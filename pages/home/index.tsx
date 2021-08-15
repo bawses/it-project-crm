@@ -1,5 +1,6 @@
 import Next from "next";
+import { LoginForm } from "../../components/TestLogin";
 
 export default function Home() {
-  return <div>Hello World!</div>;                                                                   
+  return <LoginForm />;
 }
