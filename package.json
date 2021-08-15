@@ -4,11 +4,10 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "dev": "next dev",
+    "dev": "node backend/server.js",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint",
-    "server": "node backend/server.js"
+    "lint": "next lint"
   },
   "dependencies": {
     "@material-ui/core": "^4.12.3",
@@ -21,6 +20,7 @@
     "eslint": "7.32.0",
     "eslint-config-next": "11.0.1",
     "vercel": "^23.1.2",
+    "express": "^4.17.1",
     "typescript": "^4.3.5"
   }
 }
