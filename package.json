@@ -2,11 +2,13 @@
   "name": "it-project-crm",
   "version": "0.1.0",
   "private": true,
+  "type": "module",
   "scripts": {
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "server": "node backend/server.js"
   },
   "dependencies": {
     "@material-ui/core": "^4.12.3",
