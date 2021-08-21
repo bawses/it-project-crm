@@ -12,7 +12,7 @@ export const LoginForm: React.FC<Props> = ({}) => {
   const [formState, setFormState] = useState(initialState);
 
   const handleInput = (event) => {
-    setFormState({ ...formState, [event.target.name]: event.target.value });
+    setFormState({ ...formState, [event.target.id]: event.target.value });
   };
 
   const handleSubmit = (event) => {
@@ -24,20 +24,8 @@ export const LoginForm: React.FC<Props> = ({}) => {
 
   return (
     <div>
-      <Input
-        name="email"
-        label="Email Address"
-        handleChange={handleInput}
-        autoFocus
-        half
-      />
-      <Input
-        name="password"
-        label="Password"
-        handleChange={handleInput}
-        autoFocus
-        half
-      />
+      <input id="email" onChange={handleInput} type="email" />
+      <input id="password" onChange={handleInput} type="password" />
       <Button onClick={handleSubmit}>Log In</Button>
     </div>
   );
