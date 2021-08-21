@@ -7,4 +7,6 @@ const TestSchema = new mongoose.Schema({
 
 })
 
-module.exports = mongoose.models.TestSchema || mongoose.model('individual', TestSchema);
+const Test = mongoose.model("Individual", TestSchema)
+
+module.exports = Test;
