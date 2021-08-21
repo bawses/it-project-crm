@@ -1,5 +1,7 @@
 const next = require("next");
 const express = require("express");
+const connectDB = require("./utils/dbConnect");
+const Individual = require("./models/Test");
 
 const dev = process.env.NODE_ENV !== "production";
 const port = process.env.PORT || 3000;
@@ -11,13 +13,26 @@ app.prepare().then(() => {
 
     server.use(express.json());
 
-    server.post('/api/login', (req, res) => {
-        const { email, password } = req.body;
+    connectDB();
 
+    server.post('/api/login', async (req, res) => {
+        const { email, password } = req.body;
+        
+        const userData = {name: {firstName: "Saishnu", lastName: "Test"}, email, password}
+        const individual = await Individual.create(userData);
+
+        let success = true
+        if (individual){
+            console.log("User Created Successfully");
+        }
+        else{
+            console.log("Error encountered.");
+            success = false;
+        }
         res.json({
             email,
             password,
-            success: true
+            success: success
         });
     })
 

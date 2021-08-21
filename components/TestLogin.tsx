@@ -18,7 +18,8 @@ export const LoginForm: React.FC<Props> = ({}) => {
   const handleSubmit = (event) => {
     event.preventDefault();
     const response = loginUser(formState.email, formState.password);
-    setFormState({ email: "", password: "" });
+
+    console.log(response);
   };
 
   return (
