@@ -1,7 +1,7 @@
 import React from "react";
 import { Input } from "./Input";
 import { Button } from "@material-ui/core";
-import { loginUser } from "../lib/auth";
+import { loginUser } from "../util/mongodb";
 import { useState } from "react";
 
 interface Props {}
