@@ -5,6 +5,8 @@ import theme from '../src/theme'
 import { AppProps } from 'next/app'
 import { useEffect } from 'react'
 import { Provider } from 'next-auth/client';
+import '../src/styles.css';
+
 
 export default function MyApp(props: AppProps) {
   const { Component, pageProps } = props

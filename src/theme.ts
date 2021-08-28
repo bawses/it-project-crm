@@ -1,14 +1,17 @@
 import { createTheme } from '@material-ui/core/styles';
 import { red } from '@material-ui/core/colors';
+import { COLORS } from './colors';
 
 // Create a theme instance.
 const theme = createTheme({
     palette: {
+        // Nav bar blue
         primary: {
-            main: '#556cd6',
+            main: COLORS.primaryBlue,
         },
+        // Action button orange
         secondary: {
-            main: '#19857b',
+            main: COLORS.actionOrange,
         },
         error: {
             main: red.A400,
@@ -17,6 +20,15 @@ const theme = createTheme({
             default: '#fff',
         },
     },
+    typography: {
+        fontFamily: [
+          'Nunito',
+          'Roboto',
+          '"Helvetica Neue"',
+          'Arial',
+          'sans-serif'
+        ].join(','),
+      },
 });
 
 export default theme;
