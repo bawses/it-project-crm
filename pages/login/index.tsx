@@ -41,7 +41,7 @@ export default function LoginPage() {
   useEffect(() => {
     getSession().then((session) => {
       if (session) {
-        router.replace("/");
+        router.replace("/profile");
       } else {
         setIsLoading(false);
       }
