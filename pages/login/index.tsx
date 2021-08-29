@@ -1,6 +1,6 @@
 import { useRouter } from "next/router";
 import { getSession, signIn } from "next-auth/client";
-import { useEffect, useState } from "react";
+import { useEffect, useState, ChangeEvent, MouseEvent } from "react";
 
 export default function LoginPage() {
   const [isLoading, setIsLoading] = useState(true);
@@ -9,17 +9,17 @@ export default function LoginPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
-  const handleEmail = (e) => {
+  const handleEmail = (e: ChangeEvent<HTMLInputElement>) => {
     setEmail(e.target.value);
     console.log(email);
   };
 
-  const handlePassword = (e) => {
+  const handlePassword = (e: ChangeEvent<HTMLInputElement>) => {
     setPassword(e.target.value);
     console.log(password);
   };
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = async (e: MouseEvent<HTMLButtonElement, globalThis.MouseEvent>) => {
     e.preventDefault();
 
     const result = await signIn("credentials", {
@@ -28,7 +28,7 @@ export default function LoginPage() {
       password: password,
     });
 
-    if (result.error) {
+    if (result?.error) {
       console.log("Invalid User Credentials Entered");
       console.log(result.error);
     } else {

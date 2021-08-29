@@ -1,6 +1,6 @@
 import { useRouter } from "next/router";
-import { getSession, signIn } from "next-auth/client";
-import { useEffect, useState } from "react";
+import { getSession } from "next-auth/client";
+import { useEffect, useState, ChangeEvent, MouseEvent } from "react";
 import { createUser } from "../../lib/auth";
 
 const initialState = {
@@ -15,11 +15,11 @@ export default function SignUpPage() {
   const router = useRouter();
   const [userState, setUserState] = useState(initialState);
 
-  const handleInput = (e) => {
+  const handleInput = (e: ChangeEvent<HTMLInputElement>) => {
     setUserState({ ...userState, [e.target.name]: e.target.value });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = (e: MouseEvent<HTMLButtonElement, globalThis.MouseEvent>) => {
     e.preventDefault();
     createUser(
       { firstName: userState.firstName, lastName: userState.lastName },

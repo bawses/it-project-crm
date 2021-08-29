@@ -1,12 +1,12 @@
 import { useRouter } from "next/router";
 import { getSession, signIn, signOut } from "next-auth/client";
-import { useEffect, useState } from "react";
+import { useEffect, useState, MouseEvent } from "react";
 
 export default function Profile() {
   const [isLoading, setIsLoading] = useState(true);
   const router = useRouter();
 
-  const handleSignOut = (e) => {
+  const handleSignOut = (e: MouseEvent<HTMLButtonElement, globalThis.MouseEvent>) => {
     signOut();
   };
 
