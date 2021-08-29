@@ -4,6 +4,7 @@ import {
   Typography,
   makeStyles,
   TextField,
+  Button,
 } from "@material-ui/core";
 import Box from "@material-ui/core/Box";
 import { COLORS } from "../../src/colors";
@@ -140,9 +141,14 @@ export default function CreateContact() {
     return <TextField id={fieldType} label={fieldType} fullWidth />;
   };
 
-  const handleChange = (event: React.FormEvent<HTMLInputElement>) => {
+  const handleChange = (fieldType: string, fieldValue: string) => {
+    setFieldValues({ ...fieldValues, [fieldType]: fieldValue });
+  };
 
-  }
+  const handleSubmit = (event: React.FormEvent<HTMLInputElement>) => {
+    event.preventDefault();
+    console.log(fieldValues.toString());
+  };
 
   return (
     <Container maxWidth="md">
@@ -162,13 +168,35 @@ export default function CreateContact() {
           <div className={classes.primaryDetailsTextfields}>
             <div className={classes.responsiveRow}>
               <div className={classes.responsiveField}>
-                <TextField id="firstName" label="First name" fullWidth />
+                <TextField
+                  id="firstName"
+                  label="First name"
+                  fullWidth
+                  value={fieldValues.firstName}
+                  onChange={(event) =>
+                    handleChange("firstName", event.target.value)
+                  }
+                />
               </div>
               <div className={classes.responsiveField}>
-                <TextField id="lastName" label="Last name" fullWidth />
+                <TextField
+                  id="lastName"
+                  label="Last name"
+                  fullWidth
+                  value={fieldValues.lastName}
+                  onChange={(event) =>
+                    handleChange("lastName", event.target.value)
+                  }
+                />
               </div>
             </div>
-            <TextField id="title" label="Title" fullWidth />
+            <TextField
+              id="title"
+              label="Title"
+              fullWidth
+              value={fieldValues.title}
+              onChange={(event) => handleChange("title", event.target.value)}
+            />
             <Select
               instanceId="locationSelector"
               options={options}
@@ -189,6 +217,10 @@ export default function CreateContact() {
                   variant="filled"
                   InputLabelProps={{ className: classes.textfieldLabel }}
                   fullWidth
+                  value={fieldValues.primaryOrg}
+                  onChange={(event) =>
+                    handleChange("primaryOrg", event.target.value)
+                  }
                 />
               </div>
               <div className={classes.responsiveField}>
@@ -198,6 +230,10 @@ export default function CreateContact() {
                   variant="filled"
                   InputLabelProps={{ className: classes.textfieldLabel }}
                   fullWidth
+                  value={fieldValues.secondaryOrg}
+                  onChange={(event) =>
+                    handleChange("secondaryOrg", event.target.value)
+                  }
                 />
               </div>
             </div>
@@ -205,15 +241,53 @@ export default function CreateContact() {
         </div>
         <div className={classes.responsiveRow}>
           <div className={classes.responsiveField}>
-            <TextField id="primaryEmail" label="Primary email" fullWidth />
-            <TextField id="secondaryEmail" label="Secondary email" fullWidth />
+            <TextField
+              id="primaryEmail"
+              label="Primary email"
+              fullWidth
+              value={fieldValues.primaryEmail}
+              onChange={(event) =>
+                handleChange("primaryEmail", event.target.value)
+              }
+            />
+            <TextField
+              id="secondaryEmail"
+              label="Secondary email"
+              fullWidth
+              value={fieldValues.secondaryEmail}
+              onChange={(event) =>
+                handleChange("secondaryEmail", event.target.value)
+              }
+            />
           </div>
           <div className={classes.responsiveField}>
-            <TextField id="primaryPhone" label="Primary phone" fullWidth />
-            <TextField id="secondaryPhone" label="Secondary phone" fullWidth />
+            <TextField
+              id="primaryPhone"
+              label="Primary phone"
+              fullWidth
+              value={fieldValues.primaryPhone}
+              onChange={(event) =>
+                handleChange("primaryPhone", event.target.value)
+              }
+            />
+            <TextField
+              id="secondaryPhone"
+              label="Secondary phone"
+              fullWidth
+              value={fieldValues.secondaryPhone}
+              onChange={(event) =>
+                handleChange("secondaryPhone", event.target.value)
+              }
+            />
           </div>
         </div>
-        <TextField id="workAddress" label="Work address" fullWidth />
+        <TextField
+          id="workAddress"
+          label="Work address"
+          fullWidth
+          value={fieldValues.address}
+          onChange={(event) => handleChange("address", event.target.value)}
+        />
         {extraFields.map((field) => fieldCreator(field.fieldType))}
         <Select
           instanceId="addField"
@@ -245,6 +319,18 @@ export default function CreateContact() {
             menu: (provided) => ({ ...provided, zIndex: 9999 }),
           }}
         />
+        {/* <CustomButton
+          color={COLORS.actionOrange}
+          textColor={COLORS.white}
+          title="Create contact"
+          onClick={handleSubmit}
+        /> */}
+        <Button
+          type="submit"
+          onClick={() => console.log(fieldValues.toString())}
+        >
+          Create contact
+        </Button>
       </form>
     </Container>
   );
