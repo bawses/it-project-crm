@@ -1,8 +1,6 @@
 import { useRouter } from "next/router";
 import { getSession, signIn } from "next-auth/client";
 import { useEffect, useState } from "react";
-import styles from "../../styles/Home.module.css";
-import axios, { AxiosResponse } from "axios";
 
 export default function LoginPage() {
   const [isLoading, setIsLoading] = useState(true);
@@ -53,7 +51,7 @@ export default function LoginPage() {
   }
 
   return (
-    <main className={styles.main}>
+    <main>
       <>
         <h1>You are not signed in</h1> <br />
         <input

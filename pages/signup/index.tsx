@@ -2,8 +2,6 @@ import { useRouter } from "next/router";
 import { getSession, signIn } from "next-auth/client";
 import { useEffect, useState } from "react";
 import { createUser } from "../../lib/auth";
-import styles from "../../styles/Home.module.css";
-import { create } from "jss";
 
 const initialState = {
   firstName: "",
@@ -51,7 +49,7 @@ export default function SignUpPage() {
   }
 
   return (
-    <main className={styles.main}>
+    <main>
       <>
         <h1>You are not signed in</h1> <br />
         <input

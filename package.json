@@ -12,6 +12,7 @@
     "@material-ui/core": "^4.12.3",
     "@material-ui/icons": "^4.11.2",
     "axios": "^0.21.1",
+    "bcryptjs": "^2.4.3",
     "mongoose": "^5.13.7",
     "next": "11.0.1",
     "next-auth": "^3.29.0",
@@ -23,9 +24,9 @@
     "@types/react": "^17.0.15",
     "eslint": "7.32.0",
     "eslint-config-next": "11.0.1",
-    "vercel": "^23.1.2",
     "express": "^4.17.1",
     "nodemon": "^2.0.12",
-    "typescript": "^4.3.5"
+    "typescript": "^4.3.5",
+    "vercel": "^23.1.2"
   }
 }
