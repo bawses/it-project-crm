@@ -100,6 +100,32 @@ const useStyles = makeStyles((theme) => ({
   textfieldLabel: {
     fontSize: "0.8rem",
   },
+  formOptions: {
+    display: "flex",
+    flexDirection: "row",
+    width: "100%",
+    justifyContent: "flex-end",
+    [theme.breakpoints.down("xs")]: {
+      flexDirection: "column",
+      alignItems: "center",
+    },
+  },
+  formButton: {
+    fontWeight: "bold",
+    width: "20%",
+    margin: theme.spacing(2),
+    [theme.breakpoints.down("sm")]: {
+      width: "30%",
+    },
+    [theme.breakpoints.down("xs")]: {
+      width: "70%",
+    },
+  },
+  cancelButton: {
+    backgroundColor: COLORS.inactiveGrey,
+  },
+  submitButton: {
+  },
 }));
 
 type ContactDetailsType = {
@@ -137,17 +163,40 @@ export default function CreateContact() {
   });
   const [extraFields, setExtraFields] = useState<ExtraFieldType[]>([]);
 
-  const fieldCreator = (fieldType: string) => {
-    return <TextField id={fieldType} label={fieldType} fullWidth />;
+  const fieldCreator = (fieldType: string, fieldValue: string) => {
+    return (
+      <TextField
+        key={fieldType}
+        id={fieldType}
+        label={fieldType}
+        value={fieldValue}
+        onChange={(event) => handleExtraField(fieldType, event.target.value)}
+        fullWidth
+      />
+    );
   };
 
   const handleChange = (fieldType: string, fieldValue: string) => {
     setFieldValues({ ...fieldValues, [fieldType]: fieldValue });
   };
 
-  const handleSubmit = (event: React.FormEvent<HTMLInputElement>) => {
+  const handleExtraField = (fieldType: string, fieldValue: string) => {
+    const newExtraFields = extraFields.map((field) =>
+      field.fieldType === fieldType
+        ? { fieldType: field.fieldType, fieldValue: fieldValue }
+        : field
+    );
+    setExtraFields(newExtraFields);
+  };
+
+  const handleSubmit = (event: React.SyntheticEvent) => {
     event.preventDefault();
-    console.log(fieldValues.toString());
+    console.log(`Form data: ${JSON.stringify(fieldValues)}`);
+    console.log(`Location: ${location ? location.value : "None selected"}`);
+    console.log("Extra fields:");
+    for (let field of extraFields) {
+      console.log(JSON.stringify(field));
+    }
   };
 
   return (
@@ -156,7 +205,7 @@ export default function CreateContact() {
         Create a manual contact
       </Typography>
 
-      <form noValidate autoComplete="off">
+      <form noValidate autoComplete="off" onSubmit={handleSubmit}>
         <div className={classes.primaryDetailsStyle}>
           <div className={classes.profilePicDiv}>
             <Image
@@ -288,7 +337,9 @@ export default function CreateContact() {
           value={fieldValues.address}
           onChange={(event) => handleChange("address", event.target.value)}
         />
-        {extraFields.map((field) => fieldCreator(field.fieldType))}
+        {extraFields.map((field) =>
+          fieldCreator(field.fieldType, field.fieldValue)
+        )}
         <Select
           instanceId="addField"
           options={addFieldOptions}
@@ -319,18 +370,25 @@ export default function CreateContact() {
             menu: (provided) => ({ ...provided, zIndex: 9999 }),
           }}
         />
-        {/* <CustomButton
-          color={COLORS.actionOrange}
-          textColor={COLORS.white}
-          title="Create contact"
-          onClick={handleSubmit}
-        /> */}
-        <Button
-          type="submit"
-          onClick={() => console.log(fieldValues.toString())}
-        >
-          Create contact
-        </Button>
+        <div className={classes.formOptions}>
+          <Button
+            variant="contained"
+            type="button"
+            onClick={() => {}}
+            className={`${classes.formButton} ${classes.cancelButton}`}
+          >
+            Cancel
+          </Button>
+          <Button
+            variant="contained"
+            type="submit"
+            onClick={handleSubmit}
+            color="secondary"
+            className={`${classes.formButton} ${classes.submitButton}`}
+          >
+            Create contact
+          </Button>
+        </div>
       </form>
     </Container>
   );
