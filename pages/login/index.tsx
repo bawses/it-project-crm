@@ -3,7 +3,7 @@ import { getSession, signIn } from "next-auth/client";
 import { useEffect, useState, ChangeEvent, MouseEvent } from "react";
 
 import CircularProgress from '@material-ui/core/CircularProgress';
-import { TextField, Grid, Paper, Button } from '@material-ui/core';
+import { Typography, TextField, Grid, Paper, Button } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 import { COLORS }  from '../../src/colors';
 
@@ -97,8 +97,7 @@ export default function LoginPage() {
   return (
     <main>
       <>
-      <h1 className={classes.h1}>Welcome back <br /> to your personal CRM</h1>
-      <h1 className={classes.h1}></h1>
+      <Typography variant="h4" component="h4">Welcome back<br /> to your personal CRM</Typography>
 
       <Paper className = {classes.paper}>
     <Grid item xs={12}>
