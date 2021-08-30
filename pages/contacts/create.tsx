@@ -5,6 +5,7 @@ import {
   makeStyles,
   TextField,
   Button,
+  IconButton,
 } from "@material-ui/core";
 import {
   Mail,
@@ -15,6 +16,7 @@ import {
   Facebook,
   Instagram,
   Language,
+  Cancel,
 } from "@material-ui/icons";
 import { COLORS } from "../../src/colors";
 import Image from "next/image";
@@ -43,27 +45,27 @@ const options = [
 
 const addFieldOptions = [
   {
-    value: "linkedin",
+    value: "LinkedIn",
     label: "LinkedIn",
   },
   {
-    value: "instagram",
+    value: "Instagram",
     label: "Instagram",
   },
   {
-    value: "twitter",
+    value: "Twitter",
     label: "Twitter",
   },
   {
-    value: "facebook",
+    value: "Facebook",
     label: "Facebook",
   },
   {
-    value: "website",
+    value: "Website",
     label: "Website",
   },
   {
-    value: "other",
+    value: "Other",
     label: "Other",
   },
 ];
@@ -262,8 +264,20 @@ export default function CreateContact() {
           }
           fullWidth
         />
+        <IconButton onClick={() => {deleteField(index, fieldType);}}>
+          <Cancel />
+        </IconButton>
       </div>
     );
+  };
+
+  const deleteField = (index: number, fieldType: string) => {
+    const newExtraFields = extraFields.filter((field, i) => i !== index);
+    if (fieldType !== "Other") {
+      addFieldOptions.push({value: fieldType, label: fieldType});
+    }
+    setExtraFields(newExtraFields);
+    
   };
 
   const handleChange = (fieldType: string, fieldValue: string) => {
@@ -292,7 +306,7 @@ export default function CreateContact() {
       ]);
       // If added field is not "other",
       // remove it from the remaining field options
-      if (value.value !== "other") {
+      if (value.value !== "Other") {
         const fieldTypeIndex = addFieldOptions.findIndex(
           (field) => field.value === value.value
         );
