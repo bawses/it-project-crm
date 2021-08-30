@@ -1,5 +1,6 @@
 import { hashPassword } from '../../../lib/auth';
 import { connectToDatabase } from '../../../lib/db';
+import Individual from "../../../models/individual";
 
 async function handler(req, res) {
   if (req.method !== 'POST') {
@@ -29,15 +30,13 @@ async function handler(req, res) {
   }
   const client = await connectToDatabase();
 
-  const db = client.db();
-
   // Find user based on email, with email being their unique key identifier
-  const existingUser = await db.collection('individuals').findOne({ email: email });
+  const existingUser = await Individual.findOne({ email: email });
   console.log(`Existing user: ${existingUser}`)
   if (existingUser) {
     console.log("User already exists!");
     res.status(422).json({ message: 'User exists already!' });
-    client.close();
+    client.connection.close();
     return;
   }
 
@@ -45,14 +44,14 @@ async function handler(req, res) {
   console.log("Before Hashing");
   const hashedPassword = await hashPassword(password);
   console.log(`Hash Password: ${hashedPassword}`);
-  const result = await db.collection('individuals').insertOne({
+  const result = await Individual.create({
     name: name,
     email: email,
     password: hashedPassword,
   });
 
   res.status(201).json({ message: 'Created user!' , ok: true});
-  client.close();
+  client.connection.close();
 }
 
 export default handler;
