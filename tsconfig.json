@@ -22,7 +22,7 @@
     "next-env.d.ts",
     "**/*.ts",
     "**/*.tsx"
-, "pages/api/auth/[...nextauth].js"  ],
+, "pages/api/auth/[...nextauth].js", "src/colors.ts", "src/theme.ts"  ],
   "exclude": [
     "node_modules"
   ]

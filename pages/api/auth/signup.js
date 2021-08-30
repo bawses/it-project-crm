@@ -41,6 +41,7 @@ async function handler(req, res) {
     return;
   }
 
+  // before hashing 
   console.log("Before Hashing");
   const hashedPassword = await hashPassword(password);
   console.log(`Hash Password: ${hashedPassword}`);

@@ -2,7 +2,48 @@ import { useRouter } from "next/router";
 import { getSession, signIn } from "next-auth/client";
 import { useEffect, useState, ChangeEvent, MouseEvent } from "react";
 
+import CircularProgress from '@material-ui/core/CircularProgress';
+import { TextField, Grid, Paper, Button } from '@material-ui/core';
+import { makeStyles } from '@material-ui/core/styles';
+import { COLORS }  from '../../src/colors';
+
+const useStyles = makeStyles({
+  h1: {
+    position: "relative",
+    left: "56%",
+    right: "11.5%"
+  },
+
+  btn: {
+    backgroundColor: COLORS.primaryBlue,
+    '&:hover': {
+      backgroundColor: '#EE6C4D'
+    },
+    maxWidth: 600,  
+    height:'50px', 
+    margin: "20px auto"
+  },
+
+  paper: {
+    padding: 30, 
+    height: '50vh', 
+    maxWidth: 600, 
+    margin: "20px auto", 
+    position: "absolute",
+    left: "50%",
+    right: "11.5%",
+    bottom: "25%"
+  },
+
+  textbox: {
+    margin: "10px auto"
+  }
+
+});
+
 export default function LoginPage() {
+  const classes = useStyles();
+
   const [isLoading, setIsLoading] = useState(true);
   const router = useRouter();
 
@@ -39,29 +80,62 @@ export default function LoginPage() {
   useEffect(() => {
     getSession().then((session) => {
       if (session) {
-        router.replace("/profile");
+    // redirect to profile 
+    router.replace("/profile");
       } else {
-        setIsLoading(false);
+    setIsLoading(false);
       }
     });
   }, [router]);
 
   if (isLoading) {
-    return <p>Loading...</p>;
+    return (
+      <CircularProgress />
+    );
   }
 
   return (
     <main>
       <>
-        <h1>You are not signed in</h1> <br />
-        <input
-          type="email"
-          onChange={handleEmail}
-          placeholder="example@email.com"
-        />
-        <input type="password" onChange={handlePassword} />
-        <button onClick={handleSubmit}>Sign In</button>
+      <h1 className={classes.h1}>Welcome back <br /> to your personal CRM</h1>
+      <h1 className={classes.h1}></h1>
+
+      <Paper className = {classes.paper}>
+    <Grid item xs={12}>
+    <TextField 
+      onChange={handleEmail}
+      fullWidth 
+      name="email" 
+      size="small" 
+      variant="outlined"
+      className={classes.textbox}
+      placeholder="example@email.com"
+    />
+    </Grid>
+    <Grid item xs={12}>
+      <TextField
+      onChange={handlePassword}
+      fullWidth 
+      name="password"
+      size="small"
+      type="password"
+      variant="outlined"
+      className={classes.textbox}
+      placeholder="Enter your password here"
+      />
+    </Grid>
+    <Button 
+      fullWidth
+      onClick={handleSubmit}
+      variant="contained" 
+      className = {classes.btn} 
+      style={{ position: "relative", top: "5px", bottom: "5px"}}
+    >
+    Log In
+    </Button>
+      </Paper>
       </>
     </main>
   );
 }
+
