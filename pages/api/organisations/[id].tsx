@@ -1,7 +1,66 @@
+import connectToDatabase from "../../../backend/lib/dbConnect";
+import Organisation from "../../../backend/models/Organisation";
 import { Request, Response } from "express";
-import { idHandler } from "../../../backend/lib/ApiHandlers";
-import { DataType } from "../../../components/DataTypes";
 
-export default async function handler(req: Request, res: Response): Promise<Response> {
-  return await idHandler(req, res, DataType.Organisation);
+export default async function handler(req: Request, res: Response): Promise<void> {
+  const {
+    query: { id },
+    method,
+  } = req;
+  await connectToDatabase();
+
+  switch (method) {
+    /* Get a model by its ID */
+    case "GET": {
+      try {
+        const organisation = await Organisation.findById(id);
+        if (!organisation) {
+          res.status(400).json({ success: false });
+          return;
+        }
+        res.status(200).json({ success: true, data: organisation });
+      } catch (error) {
+        res.status(400).json({ success: false });
+      }
+      return;
+    }
+
+    /* Edit a model by its ID */
+    case "PUT": {
+      try {
+        const organisation = await Organisation.findByIdAndUpdate(id, req.body, {
+          new: true,
+          runValidators: true,
+        });
+        if (!organisation) {
+          res.status(400).json({ success: false });
+          return;
+        }
+        res.status(200).json({ success: true, data: organisation });
+      } catch (error) {
+        res.status(400).json({ success: false });
+      }
+      return;
+    }
+
+    /* Delete a model by its ID */
+    case "DELETE": {
+      try {
+        const deletedOrganisation = await Organisation.deleteOne({ _id: id });
+        if (!deletedOrganisation) {
+          res.status(400).json({ success: false });
+          return;
+        }
+        res.status(200).json({ success: true, data: {} });
+      } catch (error) {
+        res.status(400).json({ success: false });
+      }
+      return;
+    }
+
+    default: {
+      res.status(400).json({ success: false });
+      return;
+    }
+  }
 }
