@@ -1,9 +1,9 @@
 import NextAuth from "next-auth";
 import Providers from "next-auth/providers";
 
-import { verifyPassword } from "../../../lib/auth";
-import connectToDatabase from "../../../lib/dbConnect";
-import User from "../../../models/User";
+import { verifyPassword } from "../../../backend/lib/auth";
+import connectToDatabase from "../../../backend/lib/dbConnect";
+import User from "../../../backend/models/User";
 
 export default NextAuth({
   session: {
