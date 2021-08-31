@@ -1,5 +1,5 @@
 import dbConnect from "../../../lib/dbConnect";
-import ManualContact from "../../../models/ManualContact";
+import Organisation from "../../../models/Organisation";
 
 export default async function handler(req, res) {
   const {
@@ -13,11 +13,11 @@ export default async function handler(req, res) {
     /* Get a model by its ID */
     case "GET": {
       try {
-        const manualContact = await ManualContact.findById(id);
-        if (!manualContact) {
+        const organisation = await Organisation.findById(id);
+        if (!organisation) {
           return res.status(400).json({ success: false });
         }
-        res.status(200).json({ success: true, data: manualContact });
+        res.status(200).json({ success: true, data: organisation });
       } catch (error) {
         res.status(400).json({ success: false });
       }
@@ -27,7 +27,7 @@ export default async function handler(req, res) {
     /* Edit a model by its ID */
     case "PUT": {
       try {
-        const manualContact = await ManualContact.findByIdAndUpdate(
+        const organisation = await Organisation.findByIdAndUpdate(
           id,
           req.body,
           {
@@ -35,10 +35,10 @@ export default async function handler(req, res) {
             runValidators: true,
           }
         );
-        if (!manualContact) {
+        if (!organisation) {
           return res.status(400).json({ success: false });
         }
-        res.status(200).json({ success: true, data: manualContact });
+        res.status(200).json({ success: true, data: organisation });
       } catch (error) {
         res.status(400).json({ success: false });
       }
@@ -48,8 +48,8 @@ export default async function handler(req, res) {
     /* Delete a model by its ID */
     case "DELETE": {
       try {
-        const deletedManualContact = await ManualContact.deleteOne({ _id: id });
-        if (!deletedManualContact) {
+        const deletedOrganisation = await Organisation.deleteOne({ _id: id });
+        if (!deletedOrganisation) {
           return res.status(400).json({ success: false });
         }
         res.status(200).json({ success: true, data: {} });

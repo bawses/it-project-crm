@@ -10,7 +10,8 @@ export default async function handler(req, res) {
   await dbConnect();
 
   switch (method) {
-    case "GET" /* Get a model by its ID */:
+    /* Get a model by its ID */
+    case "GET": {
       try {
         const user = await User.findById(id);
         if (!user) {
@@ -21,8 +22,10 @@ export default async function handler(req, res) {
         res.status(400).json({ success: false });
       }
       break;
+    }
 
-    case "PUT" /* Edit a model by its ID */:
+    /* Edit a model by its ID */
+    case "PUT": {
       try {
         const user = await User.findByIdAndUpdate(id, req.body, {
           new: true,
@@ -36,8 +39,10 @@ export default async function handler(req, res) {
         res.status(400).json({ success: false });
       }
       break;
+    }
 
-    case "DELETE" /* Delete a model by its ID */:
+    /* Delete a model by its ID */
+    case "DELETE": {
       try {
         const deletedUser = await User.deleteOne({ _id: id });
         if (!deletedUser) {
@@ -48,9 +53,11 @@ export default async function handler(req, res) {
         res.status(400).json({ success: false });
       }
       break;
+    }
 
-    default:
+    default: {
       res.status(400).json({ success: false });
       break;
+    }
   }
 }

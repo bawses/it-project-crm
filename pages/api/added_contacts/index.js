@@ -1,5 +1,5 @@
 import dbConnect from "../../../lib/dbConnect";
-import ManualContact from "../../../models/ManualContact";
+import AddedContact from "../../../models/AddedContact";
 
 export default async function handler(req, res) {
   const { method } = req;
@@ -10,8 +10,8 @@ export default async function handler(req, res) {
     case "GET": {
       try {
         /* find all the data in our database */
-        const manualContacts = await ManualContact.find({});
-        res.status(200).json({ success: true, data: manualContacts });
+        const addedContacts = await AddedContact.find({});
+        res.status(200).json({ success: true, data: addedContacts });
       } catch (error) {
         res.status(400).json({ success: false });
       }
@@ -21,8 +21,8 @@ export default async function handler(req, res) {
     case "POST": {
       try {
         /* create a new model in the database */
-        const manualContact = await ManualContact.create(req.body);
-        res.status(201).json({ success: true, data: manualContact });
+        const addedContact = await AddedContact.create(req.body);
+        res.status(201).json({ success: true, data: addedContact });
       } catch (error) {
         res.status(400).json({ success: false });
       }

@@ -1,0 +1,24 @@
+import mongoose from "mongoose";
+import { IUser } from "../components/interfaces";
+
+/*TODO: add min/max length for Strings and error message for required fields */
+
+const UserSchema = new mongoose.Schema<IUser>(
+  {
+    passwordHash: { type: String, required: true },
+    name: { type: { firstName: String, lastName: String }, required: true },
+    email: { type: { primary: String, secondary: String }, required: true },
+    phone: { primary: String, secondary: String },
+    job: String,
+    location: String,
+    links: { facebook: String, linkedIn: String, instagram: String },
+    about: String,
+    allTags: [String],
+    organisations: [String],
+  },
+  {
+    timestamps: true,
+  }
+);
+
+export default mongoose.models.User || mongoose.model("User", UserSchema);
