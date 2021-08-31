@@ -1,6 +1,6 @@
-import { hashPassword } from "../../../lib/auth";
-import connectToDatabase from "../../../lib/dbConnect";
-import User from "../../../models/User";
+import { hashPassword } from "../../../backend/lib/auth";
+import connectToDatabase from "../../../backend/lib/dbConnect";
+import User from "../../../backend/models/User";
 import { Request, Response } from "express";
 
 async function handler(req: Request, res: Response): Promise<void> {
