@@ -6,16 +6,10 @@ import { createUser } from "../../lib/auth";
 
 import { Typography, TextField, Grid, Paper, Button } from '@material-ui/core';
 import { makeStyles, createStyles, Theme } from '@material-ui/core/styles';
-import CircularProgress from '@material-ui/core/CircularProgress';
+import LinearProgress from '@material-ui/core/LinearProgress';
 import { COLORS } from '../../src/colors';
 
 
-const initialState = {
-	firstName: "",
-	lastName: "",
-	email: "",
-	password: "",
-};
 
 
 const useStyles =  makeStyles((theme: Theme) =>
@@ -43,7 +37,7 @@ const useStyles =  makeStyles((theme: Theme) =>
       color: COLORS.white,
       backgroundColor: COLORS.primaryBlue,
       '&:hover': {
-        backgroundColor: '#EE6C4D'
+        backgroundColor: COLORS.actionOrange
       },
       maxWidth: 600,  
       height:'50px', 
@@ -56,7 +50,8 @@ const useStyles =  makeStyles((theme: Theme) =>
       maxHeight: 380,  
       maxWidth: 600, 
       marginTop: "10px", 
-      marginBottom: "15px",
+      marginBottom: "15px auto",
+      backgroundColor: COLORS.lightGrey
     },
 
     logo : {
@@ -66,13 +61,13 @@ const useStyles =  makeStyles((theme: Theme) =>
     },
 
     textbox: {
-      margin: "10px auto",
+      margin: "5px auto",
+      backgroundColor: COLORS.white
     },
 
     halfTextbox: {
-      margin: "10px auto",
-      // paddingLeft: "5px auto",
-      // paddingRight: "5px auto",
+      margin: "5px auto",
+      backgroundColor: COLORS.white
     },
 
     links : {
@@ -82,6 +77,15 @@ const useStyles =  makeStyles((theme: Theme) =>
 
   }),
 );
+
+
+const initialState = {
+	firstName: "",
+	lastName: "",
+	email: "",
+	password: "",
+  confirmPassword: ""
+};
 
 export default function SignUpPage() {
   const classes = useStyles();
@@ -97,7 +101,31 @@ export default function SignUpPage() {
 	const handleSubmit = (
 		e: MouseEvent<HTMLButtonElement, globalThis.MouseEvent>
 	) => {
-		e.preventDefault();
+		
+    // make sure password is the same as confirm password
+    if (userState.password !== userState.confirmPassword) {
+      alert("Passwords are not identical. Try again.");
+      setUserState({
+        firstName: userState.firstName,
+        lastName: userState.lastName,
+        email: userState.email,
+        password: "",
+        confirmPassword: "",
+      });
+      return;
+    }
+
+    e.preventDefault();
+
+    // make sure all fields on Sign Up form are nonempty
+    const fields = Object.values(userState);
+    for (var i = 0; i < fields.length; i++) {
+      if (fields[i].trim() === "") {
+        alert("Please make sure you have filled in all fields.");
+        return;
+      }
+    }
+
 		createUser(
 			{ firstName: userState.firstName, lastName: userState.lastName },
 			userState.email,
@@ -124,7 +152,12 @@ export default function SignUpPage() {
 
   if (isLoading) {
     return (
-      <CircularProgress />
+      <div>
+        <LinearProgress color="secondary"/>
+        <LinearProgress color="secondary"/>
+        <LinearProgress color="secondary"/>
+        <LinearProgress color="secondary" />
+      </div>
     );
   }
 
@@ -178,6 +211,17 @@ export default function SignUpPage() {
                   placeholder="Email"
                 />
               </Grid>
+              <TextField
+                  onChange={handleInput}
+                  fullWidth 
+                  size="small" 
+                  variant="outlined"
+                  className={classes.textbox}
+                  name="password" 
+                  type="password"
+                  placeholder="Enter Password"
+                />
+  
               <Grid item xs>
                 <TextField 
                   onChange={handleInput} 
@@ -185,7 +229,7 @@ export default function SignUpPage() {
                   size="small" 
                   variant="outlined"
                   className={classes.textbox}
-                  name="password" 
+                  name="confirmPassword" 
                   type="password"
                   placeholder="Confirm Password"
                 />

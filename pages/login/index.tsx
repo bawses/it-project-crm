@@ -26,10 +26,11 @@ const useStyles = makeStyles((theme: Theme) =>
       position: "absolute",
       left: "50%",
       right: "11.5%",
-      top: "15%",
+      top: "15%"
     },
 
     btn: {
+      color: COLORS.white,
       backgroundColor: COLORS.primaryBlue,
       '&:hover': {
         backgroundColor: '#EE6C4D'
@@ -41,11 +42,11 @@ const useStyles = makeStyles((theme: Theme) =>
 
     paper: {
       padding: 28,
-      height: '60vh', 
+      minHeight: 340,
+      maxHeight: 340, 
       maxWidth: 600, 
-      margin: "20px auto", 
       marginTop: "10px", 
-      marginBottom: "10px",
+      marginBottom: "15px auto"
       // position: "absolute",
       // left: "50%",
       // right: "11.5%",
@@ -92,7 +93,7 @@ export default function LoginPage() {
 
   const handleSubmit = async (e: MouseEvent<HTMLButtonElement, globalThis.MouseEvent>) => {
     e.preventDefault();
-
+    
     const result = await signIn("credentials", {
       redirect: false,
       email: email,
@@ -137,7 +138,6 @@ export default function LoginPage() {
           <div className= {classes.pageRight}>
             <Typography variant="h4" component="h4">Welcome back
             <br /> to your personal CRM</Typography>
-
             <Paper className = {classes.paper}>
               <Grid item xs={12}>
                 Email
@@ -184,7 +184,7 @@ export default function LoginPage() {
                 </div>
                 <div>
                 <Typography component="p"> 
-                    <Link href="/login">Sign Up as an Individual</Link> |  <Link href="/login">Sign Up as an Organisation</Link>
+                    <Link href="/signup">Sign Up as an Individual</Link> |  <Link href="/signup">Sign Up as an Organisation</Link>
                 </Typography>
 
                 </div>
