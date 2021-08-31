@@ -37,7 +37,6 @@ const useStyles =  makeStyles((theme: Theme) =>
       left: "50%",
       right: "11.5%",
       top: "15%",
-      // bottom: "20%"
     },
 
     btn: {
@@ -61,9 +60,9 @@ const useStyles =  makeStyles((theme: Theme) =>
     },
 
     logo : {
-      marginTop: "10px", 
-      marginBottom: "15px",
-      paddingLeft: "100px"
+      marginTop: "60px", 
+      marginBottom: "10px",
+      paddingLeft: "80px"
     },
 
     textbox: {
@@ -132,12 +131,14 @@ export default function SignUpPage() {
   return (
     <main>
       <div className={classes.root}>
+
         <div className= {classes.pageLeft}>
           <div className= {classes.logo} >
-            <Typography variant="h6" component="h6">Stay connected with</Typography>
-            <Typography variant="h4" component="h4">CataLog</Typography>
+            <Typography variant="h5" component="h5">Stay connected with</Typography>
+            <Typography variant="h3" component="h3">CataLog</Typography>
           </div>
         </div>
+
         <div className= {classes.pageRight}>
           <Typography variant="h4" component="h4">Sign Up</Typography>
           <Paper className = {classes.paper}>
