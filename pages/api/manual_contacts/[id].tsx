@@ -1,7 +1,8 @@
 import connectToDatabase from "../../../lib/dbConnect";
 import ManualContact from "../../../models/ManualContact";
+import { Request, Response } from "express";
 
-export default async function handler(req, res) {
+export default async function handler(req: Request, res: Response): Promise<void> {
   const {
     query: { id },
     method,
@@ -15,34 +16,32 @@ export default async function handler(req, res) {
       try {
         const manualContact = await ManualContact.findById(id);
         if (!manualContact) {
-          return res.status(400).json({ success: false });
+          res.status(400).json({ success: false });
+          return;
         }
         res.status(200).json({ success: true, data: manualContact });
       } catch (error) {
         res.status(400).json({ success: false });
       }
-      break;
+      return;
     }
 
     /* Edit a model by its ID */
     case "PUT": {
       try {
-        const manualContact = await ManualContact.findByIdAndUpdate(
-          id,
-          req.body,
-          {
-            new: true,
-            runValidators: true,
-          }
-        );
+        const manualContact = await ManualContact.findByIdAndUpdate(id, req.body, {
+          new: true,
+          runValidators: true,
+        });
         if (!manualContact) {
-          return res.status(400).json({ success: false });
+          res.status(400).json({ success: false });
+          return;
         }
         res.status(200).json({ success: true, data: manualContact });
       } catch (error) {
         res.status(400).json({ success: false });
       }
-      break;
+      return;
     }
 
     /* Delete a model by its ID */
@@ -50,18 +49,19 @@ export default async function handler(req, res) {
       try {
         const deletedManualContact = await ManualContact.deleteOne({ _id: id });
         if (!deletedManualContact) {
-          return res.status(400).json({ success: false });
+          res.status(400).json({ success: false });
+          return;
         }
         res.status(200).json({ success: true, data: {} });
       } catch (error) {
         res.status(400).json({ success: false });
       }
-      break;
+      return;
     }
 
     default: {
       res.status(400).json({ success: false });
-      break;
+      return;
     }
   }
 }

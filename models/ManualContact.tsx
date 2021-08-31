@@ -8,8 +8,8 @@ const ManualContactSchema = new mongoose.Schema<IManualContact>(
   {
     ownerId: { type: String, required: true },
     name: { type: { firstName: String, lastName: String }, required: true },
-    email: { primary: String, secondary: String },
-    phone: { primary: String, secondary: String },
+    email: [String],
+    phone: [String],
     job: String,
     location: String,
     links: { facebook: String, linkedIn: String, instagram: String },
@@ -23,5 +23,4 @@ const ManualContactSchema = new mongoose.Schema<IManualContact>(
   }
 );
 
-export default mongoose.models.ManualContact ||
-  mongoose.model("ManualContact", ManualContactSchema);
+export default mongoose.models.ManualContact || mongoose.model("ManualContact", ManualContactSchema);

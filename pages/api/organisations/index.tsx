@@ -1,37 +1,37 @@
 import connectToDatabase from "../../../lib/dbConnect";
-import AddedContact from "../../../models/AddedContact";
+import Organisation from "../../../models/Organisation";
+import { Request, Response } from "express";
 
-export default async function handler(req, res) {
+export default async function handler(req: Request, res: Response): Promise<void> {
   const { method } = req;
-
   await connectToDatabase();
 
   switch (method) {
     case "GET": {
       try {
         /* find all the data in our database */
-        const addedContacts = await AddedContact.find({});
-        res.status(200).json({ success: true, data: addedContacts });
+        const organisations = await Organisation.find({});
+        res.status(200).json({ success: true, data: organisations });
       } catch (error) {
         res.status(400).json({ success: false });
       }
-      break;
+      return;
     }
 
     case "POST": {
       try {
         /* create a new model in the database */
-        const addedContact = await AddedContact.create(req.body);
-        res.status(201).json({ success: true, data: addedContact });
+        const organisation = await Organisation.create(req.body);
+        res.status(201).json({ success: true, data: organisation });
       } catch (error) {
         res.status(400).json({ success: false });
       }
-      break;
+      return;
     }
 
     default: {
       res.status(400).json({ success: false });
-      break;
+      return;
     }
   }
 }

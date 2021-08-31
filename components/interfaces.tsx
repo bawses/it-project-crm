@@ -12,8 +12,8 @@ export interface IAddedContact {
 export interface IManualContact {
   ownerId: UserId;
   name: { firstName: string; lastName: string };
-  email?: { primary: string; secondary: string };
-  phone?: { primary: string; secondary: string };
+  email?: [string];
+  phone?: [string];
   job?: string;
   location?: string;
   links?: { facebook: string; linkedIn: string; instagram: string };
@@ -26,8 +26,8 @@ export interface IManualContact {
 export interface IOrganisation {
   passwordHash: string;
   name: string;
-  email: { primary: string; secondary: string };
-  phone?: { primary: string; secondary: string };
+  email: [string];
+  phone?: [string];
   location?: string;
   links?: { facebook: string; linkedIn: string; instagram: string };
   industry?: string;
