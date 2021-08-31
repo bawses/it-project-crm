@@ -17,5 +17,4 @@ const AddedContactSchema = new mongoose.Schema<IAddedContact>(
   }
 );
 
-export default mongoose.models.AddedContact ||
-  mongoose.model("AddedContact", AddedContactSchema);
+export default mongoose.models.AddedContact || mongoose.model("AddedContact", AddedContactSchema);

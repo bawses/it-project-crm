@@ -15,7 +15,7 @@ export default function CustomButton({
   color = COLORS.lightGrey,
   textColor = COLORS.black,
   title,
-  href="",
+  href = "",
   onClick = () => {},
 }: ButtonProps) {
   return (

@@ -1,7 +1,8 @@
 import connectToDatabase from "../../../lib/dbConnect";
 import AddedContact from "../../../models/AddedContact";
+import { Request, Response } from "express";
 
-export default async function handler(req, res) {
+export default async function handler(req: Request, res: Response): Promise<void> {
   const {
     query: { id },
     method,
@@ -15,34 +16,32 @@ export default async function handler(req, res) {
       try {
         const addedContact = await AddedContact.findById(id);
         if (!addedContact) {
-          return res.status(400).json({ success: false });
+          res.status(400).json({ success: false });
+          return;
         }
         res.status(200).json({ success: true, data: addedContact });
       } catch (error) {
         res.status(400).json({ success: false });
       }
-      break;
+      return;
     }
 
     /* Edit a model by its ID */
     case "PUT": {
       try {
-        const addedContact = await AddedContact.findByIdAndUpdate(
-          id,
-          req.body,
-          {
-            new: true,
-            runValidators: true,
-          }
-        );
+        const addedContact = await AddedContact.findByIdAndUpdate(id, req.body, {
+          new: true,
+          runValidators: true,
+        });
         if (!addedContact) {
-          return res.status(400).json({ success: false });
+          res.status(400).json({ success: false });
+          return;
         }
         res.status(200).json({ success: true, data: addedContact });
       } catch (error) {
         res.status(400).json({ success: false });
       }
-      break;
+      return;
     }
 
     /* Delete a model by its ID */
@@ -50,18 +49,19 @@ export default async function handler(req, res) {
       try {
         const deleted_AddedContact = await AddedContact.deleteOne({ _id: id });
         if (!deleted_AddedContact) {
-          return res.status(400).json({ success: false });
+          res.status(400).json({ success: false });
+          return;
         }
         res.status(200).json({ success: true, data: {} });
       } catch (error) {
         res.status(400).json({ success: false });
       }
-      break;
+      return;
     }
 
     default: {
       res.status(400).json({ success: false });
-      break;
+      return;
     }
   }
 }

@@ -4,11 +4,11 @@ import { Button } from "@material-ui/core";
 //import { loginUser } from "../util/mongodb";
 import { useState } from "react";
 
-interface Props { }
+interface Props {}
 
 const initialState = { email: "", password: "" };
 
-export const LoginForm: React.FC<Props> = ({ }) => {
+export const LoginForm: React.FC<Props> = ({}) => {
   const [formState, setFormState] = useState(initialState);
 
   const handleInput = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -26,7 +26,7 @@ export const LoginForm: React.FC<Props> = ({ }) => {
     <div>
       <input id="email" onChange={handleInput} type="email" />
       <input id="password" onChange={handleInput} type="password" />
-      <Button onClick={(handleSubmit)}>Log In</Button>
+      <Button onClick={handleSubmit}>Log In</Button>
     </div>
   );
 };

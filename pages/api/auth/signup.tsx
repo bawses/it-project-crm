@@ -1,8 +1,9 @@
 import { hashPassword } from "../../../lib/auth";
 import connectToDatabase from "../../../lib/dbConnect";
 import User from "../../../models/User";
+import { Request, Response } from "express";
 
-async function handler(req, res) {
+async function handler(req: Request, res: Response): Promise<void> {
   if (req.method !== "POST") {
     res.status(422).json({ error: "Request method is not POST" });
   }
@@ -16,15 +17,9 @@ async function handler(req, res) {
   console.log(password);
 
   // Check for valid properties of email
-  if (
-    !email ||
-    !email.includes("@") ||
-    !password ||
-    password.trim().length < 7
-  ) {
+  if (!email || !email.includes("@") || !password || password.trim().length < 7) {
     res.status(422).json({
-      message:
-        "Invalid input - password should also be at LEAST 7 characters long.",
+      message: "Invalid input - password should also be at LEAST 7 characters long.",
     });
     return;
   }
@@ -36,7 +31,6 @@ async function handler(req, res) {
   if (existingUser) {
     console.log("User already exists!");
     res.status(422).json({ message: "User exists already!" });
-    client.connection.close();
     return;
   }
 
