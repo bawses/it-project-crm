@@ -1,6 +1,7 @@
+import { useRouter } from 'next/dist/client/router';
 import { hashPassword } from '../../../lib/auth';
 import { connectToDatabase } from '../../../lib/db';
-import Individual from "../../../models/individual";
+import User from "../../../models/User";
 
 async function handler(req, res) {
   if (req.method !== 'POST') {
@@ -31,7 +32,7 @@ async function handler(req, res) {
   const client = await connectToDatabase();
 
   // Find user based on email, with email being their unique key identifier
-  const existingUser = await Individual.findOne({ email: email });
+  const existingUser = await useRouter.findOne({ email: email });
   console.log(`Existing user: ${existingUser}`)
   if (existingUser) {
     console.log("User already exists!");
@@ -43,7 +44,7 @@ async function handler(req, res) {
   console.log("Before Hashing");
   const hashedPassword = await hashPassword(password);
   console.log(`Hash Password: ${hashedPassword}`);
-  const result = await Individual.create({
+  const result = await useRouter.create({
     name: name,
     email: email,
     password: hashedPassword,

@@ -1,9 +1,9 @@
-import NextAuth from 'next-auth';
-import Providers from 'next-auth/providers';
+import NextAuth from "next-auth";
+import Providers from "next-auth/providers";
 
-import { verifyPassword } from '../../../lib/auth';
-import { connectToDatabase } from '../../../lib/db';
-import Individual from "../../../models/individual";
+import { verifyPassword } from "../../../lib/auth";
+import { connectToDatabase } from "../../../lib/db";
+import User from "../../../models/User";
 
 export default NextAuth({
   session: {
@@ -16,13 +16,13 @@ export default NextAuth({
         //const usersCollection = client.db().collection('individuals');
 
         console.log(credentials.email);
-        const user = await Individual.findOne({
+        const user = await User.findOne({
           email: credentials.email,
         });
-  
+
         if (!user) {
           client.connection.close();
-          throw new Error('No user found!');
+          throw new Error("No user found!");
         }
 
         const isValid = await verifyPassword(
@@ -32,12 +32,11 @@ export default NextAuth({
 
         if (!isValid) {
           client.connection.close();
-          throw new Error('Could not log you in!');
+          throw new Error("Could not log you in!");
         }
 
         client.connection.close();
         return { email: user.email };
-        
       },
     }),
   ],
