@@ -1,10 +1,10 @@
-import dbConnect from "../../../lib/dbConnect";
+import connectToDatabase from "../../../lib/dbConnect";
 import AddedContact from "../../../models/AddedContact";
 
 export default async function handler(req, res) {
   const { method } = req;
 
-  await dbConnect();
+  await connectToDatabase();
 
   switch (method) {
     case "GET": {

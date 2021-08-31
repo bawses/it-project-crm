@@ -1,4 +1,4 @@
-import dbConnect from "../../../lib/dbConnect";
+import connectToDatabase from "../../../lib/dbConnect";
 import AddedContact from "../../../models/AddedContact";
 
 export default async function handler(req, res) {
@@ -7,7 +7,7 @@ export default async function handler(req, res) {
     method,
   } = req;
 
-  await dbConnect();
+  await connectToDatabase();
 
   switch (method) {
     /* Get a model by its ID */

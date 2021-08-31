@@ -38,8 +38,8 @@ export interface IOrganisation {
 export interface IUser {
   passwordHash: string;
   name: { firstName: string; lastName: string };
-  email: { primary: string; secondary: string };
-  phone?: { primary: string; secondary: string };
+  email: [string];
+  phone?: [string];
   job?: string;
   location?: string;
   links?: { facebook: string; linkedIn: string; instagram: string };
