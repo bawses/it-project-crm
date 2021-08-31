@@ -1,12 +1,12 @@
 import connectToDatabase from "../../../lib/dbConnect";
 import Organisation from "../../../models/Organisation";
+import { Request, Response } from "express";
 
-export default async function handler(req, res) {
+export default async function handler(req: Request, res: Response): Promise<void> {
   const {
     query: { id },
     method,
   } = req;
-
   await connectToDatabase();
 
   switch (method) {
@@ -15,34 +15,32 @@ export default async function handler(req, res) {
       try {
         const organisation = await Organisation.findById(id);
         if (!organisation) {
-          return res.status(400).json({ success: false });
+          res.status(400).json({ success: false });
+          return;
         }
         res.status(200).json({ success: true, data: organisation });
       } catch (error) {
         res.status(400).json({ success: false });
       }
-      break;
+      return;
     }
 
     /* Edit a model by its ID */
     case "PUT": {
       try {
-        const organisation = await Organisation.findByIdAndUpdate(
-          id,
-          req.body,
-          {
-            new: true,
-            runValidators: true,
-          }
-        );
+        const organisation = await Organisation.findByIdAndUpdate(id, req.body, {
+          new: true,
+          runValidators: true,
+        });
         if (!organisation) {
-          return res.status(400).json({ success: false });
+          res.status(400).json({ success: false });
+          return;
         }
         res.status(200).json({ success: true, data: organisation });
       } catch (error) {
         res.status(400).json({ success: false });
       }
-      break;
+      return;
     }
 
     /* Delete a model by its ID */
@@ -50,18 +48,19 @@ export default async function handler(req, res) {
       try {
         const deletedOrganisation = await Organisation.deleteOne({ _id: id });
         if (!deletedOrganisation) {
-          return res.status(400).json({ success: false });
+          res.status(400).json({ success: false });
+          return;
         }
         res.status(200).json({ success: true, data: {} });
       } catch (error) {
         res.status(400).json({ success: false });
       }
-      break;
+      return;
     }
 
     default: {
       res.status(400).json({ success: false });
-      break;
+      return;
     }
   }
 }

@@ -8,8 +8,8 @@ const OrganisationSchema = new mongoose.Schema<IOrganisation>(
   {
     passwordHash: { type: String, required: true },
     name: { type: String, required: true },
-    email: { type: { primary: String, secondary: String }, required: true },
-    phone: { primary: String, secondary: String },
+    email: { type: [String], required: true },
+    phone: [String],
     location: String,
     links: { facebook: String, linkedIn: String, instagram: String },
     industry: String,
@@ -21,5 +21,4 @@ const OrganisationSchema = new mongoose.Schema<IOrganisation>(
   }
 );
 
-export default mongoose.models.Organisation ||
-  mongoose.model("Organisation", OrganisationSchema);
+export default mongoose.models.Organisation || mongoose.model("Organisation", OrganisationSchema);

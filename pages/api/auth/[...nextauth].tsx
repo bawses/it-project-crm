@@ -11,7 +11,7 @@ export default NextAuth({
   },
   providers: [
     Providers.Credentials({
-      async authorize(credentials) {
+      async authorize(credentials: Record<string, string>) {
         const client = await connectToDatabase();
 
         console.log(credentials.email);
@@ -20,14 +20,10 @@ export default NextAuth({
         });
 
         if (!user) {
-          client.connection.close();
           throw new Error("No user found!");
         }
 
-        const isValid = await verifyPassword(
-          credentials.password,
-          user.passwordHash
-        );
+        const isValid = await verifyPassword(credentials.password, user.passwordHash);
 
         if (!isValid) {
           throw new Error("Could not log you in!");

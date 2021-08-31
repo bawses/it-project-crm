@@ -1,7 +1,8 @@
 import connectToDatabase from "../../../lib/dbConnect";
 import User from "../../../models/User";
+import { Request, Response } from "express";
 
-export default async function handler(req, res) {
+export default async function handler(req: Request, res: Response): Promise<void> {
   const {
     query: { id },
     method,
@@ -15,13 +16,14 @@ export default async function handler(req, res) {
       try {
         const user = await User.findById(id);
         if (!user) {
-          return res.status(400).json({ success: false });
+          res.status(400).json({ success: false });
+          return;
         }
         res.status(200).json({ success: true, data: user });
       } catch (error) {
         res.status(400).json({ success: false });
       }
-      break;
+      return;
     }
 
     /* Edit a model by its ID */
@@ -32,13 +34,14 @@ export default async function handler(req, res) {
           runValidators: true,
         });
         if (!user) {
-          return res.status(400).json({ success: false });
+          res.status(400).json({ success: false });
+          return;
         }
         res.status(200).json({ success: true, data: user });
       } catch (error) {
         res.status(400).json({ success: false });
       }
-      break;
+      return;
     }
 
     /* Delete a model by its ID */
@@ -46,18 +49,19 @@ export default async function handler(req, res) {
       try {
         const deletedUser = await User.deleteOne({ _id: id });
         if (!deletedUser) {
-          return res.status(400).json({ success: false });
+          res.status(400).json({ success: false });
+          return;
         }
         res.status(200).json({ success: true, data: {} });
       } catch (error) {
         res.status(400).json({ success: false });
       }
-      break;
+      return;
     }
 
     default: {
       res.status(400).json({ success: false });
-      break;
+      return;
     }
   }
 }
