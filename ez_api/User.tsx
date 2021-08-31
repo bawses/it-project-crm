@@ -5,7 +5,7 @@ const contentType = "application/json";
 /* The PUT method edits an existing entry in the mongodb database. */
 export const editUser = async (id: String, userObject: IUser) => {
   try {
-    const res = await fetch(`/api/pets/${id}`, {
+    const res = await fetch(`/api/users/${id}`, {
       method: "PUT",
       headers: {
         Accept: contentType,
@@ -22,16 +22,16 @@ export const editUser = async (id: String, userObject: IUser) => {
     const { data } = await res.json();
     console.log(data);
     // return data;
-    mutate(`/api/pets/${id}`, data, false); // Update the local data without a revalidation
+    mutate(`/api/users/${id}`, data, false); // Update the local data without a revalidation
   } catch (error) {
-    console.log("Failed to update pet");
+    console.log("Failed to update user");
   }
 };
 
 /* The POST method adds a new entry in the mongodb database. */
-export const postData = async (userObject: IUser) => {
+export const createUser = async (userObject: IUser) => {
   try {
-    const res = await fetch("/api/pets", {
+    const res = await fetch("/api/users", {
       method: "POST",
       headers: {
         Accept: contentType,
@@ -45,6 +45,6 @@ export const postData = async (userObject: IUser) => {
       throw new Error(`${res.status}`);
     }
   } catch (error) {
-    console.log("Failed to add pet");
+    console.log("Failed to add user");
   }
 };
