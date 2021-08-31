@@ -11,7 +11,7 @@ export async function verifyPassword(password: string, hashedPassword: string) {
   return isValid;
 }
 
-export async function createUser(name: string, email: string, password: string) {
+export async function createUser(name: { firstName: string; lastName: string }, email: string, password: string) {
   const response = await axios.post("/api/auth/signup", { name, email, password });
   const { data } = response;
 
