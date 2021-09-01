@@ -1,8 +1,8 @@
 import { Model } from "mongoose";
-import connectToDatabase from "./dbConnect";
+import connectToDatabase from "./DatabaseConnect";
 import { Request, Response } from "express";
 import { DataType } from "../../components/DataTypes";
-import { Database } from "../models/DbMapping";
+import { Database } from "../models/DatabaseMapping";
 
 /* API handler for generic GET / PUT / DELETE requests on _id pages */
 export async function idHandler(req: Request, res: Response, dataType: DataType): Promise<void> {
