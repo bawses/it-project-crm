@@ -1,16 +1,12 @@
 import { mutate } from "swr";
 import { DataType, DataInterface } from "../components/DataTypes";
+import { GET, POST, PUT, DELETE } from "../backend/lib/ApiHandlers";
 
 const contentType = "application/json";
 const requestHeaders = {
   Accept: contentType,
   "Content-Type": contentType,
 };
-
-const POST = "POST";
-const GET = "GET";
-const PUT = "PUT";
-const DELETE = "DELETE";
 
 /* Makes an API call to add a new entry into the database */
 export const createDbRecord = async (dataType: DataType, dataObj: DataInterface): Promise<DataInterface | null> => {
