@@ -1,8 +1,12 @@
 import { DataType, IUser } from "../components/DataTypes";
-import { createDbRecord, getDbRecordById, updateDbRecord, deletedDbRecord } from "./Queries";
+import { createDbRecord, getAllDbRecords, getDbRecordById, updateDbRecord, deletedDbRecord } from "./Queries";
 
 export const createUser = (newObj: IUser) => {
   return createDbRecord(DataType.User, newObj);
+};
+
+export const getAllUsers = () => {
+  return getAllDbRecords(DataType.User);
 };
 
 export const getUserById = (id: string) => {
