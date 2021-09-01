@@ -1,7 +1,7 @@
 import mongoose from "mongoose";
-import { IManualContact } from "../../components/interfaces";
+import { IManualContact } from "../../components/DataTypes";
 
-/*TODO: add min/max length for Strings and error message for required fields */
+/*TODO: add min/max length for Strings, error message for required fields, and default values */
 
 /* ManualContact will correspond to the "manualcontacts" collection in the MongoDB database. */
 const ManualContactSchema = new mongoose.Schema<IManualContact>(

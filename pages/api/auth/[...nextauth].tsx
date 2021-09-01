@@ -2,7 +2,7 @@ import NextAuth from "next-auth";
 import Providers from "next-auth/providers";
 
 import { verifyPassword } from "../../../backend/lib/auth";
-import connectToDatabase from "../../../backend/lib/dbConnect";
+import connectToDatabase from "../../../backend/lib/DbConnect";
 import User from "../../../backend/models/User";
 
 export default NextAuth({

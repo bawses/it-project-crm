@@ -1,15 +1,18 @@
 import { Model } from "mongoose";
-import connectToDatabase from "./dbConnect";
+import connectToDatabase from "./DbConnect";
 import { Request, Response } from "express";
+import { DataType } from "../../components/DataTypes";
+import { Database } from "../models/DbMapping";
 
 /* API handler for generic GET / PUT / DELETE requests on _id pages */
-export async function idHandler(req: Request, res: Response, dbCollection: Model<any, {}, {}>): Promise<void> {
+export async function idHandler(req: Request, res: Response, dataType: DataType): Promise<void> {
   const {
     query: { id },
     method,
   } = req;
 
   await connectToDatabase();
+  const dbCollection: Model<any, {}, {}> = Database[dataType];
 
   switch (method) {
     /* Get a model by its ID */
@@ -68,15 +71,16 @@ export async function idHandler(req: Request, res: Response, dbCollection: Model
 }
 
 /* API handler for generic GET / POST requests on index pages */
-export async function indexHandler(req: Request, res: Response, dbCollection: Model<any, {}, {}>): Promise<void> {
+export async function indexHandler(req: Request, res: Response, dataType: DataType): Promise<void> {
   const { method } = req;
 
   await connectToDatabase();
+  const dbCollection: Model<any, {}, {}> = Database[dataType];
 
+  /* Find all the data in our database */
   switch (method) {
     case "GET": {
       try {
-        /* find all the data in our database */
         const dbRecords = await dbCollection.find({});
         res.status(200).json({ success: true, data: dbRecords });
       } catch (error) {
@@ -85,9 +89,9 @@ export async function indexHandler(req: Request, res: Response, dbCollection: Mo
       return;
     }
 
+    /* Create a new document/record in the database */
     case "POST": {
       try {
-        /* create a new model in the database */
         const dbRecord = await dbCollection.create(req.body);
         res.status(201).json({ success: true, data: dbRecord });
       } catch (error) {

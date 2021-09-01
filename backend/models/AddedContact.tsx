@@ -1,7 +1,7 @@
 import mongoose from "mongoose";
-import { IAddedContact } from "../../components/interfaces";
+import { IAddedContact } from "../../components/DataTypes";
 
-/*TODO: add min/max length for Strings and error message for required fields */
+/*TODO: add min/max length for Strings, error message for required fields, and default values */
 
 /* AddedContactSchema will correspond to "addedcontacts" collection in the MongoDB database. */
 const AddedContactSchema = new mongoose.Schema<IAddedContact>(
