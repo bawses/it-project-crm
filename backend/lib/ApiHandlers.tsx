@@ -1,17 +1,13 @@
-import { get, Model } from "mongoose";
+import { Model } from "mongoose";
 import connectToDatabase from "./dbConnect";
 import { Request, Response } from "express";
 import { DataType } from "../../components/DataTypes";
 import { Database } from "../models/DbMapping";
 
-export const POST = "POST";
 export const GET = "GET";
+export const POST = "POST";
 export const PUT = "PUT";
 export const DELETE = "DELETE";
-
-const REQ_FAILURE = 400;
-const REQ_SUCCESS = 200;
-const REQ_SUCCESS_CREATION = 201;
 
 /* API handler for generic GET / PUT / DELETE requests on _id pages */
 export async function idHandler(req: Request, res: Response, dataType: DataType): Promise<Response> {
@@ -29,9 +25,9 @@ export async function idHandler(req: Request, res: Response, dataType: DataType)
         if (!dbRecord) {
           throw new Error();
         }
-        return res.status(REQ_SUCCESS).json({ success: true, data: dbRecord });
+        return res.status(200).json({ success: true, data: dbRecord });
       } catch (error) {
-        return res.status(REQ_FAILURE).json({ success: false });
+        return res.status(400).json({ success: false });
       }
     }
 
@@ -45,9 +41,9 @@ export async function idHandler(req: Request, res: Response, dataType: DataType)
         if (!dbRecord) {
           throw new Error();
         }
-        return res.status(REQ_SUCCESS).json({ success: true, data: dbRecord });
+        return res.status(200).json({ success: true, data: dbRecord });
       } catch (error) {
-        return res.status(REQ_FAILURE).json({ success: false });
+        return res.status(400).json({ success: false });
       }
     }
 
@@ -58,14 +54,14 @@ export async function idHandler(req: Request, res: Response, dataType: DataType)
         if (!deleted_dbRecord) {
           throw new Error();
         }
-        return res.status(REQ_SUCCESS).json({ success: true, data: deleted_dbRecord });
+        return res.status(200).json({ success: true, data: deleted_dbRecord });
       } catch (error) {
-        return res.status(REQ_FAILURE).json({ success: false });
+        return res.status(400).json({ success: false });
       }
     }
 
     default: {
-      return res.status(REQ_FAILURE).json({ success: false });
+      return res.status(400).json({ success: false });
     }
   }
 }
@@ -82,9 +78,9 @@ export async function indexHandler(req: Request, res: Response, dataType: DataTy
     case GET: {
       try {
         const dbRecords = await dbCollection.find({});
-        return res.status(REQ_SUCCESS).json({ success: true, data: dbRecords });
+        return res.status(200).json({ success: true, data: dbRecords });
       } catch (error) {
-        return res.status(REQ_FAILURE).json({ success: false });
+        return res.status(400).json({ success: false });
       }
     }
 
@@ -92,14 +88,14 @@ export async function indexHandler(req: Request, res: Response, dataType: DataTy
     case POST: {
       try {
         const dbRecord = await dbCollection.create(req.body);
-        return res.status(REQ_SUCCESS_CREATION).json({ success: true, data: dbRecord });
+        return res.status(201).json({ success: true, data: dbRecord });
       } catch (error) {
-        return res.status(REQ_FAILURE).json({ success: false });
+        return res.status(400).json({ success: false });
       }
     }
 
     default: {
-      return res.status(REQ_FAILURE).json({ success: false });
+      return res.status(400).json({ success: false });
     }
   }
 }
