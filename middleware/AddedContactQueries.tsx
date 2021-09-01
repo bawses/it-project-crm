@@ -1,4 +1,3 @@
-import React from "react";
 import { DataType, IAddedContact } from "../components/DataTypes";
 import { createDbRecord, getDbRecordById, updateDbRecord, deletedDbRecord } from "./Queries";
 
