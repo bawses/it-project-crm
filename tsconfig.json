@@ -21,8 +21,9 @@
   "include": [
     "next-env.d.ts",
     "**/*.ts",
-    "**/*.tsx"
-, "pages/api/auth/[...nextauth].tsx", "backend/lib/dbConnect.js"  ],
+    "**/*.tsx",
+    "pages/api/auth/[...nextauth].tsx", 
+    "backend/lib/dbConnect.js"],
   "exclude": [
     "node_modules"
   ]
