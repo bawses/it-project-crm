@@ -1,5 +1,5 @@
 import { Model } from "mongoose";
-import connectToDatabase from "./dbConnect";
+import connectToDatabase from "./DbConnect";
 import { Request, Response } from "express";
 import { DataType } from "../../components/DataTypes";
 import { Database } from "../models/DbMapping";
