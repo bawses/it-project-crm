@@ -8,7 +8,7 @@ const requestHeaders = {
   "Content-Type": contentType,
 };
 
-/* Makes an API call to add a new entry into the database */
+/* Makes an API call to add a new entry into the database for the given dataType */
 export const createDbRecord = async (dataType: DataType, dataObj: DataInterface): Promise<DataInterface | null> => {
   try {
     const response = await fetch(`/api/${dataType}s`, {
@@ -30,7 +30,27 @@ export const createDbRecord = async (dataType: DataType, dataObj: DataInterface)
   }
 };
 
-/* Makes an API call to find an existing entry in the database */
+/* Makes an API call to get all existing entries in the database for the given dataType */
+export const getAllDbRecords = async (dataType: DataType): Promise<[DataInterface] | null> => {
+  try {
+    const response = await fetch(`/api/${dataType}s`, {
+      method: GET,
+      headers: requestHeaders,
+    });
+
+    if (!response.ok) {
+      throw new Error(`${response.status}`);
+    }
+    const { data } = await response.json();
+    return data;
+  } catch (error) {
+    console.error(error);
+    console.log(`Failed to get ${dataType}`);
+    return null;
+  }
+};
+
+/* Makes an API call to find an existing entry in the database for the given dataType */
 export const getDbRecordById = async (dataType: DataType, recordId: string): Promise<DataInterface | null> => {
   try {
     const response = await fetch(`/api/${dataType}s/${recordId}`, {
@@ -50,7 +70,7 @@ export const getDbRecordById = async (dataType: DataType, recordId: string): Pro
   }
 };
 
-/* Makes an API call to edit an existing entry in the database */
+/* Makes an API call to edit an existing entry in the database for the given dataType */
 export const updateDbRecord = async (
   dataType: DataType,
   recordId: string,
@@ -79,7 +99,7 @@ export const updateDbRecord = async (
   }
 };
 
-/* Makes an API call to delete an existing entry in the database */
+/* Makes an API call to delete an existing entry in the database for the given dataType */
 export const deletedDbRecord = async (dataType: DataType, recordId: string): Promise<DataInterface | null> => {
   try {
     const response = await fetch(`/api/${dataType}s/${recordId}`, {
