@@ -1,23 +1,5 @@
-import {
-  Paper,
-  Container,
-  Typography,
-  makeStyles,
-  TextField,
-  Button,
-  IconButton,
-} from "@material-ui/core";
-import {
-  Mail,
-  Phone,
-  Business,
-  LinkedIn,
-  Twitter,
-  Facebook,
-  Instagram,
-  Language,
-  Cancel,
-} from "@material-ui/icons";
+import { Paper, Container, Typography, makeStyles, TextField, Button, IconButton } from "@material-ui/core";
+import { Mail, Phone, Business, LinkedIn, Twitter, Facebook, Instagram, Language, Cancel } from "@material-ui/icons";
 import { COLORS } from "../../src/colors";
 import Image from "next/image";
 import DEFAULT_IMAGE from "../../assets/blank-profile-picture-973460_640.png";
@@ -239,11 +221,7 @@ export default function CreateContact() {
   });
   const [extraFields, setExtraFields] = useState<ExtraFieldType[]>([]);
 
-  const fieldCreator = (
-    index: number,
-    fieldType: string,
-    fieldValue: string
-  ) => {
+  const fieldCreator = (index: number, fieldType: string, fieldValue: string) => {
     return (
       <div className={classes.iconRow} key={index.toString()}>
         {fieldType === "Facebook" && <Facebook className={classes.icon} />}
@@ -259,12 +237,14 @@ export default function CreateContact() {
           label={fieldType}
           value={fieldValue}
           className={classes.topSpacing}
-          onChange={(event) =>
-            handleExtraField(fieldType, event.target.value, index)
-          }
+          onChange={(event) => handleExtraField(fieldType, event.target.value, index)}
           fullWidth
         />
-        <IconButton onClick={() => {deleteField(index, fieldType);}}>
+        <IconButton
+          onClick={() => {
+            deleteField(index, fieldType);
+          }}
+        >
           <Cancel />
         </IconButton>
       </div>
@@ -274,25 +254,18 @@ export default function CreateContact() {
   const deleteField = (index: number, fieldType: string) => {
     const newExtraFields = extraFields.filter((field, i) => i !== index);
     if (fieldType !== "Other") {
-      addFieldOptions.push({value: fieldType, label: fieldType});
+      addFieldOptions.push({ value: fieldType, label: fieldType });
     }
     setExtraFields(newExtraFields);
-    
   };
 
   const handleChange = (fieldType: string, fieldValue: string) => {
     setFieldValues({ ...fieldValues, [fieldType]: fieldValue });
   };
 
-  const handleExtraField = (
-    fieldType: string,
-    fieldValue: string,
-    index: number
-  ) => {
+  const handleExtraField = (fieldType: string, fieldValue: string, index: number) => {
     const newExtraFields = extraFields.map((field, i) =>
-      field.fieldType === fieldType && i === index
-        ? { fieldType: field.fieldType, fieldValue: fieldValue }
-        : field
+      field.fieldType === fieldType && i === index ? { fieldType: field.fieldType, fieldValue: fieldValue } : field
     );
     setExtraFields(newExtraFields);
   };
@@ -300,16 +273,11 @@ export default function CreateContact() {
   const handleAddedField = (value: OptionTypeBase | null) => {
     if (value) {
       // New field selected, so add this text field to page
-      setExtraFields([
-        ...extraFields,
-        { fieldType: value.label, fieldValue: "" },
-      ]);
+      setExtraFields([...extraFields, { fieldType: value.label, fieldValue: "" }]);
       // If added field is not "other",
       // remove it from the remaining field options
       if (value.value !== "Other") {
-        const fieldTypeIndex = addFieldOptions.findIndex(
-          (field) => field.value === value.value
-        );
+        const fieldTypeIndex = addFieldOptions.findIndex((field) => field.value === value.value);
         if (fieldTypeIndex >= 0) {
           addFieldOptions.splice(fieldTypeIndex, 1);
         }
@@ -336,17 +304,11 @@ export default function CreateContact() {
       <form noValidate autoComplete="off" onSubmit={handleSubmit}>
         <div className={classes.primaryDetailsStyle}>
           <Container className={classes.profilePicDiv}>
-            <Image
-              className={classes.profilePic}
-              src={DEFAULT_IMAGE}
-              alt="Profile picture"
-            />
+            <Image className={classes.profilePic} src={DEFAULT_IMAGE} alt="Profile picture" />
           </Container>
           <div className={classes.inputFields}>
             <div className={classes.responsiveRow}>
-              <div
-                className={`${classes.responsiveField} ${classes.topSpacing}`}
-              >
+              <div className={`${classes.responsiveField} ${classes.topSpacing}`}>
                 <TextField
                   size="small"
                   variant="filled"
@@ -354,14 +316,10 @@ export default function CreateContact() {
                   label="First name"
                   fullWidth
                   value={fieldValues.firstName}
-                  onChange={(event) =>
-                    handleChange("firstName", event.target.value)
-                  }
+                  onChange={(event) => handleChange("firstName", event.target.value)}
                 />
               </div>
-              <div
-                className={`${classes.responsiveField} ${classes.topSpacing}`}
-              >
+              <div className={`${classes.responsiveField} ${classes.topSpacing}`}>
                 <TextField
                   size="small"
                   variant="filled"
@@ -369,9 +327,7 @@ export default function CreateContact() {
                   label="Last name"
                   fullWidth
                   value={fieldValues.lastName}
-                  onChange={(event) =>
-                    handleChange("lastName", event.target.value)
-                  }
+                  onChange={(event) => handleChange("lastName", event.target.value)}
                 />
               </div>
             </div>
@@ -401,9 +357,7 @@ export default function CreateContact() {
               />
             </div>
             <div className={classes.responsiveRow}>
-              <div
-                className={`${classes.responsiveField} ${classes.topSpacing}`}
-              >
+              <div className={`${classes.responsiveField} ${classes.topSpacing}`}>
                 <TextField
                   id="primaryOrganisation"
                   label="Primary organisation"
@@ -411,14 +365,10 @@ export default function CreateContact() {
                   InputLabelProps={{ className: classes.textfieldLabel }}
                   fullWidth
                   value={fieldValues.primaryOrg}
-                  onChange={(event) =>
-                    handleChange("primaryOrg", event.target.value)
-                  }
+                  onChange={(event) => handleChange("primaryOrg", event.target.value)}
                 />
               </div>
-              <div
-                className={`${classes.responsiveField} ${classes.topSpacing}`}
-              >
+              <div className={`${classes.responsiveField} ${classes.topSpacing}`}>
                 <TextField
                   id="secondaryOrganisation"
                   label="Secondary organisation"
@@ -426,18 +376,13 @@ export default function CreateContact() {
                   InputLabelProps={{ className: classes.textfieldLabel }}
                   fullWidth
                   value={fieldValues.secondaryOrg}
-                  onChange={(event) =>
-                    handleChange("secondaryOrg", event.target.value)
-                  }
+                  onChange={(event) => handleChange("secondaryOrg", event.target.value)}
                 />
               </div>
             </div>
           </div>
         </div>
-        <Paper
-          elevation={3}
-          className={`${classes.otherDetails} ${classes.topSpacing}`}
-        >
+        <Paper elevation={3} className={`${classes.otherDetails} ${classes.topSpacing}`}>
           <div className={classes.responsiveRow}>
             <div className={`${classes.iconRow} ${classes.responsiveField}`}>
               <Mail className={classes.icon} />
@@ -449,9 +394,7 @@ export default function CreateContact() {
                   label="Primary email"
                   fullWidth
                   value={fieldValues.primaryEmail}
-                  onChange={(event) =>
-                    handleChange("primaryEmail", event.target.value)
-                  }
+                  onChange={(event) => handleChange("primaryEmail", event.target.value)}
                 />
                 <TextField
                   size="small"
@@ -460,16 +403,12 @@ export default function CreateContact() {
                   label="Secondary email"
                   fullWidth
                   value={fieldValues.secondaryEmail}
-                  onChange={(event) =>
-                    handleChange("secondaryEmail", event.target.value)
-                  }
+                  onChange={(event) => handleChange("secondaryEmail", event.target.value)}
                   className={classes.topSpacing}
                 />
               </div>
             </div>
-            <div
-              className={`${classes.iconRow} ${classes.responsiveField} ${classes.responsiveSpacing}`}
-            >
+            <div className={`${classes.iconRow} ${classes.responsiveField} ${classes.responsiveSpacing}`}>
               <Phone className={classes.icon} />
               <div className={classes.inputFields}>
                 <TextField
@@ -479,9 +418,7 @@ export default function CreateContact() {
                   label="Primary phone"
                   fullWidth
                   value={fieldValues.primaryPhone}
-                  onChange={(event) =>
-                    handleChange("primaryPhone", event.target.value)
-                  }
+                  onChange={(event) => handleChange("primaryPhone", event.target.value)}
                 />
                 <TextField
                   size="small"
@@ -490,9 +427,7 @@ export default function CreateContact() {
                   label="Secondary phone"
                   fullWidth
                   value={fieldValues.secondaryPhone}
-                  onChange={(event) =>
-                    handleChange("secondaryPhone", event.target.value)
-                  }
+                  onChange={(event) => handleChange("secondaryPhone", event.target.value)}
                   className={classes.topSpacing}
                 />
               </div>
@@ -511,9 +446,7 @@ export default function CreateContact() {
               className={classes.topSpacing}
             />
           </div>
-          {extraFields.map((field, index) =>
-            fieldCreator(index, field.fieldType, field.fieldValue)
-          )}
+          {extraFields.map((field, index) => fieldCreator(index, field.fieldType, field.fieldValue))}
         </Paper>
         <Select
           className={classes.addFieldDropdown}

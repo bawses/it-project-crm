@@ -1,4 +1,4 @@
-import { hashPassword } from "../../../backend/lib/auth";
+import { hashPassword } from "../../../backend/lib/Authentication";
 import connectToDatabase from "../../../backend/lib/DbConnect";
 import User from "../../../backend/models/User";
 import { Request, Response } from "express";
