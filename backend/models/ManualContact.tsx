@@ -1,5 +1,5 @@
 import mongoose from "mongoose";
-import { IManualContact } from "../../components/interfaces";
+import { IManualContact } from "../../components/DataTypes";
 
 /*TODO: add min/max length for Strings and error message for required fields */
 
