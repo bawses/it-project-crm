@@ -1,5 +1,5 @@
 import mongoose from "mongoose";
-import { IUser } from "../../components/interfaces";
+import { IUser } from "../../components/DataTypes";
 
 /*TODO: add min/max length for Strings and error message for required fields */
 

@@ -1,5 +1,5 @@
 import { mutate } from "swr";
-import { IUser } from "../components/interfaces";
+import { IUser } from "../components/DataTypes";
 const contentType = "application/json";
 
 /* The PUT method edits an existing entry in the mongodb database. */
