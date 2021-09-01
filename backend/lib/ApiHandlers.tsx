@@ -1,8 +1,13 @@
-import { Model } from "mongoose";
+import { get, Model } from "mongoose";
 import connectToDatabase from "./dbConnect";
 import { Request, Response } from "express";
 import { DataType } from "../../components/DataTypes";
 import { Database } from "../models/DbMapping";
+
+export const POST = "POST";
+export const GET = "GET";
+export const PUT = "PUT";
+export const DELETE = "DELETE";
 
 const REQ_FAILURE = 400;
 const REQ_SUCCESS = 200;
@@ -10,17 +15,15 @@ const REQ_SUCCESS_CREATION = 201;
 
 /* API handler for generic GET / PUT / DELETE requests on _id pages */
 export async function idHandler(req: Request, res: Response, dataType: DataType): Promise<Response> {
-  const {
-    query: { id },
-    method,
-  } = req;
+  const id = req.query.id;
+  const requestType = req.method;
 
   await connectToDatabase();
   const dbCollection: Model<any, {}, {}> = Database[dataType];
 
-  switch (method) {
+  switch (requestType) {
     /* Get a model by its ID */
-    case "GET": {
+    case GET: {
       try {
         const dbRecord = await dbCollection.findById(id);
         if (!dbRecord) {
@@ -33,7 +36,7 @@ export async function idHandler(req: Request, res: Response, dataType: DataType)
     }
 
     /* Edit a model by its ID */
-    case "PUT": {
+    case PUT: {
       try {
         const dbRecord = await dbCollection.findByIdAndUpdate(id, req.body, {
           new: true,
@@ -49,7 +52,7 @@ export async function idHandler(req: Request, res: Response, dataType: DataType)
     }
 
     /* Delete a model by its ID */
-    case "DELETE": {
+    case DELETE: {
       try {
         const deleted_dbRecord = await dbCollection.deleteOne({ _id: id });
         if (!deleted_dbRecord) {
@@ -69,14 +72,14 @@ export async function idHandler(req: Request, res: Response, dataType: DataType)
 
 /* API handler for generic GET / POST requests on index pages */
 export async function indexHandler(req: Request, res: Response, dataType: DataType): Promise<Response> {
-  const { method } = req;
+  const requestType = req.method;
 
   await connectToDatabase();
   const dbCollection: Model<any, {}, {}> = Database[dataType];
 
   /* Find all the data in our database */
-  switch (method) {
-    case "GET": {
+  switch (requestType) {
+    case GET: {
       try {
         const dbRecords = await dbCollection.find({});
         return res.status(REQ_SUCCESS).json({ success: true, data: dbRecords });
@@ -86,7 +89,7 @@ export async function indexHandler(req: Request, res: Response, dataType: DataTy
     }
 
     /* Create a new document/record in the database */
-    case "POST": {
+    case POST: {
       try {
         const dbRecord = await dbCollection.create(req.body);
         return res.status(REQ_SUCCESS_CREATION).json({ success: true, data: dbRecord });
