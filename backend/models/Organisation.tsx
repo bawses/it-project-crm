@@ -1,5 +1,5 @@
 import mongoose from "mongoose";
-import { IOrganisation } from "../../components/interfaces";
+import { IOrganisation } from "../../components/DataTypes";
 
 /*TODO: add min/max length for Strings and error message for required fields */
 

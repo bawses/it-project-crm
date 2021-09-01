@@ -1,3 +1,10 @@
+export enum DataType {
+  User = "user",
+  Organisation = "organisation",
+  ManualContact = "manual_contact",
+  AddedContact = "added_contact",
+}
+
 type UserId = string;
 type OrganisationId = string;
 
@@ -47,3 +54,5 @@ export interface IUser {
   allTags?: [string];
   organisations?: [OrganisationId];
 }
+
+export type DataInterface = IUser | IOrganisation | IManualContact | IAddedContact;
