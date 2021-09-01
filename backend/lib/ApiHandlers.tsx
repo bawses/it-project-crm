@@ -4,8 +4,12 @@ import { Request, Response } from "express";
 import { DataType } from "../../components/DataTypes";
 import { Database } from "../models/DbMapping";
 
+const REQ_FAILURE = 400;
+const REQ_SUCCESS = 200;
+const REQ_SUCCESS_CREATION = 201;
+
 /* API handler for generic GET / PUT / DELETE requests on _id pages */
-export async function idHandler(req: Request, res: Response, dataType: DataType): Promise<void> {
+export async function idHandler(req: Request, res: Response, dataType: DataType): Promise<Response> {
   const {
     query: { id },
     method,
@@ -20,14 +24,12 @@ export async function idHandler(req: Request, res: Response, dataType: DataType)
       try {
         const dbRecord = await dbCollection.findById(id);
         if (!dbRecord) {
-          res.status(400).json({ success: false });
-          return;
+          throw new Error();
         }
-        res.status(200).json({ success: true, data: dbRecord });
+        return res.status(REQ_SUCCESS).json({ success: true, data: dbRecord });
       } catch (error) {
-        res.status(400).json({ success: false });
+        return res.status(REQ_FAILURE).json({ success: false });
       }
-      return;
     }
 
     /* Edit a model by its ID */
@@ -38,14 +40,12 @@ export async function idHandler(req: Request, res: Response, dataType: DataType)
           runValidators: true,
         });
         if (!dbRecord) {
-          res.status(400).json({ success: false });
-          return;
+          throw new Error();
         }
-        res.status(200).json({ success: true, data: dbRecord });
+        return res.status(REQ_SUCCESS).json({ success: true, data: dbRecord });
       } catch (error) {
-        res.status(400).json({ success: false });
+        return res.status(REQ_FAILURE).json({ success: false });
       }
-      return;
     }
 
     /* Delete a model by its ID */
@@ -53,25 +53,22 @@ export async function idHandler(req: Request, res: Response, dataType: DataType)
       try {
         const deleted_dbRecord = await dbCollection.deleteOne({ _id: id });
         if (!deleted_dbRecord) {
-          res.status(400).json({ success: false });
-          return;
+          throw new Error();
         }
-        res.status(200).json({ success: true, data: {} });
+        return res.status(REQ_SUCCESS).json({ success: true, data: deleted_dbRecord });
       } catch (error) {
-        res.status(400).json({ success: false });
+        return res.status(REQ_FAILURE).json({ success: false });
       }
-      return;
     }
 
     default: {
-      res.status(400).json({ success: false });
-      return;
+      return res.status(REQ_FAILURE).json({ success: false });
     }
   }
 }
 
 /* API handler for generic GET / POST requests on index pages */
-export async function indexHandler(req: Request, res: Response, dataType: DataType): Promise<void> {
+export async function indexHandler(req: Request, res: Response, dataType: DataType): Promise<Response> {
   const { method } = req;
 
   await connectToDatabase();
@@ -82,27 +79,24 @@ export async function indexHandler(req: Request, res: Response, dataType: DataTy
     case "GET": {
       try {
         const dbRecords = await dbCollection.find({});
-        res.status(200).json({ success: true, data: dbRecords });
+        return res.status(REQ_SUCCESS).json({ success: true, data: dbRecords });
       } catch (error) {
-        res.status(400).json({ success: false });
+        return res.status(REQ_FAILURE).json({ success: false });
       }
-      return;
     }
 
     /* Create a new document/record in the database */
     case "POST": {
       try {
         const dbRecord = await dbCollection.create(req.body);
-        res.status(201).json({ success: true, data: dbRecord });
+        return res.status(REQ_SUCCESS_CREATION).json({ success: true, data: dbRecord });
       } catch (error) {
-        res.status(400).json({ success: false });
+        return res.status(REQ_FAILURE).json({ success: false });
       }
-      return;
     }
 
     default: {
-      res.status(400).json({ success: false });
-      return;
+      return res.status(REQ_FAILURE).json({ success: false });
     }
   }
 }
