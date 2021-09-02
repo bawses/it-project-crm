@@ -1,46 +1,53 @@
-import { Box, Button, ClickAwayListener, MenuList, Popper, Paper } from "@material-ui/core";
-import ArrowDropDownIcon from '@material-ui/icons/ArrowDropDown';
-import { MouseEvent, useState } from "react";
-import { useRef } from "react";
-import DropDownMenuItem from "./dropDownMenuItem";
+import { Box, FormControl, InputLabel, Select, MenuItem, makeStyles, createStyles } from "@material-ui/core";
+import { ChangeEvent, useState } from "react";
+
+const useStyles = makeStyles(() =>
+  createStyles({
+    formControl: {
+      minWidth: "80%"
+    }
+  })
+)
 
 export default function ContactsTableSort() {
+  const classes = useStyles()
   const [open, setOpen] = useState(false)
-  const [display, setDisplay] = useState("Select sort option")
-  const anchorRef = useRef<HTMLButtonElement>(null)
+  const [sortValue, setSortValue] = useState<string>("")
 
-  // Added to the start of all options when selected
-  const initString = "Sort by "
-
-  function handleClose(event: MouseEvent<EventTarget>) {
-    if (anchorRef.current && anchorRef.current.contains(event.target as HTMLElement)) {
-      // Use did not click away, do nothing
-      return
-    }
-
-    // User clicked away, close the Popper menu
+  function handleClose() {
     setOpen(false)
   }
 
-  function handleMenuClick(text: string, event: MouseEvent<EventTarget>) {
-    setDisplay(initString + text)
-    handleClose(event)
+  function handleOpen() {
+    setOpen(true)
+  }
+
+  function handleChange(event: ChangeEvent<{ value: unknown }>) {
+    setSortValue(event.target.value as string)
   }
 
   return (
     <Box display="flex" flexGrow={1} justifyContent="flex-end">
-      <Button variant="outlined" onClick={() => setOpen(!open)} ref={anchorRef}>{display} <ArrowDropDownIcon /></Button>
-      <Popper open={open} anchorEl={anchorRef.current}>
-        <Paper>
-          <ClickAwayListener onClickAway={handleClose}>
-            <MenuList>
-              <DropDownMenuItem text="ABC" onClick={handleMenuClick} />
-              <DropDownMenuItem text="DEF" onClick={handleMenuClick} />
-              <DropDownMenuItem text="GHI" onClick={handleMenuClick} />
-            </MenuList>
-          </ClickAwayListener>
-        </Paper>
-      </Popper>
+      <FormControl variant="outlined" className={classes.formControl}>
+        <InputLabel htmlFor="contacts-sort-select">Sort by</InputLabel>
+        <Select
+          labelId="contacts-sort-select"
+          id="contacts-sort-select"
+          label="Sort by"
+          open={open}
+          onClose={handleClose}
+          onOpen={handleOpen}
+          value={sortValue}
+          onChange={handleChange}
+        >
+          <MenuItem value="">
+            <em>None</em>
+          </MenuItem>
+          <MenuItem value="ABC">ABC</MenuItem>
+          <MenuItem value="DEF">DEF</MenuItem>
+          <MenuItem value="GHI">GHI</MenuItem>
+        </Select>
+      </FormControl>
     </Box>
   )
 }
