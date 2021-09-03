@@ -1,6 +1,13 @@
-import Select, { StylesConfig } from "react-select"
+import Select, { OnChangeValue, StylesConfig } from "react-select"
 import makeAnimated from "react-select/animated"
 import { COLORS } from "../src/colors";
+
+export type SelectValue = { value: string, label: string }
+
+interface ContactsTableTagsProps {
+  instanceId: string,
+  handleTagChange: (newTags: OnChangeValue<SelectValue, true>) => void
+}
 
 const animatedComponents = makeAnimated();
 
@@ -24,8 +31,16 @@ const colourStyles: StylesConfig<any, true> = {
   })
 }
 
-export default function ContactsTableTags() {
+export default function ContactsTableTags({ instanceId, handleTagChange }: ContactsTableTagsProps) {
   return (
-    <Select closeMenuOnSelect={false} components={animatedComponents} isMulti options={options} styles={colourStyles} />
+    <Select
+      instanceId={instanceId}
+      closeMenuOnSelect={false}
+      components={animatedComponents}
+      isMulti
+      options={options}
+      styles={colourStyles}
+      onChange={(value: OnChangeValue<SelectValue, true>, actionMeta) => { handleTagChange(value) }}
+    />
   )
 }

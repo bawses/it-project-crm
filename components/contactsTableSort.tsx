@@ -9,10 +9,14 @@ const useStyles = makeStyles(() =>
   })
 )
 
-export default function ContactsTableSort() {
+interface ContactsTableSortProps {
+  sortValue: string,
+  handleChange: (event: ChangeEvent<{ value: unknown }>) => void
+}
+
+export default function ContactsTableSort({ sortValue, handleChange }: ContactsTableSortProps) {
   const classes = useStyles()
   const [open, setOpen] = useState(false)
-  const [sortValue, setSortValue] = useState<string>("")
 
   function handleClose() {
     setOpen(false)
@@ -20,10 +24,6 @@ export default function ContactsTableSort() {
 
   function handleOpen() {
     setOpen(true)
-  }
-
-  function handleChange(event: ChangeEvent<{ value: unknown }>) {
-    setSortValue(event.target.value as string)
   }
 
   return (
