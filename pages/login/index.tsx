@@ -4,29 +4,16 @@ import { getSession, signIn } from "next-auth/client";
 import React,{ useEffect, useState, ChangeEvent, MouseEvent } from "react";
 
 import CircularProgress from '@material-ui/core/CircularProgress';
-import { Typography, TextField, Grid, Paper, Button } from '@material-ui/core';
+import theme from '../../src/theme';
+import { Hidden, Box, Typography, TextField, Grid, Paper, Button } from '@material-ui/core';
 import { makeStyles, createStyles, Theme } from '@material-ui/core/styles';
 import { COLORS }  from '../../src/colors';
+
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles ({
     root: {
       flexGrow: 1,
-    },
-
-    pageLeft: {
-      position: "absolute",
-      left: "11.5%",
-      right: "50%",
-      top: "30%",
-      bottom: "50%",
-    },
-
-    pageRight: {
-      position: "absolute",
-      left: "50%",
-      right: "11.5%",
-      top: "15%"
     },
 
     btn: {
@@ -35,32 +22,50 @@ const useStyles = makeStyles((theme: Theme) =>
       '&:hover': {
         backgroundColor: '#EE6C4D'
       },
-      maxWidth: 600,  
+      maxWidth: 600, 
+      paddingTop: theme.spacing(1),
       height:'50px', 
-      margin: "5px auto"
+      margin: "15px auto"
     },
 
     paper: {
-      padding: 28,
-      minHeight: 340,
+      padding: theme.spacing(2),
+      marginTop: theme.spacing(1),
+      color: COLORS.white,
+      minWidth: theme.breakpoints.values.xs,
       maxHeight: 340, 
       maxWidth: 600, 
-      marginTop: "10px", 
-      marginBottom: "15px auto"
-      // position: "absolute",
-      // left: "50%",
-      // right: "11.5%",
-      // bottom: "25%"
     },
 
-    logo : {
-      marginTop: "60px", 
-      marginBottom: "10px",
-      paddingLeft: "80px"
+    logobox: {
+      [theme.breakpoints.down('sm')]: {
+        // backgroundColor: theme.palette.secondary.main,
+        paddingTop: theme.spacing(2.5),
+        paddingBottom: theme.spacing(2),
+        paddingLeft: theme.spacing(2),
+        marginLeft: theme.spacing(1),
+        backgroundColor: COLORS.primaryBlue,
+        color: COLORS.white
+      },
+      [theme.breakpoints.up('md')]: {
+        backgroundColor: COLORS.white,
+        paddingTop: theme.spacing(3),
+        marginLeft: theme.spacing(3),
+      },
     },
+    
+    welcomeBack : {
+        paddingTop: 10,
+        paddingBottom:10,
+    },
+
+    form : {
+      paddingTop:  theme.spacing(3),
+      paddingBottom:  theme.spacing(3),
+    }, 
 
     textbox: {
-      margin: "10px auto"
+      margin: "8px auto"
     },
 
     links: {
@@ -129,72 +134,86 @@ export default function LoginPage() {
 
   return (
     <main>
-      <div className={classes.root}>
-        <div className= {classes.pageLeft}>
-            <div className= {classes.logo} >
-              <Typography variant="h5" component="h5">Stay connected with</Typography>
-              <Typography variant="h3" component="h3">CataLog</Typography>
-            </div>
-          </div>
+        <Grid 
+            container 
+            alignItems="center"
+            justify="center"
+            spacing={0}
+        >
+            <Grid item xs={12} sm = {12} md = {6} >
+                <div className= {classes.logobox}>
+                    <Typography variant="h5" component="h5">Stay connected with</Typography>
+                    <Typography variant="h3" component="h3">CataLog</Typography>
+                </div>
+            </Grid>
 
-          <div className= {classes.pageRight}>
-            <Typography variant="h4" component="h4">Welcome back
-            <br /> to your personal CRM</Typography>
-            <Paper className = {classes.paper}>
-              <Grid item xs={12}>
-                Email
-              <TextField 
-                onChange={handleEmail}
-                fullWidth 
-                name="email" 
-                size="small" 
-                variant="outlined"
-                className={classes.textbox}
-                placeholder="example@email.com"
-              />
-              </Grid>
-
-              <Grid item xs={12}>
-                Password
-                <TextField
-                onChange={handlePassword}
-                fullWidth 
-                name="password"
-                size="small"
-                type="password"
-                variant="outlined"
-                className={classes.textbox}
-                placeholder="Enter your password here"
-                />
-              </Grid>
-              <Button 
-                fullWidth
-                onClick={handleSubmit}
-                variant="contained" 
-                className = {classes.btn} 
-                style={{ position: "relative", top: "5px", bottom: "5px"}}
-              >
-              Log In
-              </Button>
-              
-
-              <div className={classes.links}>
-                <div>
-                  <Typography component="p"> 
-                    Don&apos;t have an account yet?
+            <Grid item xs={12} sm = {12} md = {6} justifyContent="center"> 
+              <div className= {classes.form}>
+                <Hidden mdUp>
+                    <Typography variant="h5" component="h5" className= {classes.welcomeBack}>
+                      Welcome back <br/> to your personal CRM
+                    </Typography>
+                </Hidden>
+                <Hidden smDown>
+                  <Typography variant="h4" component="h4" className= {classes.welcomeBack}>
+                    Welcome back <br/> to your personal CRM
                   </Typography>
-                </div>
-                <div>
-                <Typography component="p"> 
-                    <Link href="/signup">Sign Up as an Individual</Link> |  <Link href="/signup">Sign Up as an Organisation</Link>
-                </Typography>
+                </Hidden>
+                  <Paper className = {classes.paper}>
+                    <Grid item xs={12}>
+                      Email
+                      <TextField 
+                        onChange={handleEmail}
+                        fullWidth 
+                        name="email" 
+                        size="small" 
+                        variant="outlined"
+                        className={classes.textbox}
+                        placeholder="example@email.com"
+                      />
+                    </Grid>
 
-                </div>
-              </div>
+                      <Grid item xs={12}>
+                      Password
+                      <TextField
+                          onChange={handlePassword}
+                          fullWidth 
+                          name="password"
+                          size="small"
+                          type="password"
+                          variant="outlined"
+                          className={classes.textbox}
+                          placeholder="Enter your password here"
+                      />
+                      </Grid>
+                      <Button 
+                          fullWidth
+                          onClick={handleSubmit}
+                          variant="contained" 
+                          className = {classes.btn} 
+                          style={{ position: "relative", top: "5px", bottom: "5px"}}
+                      >
+                      Log In
+                      </Button>
+                      
 
-            </Paper>
-            </div>
-      </div>
+                      <div className={classes.links}>
+                      <div>
+                          <Typography component="p"> 
+                          Don&apos;t have an account yet?
+                          </Typography>
+                      </div>
+                      <div>
+                      <Typography component="p"> 
+                          <Link href="/signup">Sign Up as an Individual</Link> |  <Link href="/signup">Sign Up as an Organisation</Link>
+                      </Typography>
+
+                      </div>
+                    </div>
+                  </Paper>
+                </div>
+            </Grid>
+        </Grid>
     </main>
   );
 }
