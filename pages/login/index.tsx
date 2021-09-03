@@ -92,6 +92,7 @@ export default function LoginPage() {
   };
 
   const handleSubmit = async (e: MouseEvent<HTMLButtonElement, globalThis.MouseEvent>) => {
+    
     e.preventDefault();
     
     const result = await signIn("credentials", {
@@ -99,6 +100,7 @@ export default function LoginPage() {
       email: email,
       password: password,
     });
+    // console.log(result);
 
     if (result?.error) {
       console.log("Invalid User Credentials Entered");
