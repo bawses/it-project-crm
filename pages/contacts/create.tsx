@@ -22,7 +22,7 @@ import { COLORS } from "../../src/colors";
 import Image from "next/image";
 import DEFAULT_IMAGE from "../../assets/blank-profile-picture-973460_640.png";
 import { useState } from "react";
-import Select, { OptionTypeBase } from "react-select";
+import Select, { OnChangeValue } from "react-select";
 
 const options = [
   {
@@ -224,7 +224,7 @@ type ExtraFieldType = {
 
 export default function CreateContact() {
   const classes = useStyles();
-  const [location, setLocation] = useState<OptionTypeBase | null>(null);
+  const [location, setLocation] = useState<OnChangeValue<{ value: string, label: string }, false> | null>(null);
   const [fieldValues, setFieldValues] = useState<ContactDetailsType>({
     firstName: "",
     lastName: "",
@@ -264,7 +264,7 @@ export default function CreateContact() {
           }
           fullWidth
         />
-        <IconButton onClick={() => {deleteField(index, fieldType);}}>
+        <IconButton onClick={() => { deleteField(index, fieldType); }}>
           <Cancel />
         </IconButton>
       </div>
@@ -274,10 +274,10 @@ export default function CreateContact() {
   const deleteField = (index: number, fieldType: string) => {
     const newExtraFields = extraFields.filter((field, i) => i !== index);
     if (fieldType !== "Other") {
-      addFieldOptions.push({value: fieldType, label: fieldType});
+      addFieldOptions.push({ value: fieldType, label: fieldType });
     }
     setExtraFields(newExtraFields);
-    
+
   };
 
   const handleChange = (fieldType: string, fieldValue: string) => {
@@ -297,7 +297,7 @@ export default function CreateContact() {
     setExtraFields(newExtraFields);
   };
 
-  const handleAddedField = (value: OptionTypeBase | null) => {
+  const handleAddedField = (value: OnChangeValue<{ value: string, label: string }, false> | null) => {
     if (value) {
       // New field selected, so add this text field to page
       setExtraFields([
@@ -530,7 +530,7 @@ export default function CreateContact() {
           <Button
             variant="contained"
             type="button"
-            onClick={() => {}}
+            onClick={() => { }}
             className={`${classes.formButton} ${classes.cancelButton}`}
           >
             Cancel
