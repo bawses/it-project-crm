@@ -18,7 +18,7 @@ export default function ContactsTableRow({ name, role, isStarred }: ContactsTabl
   return (
     <TableRow>
       <TableCell><Avatar src={stockImage.src} /></TableCell>
-      <TableCell><Typography variant="h4" component="h4">{name}</Typography></TableCell>
+      <TableCell><Typography component="p" style={{ fontWeight: 600 }}>{name}</Typography></TableCell>
       <TableCell><Typography component="p">{role}</Typography></TableCell>
       <TableCell><StarsIcon htmlColor={starColor} /></TableCell>
     </TableRow>
