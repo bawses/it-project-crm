@@ -17,12 +17,14 @@ import {
   Instagram,
   Language,
   Edit,
+  Cancel,
 } from "@material-ui/icons";
 import { COLORS } from "../../src/colors";
 import Image from "next/image";
 import DEFAULT_IMAGE from "../../assets/blank-profile-picture-973460_640.png";
 import { useState, useEffect } from "react";
 import Select, { OptionTypeBase } from "react-select";
+import CreatableSelect from 'react-select/creatable';
 
 const options = [
   {
@@ -150,12 +152,43 @@ const useStyles = makeStyles((theme) => ({
       alignItems: "center",
     },
   },
+  detailsAndNotes: {
+    width: "70%",
+    [theme.breakpoints.down("sm")]: {
+      width: "100%",
+    },
+  },
   myTags: {
     margin: 12,
-    width: "30%",
+    width: "25%",
     [theme.breakpoints.down("sm")]: {
-        width: "100%",
-      },
+      width: "100%",
+    },
+  },
+  tagsSection: {
+    borderRadius: 10,
+    padding: 20,
+    [theme.breakpoints.down("xs")]: {
+      padding: 15,
+    },
+  },
+  tagsList: {
+    height: 350,
+    overflowY: "auto",
+    overflowX: "hidden",
+  },
+  tagStyle: {
+    padding: 8,
+    paddingLeft: 12,
+    paddingRight: 0,
+    borderRadius: 20,
+    backgroundColor: COLORS.primaryBlueLight,
+    margin: 8,
+    width: "95%",
+    display: "flex",
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
   },
 }));
 
@@ -209,6 +242,25 @@ const DUMMY_CONTACT = {
   ],
 };
 
+const DUMMY_TAG_OPTIONS = [
+  "Finance",
+  "Business",
+  "Melbourne AI Conference 2019",
+  "Management",
+  "Data Science",
+  "Unimelb",
+  "Anime Conference 2017",
+  "Sundance film festival 2016",
+  "A really really really really really really long tag",
+];
+
+const DUMMY_TAGS = [
+  "Unimelb",
+  "Anime Conference 2017",
+  "Sundance film festival 2016",
+  "A really really really really really really long tag",
+];
+
 const DUMMY_NOTES =
   "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.";
 
@@ -218,6 +270,8 @@ export default function ViewContact() {
   const [isEditingNotes, setIsEditingNotes] = useState(false);
   const [notes, setNotes] = useState("");
   const [editedNotes, setEditedNotes] = useState("");
+  const [tags, setTags] = useState<string[]>([]);
+  const [tagOptions, setTagOptions] = useState<string[]>([]);
 
   useEffect(() => {
     const fetchedContactDetails = DUMMY_CONTACT;
@@ -225,6 +279,10 @@ export default function ViewContact() {
     const fetchedContactNotes = DUMMY_NOTES;
     setNotes(fetchedContactNotes);
     setEditedNotes(fetchedContactNotes);
+    const fetchedTags = DUMMY_TAGS;
+    setTags(fetchedTags);
+    const fetchedTagOptions = DUMMY_TAG_OPTIONS;
+    setTagOptions(fetchedTagOptions);
   }, []);
 
   const toggleEditingMode = () => {
@@ -244,6 +302,32 @@ export default function ViewContact() {
     if (isEditingNotes) {
       toggleEditingMode();
     }
+  };
+
+  /** TODO: update database with new tags once you navigate away from page */
+
+  const deleteTag = (toDelete: string) => {
+    const newTags = tags.filter((value) => value !== toDelete);
+    setTags(newTags);
+  };
+
+  const addTag = (toAdd: string) => {
+    setTags([...tags, toAdd]);
+    if (!tagOptions.includes(toAdd)) {
+      setTagOptions([...tagOptions, toAdd]);
+    }
+  };
+
+  const formatTagOptions = (options: string[]) => {
+    const formattedOptions = options
+      .filter((option) => !tags.includes(option))
+      .map((option) => {
+        return {
+          value: option,
+          label: option,
+        };
+      });
+    return formattedOptions;
   };
 
   const fieldCreator = (
@@ -266,6 +350,21 @@ export default function ViewContact() {
           {fieldValue}
         </Typography>
       </div>
+    );
+  };
+
+  const tagCreator = (value: string, index: number) => {
+    return (
+      <Container key={index.toString()} className={classes.tagStyle}>
+        <Typography component="p">{value}</Typography>
+        <IconButton
+          onClick={() => {
+            deleteTag(value);
+          }}
+        >
+          <Cancel style={{ fontSize: 20 }} />
+        </IconButton>
+      </Container>
     );
   };
 
@@ -317,7 +416,7 @@ export default function ViewContact() {
         </div>
       </div>
       <div className={classes.responsiveSections}>
-        <div>
+        <div className={classes.detailsAndNotes}>
           <Paper
             elevation={3}
             className={`${classes.otherDetails} ${classes.topSpacing}`}
@@ -393,19 +492,24 @@ export default function ViewContact() {
           </Typography>
           <Paper
             elevation={3}
-            className={`${classes.otherDetails} ${classes.topSpacing}`}
+            className={`${classes.tagsSection} ${classes.topSpacing}`}
           >
-              {/* <CreatableSelect 
-               className={classes.addTagsDropdown}
-               styles={addTagsStyles}
-               instanceId="addTags"
-               options={addFieldOptions}
-               value={null}
-               onChange={handleAddedField}
-               isSearchable={true}
-               placeholder={"Add field..."}
-               isClearable={true}
-              /> */}
+            <div className={classes.tagsList}>
+              {tags.map((value, index) => tagCreator(value, index))}
+            </div>
+            <CreatableSelect
+              instanceId="addTags"
+              options={formatTagOptions(tagOptions)}
+              value={null}
+              onChange={(chosen) => {
+                if (chosen) {
+                  addTag(chosen.value);
+                }
+              }}
+              isSearchable={true}
+              placeholder={"Add a tag..."}
+              isClearable={true}
+            />
           </Paper>
         </div>
       </div>
