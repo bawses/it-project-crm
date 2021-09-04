@@ -1,30 +1,19 @@
 import {
-  Paper,
   Container,
   Typography,
   makeStyles,
-  TextField,
   Button,
   IconButton,
 } from "@material-ui/core";
-import {
-  Mail,
-  Phone,
-  Business,
-  LinkedIn,
-  Twitter,
-  Facebook,
-  Instagram,
-  Language,
-  Edit,
-  Cancel,
-} from "@material-ui/icons";
+import { Edit } from "@material-ui/icons";
 import { COLORS } from "../../src/colors";
 import Image from "next/image";
 import DEFAULT_IMAGE from "../../assets/blank-profile-picture-973460_640.png";
 import { useState, useEffect } from "react";
 import Select, { OptionTypeBase } from "react-select";
-import CreatableSelect from 'react-select/creatable';
+import MyTags from "../../components/cards/MyTags";
+import MyNotes from "../../components/cards/MyNotes";
+import ContactDetails from "../../components/cards/ContactDetails";
 
 const options = [
   {
@@ -66,9 +55,6 @@ const useStyles = makeStyles((theme) => ({
       width: "50%",
     },
   },
-  inputFields: {
-    width: "100%",
-  },
   topSpacing: {
     marginTop: theme.spacing(),
   },
@@ -76,6 +62,7 @@ const useStyles = makeStyles((theme) => ({
     borderRadius: "50%",
   },
   profileHeader: {
+    width: "100%",
     [theme.breakpoints.down("md")]: {
       textAlign: "center",
     },
@@ -89,27 +76,14 @@ const useStyles = makeStyles((theme) => ({
       flexDirection: "column",
     },
   },
-  icon: {
-    marginRight: theme.spacing(2),
-  },
   editIcon: {
     fontSize: 35,
     [theme.breakpoints.down("xs")]: {
       fontSize: 30,
     },
   },
-  iconRow: {
-    display: "flex",
-    flexDirection: "row",
-    alignItems: "center",
-  },
   responsiveField: {
     flexGrow: 1,
-  },
-  responsiveSpacing: {
-    [theme.breakpoints.down("xs")]: {
-      marginTop: theme.spacing(),
-    },
   },
   titleField: {},
   locationSelector: {
@@ -117,13 +91,6 @@ const useStyles = makeStyles((theme) => ({
   },
   textfieldLabel: {
     fontSize: "0.8rem",
-  },
-  otherDetails: {
-    borderRadius: 10,
-    padding: 25,
-    [theme.breakpoints.down("xs")]: {
-      padding: 20,
-    },
   },
   contactOptionsBtn: {
     fontSize: "1rem",
@@ -138,9 +105,6 @@ const useStyles = makeStyles((theme) => ({
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "flex-end",
-  },
-  savedNotes: {
-    whiteSpace: "pre-line",
   },
   responsiveSections: {
     display: "flex",
@@ -165,31 +129,6 @@ const useStyles = makeStyles((theme) => ({
       width: "100%",
     },
   },
-  tagsSection: {
-    borderRadius: 10,
-    padding: 20,
-    [theme.breakpoints.down("xs")]: {
-      padding: 15,
-    },
-  },
-  tagsList: {
-    height: 350,
-    overflowY: "auto",
-    overflowX: "hidden",
-  },
-  tagStyle: {
-    padding: 8,
-    paddingLeft: 12,
-    paddingRight: 0,
-    borderRadius: 20,
-    backgroundColor: COLORS.primaryBlueLight,
-    margin: 8,
-    width: "95%",
-    display: "flex",
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-  },
 }));
 
 const contactOptionsStyles = {
@@ -210,7 +149,7 @@ type ExtraFieldType = {
   fieldValue: string;
 };
 
-type ContactDetailsType = {
+export type ContactDetailsType = {
   firstName?: string;
   lastName?: string;
   title?: string;
@@ -318,56 +257,6 @@ export default function ViewContact() {
     }
   };
 
-  const formatTagOptions = (options: string[]) => {
-    const formattedOptions = options
-      .filter((option) => !tags.includes(option))
-      .map((option) => {
-        return {
-          value: option,
-          label: option,
-        };
-      });
-    return formattedOptions;
-  };
-
-  const fieldCreator = (
-    fieldType: string,
-    fieldValue: string,
-    index: number
-  ) => {
-    return (
-      <div className={classes.iconRow} key={index.toString()}>
-        {fieldType === "Facebook" && <Facebook className={classes.icon} />}
-        {fieldType === "Instagram" && <Instagram className={classes.icon} />}
-        {fieldType === "LinkedIn" && <LinkedIn className={classes.icon} />}
-        {fieldType === "Twitter" && <Twitter className={classes.icon} />}
-        {fieldType === "Website" && <Language className={classes.icon} />}
-        {fieldType === "Other" && <Language className={classes.icon} />}
-        <Typography
-          id={fieldType + index.toString()}
-          className={classes.topSpacing}
-        >
-          {fieldValue}
-        </Typography>
-      </div>
-    );
-  };
-
-  const tagCreator = (value: string, index: number) => {
-    return (
-      <Container key={index.toString()} className={classes.tagStyle}>
-        <Typography component="p">{value}</Typography>
-        <IconButton
-          onClick={() => {
-            deleteTag(value);
-          }}
-        >
-          <Cancel style={{ fontSize: 20 }} />
-        </IconButton>
-      </Container>
-    );
-  };
-
   return (
     <Container className={classes.containerStyle}>
       <Typography variant="h5" component="h5">
@@ -394,7 +283,7 @@ export default function ViewContact() {
             alt="Profile picture"
           />
         </Container>
-        <div className={`${classes.inputFields} ${classes.profileHeader}`}>
+        <div className={classes.profileHeader}>
           <Typography variant="h5" component="h1">
             {fieldValues.firstName} {fieldValues.lastName}
           </Typography>
@@ -417,100 +306,24 @@ export default function ViewContact() {
       </div>
       <div className={classes.responsiveSections}>
         <div className={classes.detailsAndNotes}>
-          <Paper
-            elevation={3}
-            className={`${classes.otherDetails} ${classes.topSpacing}`}
-          >
-            <div className={classes.responsiveRow}>
-              <div className={`${classes.iconRow} ${classes.responsiveField}`}>
-                <Mail className={classes.icon} />
-                <div className={classes.inputFields}>
-                  <Typography>{fieldValues.primaryEmail}</Typography>
-                  <Typography className={classes.topSpacing}>
-                    {fieldValues.secondaryEmail}
-                  </Typography>
-                </div>
-              </div>
-              <div
-                className={`${classes.iconRow} ${classes.responsiveField} ${classes.responsiveSpacing}`}
-              >
-                <Phone className={classes.icon} />
-                <div className={classes.inputFields}>
-                  <Typography>{fieldValues.primaryPhone}</Typography>
-                  <Typography className={classes.topSpacing}>
-                    {fieldValues.secondaryPhone}
-                  </Typography>
-                </div>
-              </div>
-            </div>
-            <div className={classes.iconRow}>
-              <Business className={classes.icon} />
-              <Typography className={classes.topSpacing}>
-                {fieldValues.address}
-              </Typography>
-            </div>
-            {fieldValues.links &&
-              fieldValues.links.map((field, index) =>
-                fieldCreator(field.fieldType, field.fieldValue, index)
-              )}
-          </Paper>
-          <Paper
-            elevation={3}
-            className={`${classes.otherDetails} ${classes.topSpacing}`}
-          >
-            <Typography variant="h6" component="h4">
-              Notes
-            </Typography>
-            {!isEditingNotes && (
-              <div>
-                <Typography component="p" className={classes.savedNotes}>
-                  {notes}
-                </Typography>
-                <Button onClick={toggleEditingMode}>Edit</Button>
-              </div>
-            )}
-            {isEditingNotes && (
-              <div>
-                <TextField
-                  placeholder="Write your notes here..."
-                  value={editedNotes}
-                  onChange={(event) => setEditedNotes(event.target.value)}
-                  variant="filled"
-                  id="workAddress"
-                  fullWidth
-                  multiline={true}
-                />
-                <Button onClick={saveEditedNotes}>Save</Button>
-                <Button onClick={cancelEditedNotes}>Cancel</Button>
-              </div>
-            )}
-          </Paper>
+          <ContactDetails fieldValues={fieldValues} />
+          <MyNotes
+            isEditingNotes={isEditingNotes}
+            toggleEditingMode={toggleEditingMode}
+            onChangeEdited={(event: any) => setEditedNotes(event.target.value)}
+            notes={notes}
+            editedNotes={editedNotes}
+            saveEditedNotes={saveEditedNotes}
+            cancelEditedNotes={cancelEditedNotes}
+          />
         </div>
         <div className={classes.myTags}>
-          <Typography variant="h6" component="h3">
-            My tags
-          </Typography>
-          <Paper
-            elevation={3}
-            className={`${classes.tagsSection} ${classes.topSpacing}`}
-          >
-            <div className={classes.tagsList}>
-              {tags.map((value, index) => tagCreator(value, index))}
-            </div>
-            <CreatableSelect
-              instanceId="addTags"
-              options={formatTagOptions(tagOptions)}
-              value={null}
-              onChange={(chosen) => {
-                if (chosen) {
-                  addTag(chosen.value);
-                }
-              }}
-              isSearchable={true}
-              placeholder={"Add a tag..."}
-              isClearable={true}
-            />
-          </Paper>
+          <MyTags
+            tags={tags}
+            tagOptions={tagOptions}
+            deleteTag={deleteTag}
+            addTag={addTag}
+          />
         </div>
       </div>
     </Container>
