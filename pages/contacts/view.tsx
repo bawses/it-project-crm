@@ -1,30 +1,12 @@
-import {
-  Container,
-  Typography,
-  makeStyles,
-  Button,
-  IconButton,
-} from "@material-ui/core";
-import { Edit } from "@material-ui/icons";
-import { COLORS } from "../../src/colors";
+import { Container, Typography, makeStyles } from "@material-ui/core";
 import Image from "next/image";
 import DEFAULT_IMAGE from "../../assets/blank-profile-picture-973460_640.png";
 import { useState, useEffect } from "react";
-import Select, { OptionTypeBase } from "react-select";
 import MyTags from "../../components/cards/MyTags";
 import MyNotes from "../../components/cards/MyNotes";
 import ContactDetails from "../../components/cards/ContactDetails";
-
-const options = [
-  {
-    value: "archive",
-    label: "Archive contact",
-  },
-  {
-    value: "delete",
-    label: "Delete contact",
-  },
-];
+import ContactOptions from "../../components/buttons/ContactOptions";
+import ContactHeader from "../../components/cards/ContactHeader";
 
 const useStyles = makeStyles((theme) => ({
   containerStyle: {
@@ -55,56 +37,8 @@ const useStyles = makeStyles((theme) => ({
       width: "50%",
     },
   },
-  topSpacing: {
-    marginTop: theme.spacing(),
-  },
   profilePic: {
     borderRadius: "50%",
-  },
-  profileHeader: {
-    width: "100%",
-    [theme.breakpoints.down("md")]: {
-      textAlign: "center",
-    },
-  },
-  responsiveRow: {
-    display: "flex",
-    flexDirection: "row",
-    width: "100%",
-    justifyContent: "space-between",
-    [theme.breakpoints.down("xs")]: {
-      flexDirection: "column",
-    },
-  },
-  editIcon: {
-    fontSize: 35,
-    [theme.breakpoints.down("xs")]: {
-      fontSize: 30,
-    },
-  },
-  responsiveField: {
-    flexGrow: 1,
-  },
-  titleField: {},
-  locationSelector: {
-    fontSize: "1rem",
-  },
-  textfieldLabel: {
-    fontSize: "0.8rem",
-  },
-  contactOptionsBtn: {
-    fontSize: "1rem",
-    width: 220,
-    [theme.breakpoints.down("sm")]: {
-      width: 200,
-      fontSize: "0.8rem",
-    },
-  },
-  contactOptionsMenu: {
-    display: "flex",
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "flex-end",
   },
   responsiveSections: {
     display: "flex",
@@ -130,19 +64,6 @@ const useStyles = makeStyles((theme) => ({
     },
   },
 }));
-
-const contactOptionsStyles = {
-  dropdownIndicator: (base: any) => ({
-    ...base,
-    color: COLORS.white,
-  }),
-  menu: (provided: any) => ({ ...provided, zIndex: 9999 }),
-  control: (styles: any) => ({
-    ...styles,
-    backgroundColor: COLORS.primaryBlue,
-  }),
-  placeholder: (styles: any) => ({ ...styles, color: COLORS.white }),
-};
 
 type ExtraFieldType = {
   fieldType: string;
@@ -262,19 +183,11 @@ export default function ViewContact() {
       <Typography variant="h5" component="h5">
         View a manual contact
       </Typography>
-      <div className={classes.contactOptionsMenu}>
-        <Select
-          className={classes.contactOptionsBtn}
-          styles={contactOptionsStyles}
-          instanceId="contactOptions"
-          options={options}
-          value={null}
-          placeholder={"Added to my contacts"}
-        />
-        <IconButton onClick={() => {}}>
-          <Edit className={classes.editIcon} />
-        </IconButton>
-      </div>
+      <ContactOptions
+        onPressArchive={() => {}}
+        onPressDelete={() => {}}
+        onPressEdit={() => {}}
+      />
       <div className={classes.primaryDetailsStyle}>
         <Container className={classes.profilePicDiv}>
           <Image
@@ -283,26 +196,13 @@ export default function ViewContact() {
             alt="Profile picture"
           />
         </Container>
-        <div className={classes.profileHeader}>
-          <Typography variant="h5" component="h1">
-            {fieldValues.firstName} {fieldValues.lastName}
-          </Typography>
-          <Typography variant="h6" component="h2">
-            {fieldValues.title}
-          </Typography>
-          <div className={classes.responsiveRow}>
-            <div className={`${classes.responsiveField} ${classes.topSpacing}`}>
-              <Typography>{fieldValues.primaryOrg}</Typography>
-            </div>
-            {fieldValues.secondaryOrg && (
-              <div
-                className={`${classes.responsiveField} ${classes.topSpacing}`}
-              >
-                <Typography>{fieldValues.secondaryOrg}</Typography>
-              </div>
-            )}
-          </div>
-        </div>
+        <ContactHeader
+          firstName={fieldValues.firstName}
+          lastName={fieldValues.lastName}
+          title={fieldValues.title}
+          primaryOrg={fieldValues.primaryOrg}
+          secondaryOrg={fieldValues.secondaryOrg}
+        />
       </div>
       <div className={classes.responsiveSections}>
         <div className={classes.detailsAndNotes}>

@@ -7,68 +7,17 @@ import {
   Button,
   IconButton,
 } from "@material-ui/core";
-import {
-  Mail,
-  Phone,
-  Business,
-  LinkedIn,
-  Twitter,
-  Facebook,
-  Instagram,
-  Language,
-  Cancel,
-} from "@material-ui/icons";
-import { COLORS } from "../../src/colors";
+import { Business } from "@material-ui/icons";
 import Image from "next/image";
 import DEFAULT_IMAGE from "../../assets/blank-profile-picture-973460_640.png";
 import { useState } from "react";
-import Select, { OnChangeValue } from "react-select";
-
-const options = [
-  {
-    value: "Melbourne, AU",
-    label: "Melbourne, AU",
-  },
-  {
-    value: "Sydney, AU",
-    label: "Sydney, AU",
-  },
-  {
-    value: "Tokyo, JP",
-    label: "Tokyo, JP",
-  },
-  {
-    value: "New York City, USA",
-    label: "New York City, USA",
-  },
-];
-
-const addFieldOptions = [
-  {
-    value: "LinkedIn",
-    label: "LinkedIn",
-  },
-  {
-    value: "Instagram",
-    label: "Instagram",
-  },
-  {
-    value: "Twitter",
-    label: "Twitter",
-  },
-  {
-    value: "Facebook",
-    label: "Facebook",
-  },
-  {
-    value: "Website",
-    label: "Website",
-  },
-  {
-    value: "Other",
-    label: "Other",
-  },
-];
+import { OptionTypeBase } from "react-select";
+import EditContactOptions from "../../components/buttons/EditContactOptions";
+import ExtraField from "../../components/input/ExtraField";
+import ResponsiveFieldPair from "../../components/input/ResponsiveFieldPair";
+import VerticalFieldPair from "../../components/input/VerticalFieldPair";
+import LocationSelector from "../../components/input/LocationSelector";
+import AddFieldSelector from "../../components/input/AddFieldSelector";
 
 const useStyles = makeStyles((theme) => ({
   containerStyle: {
@@ -126,24 +75,6 @@ const useStyles = makeStyles((theme) => ({
     flexDirection: "row",
     alignItems: "center",
   },
-  responsiveField: {
-    width: "48%",
-    [theme.breakpoints.down("xs")]: {
-      width: "100%",
-    },
-  },
-  responsiveSpacing: {
-    [theme.breakpoints.down("xs")]: {
-      marginTop: theme.spacing(),
-    },
-  },
-  titleField: {},
-  locationSelector: {
-    fontSize: "1rem",
-  },
-  textfieldLabel: {
-    fontSize: "0.8rem",
-  },
   otherDetails: {
     borderRadius: 10,
     padding: 25,
@@ -151,58 +82,7 @@ const useStyles = makeStyles((theme) => ({
       padding: 20,
     },
   },
-  formOptions: {
-    display: "flex",
-    flexDirection: "row",
-    width: "100%",
-    justifyContent: "flex-end",
-    [theme.breakpoints.down("xs")]: {
-      flexDirection: "column",
-      alignItems: "center",
-    },
-  },
-  addFieldDropdown: {
-    fontSize: "1rem",
-    marginTop: theme.spacing(2),
-    width: "25%",
-    [theme.breakpoints.down("sm")]: {
-      width: "40%",
-    },
-    [theme.breakpoints.down("xs")]: {
-      width: "100%",
-    },
-  },
-  formButton: {
-    fontWeight: "bold",
-    width: "20%",
-    margin: theme.spacing(2),
-    [theme.breakpoints.down("sm")]: {
-      width: "30%",
-    },
-    [theme.breakpoints.down("xs")]: {
-      width: "70%",
-      margin: theme.spacing(),
-    },
-  },
-  cancelButton: {
-    backgroundColor: COLORS.white,
-  },
-  submitButton: {},
 }));
-
-const addFieldStyles = {
-  dropdownIndicator: (base: any) => ({
-    ...base,
-    color: COLORS.white,
-  }),
-  menu: (provided: any) => ({ ...provided, zIndex: 9999 }),
-  control: (styles: any) => ({
-    ...styles,
-    backgroundColor: COLORS.primaryBlue,
-  }),
-  input: (styles: any) => ({ ...styles, color: COLORS.white }),
-  placeholder: (styles: any) => ({ ...styles, color: COLORS.white }),
-};
 
 type ContactDetailsType = {
   firstName: string;
@@ -217,7 +97,7 @@ type ContactDetailsType = {
   address: string;
 };
 
-type ExtraFieldType = {
+export type ExtraFieldType = {
   fieldType: string;
   fieldValue: string;
 };
@@ -245,39 +125,24 @@ export default function CreateContact() {
     fieldValue: string
   ) => {
     return (
-      <div className={classes.iconRow} key={index.toString()}>
-        {fieldType === "Facebook" && <Facebook className={classes.icon} />}
-        {fieldType === "Instagram" && <Instagram className={classes.icon} />}
-        {fieldType === "LinkedIn" && <LinkedIn className={classes.icon} />}
-        {fieldType === "Twitter" && <Twitter className={classes.icon} />}
-        {fieldType === "Website" && <Language className={classes.icon} />}
-        {fieldType === "Other" && <Language className={classes.icon} />}
-        <TextField
-          size="small"
-          variant="filled"
-          id={fieldType + index.toString()}
-          label={fieldType}
-          value={fieldValue}
-          className={classes.topSpacing}
-          onChange={(event) =>
-            handleExtraField(fieldType, event.target.value, index)
-          }
-          fullWidth
-        />
-        <IconButton onClick={() => { deleteField(index, fieldType); }}>
-          <Cancel />
-        </IconButton>
-      </div>
+      <ExtraField
+        key={index.toString()}
+        index={index}
+        fieldType={fieldType}
+        fieldValue={fieldValue}
+        handleChange={(event) =>
+          handleExtraField(fieldType, event.target.value, index)
+        }
+        onPressDelete={() => {
+          deleteField(index, fieldType);
+        }}
+      />
     );
   };
 
   const deleteField = (index: number, fieldType: string) => {
     const newExtraFields = extraFields.filter((field, i) => i !== index);
-    if (fieldType !== "Other") {
-      addFieldOptions.push({ value: fieldType, label: fieldType });
-    }
     setExtraFields(newExtraFields);
-
   };
 
   const handleChange = (fieldType: string, fieldValue: string) => {
@@ -304,16 +169,6 @@ export default function CreateContact() {
         ...extraFields,
         { fieldType: value.label, fieldValue: "" },
       ]);
-      // If added field is not "other",
-      // remove it from the remaining field options
-      if (value.value !== "Other") {
-        const fieldTypeIndex = addFieldOptions.findIndex(
-          (field) => field.value === value.value
-        );
-        if (fieldTypeIndex >= 0) {
-          addFieldOptions.splice(fieldTypeIndex, 1);
-        }
-      }
     }
   };
 
@@ -343,38 +198,21 @@ export default function CreateContact() {
             />
           </Container>
           <div className={classes.inputFields}>
-            <div className={classes.responsiveRow}>
-              <div
-                className={`${classes.responsiveField} ${classes.topSpacing}`}
-              >
-                <TextField
-                  size="small"
-                  variant="filled"
-                  id="firstName"
-                  label="First name"
-                  fullWidth
-                  value={fieldValues.firstName}
-                  onChange={(event) =>
-                    handleChange("firstName", event.target.value)
-                  }
-                />
-              </div>
-              <div
-                className={`${classes.responsiveField} ${classes.topSpacing}`}
-              >
-                <TextField
-                  size="small"
-                  variant="filled"
-                  id="lastName"
-                  label="Last name"
-                  fullWidth
-                  value={fieldValues.lastName}
-                  onChange={(event) =>
-                    handleChange("lastName", event.target.value)
-                  }
-                />
-              </div>
-            </div>
+            <ResponsiveFieldPair
+              small={true}
+              leftId="firstName"
+              leftLabel="First name"
+              leftValue={fieldValues.firstName}
+              rightId="lastName"
+              rightLabel="Last name"
+              rightValue={fieldValues.lastName}
+              leftOnChange={(event) =>
+                handleChange("firstName", event.target.value)
+              }
+              rightOnChange={(event) =>
+                handleChange("lastName", event.target.value)
+              }
+            />
             <TextField
               size="small"
               variant="filled"
@@ -385,53 +223,24 @@ export default function CreateContact() {
               onChange={(event) => handleChange("title", event.target.value)}
               className={classes.topSpacing}
             />
-            <div className={classes.topSpacing}>
-              <Select
-                className={classes.locationSelector}
-                instanceId="locationSelector"
-                options={options}
-                value={location}
-                onChange={(value) => setLocation(value)}
-                isSearchable={true}
-                placeholder={"Select location..."}
-                isClearable={true}
-                styles={{
-                  menu: (provided) => ({ ...provided, zIndex: 9999 }),
-                }}
-              />
-            </div>
-            <div className={classes.responsiveRow}>
-              <div
-                className={`${classes.responsiveField} ${classes.topSpacing}`}
-              >
-                <TextField
-                  id="primaryOrganisation"
-                  label="Primary organisation"
-                  variant="filled"
-                  InputLabelProps={{ className: classes.textfieldLabel }}
-                  fullWidth
-                  value={fieldValues.primaryOrg}
-                  onChange={(event) =>
-                    handleChange("primaryOrg", event.target.value)
-                  }
-                />
-              </div>
-              <div
-                className={`${classes.responsiveField} ${classes.topSpacing}`}
-              >
-                <TextField
-                  id="secondaryOrganisation"
-                  label="Secondary organisation"
-                  variant="filled"
-                  InputLabelProps={{ className: classes.textfieldLabel }}
-                  fullWidth
-                  value={fieldValues.secondaryOrg}
-                  onChange={(event) =>
-                    handleChange("secondaryOrg", event.target.value)
-                  }
-                />
-              </div>
-            </div>
+            <LocationSelector
+              selectedLocation={location}
+              onChange={(value) => setLocation(value)}
+            />
+            <ResponsiveFieldPair
+              leftId="primaryOrganisation"
+              leftLabel="Primary organisation"
+              leftValue={fieldValues.primaryOrg}
+              rightId="secondaryOrganisation"
+              rightLabel="Secondary organisation"
+              rightValue={fieldValues.secondaryOrg}
+              leftOnChange={(event) =>
+                handleChange("primaryOrg", event.target.value)
+              }
+              rightOnChange={(event) =>
+                handleChange("secondaryOrg", event.target.value)
+              }
+            />
           </div>
         </div>
         <Paper
@@ -439,64 +248,36 @@ export default function CreateContact() {
           className={`${classes.otherDetails} ${classes.topSpacing}`}
         >
           <div className={classes.responsiveRow}>
-            <div className={`${classes.iconRow} ${classes.responsiveField}`}>
-              <Mail className={classes.icon} />
-              <div className={classes.inputFields}>
-                <TextField
-                  size="small"
-                  variant="filled"
-                  id="primaryEmail"
-                  label="Primary email"
-                  fullWidth
-                  value={fieldValues.primaryEmail}
-                  onChange={(event) =>
-                    handleChange("primaryEmail", event.target.value)
-                  }
-                />
-                <TextField
-                  size="small"
-                  variant="filled"
-                  id="secondaryEmail"
-                  label="Secondary email"
-                  fullWidth
-                  value={fieldValues.secondaryEmail}
-                  onChange={(event) =>
-                    handleChange("secondaryEmail", event.target.value)
-                  }
-                  className={classes.topSpacing}
-                />
-              </div>
-            </div>
-            <div
-              className={`${classes.iconRow} ${classes.responsiveField} ${classes.responsiveSpacing}`}
-            >
-              <Phone className={classes.icon} />
-              <div className={classes.inputFields}>
-                <TextField
-                  size="small"
-                  variant="filled"
-                  id="primaryPhone"
-                  label="Primary phone"
-                  fullWidth
-                  value={fieldValues.primaryPhone}
-                  onChange={(event) =>
-                    handleChange("primaryPhone", event.target.value)
-                  }
-                />
-                <TextField
-                  size="small"
-                  variant="filled"
-                  id="secondaryPhone"
-                  label="Secondary phone"
-                  fullWidth
-                  value={fieldValues.secondaryPhone}
-                  onChange={(event) =>
-                    handleChange("secondaryPhone", event.target.value)
-                  }
-                  className={classes.topSpacing}
-                />
-              </div>
-            </div>
+            <VerticalFieldPair
+              iconType="email"
+              topId="primaryEmail"
+              topLabel="Primary email"
+              topValue={fieldValues.primaryEmail}
+              bottomId="secondaryEmail"
+              bottomLabel="Secondary email"
+              bottomValue={fieldValues.secondaryEmail}
+              topOnChange={(event: any) =>
+                handleChange("primaryEmail", event.target.value)
+              }
+              bottomOnChange={(event: any) =>
+                handleChange("secondaryEmail", event.target.value)
+              }
+            />
+            <VerticalFieldPair
+              iconType="phone"
+              topId="primaryPhone"
+              topLabel="Primary phone"
+              topValue={fieldValues.primaryPhone}
+              bottomId="secondaryPhone"
+              bottomLabel="Secondary phone"
+              bottomValue={fieldValues.secondaryPhone}
+              topOnChange={(event: any) =>
+                handleChange("primaryPhone", event.target.value)
+              }
+              bottomOnChange={(event: any) =>
+                handleChange("secondaryPhone", event.target.value)
+              }
+            />
           </div>
           <div className={classes.iconRow}>
             <Business className={classes.icon} />
@@ -515,36 +296,11 @@ export default function CreateContact() {
             fieldCreator(index, field.fieldType, field.fieldValue)
           )}
         </Paper>
-        <Select
-          className={classes.addFieldDropdown}
-          styles={addFieldStyles}
-          instanceId="addField"
-          options={addFieldOptions}
-          value={null}
+        <AddFieldSelector
           onChange={handleAddedField}
-          isSearchable={true}
-          placeholder={"Add field..."}
-          isClearable={true}
+          addedFields={extraFields}
         />
-        <div className={`${classes.formOptions} ${classes.topSpacing}`}>
-          <Button
-            variant="contained"
-            type="button"
-            onClick={() => { }}
-            className={`${classes.formButton} ${classes.cancelButton}`}
-          >
-            Cancel
-          </Button>
-          <Button
-            variant="contained"
-            type="submit"
-            onClick={handleSubmit}
-            color="secondary"
-            className={`${classes.formButton} ${classes.submitButton}`}
-          >
-            Create contact
-          </Button>
-        </div>
+        <EditContactOptions onCancel={() => { }} onSubmit={handleSubmit} />
       </form>
     </Container>
   );
