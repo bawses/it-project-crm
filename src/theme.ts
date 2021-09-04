@@ -38,7 +38,7 @@ const theme = createTheme({
             xl: 1920,
         },
     },
-    spacing: value => value ** 4,
+    spacing: 4,
 });
 
 export default theme;

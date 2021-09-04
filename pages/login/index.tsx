@@ -5,6 +5,7 @@ import React,{ useEffect, useState, ChangeEvent, MouseEvent } from "react";
 
 import CircularProgress from '@material-ui/core/CircularProgress';
 import theme from '../../src/theme';
+import Layout from "../../components/Layout";
 import { Hidden, Box, Typography, TextField, Grid, Paper, Button } from '@material-ui/core';
 import { makeStyles, createStyles, Theme } from '@material-ui/core/styles';
 import { COLORS }  from '../../src/colors';
@@ -133,13 +134,14 @@ export default function LoginPage() {
   }
 
   return (
-    <main>
-        <Grid 
+    <Layout>
+      <main>
+          <Grid 
             container 
             alignItems="center"
             justify="center"
             spacing={0}
-        >
+          >
             <Grid item xs={12} sm = {12} md = {6} >
                 <div className= {classes.logobox}>
                     <Typography variant="h5" component="h5">Stay connected with</Typography>
@@ -147,7 +149,7 @@ export default function LoginPage() {
                 </div>
             </Grid>
 
-            <Grid item xs={12} sm = {12} md = {6} justifyContent="center"> 
+              <Grid item xs={12} sm = {12} md = {6} justifyContent="center"> 
               <div className= {classes.form}>
                 <Hidden mdUp>
                     <Typography variant="h5" component="h5" className= {classes.welcomeBack}>
@@ -196,7 +198,6 @@ export default function LoginPage() {
                       Log In
                       </Button>
                       
-
                       <div className={classes.links}>
                       <div>
                           <Typography component="p"> 
@@ -211,10 +212,11 @@ export default function LoginPage() {
                       </div>
                     </div>
                   </Paper>
-                </div>
-            </Grid>
-        </Grid>
-    </main>
+                  </div>
+              </Grid>
+          </Grid>
+      </main>
+    </Layout>
   );
 }
 
