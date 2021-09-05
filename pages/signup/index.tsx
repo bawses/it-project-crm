@@ -38,7 +38,6 @@ const useStyles =  makeStyles((theme: Theme) =>
       },
       [theme.breakpoints.up('md')]: {
         backgroundColor: COLORS.white,
-        paddingTop: theme.spacing(3),
         marginLeft: theme.spacing(3),
       },
     },
@@ -70,7 +69,7 @@ const useStyles =  makeStyles((theme: Theme) =>
       minWidth: theme.breakpoints.values.xs,
       maxHeight: 400, 
       maxWidth: 600, 
-      padding: theme.spacing(6),
+      padding: theme.spacing(4),
       marginTop: theme.spacing(1),
       marginBottom:theme.spacing(1),
       backgroundColor:COLORS.lightGrey,
@@ -79,7 +78,13 @@ const useStyles =  makeStyles((theme: Theme) =>
 
     form : {
       paddingTop:  "4.5%",
-      paddingBottom:  "2%",
+      [theme.breakpoints.down('sm')]: {
+        marginTop: "5%"
+      },
+      [theme.breakpoints.up('sm')]: {
+        marginLeft: "-10%",
+      },
+      
     }, 
 
     textbox: {
@@ -184,12 +189,12 @@ export default function SignUpPage() {
       >
 
       <Grid item xs={12} sm = {12} md = {6} 
-            style={isSmall ? {textAlign: "left"} : {textAlign: "center"}}>
+            style={isSmall ? {textAlign: "center"} : {textAlign: "left"}}>
           <div className= {classes.logobox}>
-                  <Typography variant="h5" component="h5">Stay connected with</Typography>
-                  <div className= {classes.logo}>
-                    <Typography variant="h3" component="h3" >CataLog</Typography>
-                  </div>
+              <Typography variant="h5" component="h5">Stay connected with</Typography>
+              <div className= {classes.logo}>
+                <Typography variant="h3" component="h3" >CataLog</Typography>
+              </div>
         </div>
       </Grid>
       <div className= {classes.form}>

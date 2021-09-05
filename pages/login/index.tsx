@@ -38,7 +38,6 @@ const useStyles = makeStyles((theme: Theme) =>
       },
       [theme.breakpoints.up('md')]: {
         backgroundColor: COLORS.white,
-        paddingTop: theme.spacing(3),
         marginLeft: theme.spacing(3),
       },
     },
@@ -68,6 +67,7 @@ const useStyles = makeStyles((theme: Theme) =>
  
     paper: {
       minWidth: theme.breakpoints.values.xs,
+      minHeight: 370,
       maxHeight: 340, 
       maxWidth: 500, 
       padding: theme.spacing(4),
@@ -76,8 +76,14 @@ const useStyles = makeStyles((theme: Theme) =>
     },
 
     form : {
-      paddingTop:  theme.spacing(2),
-      paddingBottom:  theme.spacing(2),
+      paddingTop:  "3%",
+      paddingBottom: "3%",
+      [theme.breakpoints.down('sm')]: {
+        marginTop: "5%"
+      },
+      [theme.breakpoints.up('sm')]: {
+        marginLeft: "-10%"
+      },
     }, 
 
     textbox: {
@@ -158,7 +164,7 @@ export default function LoginPage() {
           alignItems = "center" 
         >
           <Grid item xs={12} sm = {12} md = {6} 
-                style={isSmall ? {textAlign: "left"} : {textAlign: "center"}}>
+                style={isSmall ? {textAlign: "center"} : {textAlign: "left"}}>
               <div className= {classes.logobox}>
                   <Typography variant="h5" component="h5">Stay connected with</Typography>
                   <div className= {classes.logo}>
@@ -167,7 +173,7 @@ export default function LoginPage() {
               </div>
           </Grid>
 
-          <Grid item xs={12} sm = {12} md = {6}> 
+          {/* <Grid item xs={12} sm = {12} md = {6}>  */}
             <div className= {classes.form}>
               {isSmall ? (
                 <Typography variant="h5" component="h5" className= {classes.formTitle}>
@@ -227,10 +233,10 @@ export default function LoginPage() {
                     </Typography>
                 </div>
               </Paper>
-              
+
               </div>
             </Grid>
-        </Grid>
+        {/* </Grid> */}
     </main>
   );
 }
