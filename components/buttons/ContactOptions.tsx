@@ -2,7 +2,7 @@ import React from "react";
 import { makeStyles, IconButton } from "@material-ui/core";
 import { Edit } from "@material-ui/icons";
 import { COLORS } from "../../src/colors";
-import Select, { OptionTypeBase } from "react-select";
+import Select from "react-select";
 
 const options = [
   {
@@ -35,9 +35,9 @@ const contactOptionsStyles = {
 };
 
 export default function ContactOptions({
-  onPressArchive = () => {},
-  onPressDelete = () => {},
-  onPressEdit = () => {},
+  onPressArchive = () => { },
+  onPressDelete = () => { },
+  onPressEdit = () => { },
 }: ContactOptionsProps) {
   const classes = useStyles();
 
