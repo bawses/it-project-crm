@@ -3,6 +3,8 @@ import { IUser } from "../../components/DataTypes";
 
 /*TODO: add min/max length for Strings and error message for required fields */
 
+const OrganisationId = String;
+
 const UserSchema = new mongoose.Schema<IUser>(
   {
     passwordHash: { type: String, required: true },
@@ -21,7 +23,7 @@ const UserSchema = new mongoose.Schema<IUser>(
     },
     about: String,
     allTags: [String],
-    organisations: [String],
+    organisations: [OrganisationId],
   },
   {
     timestamps: true,

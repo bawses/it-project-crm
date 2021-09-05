@@ -3,11 +3,13 @@ import { IAddedContact } from "../../components/DataTypes";
 
 /*TODO: add min/max length for Strings and error message for required fields */
 
+const UserId = String;
+
 /* AddedContactSchema will correspond to "addedcontacts" collection in the MongoDB database. */
 const AddedContactSchema = new mongoose.Schema<IAddedContact>(
   {
-    fromUserId: { type: String, required: true },
-    toUserId: { type: String, required: true },
+    fromUserId: { type: UserId, required: true },
+    toUserId: { type: UserId, required: true },
     notes: String,
     tags: [String],
     starred: Boolean,
