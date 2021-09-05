@@ -1,11 +1,13 @@
 import { useRouter } from "next/router";
 import Link from "next/link";
 import { getSession, signIn } from "next-auth/client";
-import React,{ useEffect, useState, ChangeEvent, MouseEvent } from "react";
+import React, { useEffect, useState, ChangeEvent, MouseEvent } from "react";
+import useMediaQuery from "@material-ui/core/useMediaQuery";
+import { useTheme } from '@material-ui/core/styles';
 
 import CircularProgress from '@material-ui/core/CircularProgress';
 import theme from '../../src/theme';
-import Layout from "../../components/Layout";
+import Layout from "../../components/navLayout/Layout";
 import { Hidden, Box, Typography, TextField, Grid, Paper, Button } from '@material-ui/core';
 import { makeStyles, createStyles, Theme } from '@material-ui/core/styles';
 import { COLORS }  from '../../src/colors';
@@ -45,8 +47,9 @@ const useStyles = makeStyles((theme: Theme) =>
         paddingBottom: theme.spacing(2),
         paddingLeft: theme.spacing(2),
         marginLeft: theme.spacing(1),
-        backgroundColor: COLORS.primaryBlue,
-        color: COLORS.white
+        marginTop:  theme.spacing(1),
+        // backgroundColor: COLORS.primaryBlue,
+        // color: COLORS.white
       },
       [theme.breakpoints.up('md')]: {
         backgroundColor: COLORS.white,
@@ -80,6 +83,8 @@ const useStyles = makeStyles((theme: Theme) =>
 
 export default function LoginPage() {
   const classes = useStyles();
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down("xs"));
 
   const [isLoading, setIsLoading] = useState(true);
   const router = useRouter();
@@ -148,72 +153,74 @@ export default function LoginPage() {
                     <Typography variant="h3" component="h3">CataLog</Typography>
                 </div>
             </Grid>
-
-              <Grid item xs={12} sm = {12} md = {6} justifyContent="center"> 
-              <div className= {classes.form}>
-                <Hidden mdUp>
-                    <Typography variant="h5" component="h5" className= {classes.welcomeBack}>
-                      Welcome back <br/> to your personal CRM
-                    </Typography>
-                </Hidden>
-                <Hidden smDown>
+            {/* <div className={classes.pageRight}> */}
+              <Grid item xs={12} sm = {12} md = {6}> 
+                <div className= {classes.form}>
+                {isMobile ? (
                   <Typography variant="h4" component="h4" className= {classes.welcomeBack}>
-                    Welcome back <br/> to your personal CRM
+                    Welcome back to your personal CRM
                   </Typography>
-                </Hidden>
-                  <Paper className = {classes.paper}>
-                    <Grid item xs={12}>
-                      Email
-                      <TextField 
-                        onChange={handleEmail}
-                        fullWidth 
-                        name="email" 
-                        size="small" 
-                        variant="outlined"
-                        className={classes.textbox}
-                        placeholder="example@email.com"
-                      />
-                    </Grid>
-
+               
+                ) : (
+                  <Hidden mdUp>
+                      <Typography variant="h5" component="h5" className= {classes.welcomeBack}>
+                        Welcome back <br/> to your personal CRM
+                      </Typography>
+                  </Hidden>
+                )}
+                    <Paper className = {classes.paper}>
                       <Grid item xs={12}>
-                      Password
-                      <TextField
-                          onChange={handlePassword}
+                        Email
+                        <TextField 
+                          onChange={handleEmail}
                           fullWidth 
-                          name="password"
-                          size="small"
-                          type="password"
+                          name="email" 
+                          size="small" 
                           variant="outlined"
                           className={classes.textbox}
-                          placeholder="Enter your password here"
-                      />
+                          placeholder="example@email.com"
+                        />
                       </Grid>
-                      <Button 
-                          fullWidth
-                          onClick={handleSubmit}
-                          variant="contained" 
-                          className = {classes.btn} 
-                          style={{ position: "relative", top: "5px", bottom: "5px"}}
-                      >
-                      Log In
-                      </Button>
-                      
-                      <div className={classes.links}>
-                      <div>
-                          <Typography component="p"> 
-                          Don&apos;t have an account yet?
-                          </Typography>
-                      </div>
-                      <div>
-                      <Typography component="p"> 
-                          <Link href="/signup">Sign Up as an Individual</Link> |  <Link href="/signup">Sign Up as an Organisation</Link>
-                      </Typography>
 
+                        <Grid item xs={12}>
+                        Password
+                        <TextField
+                            onChange={handlePassword}
+                            fullWidth 
+                            name="password"
+                            size="small"
+                            type="password"
+                            variant="outlined"
+                            className={classes.textbox}
+                            placeholder="Enter your password here"
+                        />
+                        </Grid>
+                        <Button 
+                            fullWidth
+                            onClick={handleSubmit}
+                            variant="contained" 
+                            className = {classes.btn} 
+                            style={{ position: "relative", top: "5px", bottom: "5px"}}
+                        >
+                        Log In
+                        </Button>
+                        
+                        <div className={classes.links}>
+                        <div>
+                            <Typography component="p"> 
+                            Don&apos;t have an account yet?
+                            </Typography>
+                        </div>
+                        <div>
+                        <Typography component="p"> 
+                            <Link href="/signup">Sign Up as an Individual</Link> |  <Link href="/signup">Sign Up as an Organisation</Link>
+                        </Typography>
+                        </div>
                       </div>
-                    </div>
-                  </Paper>
+                    </Paper>
                   </div>
               </Grid>
+            {/* </div> */}
           </Grid>
       </main>
     </Layout>
