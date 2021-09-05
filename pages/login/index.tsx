@@ -8,7 +8,7 @@ import { useTheme } from '@material-ui/core/styles';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import theme from '../../src/theme';
 import Layout from "../../components/navLayout/Layout";
-import { Hidden, Box, Typography, TextField, Grid, Paper, Button } from '@material-ui/core';
+import { Box, Typography, TextField, Grid, Paper, Button } from '@material-ui/core';
 import { makeStyles, createStyles, Theme } from '@material-ui/core/styles';
 import { COLORS }  from '../../src/colors';
 
@@ -31,15 +31,6 @@ const useStyles = makeStyles((theme: Theme) =>
       margin: "15px auto"
     },
 
-    paper: {
-      padding: theme.spacing(2),
-      marginTop: theme.spacing(1),
-      color: COLORS.white,
-      minWidth: theme.breakpoints.values.xs,
-      maxHeight: 340, 
-      maxWidth: 600, 
-    },
-
     logobox: {
       [theme.breakpoints.down('sm')]: {
         // backgroundColor: theme.palette.secondary.main,
@@ -57,24 +48,51 @@ const useStyles = makeStyles((theme: Theme) =>
         marginLeft: theme.spacing(3),
       },
     },
-    
-    welcomeBack : {
-        paddingTop: 10,
-        paddingBottom:10,
+
+    logo: {
+      color: COLORS.actionOrange,
+      fontWeight: "bold"
     },
 
+    welcomeBack : {
+      paddingBottom:10,
+      [theme.breakpoints.down('sm')]: {
+        paddingTop: 20,
+      },
+      [theme.breakpoints.between('md', 'lg')]: {
+        paddingTop: 40,
+      },
+      [theme.breakpoints.up( 'xl')]: {
+        paddingTop: 100,
+      },
+
+    },
+
+    
+    paper: {
+      minWidth: theme.breakpoints.values.xs,
+      maxHeight: 340, 
+      maxWidth: 550, 
+      padding: theme.spacing(4),
+      // marginTop: theme.spacing(1),
+      marginBottom:theme.spacing(1),
+      color: COLORS.white,
+    },
+
+
     form : {
-      paddingTop:  theme.spacing(3),
-      paddingBottom:  theme.spacing(3),
+      paddingTop:  theme.spacing(2),
+      paddingBottom:  theme.spacing(2),
     }, 
 
     textbox: {
-      margin: "8px auto"
+      margin: "8px auto",
     },
 
     links: {
       paddingTop: "1rem",
       marginTop: "10px auto",
+      color: COLORS.black
     }
 
   }),
@@ -84,7 +102,7 @@ const useStyles = makeStyles((theme: Theme) =>
 export default function LoginPage() {
   const classes = useStyles();
   const theme = useTheme();
-  const isMobile = useMediaQuery(theme.breakpoints.down("xs"));
+  const isSmall = useMediaQuery(theme.breakpoints.down("sm"));
 
   const [isLoading, setIsLoading] = useState(true);
   const router = useRouter();
@@ -143,84 +161,81 @@ export default function LoginPage() {
       <main>
           <Grid 
             container 
-            alignItems="center"
-            justify="center"
-            spacing={0}
+            direction={isSmall ? "column" : "row"}
+            // direction="column"
+            justify = "center"
+            alignItems = "center" 
+            // spacing={0}
           >
-            <Grid item xs={12} sm = {12} md = {6} >
+            <Grid item xs={12} sm = {12} md = {6} style={isSmall ? {textAlign: "left"} : {textAlign: "center"}} >
                 <div className= {classes.logobox}>
                     <Typography variant="h5" component="h5">Stay connected with</Typography>
-                    <Typography variant="h3" component="h3">CataLog</Typography>
+                    <div className= {classes.logo}>
+                      <Typography variant="h3" component="h3" >CataLog</Typography>
+                    </div>
                 </div>
             </Grid>
-            {/* <div className={classes.pageRight}> */}
-              <Grid item xs={12} sm = {12} md = {6}> 
-                <div className= {classes.form}>
-                {isMobile ? (
-                  <Typography variant="h4" component="h4" className= {classes.welcomeBack}>
-                    Welcome back to your personal CRM
-                  </Typography>
-               
-                ) : (
-                  <Hidden mdUp>
-                      <Typography variant="h5" component="h5" className= {classes.welcomeBack}>
-                        Welcome back <br/> to your personal CRM
-                      </Typography>
-                  </Hidden>
-                )}
-                    <Paper className = {classes.paper}>
-                      <Grid item xs={12}>
-                        Email
-                        <TextField 
-                          onChange={handleEmail}
-                          fullWidth 
-                          name="email" 
-                          size="small" 
-                          variant="outlined"
-                          className={classes.textbox}
-                          placeholder="example@email.com"
-                        />
-                      </Grid>
 
-                        <Grid item xs={12}>
-                        Password
-                        <TextField
-                            onChange={handlePassword}
-                            fullWidth 
-                            name="password"
-                            size="small"
-                            type="password"
-                            variant="outlined"
-                            className={classes.textbox}
-                            placeholder="Enter your password here"
-                        />
-                        </Grid>
-                        <Button 
-                            fullWidth
-                            onClick={handleSubmit}
-                            variant="contained" 
-                            className = {classes.btn} 
-                            style={{ position: "relative", top: "5px", bottom: "5px"}}
-                        >
-                        Log In
-                        </Button>
-                        
-                        <div className={classes.links}>
-                        <div>
-                            <Typography component="p"> 
-                            Don&apos;t have an account yet?
-                            </Typography>
-                        </div>
-                        <div>
-                        <Typography component="p"> 
-                            <Link href="/signup">Sign Up as an Individual</Link> |  <Link href="/signup">Sign Up as an Organisation</Link>
-                        </Typography>
-                        </div>
-                      </div>
-                    </Paper>
+            <Grid item xs={12} sm = {12} md = {6} > 
+              <div className= {classes.form}>
+                {isSmall ? (
+                  <Typography variant="h5" component="h5" className= {classes.welcomeBack}>
+                    Log in to your personal CRM
+                  </Typography>
+                ) : (
+                    <Typography variant="h4" component="h4" className= {classes.welcomeBack}>
+                      Welcome back <br/> to your personal CRM
+                    </Typography>
+                )}
+                <Paper className = {classes.paper}>
+                  <Grid item xs={12}>
+                    Email
+                    <TextField 
+                      onChange={handleEmail}
+                      fullWidth 
+                      name="email" 
+                      size="small" 
+                      variant="outlined"
+                      className={classes.textbox}
+                      placeholder="example@email.com"
+                    />
+                  </Grid>
+
+                    <Grid item xs={12}>
+                    Password
+                    <TextField
+                        onChange={handlePassword}
+                        fullWidth 
+                        name="password"
+                        size="small"
+                        type="password"
+                        variant="outlined"
+                        className={classes.textbox}
+                        placeholder="Enter your password here"
+                    />
+                    </Grid>
+                    <Button 
+                        fullWidth
+                        onClick={handleSubmit}
+                        variant="contained" 
+                        className = {classes.btn} 
+                        style={{ position: "relative", top: "5px", bottom: "5px"}}
+                    >
+                    Log In
+                    </Button>
+                    
+                    <div className={classes.links}>
+                      <Typography component="p"> 
+                        Don&apos;t have an account yet?
+                      </Typography>
+                      <Typography component="p"> 
+                          <Link href="/signup">Sign Up as an Individual</Link> |  <Link href="/signup">Sign Up as an Organisation</Link>
+                      </Typography>
                   </div>
+                </Paper>
+                </div>
               </Grid>
-            {/* </div> */}
+
           </Grid>
       </main>
     </Layout>
