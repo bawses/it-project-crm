@@ -1,8 +1,9 @@
 import React from "react";
 import { makeStyles } from "@material-ui/core";
-import Select, { OptionTypeBase } from "react-select";
+import Select, { OnChangeValue } from "react-select";
 import { ExtraFieldType } from "../../pages/contacts/create";
 import { COLORS } from '../../src/colors';
+import { SelectValue } from "../contactsTableTags";
 
 const addFieldOptions = [
   "LinkedIn",
@@ -15,7 +16,7 @@ const addFieldOptions = [
 
 interface AddFieldSelectorProps {
   addedFields?: ExtraFieldType[];
-  onChange: (value: OptionTypeBase | null) => void;
+  onChange: (value: OnChangeValue<SelectValue, false>) => void;
 }
 
 const addFieldStyles = {
