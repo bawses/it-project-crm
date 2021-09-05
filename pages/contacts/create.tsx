@@ -11,7 +11,7 @@ import { Business } from "@material-ui/icons";
 import Image from "next/image";
 import DEFAULT_IMAGE from "../../assets/blank-profile-picture-973460_640.png";
 import { useState } from "react";
-import { OptionTypeBase } from "react-select";
+import { OnChangeValue } from "react-select";
 import EditContactOptions from "../../components/buttons/EditContactOptions";
 import ExtraField from "../../components/input/ExtraField";
 import ResponsiveFieldPair from "../../components/input/ResponsiveFieldPair";
