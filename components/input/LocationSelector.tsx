@@ -1,10 +1,11 @@
 import React from "react";
 import { makeStyles } from "@material-ui/core";
-import Select, { OptionTypeBase } from "react-select";
+import Select, { OnChangeValue } from "react-select";
+import { SelectValue } from "../contactsTableTags";
 
 interface LocationSelectorProps {
-  selectedLocation: OptionTypeBase | null;
-  onChange: (value: OptionTypeBase) => void;
+  selectedLocation: OnChangeValue<SelectValue, false> | null;
+  onChange: (value: OnChangeValue<SelectValue, false>) => void;
 }
 
 const options = [
