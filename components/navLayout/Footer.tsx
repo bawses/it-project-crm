@@ -8,10 +8,6 @@ import CollectionsBookmarkIcon from '@material-ui/icons/CollectionsBookmark';
 import AccountCircleIcon from '@material-ui/icons/AccountCircle';
 import PersonAddIcon from '@material-ui/icons/PersonAdd';
 
-interface FooterProps {
-    type?: string;
-}
-
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     appBar: {
@@ -26,14 +22,16 @@ const useStyles = makeStyles((theme: Theme) =>
       maxHeight: '50px'
     },
     navButton: {
-      margin: theme.spacing(7),
+      margin: theme.spacing(5),
     },
   }),
 );
 
-export default function Footer({
-    type = "personal",
-  }: FooterProps) {
+type FooterProps = {
+  pageType?: string;
+}
+
+export default function Footer({pageType = "personal"}: FooterProps) {
     // NavBar code references https://material-ui.com/components/app-bar/
     const classes = useStyles();
     return (

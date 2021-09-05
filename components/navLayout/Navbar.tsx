@@ -10,10 +10,6 @@ import CollectionsBookmarkIcon from '@material-ui/icons/CollectionsBookmark';
 import PersonAddIcon from '@material-ui/icons/PersonAdd';
 import SearchIcon from '@material-ui/icons/Search';
 
-interface NavbarProps {
-  type?: string;
-}
-
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     root: {
@@ -92,11 +88,11 @@ const useStyles = makeStyles((theme: Theme) =>
   }),
 );
 
+type NavbarProps = {
+  pageType?: string;
+}
 
-export default function Navbar({
-  type = "personal",
-}: NavbarProps) {
-  // NavBar code references https://material-ui.com/components/app-bar/
+export default function Navbar({pageType = "personal"}: NavbarProps) {
   const classes = useStyles();
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("xs"));

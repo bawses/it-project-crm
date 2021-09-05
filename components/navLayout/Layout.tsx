@@ -22,11 +22,11 @@ export default function Layout({ children, title = 'CataLog' }: Props) {
         <meta charSet="utf-8" />
         <meta name="viewport" content="initial-scale=1.0, width=device-width" />
       </Head>
-      <Navbar type="personal"/>
+      <Navbar pageType="personal"/>
         {children}
       {/* Responsive design - Show bottom navigation if mobile */}
       {isMobile ? (
-        <Footer type="personal"/>
+        <Footer pageType="personal"/>
         ) : ( <> </> 
       )}
     </div>
