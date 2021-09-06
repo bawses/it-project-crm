@@ -1,12 +1,18 @@
 import { Container, Typography, makeStyles } from "@material-ui/core";
 import Image from "next/image";
 import DEFAULT_IMAGE from "../../assets/blank-profile-picture-973460_640.png";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import MyTags from "../../components/cards/MyTags";
 import MyNotes from "../../components/cards/MyNotes";
 import ContactDetails from "../../components/cards/ContactDetails";
 import ContactOptions from "../../components/buttons/ContactOptions";
 import ContactHeader from "../../components/cards/ContactHeader";
+import {
+  getManualContactById,
+  updateManualContact,
+} from "../../middleware/ManualContactQueries";
+import { IManualContact } from "../../components/DataTypes";
+import { updateUser } from "../../middleware/UserQueries";
 
 const useStyles = makeStyles((theme) => ({
   containerStyle: {
@@ -65,25 +71,25 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-type ExtraFieldType = {
-  fieldType: string;
-  fieldValue: string;
-};
+// type ExtraFieldType = {
+//   fieldType: string;
+//   fieldValue: string;
+// };
 
-export type ContactDetailsType = {
-  firstName?: string;
-  lastName?: string;
-  title?: string;
-  location?: string;
-  primaryOrg?: string;
-  secondaryOrg?: string;
-  primaryEmail?: string;
-  secondaryEmail?: string;
-  primaryPhone?: string;
-  secondaryPhone?: string;
-  address?: string;
-  links?: ExtraFieldType[];
-};
+// export type ContactDetailsType = {
+//   firstName?: string;
+//   lastName?: string;
+//   title?: string;
+//   location?: string;
+//   primaryOrg?: string;
+//   secondaryOrg?: string;
+//   primaryEmail?: string;
+//   secondaryEmail?: string;
+//   primaryPhone?: string;
+//   secondaryPhone?: string;
+//   address?: string;
+//   links?: ExtraFieldType[];
+// };
 
 const DUMMY_CONTACT = {
   firstName: "John",
@@ -124,36 +130,72 @@ const DUMMY_TAGS = [
 const DUMMY_NOTES =
   "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.";
 
-export default function ViewContact() {
+interface ViewContactProps {
+  contactId: string;
+}
+
+export default function ViewContact({
+  contactId = "6134bf036b2b512e1ca6ece0",
+}: ViewContactProps) {
   const classes = useStyles();
-  const [fieldValues, setFieldValues] = useState<ContactDetailsType>({});
+  const [fieldValues, setFieldValues] = useState<IManualContact>();
   const [isEditingNotes, setIsEditingNotes] = useState(false);
   const [notes, setNotes] = useState("");
   const [editedNotes, setEditedNotes] = useState("");
   const [tags, setTags] = useState<string[]>([]);
   const [tagOptions, setTagOptions] = useState<string[]>([]);
 
+  const fetchContactDetails = useCallback(async () => {
+    try {
+      const fetchedRawData = await getManualContactById(contactId);
+      const fetchedData = fetchedRawData as IManualContact;
+      setFieldValues(fetchedData);
+      setNotes(fetchedData.notes ?? "");
+      setEditedNotes(fetchedData.notes ?? "");
+      setTags(fetchedData.tags ?? []);
+      /** TODO: fetch tag options from user object */
+      const fetchedTagOptions = DUMMY_TAG_OPTIONS;
+      setTagOptions(fetchedTagOptions);
+    } catch (e) {
+      console.log(e);
+    }
+  }, [contactId]);
+
   useEffect(() => {
-    const fetchedContactDetails = DUMMY_CONTACT;
-    setFieldValues(fetchedContactDetails);
-    const fetchedContactNotes = DUMMY_NOTES;
-    setNotes(fetchedContactNotes);
-    setEditedNotes(fetchedContactNotes);
-    const fetchedTags = DUMMY_TAGS;
-    setTags(fetchedTags);
-    const fetchedTagOptions = DUMMY_TAG_OPTIONS;
-    setTagOptions(fetchedTagOptions);
-  }, []);
+    fetchContactDetails();
+  }, [fetchContactDetails]);
 
   const toggleEditingMode = () => {
     setIsEditingNotes(!isEditingNotes);
   };
 
+  const updateContactNotes = useCallback(async () => {
+    if (fieldValues?._id) {
+      try {
+        const updateObject = {
+          ownerId: "123",
+          name: fieldValues.name,
+          notes: notes,
+        };
+        const updatedContact = await updateManualContact(
+          fieldValues?._id,
+          updateObject
+        );
+        console.log(updatedContact);
+      } catch (e) {
+        console.log(e);
+      }
+    }
+  }, [notes, fieldValues]);
+
+  useEffect(() => {
+    updateContactNotes();
+  }, [notes, updateContactNotes]);
+
   const saveEditedNotes = () => {
     if (isEditingNotes) {
       setNotes(editedNotes);
       toggleEditingMode();
-      // API call here to update contact notes?
     }
   };
 
@@ -164,13 +206,52 @@ export default function ViewContact() {
     }
   };
 
-  /** TODO: update database with new tags once you navigate away from page */
+  const updateContactTags = useCallback(async () => {
+    if (fieldValues?._id) {
+      try {
+        const updateObject = {
+          ownerId: "123",
+          name: fieldValues.name,
+          tags: tags,
+        };
+        const updatedContact = await updateManualContact(
+          fieldValues?._id,
+          updateObject
+        );
+        console.log(updatedContact);
+      } catch (e) {
+        console.log(e);
+      }
+    }
+  }, [tags, fieldValues]);
+
+  useEffect(() => {
+    updateContactTags();
+  }, [tags, updateContactTags]);
 
   const deleteTag = (toDelete: string) => {
     const newTags = tags.filter((value) => value !== toDelete);
     setTags(newTags);
   };
 
+  /** TODO */
+  // const updateUserTags = useCallback(async () => {
+  //   try {
+  //     const updateObject = {
+  //       allTags: tagOptions,
+  //     };
+  //     const updatedUser = await updateUser("123", updateObject);
+  //     console.log(updatedUser);
+  //   } catch (e) {
+  //     console.log(e);
+  //   }
+  // }, [tagOptions]);
+
+  // useEffect(() => {
+  //   updateUserTags();
+  // },[tagOptions, updateUserTags]);
+
+  /** TODO: update user tags */
   const addTag = (toAdd: string) => {
     setTags([...tags, toAdd]);
     if (!tagOptions.includes(toAdd)) {
@@ -197,11 +278,11 @@ export default function ViewContact() {
           />
         </Container>
         <ContactHeader
-          firstName={fieldValues.firstName}
-          lastName={fieldValues.lastName}
-          title={fieldValues.title}
-          primaryOrg={fieldValues.primaryOrg}
-          secondaryOrg={fieldValues.secondaryOrg}
+          firstName={fieldValues?.name.firstName}
+          lastName={fieldValues?.name.lastName}
+          title={fieldValues?.job}
+          // primaryOrg={fieldValues.primaryOrg}
+          // secondaryOrg={fieldValues.secondaryOrg}
         />
       </div>
       <div className={classes.responsiveSections}>

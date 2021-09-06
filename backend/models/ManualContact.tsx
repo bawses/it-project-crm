@@ -32,4 +32,4 @@ const ManualContactSchema = new mongoose.Schema<IManualContact>(
   }
 );
 
-export default mongoose.models.ManualContact || mongoose.model("ManualContact", ManualContactSchema);
+export default mongoose.models?.ManualContact || mongoose.model("ManualContact", ManualContactSchema);

@@ -4,8 +4,6 @@ import {
   Typography,
   makeStyles,
   TextField,
-  Button,
-  IconButton,
 } from "@material-ui/core";
 import { Business } from "@material-ui/icons";
 import Image from "next/image";
@@ -18,6 +16,8 @@ import ResponsiveFieldPair from "../../components/input/ResponsiveFieldPair";
 import VerticalFieldPair from "../../components/input/VerticalFieldPair";
 import LocationSelector from "../../components/input/LocationSelector";
 import AddFieldSelector from "../../components/input/AddFieldSelector";
+import { createManualContact } from "../../middleware/ManualContactQueries";
+import { IManualContact } from "../../components/DataTypes";
 
 const useStyles = makeStyles((theme) => ({
   containerStyle: {
@@ -104,7 +104,10 @@ export type ExtraFieldType = {
 
 export default function CreateContact() {
   const classes = useStyles();
-  const [location, setLocation] = useState<OnChangeValue<{ value: string, label: string }, false> | null>(null);
+  const [location, setLocation] = useState<OnChangeValue<
+    { value: string; label: string },
+    false
+  > | null>(null);
   const [fieldValues, setFieldValues] = useState<ContactDetailsType>({
     firstName: "",
     lastName: "",
@@ -140,6 +143,45 @@ export default function CreateContact() {
     );
   };
 
+  const createNewContact = async () => {
+    const contactToCreate: IManualContact = {
+      ownerId: "123",
+      name: {
+        firstName: fieldValues.firstName,
+        lastName: fieldValues.lastName,
+      },
+      email: [fieldValues.primaryEmail, fieldValues.secondaryEmail],
+      phone: [fieldValues.primaryPhone, fieldValues.secondaryPhone],
+      job: fieldValues.title,
+      location: location?.value,
+      links: {
+        facebook: extraFields.find((field) => field.fieldType === "Facebook")
+          ?.fieldValue,
+        linkedIn: extraFields.find((field) => field.fieldType === "LinkedIn")
+          ?.fieldValue,
+        instagram: extraFields.find((field) => field.fieldType === "Instagram")
+          ?.fieldValue,
+        twitter: extraFields.find((field) => field.fieldType === "Twitter")
+          ?.fieldValue,
+        website: extraFields.find((field) => field.fieldType === "Website")
+          ?.fieldValue,
+        other: extraFields
+          .filter((field) => field.fieldType === "Other")
+          .map((other) => other.fieldValue),
+      },
+      notes: "",
+      tags: [],
+      starred: false,
+      archived: false,
+    };
+    try {
+      const newContact = await createManualContact(contactToCreate);
+      console.log(newContact);
+    } catch (e) {
+      console.log(e);
+    }
+  };
+
   const deleteField = (index: number, fieldType: string) => {
     const newExtraFields = extraFields.filter((field, i) => i !== index);
     setExtraFields(newExtraFields);
@@ -162,7 +204,9 @@ export default function CreateContact() {
     setExtraFields(newExtraFields);
   };
 
-  const handleAddedField = (value: OnChangeValue<{ value: string, label: string }, false> | null) => {
+  const handleAddedField = (
+    value: OnChangeValue<{ value: string; label: string }, false> | null
+  ) => {
     if (value) {
       // New field selected, so add this text field to page
       setExtraFields([
@@ -174,12 +218,7 @@ export default function CreateContact() {
 
   const handleSubmit = (event: React.SyntheticEvent) => {
     event.preventDefault();
-    console.log(`Form data: ${JSON.stringify(fieldValues)}`);
-    console.log(`Location: ${location ? location.value : "None selected"}`);
-    console.log("Extra fields array:");
-    for (let field of extraFields) {
-      console.log(JSON.stringify(field));
-    }
+    createNewContact();
   };
 
   return (
@@ -300,7 +339,7 @@ export default function CreateContact() {
           onChange={handleAddedField}
           addedFields={extraFields}
         />
-        <EditContactOptions onCancel={() => { }} onSubmit={handleSubmit} />
+        <EditContactOptions onCancel={() => {}} onSubmit={handleSubmit} />
       </form>
     </Container>
   );
