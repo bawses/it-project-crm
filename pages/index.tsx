@@ -4,6 +4,7 @@ import Box from '@material-ui/core/Box';
 import CustomButton from '../components/button';
 import { COLORS }  from '../src/colors';
 
+
 export default function Index() {
   return (
     <Container maxWidth="sm">

@@ -29,4 +29,3 @@ const OrganisationSchema = new mongoose.Schema<IOrganisation>(
 );
 
 export default mongoose.models.Organisation || mongoose.model("Organisation", OrganisationSchema);
- 

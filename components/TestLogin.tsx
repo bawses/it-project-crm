@@ -18,7 +18,6 @@ export const LoginForm: React.FC<Props> = ({}) => {
   const handleSubmit = (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
     event.preventDefault();
     //const response = loginUser(formState.email, formState.password);
-
     //console.log(response);
   };
 
