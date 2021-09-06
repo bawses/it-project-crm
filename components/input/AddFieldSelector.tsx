@@ -56,6 +56,7 @@ export default function AddFieldSelector({
       isSearchable={true}
       placeholder={"Add field..."}
       isClearable={true}
+      menuPlacement="auto"
     />
   );
 }

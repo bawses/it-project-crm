@@ -1,14 +1,14 @@
 import {
   Paper,
   Container,
-  Typography,
   makeStyles,
   TextField,
+  Typography,
 } from "@material-ui/core";
 import { Business } from "@material-ui/icons";
 import Image from "next/image";
 import DEFAULT_IMAGE from "../../assets/blank-profile-picture-973460_640.png";
-import { useState } from "react";
+import React, { useState } from "react";
 import { OnChangeValue } from "react-select";
 import EditContactOptions from "../../components/buttons/EditContactOptions";
 import ExtraField from "../../components/input/ExtraField";
@@ -18,15 +18,21 @@ import LocationSelector from "../../components/input/LocationSelector";
 import AddFieldSelector from "../../components/input/AddFieldSelector";
 import { createManualContact } from "../../middleware/ManualContactQueries";
 import { IManualContact } from "../../components/DataTypes";
+import Layout from "../../components/navLayout/Layout";
 
 const useStyles = makeStyles((theme) => ({
   containerStyle: {
     width: "100%",
-    marginTop: "5%",
+    marginTop: theme.spacing(5),
+    marginBottom: theme.spacing(5),
     [theme.breakpoints.down("md")]: {
       width: "90%",
-      marginTop: 0,
+      marginTop: theme.spacing(2),
+      marginBottom: theme.spacing(7),
     },
+  },
+  pageTitle: {
+    marginBottom: theme.spacing(),
   },
   primaryDetailsStyle: {
     display: "flex",
@@ -40,7 +46,7 @@ const useStyles = makeStyles((theme) => ({
   },
   profilePicDiv: {
     width: "25%",
-    margin: 10,
+    margin: theme.spacing(2),
     [theme.breakpoints.down("sm")]: {
       width: "30%",
     },
@@ -77,9 +83,9 @@ const useStyles = makeStyles((theme) => ({
   },
   otherDetails: {
     borderRadius: 10,
-    padding: 25,
+    padding: theme.spacing(4),
     [theme.breakpoints.down("xs")]: {
-      padding: 20,
+      padding: theme.spacing(3),
     },
   },
 }));
@@ -222,125 +228,128 @@ export default function CreateContact() {
   };
 
   return (
-    <Container maxWidth="md" className={classes.containerStyle}>
-      <Typography variant="h5" component="h5">
-        Create a manual contact
-      </Typography>
-
-      <form noValidate autoComplete="off" onSubmit={handleSubmit}>
-        <div className={classes.primaryDetailsStyle}>
-          <Container className={classes.profilePicDiv}>
-            <Image
-              className={classes.profilePic}
-              src={DEFAULT_IMAGE}
-              alt="Profile picture"
-            />
-          </Container>
-          <div className={classes.inputFields}>
-            <ResponsiveFieldPair
-              small={true}
-              leftId="firstName"
-              leftLabel="First name"
-              leftValue={fieldValues.firstName}
-              rightId="lastName"
-              rightLabel="Last name"
-              rightValue={fieldValues.lastName}
-              leftOnChange={(event) =>
-                handleChange("firstName", event.target.value)
-              }
-              rightOnChange={(event) =>
-                handleChange("lastName", event.target.value)
-              }
-            />
-            <TextField
-              size="small"
-              variant="filled"
-              id="title"
-              label="Title"
-              fullWidth
-              value={fieldValues.title}
-              onChange={(event) => handleChange("title", event.target.value)}
-              className={classes.topSpacing}
-            />
-            <LocationSelector
-              selectedLocation={location}
-              onChange={(value) => setLocation(value)}
-            />
-            <ResponsiveFieldPair
-              leftId="primaryOrganisation"
-              leftLabel="Primary organisation"
-              leftValue={fieldValues.primaryOrg}
-              rightId="secondaryOrganisation"
-              rightLabel="Secondary organisation"
-              rightValue={fieldValues.secondaryOrg}
-              leftOnChange={(event) =>
-                handleChange("primaryOrg", event.target.value)
-              }
-              rightOnChange={(event) =>
-                handleChange("secondaryOrg", event.target.value)
-              }
-            />
+    <Layout>
+      <Container maxWidth="md" className={classes.containerStyle}>
+        <Typography variant="h5" component="h5" className={classes.pageTitle}>
+          Create a manual contact:
+        </Typography>
+        <form noValidate autoComplete="off" onSubmit={handleSubmit}>
+          <div className={classes.primaryDetailsStyle}>
+            <Container className={classes.profilePicDiv}>
+              <Image
+                className={classes.profilePic}
+                src={DEFAULT_IMAGE}
+                alt="Profile picture"
+              />
+            </Container>
+            <div className={classes.inputFields}>
+              <ResponsiveFieldPair
+                small={true}
+                leftId="firstName"
+                leftLabel="First name"
+                leftValue={fieldValues.firstName}
+                rightId="lastName"
+                rightLabel="Last name"
+                rightValue={fieldValues.lastName}
+                leftOnChange={(event) =>
+                  handleChange("firstName", event.target.value)
+                }
+                rightOnChange={(event) =>
+                  handleChange("lastName", event.target.value)
+                }
+              />
+              <TextField
+                size="small"
+                variant="filled"
+                id="title"
+                label="Title"
+                fullWidth
+                value={fieldValues.title}
+                onChange={(event) => handleChange("title", event.target.value)}
+                className={classes.topSpacing}
+              />
+              <LocationSelector
+                selectedLocation={location}
+                onChange={(value) => setLocation(value)}
+              />
+              <ResponsiveFieldPair
+                leftId="primaryOrganisation"
+                leftLabel="Primary organisation"
+                leftValue={fieldValues.primaryOrg}
+                rightId="secondaryOrganisation"
+                rightLabel="Secondary organisation"
+                rightValue={fieldValues.secondaryOrg}
+                leftOnChange={(event) =>
+                  handleChange("primaryOrg", event.target.value)
+                }
+                rightOnChange={(event) =>
+                  handleChange("secondaryOrg", event.target.value)
+                }
+              />
+            </div>
           </div>
-        </div>
-        <Paper
-          elevation={3}
-          className={`${classes.otherDetails} ${classes.topSpacing}`}
-        >
-          <div className={classes.responsiveRow}>
-            <VerticalFieldPair
-              iconType="email"
-              topId="primaryEmail"
-              topLabel="Primary email"
-              topValue={fieldValues.primaryEmail}
-              bottomId="secondaryEmail"
-              bottomLabel="Secondary email"
-              bottomValue={fieldValues.secondaryEmail}
-              topOnChange={(event: any) =>
-                handleChange("primaryEmail", event.target.value)
-              }
-              bottomOnChange={(event: any) =>
-                handleChange("secondaryEmail", event.target.value)
-              }
-            />
-            <VerticalFieldPair
-              iconType="phone"
-              topId="primaryPhone"
-              topLabel="Primary phone"
-              topValue={fieldValues.primaryPhone}
-              bottomId="secondaryPhone"
-              bottomLabel="Secondary phone"
-              bottomValue={fieldValues.secondaryPhone}
-              topOnChange={(event: any) =>
-                handleChange("primaryPhone", event.target.value)
-              }
-              bottomOnChange={(event: any) =>
-                handleChange("secondaryPhone", event.target.value)
-              }
-            />
-          </div>
-          <div className={classes.iconRow}>
-            <Business className={classes.icon} />
-            <TextField
-              size="small"
-              variant="filled"
-              id="workAddress"
-              label="Work address"
-              fullWidth
-              value={fieldValues.address}
-              onChange={(event) => handleChange("address", event.target.value)}
-              className={classes.topSpacing}
-            />
-          </div>
-          {extraFields.map((field, index) =>
-            fieldCreator(index, field.fieldType, field.fieldValue)
-          )}
-        </Paper>
-        <AddFieldSelector
-          onChange={handleAddedField}
-          addedFields={extraFields}
-        />
-        <EditContactOptions onCancel={() => {}} onSubmit={handleSubmit} />
-      </form>
-    </Container>
+          <Paper
+            elevation={3}
+            className={`${classes.otherDetails} ${classes.topSpacing}`}
+          >
+            <div className={classes.responsiveRow}>
+              <VerticalFieldPair
+                iconType="email"
+                topId="primaryEmail"
+                topLabel="Primary email"
+                topValue={fieldValues.primaryEmail}
+                bottomId="secondaryEmail"
+                bottomLabel="Secondary email"
+                bottomValue={fieldValues.secondaryEmail}
+                topOnChange={(event: any) =>
+                  handleChange("primaryEmail", event.target.value)
+                }
+                bottomOnChange={(event: any) =>
+                  handleChange("secondaryEmail", event.target.value)
+                }
+              />
+              <VerticalFieldPair
+                iconType="phone"
+                topId="primaryPhone"
+                topLabel="Primary phone"
+                topValue={fieldValues.primaryPhone}
+                bottomId="secondaryPhone"
+                bottomLabel="Secondary phone"
+                bottomValue={fieldValues.secondaryPhone}
+                topOnChange={(event: any) =>
+                  handleChange("primaryPhone", event.target.value)
+                }
+                bottomOnChange={(event: any) =>
+                  handleChange("secondaryPhone", event.target.value)
+                }
+              />
+            </div>
+            <div className={classes.iconRow}>
+              <Business className={classes.icon} />
+              <TextField
+                size="small"
+                variant="filled"
+                id="workAddress"
+                label="Work address"
+                fullWidth
+                value={fieldValues.address}
+                onChange={(event) =>
+                  handleChange("address", event.target.value)
+                }
+                className={classes.topSpacing}
+              />
+            </div>
+            {extraFields.map((field, index) =>
+              fieldCreator(index, field.fieldType, field.fieldValue)
+            )}
+          </Paper>
+          <AddFieldSelector
+            onChange={handleAddedField}
+            addedFields={extraFields}
+          />
+          <EditContactOptions onCancel={() => {}} onSubmit={handleSubmit} />
+        </form>
+      </Container>
+    </Layout>
   );
 }
