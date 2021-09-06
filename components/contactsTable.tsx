@@ -1,15 +1,16 @@
 import { Paper, Table, TableBody, TableContainer } from '@material-ui/core';
-import ContactsTableRow, { ContactsTableRowProps } from './contactsTableRow';
+import ContactsTableRow from './contactsTableRow';
+import { IManualContact } from './DataTypes';
 
 interface ContactsTableProps {
-  contacts: ContactsTableRowProps[]
+  contacts: IManualContact[]
 }
 
 export default function ContactsTable({ contacts }: ContactsTableProps) {
   const rows: JSX.Element[] = []
   for (const contact of contacts) {
-    const key = contact.name + contact.role
-    rows.push(<ContactsTableRow key={key} name={contact.name} role={contact.role} isStarred={contact.isStarred} />)
+    const key = contact._id || contact.name.firstName
+    rows.push(<ContactsTableRow key={key} name={contact.name.firstName + " " + contact.name.lastName} role={contact.job} isStarred={contact.starred || false} />)
   }
 
   return (

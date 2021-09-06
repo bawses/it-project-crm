@@ -5,7 +5,7 @@ import { COLORS } from "../src/colors";
 
 export interface ContactsTableRowProps {
   name: string,
-  role: string,
+  role?: string,
   isStarred: boolean
 }
 
