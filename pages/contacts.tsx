@@ -1,33 +1,33 @@
-import Box from '@material-ui/core/Box';
-import { ChangeEvent, useState } from 'react';
-import { OnChangeValue } from 'react-select';
-import ContactsTable from '../components/contactsTable';
-import ContactsTableCategory, { CategoryButton } from '../components/contactsTableCategory';
-import { ContactsTableRowProps } from '../components/contactsTableRow';
-import ContactsTableSort from '../components/contactsTableSort';
-import ContactsTableTags, { SelectValue } from '../components/contactsTableTags';
+import Box from "@material-ui/core/Box";
+import { ChangeEvent, useState } from "react";
+import { OnChangeValue } from "react-select";
+import ContactsTable from "../components/contactsTable";
+import ContactsTableCategory, { CategoryButton } from "../components/contactsTableCategory";
+import { ContactsTableRowProps } from "../components/contactsTableRow";
+import ContactsTableSort from "../components/contactsTableSort";
+import ContactsTableTags, { SelectValue } from "../components/contactsTableTags";
 
 const tempContacts: ContactsTableRowProps[] = [
   { name: "John Appleseed", role: "Engineer at F", isStarred: false },
   { name: "Ron Arrowspeed", role: "Store manager at PizzaShack", isStarred: false },
-  { name: "Bob", role: "Unemployed", isStarred: true }
-]
+  { name: "Bob", role: "Unemployed", isStarred: true },
+];
 
 export default function Contacts() {
-  const [sortValue, setSortValue] = useState<string>("")
-  const [categoryButton, setCategoryButton] = useState<CategoryButton>("all")
-  const [tags, setTags] = useState<OnChangeValue<SelectValue, true>>([])
+  const [sortValue, setSortValue] = useState<string>("");
+  const [categoryButton, setCategoryButton] = useState<CategoryButton>("all");
+  const [tags, setTags] = useState<OnChangeValue<SelectValue, true>>([]);
 
   function handleNewSortVal(event: ChangeEvent<{ value: unknown }>) {
-    setSortValue(event.target.value as string)
+    setSortValue(event.target.value as string);
   }
 
   function handleButtonPress(button: CategoryButton) {
-    setCategoryButton(button)
+    setCategoryButton(button);
   }
 
   function handleTagChange(newTags: OnChangeValue<SelectValue, true>) {
-    setTags(newTags)
+    setTags(newTags);
   }
 
   return (

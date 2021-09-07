@@ -183,18 +183,10 @@ export default function ViewContact() {
       <Typography variant="h5" component="h5">
         View a manual contact
       </Typography>
-      <ContactOptions
-        onPressArchive={() => {}}
-        onPressDelete={() => {}}
-        onPressEdit={() => {}}
-      />
+      <ContactOptions onPressArchive={() => {}} onPressDelete={() => {}} onPressEdit={() => {}} />
       <div className={classes.primaryDetailsStyle}>
         <Container className={classes.profilePicDiv}>
-          <Image
-            className={classes.profilePic}
-            src={DEFAULT_IMAGE}
-            alt="Profile picture"
-          />
+          <Image className={classes.profilePic} src={DEFAULT_IMAGE} alt="Profile picture" />
         </Container>
         <ContactHeader
           firstName={fieldValues.firstName}
@@ -218,12 +210,7 @@ export default function ViewContact() {
           />
         </div>
         <div className={classes.myTags}>
-          <MyTags
-            tags={tags}
-            tagOptions={tagOptions}
-            deleteTag={deleteTag}
-            addTag={addTag}
-          />
+          <MyTags tags={tags} tagOptions={tagOptions} deleteTag={deleteTag} addTag={addTag} />
         </div>
       </div>
     </Container>

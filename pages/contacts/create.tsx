@@ -1,12 +1,4 @@
-import {
-  Paper,
-  Container,
-  Typography,
-  makeStyles,
-  TextField,
-  Button,
-  IconButton,
-} from "@material-ui/core";
+import { Paper, Container, Typography, makeStyles, TextField, Button, IconButton } from "@material-ui/core";
 import { Business } from "@material-ui/icons";
 import Image from "next/image";
 import DEFAULT_IMAGE from "../../assets/blank-profile-picture-973460_640.png";
@@ -104,7 +96,7 @@ export type ExtraFieldType = {
 
 export default function CreateContact() {
   const classes = useStyles();
-  const [location, setLocation] = useState<OnChangeValue<{ value: string, label: string }, false> | null>(null);
+  const [location, setLocation] = useState<OnChangeValue<{ value: string; label: string }, false> | null>(null);
   const [fieldValues, setFieldValues] = useState<ContactDetailsType>({
     firstName: "",
     lastName: "",
@@ -119,20 +111,14 @@ export default function CreateContact() {
   });
   const [extraFields, setExtraFields] = useState<ExtraFieldType[]>([]);
 
-  const fieldCreator = (
-    index: number,
-    fieldType: string,
-    fieldValue: string
-  ) => {
+  const fieldCreator = (index: number, fieldType: string, fieldValue: string) => {
     return (
       <ExtraField
         key={index.toString()}
         index={index}
         fieldType={fieldType}
         fieldValue={fieldValue}
-        handleChange={(event) =>
-          handleExtraField(fieldType, event.target.value, index)
-        }
+        handleChange={(event) => handleExtraField(fieldType, event.target.value, index)}
         onPressDelete={() => {
           deleteField(index, fieldType);
         }}
@@ -149,26 +135,17 @@ export default function CreateContact() {
     setFieldValues({ ...fieldValues, [fieldType]: fieldValue });
   };
 
-  const handleExtraField = (
-    fieldType: string,
-    fieldValue: string,
-    index: number
-  ) => {
+  const handleExtraField = (fieldType: string, fieldValue: string, index: number) => {
     const newExtraFields = extraFields.map((field, i) =>
-      field.fieldType === fieldType && i === index
-        ? { fieldType: field.fieldType, fieldValue: fieldValue }
-        : field
+      field.fieldType === fieldType && i === index ? { fieldType: field.fieldType, fieldValue: fieldValue } : field
     );
     setExtraFields(newExtraFields);
   };
 
-  const handleAddedField = (value: OnChangeValue<{ value: string, label: string }, false> | null) => {
+  const handleAddedField = (value: OnChangeValue<{ value: string; label: string }, false> | null) => {
     if (value) {
       // New field selected, so add this text field to page
-      setExtraFields([
-        ...extraFields,
-        { fieldType: value.label, fieldValue: "" },
-      ]);
+      setExtraFields([...extraFields, { fieldType: value.label, fieldValue: "" }]);
     }
   };
 
@@ -191,11 +168,7 @@ export default function CreateContact() {
       <form noValidate autoComplete="off" onSubmit={handleSubmit}>
         <div className={classes.primaryDetailsStyle}>
           <Container className={classes.profilePicDiv}>
-            <Image
-              className={classes.profilePic}
-              src={DEFAULT_IMAGE}
-              alt="Profile picture"
-            />
+            <Image className={classes.profilePic} src={DEFAULT_IMAGE} alt="Profile picture" />
           </Container>
           <div className={classes.inputFields}>
             <ResponsiveFieldPair
@@ -206,12 +179,8 @@ export default function CreateContact() {
               rightId="lastName"
               rightLabel="Last name"
               rightValue={fieldValues.lastName}
-              leftOnChange={(event) =>
-                handleChange("firstName", event.target.value)
-              }
-              rightOnChange={(event) =>
-                handleChange("lastName", event.target.value)
-              }
+              leftOnChange={(event) => handleChange("firstName", event.target.value)}
+              rightOnChange={(event) => handleChange("lastName", event.target.value)}
             />
             <TextField
               size="small"
@@ -223,10 +192,7 @@ export default function CreateContact() {
               onChange={(event) => handleChange("title", event.target.value)}
               className={classes.topSpacing}
             />
-            <LocationSelector
-              selectedLocation={location}
-              onChange={(value) => setLocation(value)}
-            />
+            <LocationSelector selectedLocation={location} onChange={(value) => setLocation(value)} />
             <ResponsiveFieldPair
               leftId="primaryOrganisation"
               leftLabel="Primary organisation"
@@ -234,19 +200,12 @@ export default function CreateContact() {
               rightId="secondaryOrganisation"
               rightLabel="Secondary organisation"
               rightValue={fieldValues.secondaryOrg}
-              leftOnChange={(event) =>
-                handleChange("primaryOrg", event.target.value)
-              }
-              rightOnChange={(event) =>
-                handleChange("secondaryOrg", event.target.value)
-              }
+              leftOnChange={(event) => handleChange("primaryOrg", event.target.value)}
+              rightOnChange={(event) => handleChange("secondaryOrg", event.target.value)}
             />
           </div>
         </div>
-        <Paper
-          elevation={3}
-          className={`${classes.otherDetails} ${classes.topSpacing}`}
-        >
+        <Paper elevation={3} className={`${classes.otherDetails} ${classes.topSpacing}`}>
           <div className={classes.responsiveRow}>
             <VerticalFieldPair
               iconType="email"
@@ -256,12 +215,8 @@ export default function CreateContact() {
               bottomId="secondaryEmail"
               bottomLabel="Secondary email"
               bottomValue={fieldValues.secondaryEmail}
-              topOnChange={(event: any) =>
-                handleChange("primaryEmail", event.target.value)
-              }
-              bottomOnChange={(event: any) =>
-                handleChange("secondaryEmail", event.target.value)
-              }
+              topOnChange={(event: any) => handleChange("primaryEmail", event.target.value)}
+              bottomOnChange={(event: any) => handleChange("secondaryEmail", event.target.value)}
             />
             <VerticalFieldPair
               iconType="phone"
@@ -271,12 +226,8 @@ export default function CreateContact() {
               bottomId="secondaryPhone"
               bottomLabel="Secondary phone"
               bottomValue={fieldValues.secondaryPhone}
-              topOnChange={(event: any) =>
-                handleChange("primaryPhone", event.target.value)
-              }
-              bottomOnChange={(event: any) =>
-                handleChange("secondaryPhone", event.target.value)
-              }
+              topOnChange={(event: any) => handleChange("primaryPhone", event.target.value)}
+              bottomOnChange={(event: any) => handleChange("secondaryPhone", event.target.value)}
             />
           </div>
           <div className={classes.iconRow}>
@@ -292,15 +243,10 @@ export default function CreateContact() {
               className={classes.topSpacing}
             />
           </div>
-          {extraFields.map((field, index) =>
-            fieldCreator(index, field.fieldType, field.fieldValue)
-          )}
+          {extraFields.map((field, index) => fieldCreator(index, field.fieldType, field.fieldValue))}
         </Paper>
-        <AddFieldSelector
-          onChange={handleAddedField}
-          addedFields={extraFields}
-        />
-        <EditContactOptions onCancel={() => { }} onSubmit={handleSubmit} />
+        <AddFieldSelector onChange={handleAddedField} addedFields={extraFields} />
+        <EditContactOptions onCancel={() => {}} onSubmit={handleSubmit} />
       </form>
     </Container>
   );
