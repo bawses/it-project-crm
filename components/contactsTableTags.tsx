@@ -17,7 +17,9 @@ const options = [
   { value: "Coworkers", label: "Coworkers" },
   { value: "Friends", label: "Friends" },
   { value: "Family", label: "Family" },
-  { value: "Google Conference 2056", label: "Google Conference 2056" }
+  { value: "Google Conference 2056", label: "Google Conference 2056" },
+  { value: "Justice League", label: "Justice League" },
+  { value: "Superhero", label: "Superhero" },
 ]
 
 const colourStyles: StylesConfig<any, true> = {
