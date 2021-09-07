@@ -1,6 +1,6 @@
 import React, { SyntheticEvent } from "react";
 import { Button, makeStyles } from "@material-ui/core";
-import { COLORS } from "../../src/colors";
+import { COLORS } from "../../lib/Colors";
 
 interface EditContactOptionsProps {
   onCancel?: () => void;

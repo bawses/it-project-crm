@@ -3,14 +3,14 @@ import Link from "next/link";
 import { getSession } from "next-auth/client";
 import React, { useEffect, useState, ChangeEvent, MouseEvent } from "react";
 import { createUser } from "../../middleware/UserQueries";
-import { IUser } from "../../components/DataTypes";
+import { IUser } from "../../lib/DataTypes";
 
 // styling imports
 import useMediaQuery from "@material-ui/core/useMediaQuery";
 import { useTheme } from "@material-ui/core/styles";
 import { Typography, TextField, Grid, Paper, Button } from "@material-ui/core";
 import { makeStyles, createStyles, Theme } from "@material-ui/core/styles";
-import { COLORS } from "../../src/colors";
+import { COLORS } from "../../lib/Colors";
 import PageLoadingBar from "../../components/pageLoadingBar";
 
 const useStyles = makeStyles((theme: Theme) =>

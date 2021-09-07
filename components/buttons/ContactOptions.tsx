@@ -1,7 +1,7 @@
 import React from "react";
 import { makeStyles, IconButton } from "@material-ui/core";
 import { Edit } from "@material-ui/icons";
-import { COLORS } from "../../src/colors";
+import { COLORS } from "../../lib/Colors";
 import Select from "react-select";
 
 const options = [
