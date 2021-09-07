@@ -1,5 +1,5 @@
 import React from 'react';
-import { COLORS } from "../../src/colors";
+import { COLORS } from "../../lib/Colors";
 import { Box, IconButton, AppBar, Toolbar } from "@material-ui/core";
 import { createStyles, Theme, makeStyles } from '@material-ui/core/styles';
 

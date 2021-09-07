@@ -2,7 +2,7 @@ import NextAuth from "next-auth";
 import Providers from "next-auth/providers";
 
 import { compare as verifyPassword } from "bcryptjs";
-import connectToDatabase from "../../../backend/dbConnect";
+import connectToDatabase from "../../../backend/DbConnect";
 import User from "../../../backend/models/User";
 
 export default NextAuth({

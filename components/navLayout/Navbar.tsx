@@ -1,6 +1,6 @@
 import React from 'react';
 import { Typography, AppBar, Toolbar, InputBase, IconButton } from "@material-ui/core";
-import { COLORS } from "../../src/colors";
+import { COLORS } from "../../lib/Colors";
 import { createStyles, alpha, Theme, makeStyles, useTheme } from '@material-ui/core/styles';
 import useMediaQuery from "@material-ui/core/useMediaQuery";
 

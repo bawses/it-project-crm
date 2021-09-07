@@ -1,5 +1,5 @@
 import { mutate } from "swr";
-import { DataType, DataInterface, GET, POST, PUT, DELETE } from "../components/DataTypes";
+import { DataType, DataInterface, GET, POST, PUT, DELETE } from "../lib/DataTypes";
 
 const contentType = "application/json";
 const requestHeaders = {

@@ -1,4 +1,4 @@
-import { DataType, IUser } from "../components/DataTypes";
+import { DataType, IUser } from "../lib/DataTypes";
 import { createDbRecord, getAllDbRecords, getDbRecordById, updateDbRecord, deleteDbRecord } from "./Queries";
 
 export const createUser = (newObj: IUser) => {

@@ -1,5 +1,5 @@
 import { Box } from "@material-ui/core";
-import { COLORS } from "../src/colors";
+import { COLORS } from "../lib/Colors";
 import CustomButton from "./button";
 
 export type CategoryButton = "all" | "starred" | "archived"

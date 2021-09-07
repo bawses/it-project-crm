@@ -1,5 +1,5 @@
 import { hash as hashPassword } from "bcryptjs";
-import connectToDatabase from "../../../backend/dbConnect";
+import connectToDatabase from "../../../backend/DbConnect";
 import User from "../../../backend/models/User";
 import { Request, Response } from "express";
 

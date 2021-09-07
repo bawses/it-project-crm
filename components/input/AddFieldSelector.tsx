@@ -2,7 +2,7 @@ import React from "react";
 import { makeStyles } from "@material-ui/core";
 import Select, { OnChangeValue } from "react-select";
 import { ExtraFieldType } from "../../pages/contacts/create";
-import { COLORS } from '../../src/colors';
+import { COLORS } from '../../lib/Colors';
 import { SelectValue } from "../contactsTableTags";
 
 const addFieldOptions = [

@@ -2,7 +2,7 @@ import Container from '@material-ui/core/Container';
 import Typography from '@material-ui/core/Typography';
 import Box from '@material-ui/core/Box';
 import CustomButton from '../components/button';
-import { COLORS }  from '../src/colors';
+import { COLORS }  from '../lib/Colors';
 
 
 export default function Index() {

@@ -23,8 +23,7 @@
     "**/*.ts",
     "**/*.js",
     "**/*.jsx",
-    "**/*.tsx",
-    "pages/api/auth/[...nextauth].tsx"
+    "**/*.tsx"
   ],
   "exclude": [
     "node_modules"

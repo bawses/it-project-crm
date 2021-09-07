@@ -8,7 +8,7 @@ import {
   IconButton,
 } from "@material-ui/core";
 import { Cancel } from "@material-ui/icons";
-import { COLORS } from "../../src/colors";
+import { COLORS } from "../../lib/Colors";
 
 interface MyNotesProps {
   isEditingNotes?: boolean;

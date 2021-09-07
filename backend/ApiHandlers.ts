@@ -1,7 +1,7 @@
 import { Model } from "mongoose";
-import connectToDatabase from "./dbConnect";
+import connectToDatabase from "./DbConnect";
 import { Request, Response } from "express";
-import { DataType, GET, POST, PUT, DELETE } from "../components/DataTypes";
+import { DataType, GET, POST, PUT, DELETE } from "../lib/DataTypes";
 import { Database } from "./models/DbMapping";
 
 /* API handler for [ID] pages, allowing GET / PUT / DELETE requests */

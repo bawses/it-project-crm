@@ -1,4 +1,4 @@
-import { DataType, IManualContact } from "../components/DataTypes";
+import { DataType, IManualContact } from "../lib/DataTypes";
 import { createDbRecord, getAllDbRecords, getDbRecordById, updateDbRecord, deleteDbRecord } from "./Queries";
 
 export const createManualContact = (newObj: IManualContact) => {
