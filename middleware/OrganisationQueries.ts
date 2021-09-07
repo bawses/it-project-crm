@@ -1,4 +1,4 @@
-import { DataType, IOrganisation } from "../components/DataTypes";
+import { DataType, IOrganisation } from "../lib/DataTypes";
 import { createDbRecord, getAllDbRecords, getDbRecordById, updateDbRecord, deleteDbRecord } from "./Queries";
 
 export const createOrganisation = (newObj: IOrganisation) => {

@@ -1,17 +1,15 @@
 import mongoose from "mongoose";
-import { IUser } from "../../components/DataTypes";
+import { IOrganisation } from "../../lib/DataTypes";
 
 /*TODO: add min/max length for Strings and error message for required fields */
 
-const OrganisationId = String;
-
-const UserSchema = new mongoose.Schema<IUser>(
+/* OrganisationSchema will correspond to the "organisations" collection in the MongoDB database. */
+const OrganisationSchema = new mongoose.Schema<IOrganisation>(
   {
     passwordHash: { type: String, required: true },
-    name: { type: { firstName: String, lastName: String }, required: true },
+    name: { type: String, required: true },
     email: { type: [String], required: true },
     phone: [String],
-    job: String,
     location: String,
     links: {
       facebook: String,
@@ -21,13 +19,13 @@ const UserSchema = new mongoose.Schema<IUser>(
       website: String,
       other: [String],
     },
+    industry: String,
     about: String,
-    allTags: [String],
-    organisations: [OrganisationId],
+    contacts: [String],
   },
   {
     timestamps: true,
   }
 );
 
-export default mongoose.models.User || mongoose.model("User", UserSchema);
+export default mongoose.models.Organisation || mongoose.model("Organisation", OrganisationSchema);
