@@ -5,11 +5,15 @@ import { COLORS } from "../../src/colors";
 interface EditContactOptionsProps {
   onCancel?: () => void;
   onSubmit?: (event: SyntheticEvent) => void;
+  toSubmitForm?: boolean;
+  submitLabel?: string;
 }
 
 export default function EditContactOptions({
   onCancel = () => {},
   onSubmit = (event: SyntheticEvent) => {},
+  toSubmitForm = true,
+  submitLabel = "Create contact",
 }: EditContactOptionsProps) {
   const classes = useStyles();
 
@@ -25,12 +29,12 @@ export default function EditContactOptions({
       </Button>
       <Button
         variant="contained"
-        type="submit"
+        type={toSubmitForm ? "submit" : "button"}
         onClick={onSubmit}
         color="secondary"
         className={`${classes.formButton} ${classes.submitButton}`}
       >
-        Create contact
+        {submitLabel}
       </Button>
     </div>
   );

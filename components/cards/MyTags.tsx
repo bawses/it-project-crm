@@ -90,7 +90,8 @@ const useStyles = makeStyles((theme) => ({
     marginBottom: theme.spacing(),
   },
   tagsList: {
-    height: 300,
+    minHeight: 60,
+    maxHeight: 300,
     overflowY: "auto",
     overflowX: "hidden",
   },

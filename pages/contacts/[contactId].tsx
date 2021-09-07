@@ -14,6 +14,8 @@ import {
 import { IManualContact } from "../../components/DataTypes";
 import { updateUser } from "../../middleware/UserQueries";
 import Layout from "../../components/navLayout/Layout";
+import { useRouter } from "next/router";
+import PageLoadingBar from "../../components/pageLoadingBar";
 
 const useStyles = makeStyles((theme) => ({
   containerStyle: {
@@ -87,15 +89,10 @@ const DUMMY_TAG_OPTIONS = [
   "A really really really really really really long tag",
 ];
 
-interface ViewContactProps {
-  contactId: string;
-}
-
-export default function ViewContact({
-  contactId = "6134bf036b2b512e1ca6ece0",
-}: ViewContactProps) {
+export default function ViewContact() {
   const classes = useStyles();
   const [fieldValues, setFieldValues] = useState<IManualContact>();
+  const [isLoading, setIsLoading] = useState(true);
   const [isEditingNotes, setIsEditingNotes] = useState(false);
   const [notes, setNotes] = useState("");
   const [editedNotes, setEditedNotes] = useState("");
@@ -103,20 +100,30 @@ export default function ViewContact({
   const [tagOptions, setTagOptions] = useState<string[]>([]);
   const [isStarred, setIsStarred] = useState(false);
 
+  const router = useRouter();
+  const { contactId } = router.query;
+
   const fetchContactDetails = useCallback(async () => {
-    try {
-      const fetchedRawData = await getManualContactById(contactId);
-      const fetchedData = fetchedRawData as IManualContact;
-      setFieldValues(fetchedData);
-      setNotes(fetchedData.notes ?? "");
-      setEditedNotes(fetchedData.notes ?? "");
-      setTags(fetchedData.tags ?? []);
-      /** TODO: fetch tag options from user object */
-      const fetchedTagOptions = DUMMY_TAG_OPTIONS;
-      setTagOptions(fetchedTagOptions);
-      setIsStarred(fetchedData.starred ?? false);
-    } catch (e) {
-      console.log(e);
+    if (contactId && typeof contactId === "string") {
+      console.log(`TODO: fetch data of contact with id:${contactId}`);
+      try {
+        setIsLoading(true);
+        const fetchedRawData = await getManualContactById(contactId);
+        const fetchedData = fetchedRawData as IManualContact;
+        setFieldValues(fetchedData);
+        setNotes(fetchedData.notes ?? "");
+        setEditedNotes(fetchedData.notes ?? "");
+        setTags(fetchedData.tags ?? []);
+        /** TODO: fetch tag options from user object */
+        const fetchedTagOptions = DUMMY_TAG_OPTIONS;
+        setTagOptions(fetchedTagOptions);
+        setIsStarred(fetchedData.starred ?? false);
+        setIsLoading(false);
+      } catch (e) {
+        /** TODO: redirect to error page */
+        console.log(e);
+        setIsLoading(false);
+      }
     }
   }, [contactId]);
 
@@ -244,6 +251,10 @@ export default function ViewContact({
     console.log("update starred");
     updateStarred();
   }, [isStarred, updateStarred]);
+
+  if (isLoading) {
+    return <PageLoadingBar />;
+  }
 
   return (
     <Layout>

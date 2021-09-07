@@ -19,6 +19,8 @@ import AddFieldSelector from "../../components/input/AddFieldSelector";
 import { createManualContact } from "../../middleware/ManualContactQueries";
 import { IManualContact } from "../../components/DataTypes";
 import Layout from "../../components/navLayout/Layout";
+import PageLoadingBar from "../../components/pageLoadingBar";
+import { useRouter } from "next/router";
 
 const useStyles = makeStyles((theme) => ({
   containerStyle: {
@@ -127,6 +129,8 @@ export default function CreateContact() {
     address: "",
   });
   const [extraFields, setExtraFields] = useState<ExtraFieldType[]>([]);
+  const [isLoading, setIsLoading] = useState(false);
+  const router = useRouter();
 
   const fieldCreator = (
     index: number,
@@ -181,10 +185,14 @@ export default function CreateContact() {
       archived: false,
     };
     try {
+      setIsLoading(true);
       const newContact = await createManualContact(contactToCreate);
       console.log(newContact);
-    } catch (e) {
+      setIsLoading(false);
+      router.replace(`/contacts/${newContact?._id}`);
+    } catch (e: any) {
       console.log(e);
+      setIsLoading(false);
     }
   };
 
@@ -226,6 +234,10 @@ export default function CreateContact() {
     event.preventDefault();
     createNewContact();
   };
+
+  if (isLoading) {
+    return <PageLoadingBar />;
+  }
 
   return (
     <Layout>
