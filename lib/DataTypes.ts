@@ -21,7 +21,7 @@ export interface IAddedContact {
 export interface IManualContact {
   _id?: ObjectId;
   ownerId?: UserId;
-  name?: { firstName: string; lastName: string };
+  name: { firstName: string; lastName: string };
   email?: string[];
   phone?: string[];
   job?: string;

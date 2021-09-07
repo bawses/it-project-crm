@@ -51,13 +51,13 @@ export default function MyTags({
   };
   return (
     <div>
-      <Typography variant="h6" component="h3">
-        My tags
-      </Typography>
       <Paper
         elevation={3}
         className={`${classes.tagsSection} ${classes.topSpacing}`}
       >
+        <Typography variant="h6" component="h3" className={classes.tagsTitle}>
+          My tags
+        </Typography>
         <div className={classes.tagsList}>
           {tags.map((value, index) => tagCreator(value, index))}
         </div>
@@ -73,6 +73,7 @@ export default function MyTags({
           isSearchable={true}
           placeholder={"Add a tag..."}
           isClearable={true}
+          menuPlacement="auto"
         />
       </Paper>
     </div>
@@ -82,23 +83,25 @@ export default function MyTags({
 const useStyles = makeStyles((theme) => ({
   tagsSection: {
     borderRadius: 10,
-    padding: 20,
-    [theme.breakpoints.down("xs")]: {
-      padding: 15,
-    },
+    padding: 10,
+  },
+  tagsTitle: {
+    margin: theme.spacing(2),
+    marginBottom: theme.spacing(),
   },
   tagsList: {
-    height: 350,
+    minHeight: 60,
+    maxHeight: 300,
     overflowY: "auto",
     overflowX: "hidden",
   },
   tagStyle: {
-    padding: 8,
+    padding: 5,
     paddingLeft: 12,
     paddingRight: 0,
     borderRadius: 20,
     backgroundColor: COLORS.primaryBlueLight,
-    margin: 8,
+    margin: theme.spacing(),
     width: "95%",
     display: "flex",
     flexDirection: "row",

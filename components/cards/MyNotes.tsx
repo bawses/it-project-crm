@@ -9,6 +9,7 @@ import {
 } from "@material-ui/core";
 import { Cancel } from "@material-ui/icons";
 import { COLORS } from "../../lib/Colors";
+import EditContactOptions from "../buttons/EditContactOptions";
 
 interface MyNotesProps {
   isEditingNotes?: boolean;
@@ -42,7 +43,17 @@ export default function MyNotes({
             <Typography component="p" className={classes.savedNotes}>
               {notes}
             </Typography>
-            <Button onClick={toggleEditingMode}>Edit</Button>
+            <div className={classes.editNotes}>
+              <Button
+                variant="contained"
+                type="button"
+                onClick={toggleEditingMode}
+                color="secondary"
+                className={classes.editNotesBtn}
+              >
+                Edit
+              </Button>
+            </div>
           </div>
         )}
         {isEditingNotes && (
@@ -56,8 +67,12 @@ export default function MyNotes({
               fullWidth
               multiline={true}
             />
-            <Button onClick={saveEditedNotes}>Save</Button>
-            <Button onClick={cancelEditedNotes}>Cancel</Button>
+            <EditContactOptions
+              onCancel={cancelEditedNotes}
+              onSubmit={saveEditedNotes}
+              toSubmitForm={false}
+              submitLabel="Save"
+            />
           </div>
         )}
       </Paper>
@@ -68,6 +83,16 @@ export default function MyNotes({
 const useStyles = makeStyles((theme) => ({
   savedNotes: {
     whiteSpace: "pre-line",
+  },
+  editNotes: {
+    width: '100%',
+    display: 'flex',
+    flexDirection: 'row',
+    justifyContent: 'flex-end',
+  },
+  editNotesBtn: {
+    fontWeight: "bold",
+    fontSize: "0.8rem",
   },
   notesSection: {
     marginTop: theme.spacing(),
