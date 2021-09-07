@@ -1,15 +1,10 @@
 import { Model } from "mongoose";
 import connectToDatabase from "./dbConnect";
 import { Request, Response } from "express";
-import { DataType } from "../../components/DataTypes";
+import { DataType, GET, POST, PUT, DELETE } from "../../components/DataTypes";
 import { Database } from "../models/DbMapping";
 
-export const GET = "GET";
-export const POST = "POST";
-export const PUT = "PUT";
-export const DELETE = "DELETE";
-
-/* API handler for generic GET / PUT / DELETE requests on _id pages */
+/* API handler for [ID] pages, allowing GET / PUT / DELETE requests */
 export async function idHandler(req: Request, res: Response, dataType: DataType): Promise<Response> {
   const id = req.query.id;
   const requestType = req.method;
@@ -17,85 +12,72 @@ export async function idHandler(req: Request, res: Response, dataType: DataType)
   await connectToDatabase();
   const dbCollection: Model<any, {}, {}> = Database[dataType];
 
-  switch (requestType) {
-    /* Get a model by its ID */
-    case GET: {
-      try {
-        const dbRecord = await dbCollection.findById(id);
-        if (!dbRecord) {
-          throw new Error();
-        }
-        return res.status(200).json({ success: true, data: dbRecord });
-      } catch (error) {
-        return res.status(400).json({ success: false });
+  var dbResponse;
+  try {
+    switch (requestType) {
+      /* Get a model by its ID */
+      case GET: {
+        dbResponse = await dbCollection.findById(id);
+        break;
       }
-    }
-
-    /* Edit a model by its ID */
-    case PUT: {
-      try {
-        const dbRecord = await dbCollection.findByIdAndUpdate(id, req.body, {
+      /* Edit a model by its ID */
+      case PUT: {
+        dbResponse = await dbCollection.findByIdAndUpdate(id, req.body, {
           new: true,
           runValidators: true,
         });
-        if (!dbRecord) {
-          throw new Error();
-        }
-        return res.status(200).json({ success: true, data: dbRecord });
-      } catch (error) {
-        return res.status(400).json({ success: false });
+        break;
+      }
+      /* Delete a model by its ID */
+      case DELETE: {
+        dbResponse = await dbCollection.deleteOne({ _id: id });
+        break;
+      }
+      default: {
+        throw new Error();
       }
     }
-
-    /* Delete a model by its ID */
-    case DELETE: {
-      try {
-        const deleted_dbRecord = await dbCollection.deleteOne({ _id: id });
-        if (!deleted_dbRecord) {
-          throw new Error();
-        }
-        return res.status(200).json({ success: true, data: deleted_dbRecord });
-      } catch (error) {
-        return res.status(400).json({ success: false });
-      }
+    if (!dbResponse) {
+      throw new Error();
     }
-
-    default: {
-      return res.status(400).json({ success: false });
-    }
+    return res.status(200).json({ success: true, data: dbResponse });
+  } catch (error) {
+    return res.status(400).json({ success: false });
   }
 }
 
-/* API handler for generic GET / POST requests on index pages */
+/* API handler for INDEX pages, allowing GET / POST requests */
 export async function indexHandler(req: Request, res: Response, dataType: DataType): Promise<Response> {
   const requestType = req.method;
 
   await connectToDatabase();
   const dbCollection: Model<any, {}, {}> = Database[dataType];
 
-  /* Find all the data in our database */
-  switch (requestType) {
-    case GET: {
-      try {
-        const dbRecords = await dbCollection.find({});
-        return res.status(200).json({ success: true, data: dbRecords });
-      } catch (error) {
-        return res.status(400).json({ success: false });
+  var dbResponse;
+  var successStatus: number;
+  try {
+    switch (requestType) {
+      /* Find all the data in our database */
+      case GET: {
+        dbResponse = await dbCollection.find({});
+        successStatus = 200;
+        break;
+      }
+      /* Create a new document/record in the database */
+      case POST: {
+        dbResponse = await dbCollection.create(req.body);
+        successStatus = 201;
+        break;
+      }
+      default: {
+        throw new Error();
       }
     }
-
-    /* Create a new document/record in the database */
-    case POST: {
-      try {
-        const dbRecord = await dbCollection.create(req.body);
-        return res.status(201).json({ success: true, data: dbRecord });
-      } catch (error) {
-        return res.status(400).json({ success: false });
-      }
+    if (!dbResponse) {
+      throw new Error();
     }
-
-    default: {
-      return res.status(400).json({ success: false });
-    }
+    return res.status(successStatus).json({ success: true, data: dbResponse });
+  } catch (error) {
+    return res.status(400).json({ success: false });
   }
 }

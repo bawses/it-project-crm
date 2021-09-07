@@ -1,5 +1,5 @@
 import { DataType, IManualContact } from "../components/DataTypes";
-import { createDbRecord, getAllDbRecords, getDbRecordById, updateDbRecord, deletedDbRecord } from "./Queries";
+import { createDbRecord, getAllDbRecords, getDbRecordById, updateDbRecord, deleteDbRecord } from "./Queries";
 
 export const createManualContact = (newObj: IManualContact) => {
   return createDbRecord(DataType.ManualContact, newObj);
@@ -18,5 +18,5 @@ export const updateManualContact = (id: string, newObj: IManualContact) => {
 };
 
 export const deleteManualContact = (id: string) => {
-  return deletedDbRecord(DataType.ManualContact, id);
+  return deleteDbRecord(DataType.ManualContact, id);
 };

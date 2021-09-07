@@ -1,5 +1,5 @@
 import { mutate } from "swr";
-import { DataType, DataInterface } from "../components/DataTypes";
+import { DataType, DataInterface, GET, POST, PUT, DELETE } from "../components/DataTypes";
 
 const contentType = "application/json";
 const requestHeaders = {
@@ -11,7 +11,7 @@ const requestHeaders = {
 export const createDbRecord = async (dataType: DataType, dataObj: DataInterface): Promise<DataInterface | null> => {
   try {
     const response = await fetch(`/api/${dataType}s`, {
-      method: "POST",
+      method: POST,
       headers: requestHeaders,
       body: JSON.stringify(dataObj),
     });
@@ -30,10 +30,10 @@ export const createDbRecord = async (dataType: DataType, dataObj: DataInterface)
 };
 
 /* Makes an API call to get all existing entries in the database for the given dataType */
-export const getAllDbRecords = async (dataType: DataType): Promise<[DataInterface] | null> => {
+export const getAllDbRecords = async (dataType: DataType): Promise<DataInterface[] | null> => {
   try {
     const response = await fetch(`/api/${dataType}s`, {
-      method: "GET",
+      method: GET,
       headers: requestHeaders,
     });
 
@@ -53,7 +53,7 @@ export const getAllDbRecords = async (dataType: DataType): Promise<[DataInterfac
 export const getDbRecordById = async (dataType: DataType, recordId: string): Promise<DataInterface | null> => {
   try {
     const response = await fetch(`/api/${dataType}s/${recordId}`, {
-      method: "GET",
+      method: GET,
       headers: requestHeaders,
     });
 
@@ -77,7 +77,7 @@ export const updateDbRecord = async (
 ): Promise<DataInterface | null> => {
   try {
     const response = await fetch(`/api/${dataType}s/${recordId}`, {
-      method: "PUT",
+      method: PUT,
       headers: requestHeaders,
       body: JSON.stringify(dataObj),
     });
@@ -99,10 +99,10 @@ export const updateDbRecord = async (
 };
 
 /* Makes an API call to delete an existing entry in the database for the given dataType */
-export const deletedDbRecord = async (dataType: DataType, recordId: string): Promise<DataInterface | null> => {
+export const deleteDbRecord = async (dataType: DataType, recordId: string): Promise<DataInterface | null> => {
   try {
     const response = await fetch(`/api/${dataType}s/${recordId}`, {
-      method: "DELETE",
+      method: DELETE,
       headers: requestHeaders,
     });
 
