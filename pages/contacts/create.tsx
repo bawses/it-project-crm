@@ -154,6 +154,7 @@ export default function CreateContact() {
   };
 
   const createNewContact = async () => {
+    /** TODO: input validation, don't create empty contacts */
     const contactToCreate: IManualContact = {
       ownerId: "123",
       name: {
@@ -188,8 +189,8 @@ export default function CreateContact() {
       setIsLoading(true);
       const newContact = await createManualContact(contactToCreate);
       console.log(newContact);
-      setIsLoading(false);
       router.replace(`/contacts/${newContact?._id}`);
+      setIsLoading(false);
     } catch (e: any) {
       console.log(e);
       setIsLoading(false);
@@ -359,7 +360,7 @@ export default function CreateContact() {
             onChange={handleAddedField}
             addedFields={extraFields}
           />
-          <EditContactOptions onCancel={() => {}} onSubmit={handleSubmit} />
+          <EditContactOptions onCancel={() => router.back()} onSubmit={handleSubmit} />
         </form>
       </Container>
     </Layout>
