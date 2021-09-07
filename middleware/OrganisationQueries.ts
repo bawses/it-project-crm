@@ -1,20 +1,24 @@
 import { DataType, IOrganisation } from "../lib/DataTypes";
-import { createDbRecord, getAllDbRecords, getDbRecordById, updateDbRecord, deleteDbRecord } from "./Queries";
+import { createDbRecord, searchDb, getDbRecordById, updateDbRecord, deleteDbRecord } from "./Queries";
 
-export const createOrganisation = (newObj: IOrganisation) => {
-  return createDbRecord(DataType.Organisation, newObj);
+export const createOrganisation = (dataObj: IOrganisation) => {
+  return createDbRecord(DataType.Organisation, dataObj);
 };
 
 export const getAllOrganisations = () => {
-  return getAllDbRecords(DataType.Organisation);
+  return searchDb(DataType.Organisation, {});
 };
+
+export const searchAllOrganisations = (dataObj: IOrganisation) => {
+  return searchDb(DataType.Organisation, dataObj);
+}
 
 export const getOrganisationById = (id: string) => {
   return getDbRecordById(DataType.Organisation, id);
 };
 
-export const updateOrganisation = (id: string, newObj: IOrganisation) => {
-  return updateDbRecord(DataType.Organisation, id, newObj);
+export const updateOrganisation = (id: string, dataObj: IOrganisation) => {
+  return updateDbRecord(DataType.Organisation, id, dataObj);
 };
 
 export const deleteOrganisation = (id: string) => {

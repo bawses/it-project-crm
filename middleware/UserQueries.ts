@@ -1,12 +1,16 @@
 import { DataType, IUser } from "../lib/DataTypes";
-import { createDbRecord, getAllDbRecords, getDbRecordById, updateDbRecord, deleteDbRecord } from "./Queries";
+import { createDbRecord, searchDb, getDbRecordById, updateDbRecord, deleteDbRecord } from "./Queries";
 
 export const createUser = (newObj: IUser) => {
   return createDbRecord(DataType.User, newObj);
 };
 
 export const getAllUsers = () => {
-  return getAllDbRecords(DataType.User);
+  return searchDb(DataType.User, {});
+};
+
+export const searchUsers = (dataObj: IUser) => {
+  return searchDb(DataType.User, dataObj);
 };
 
 export const getUserById = (id: string) => {

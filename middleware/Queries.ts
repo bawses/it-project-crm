@@ -30,11 +30,12 @@ export const createDbRecord = async (dataType: DataType, dataObj: DataInterface)
 };
 
 /* Makes an API call to get all existing entries in the database for the given dataType */
-export const getAllDbRecords = async (dataType: DataType): Promise<DataInterface[] | null> => {
+export const searchDb = async (dataType: DataType, dataObj: DataInterface): Promise<DataInterface[] | null> => {
   try {
     const response = await fetch(`/api/${dataType}s`, {
       method: GET,
       headers: requestHeaders,
+      body: JSON.stringify(dataObj),
     });
 
     if (!response.ok) {

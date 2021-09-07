@@ -49,6 +49,7 @@ export async function idHandler(req: Request, res: Response, dataType: DataType)
 /* API handler for INDEX pages, allowing GET / POST requests */
 export async function indexHandler(req: Request, res: Response, dataType: DataType): Promise<Response> {
   const requestType = req.method;
+  // const requestBody = await req.body.json();
 
   await connectToDatabase();
   const dbCollection: Model<any, {}, {}> = Database[dataType];
@@ -59,7 +60,7 @@ export async function indexHandler(req: Request, res: Response, dataType: DataTy
     switch (requestType) {
       /* Find all the data in our database */
       case GET: {
-        dbResponse = await dbCollection.find({});
+        dbResponse = await dbCollection.find(req.body);
         successStatus = 200;
         break;
       }
