@@ -1,5 +1,8 @@
 import React from "react";
-import { Typography, makeStyles } from "@material-ui/core";
+import { Typography, makeStyles, IconButton } from "@material-ui/core";
+import StarsIcon from "@material-ui/icons/Stars";
+import StarIcon from '@material-ui/icons/Star';
+import { COLORS } from "../../src/colors";
 
 interface ContactHeaderProps {
   firstName?: string;
@@ -7,6 +10,8 @@ interface ContactHeaderProps {
   title?: string;
   primaryOrg?: string;
   secondaryOrg?: string;
+  starred?: boolean;
+  onStar?: () => void;
 }
 
 export default function ContactHeader({
@@ -15,14 +20,22 @@ export default function ContactHeader({
   title = "",
   primaryOrg = "",
   secondaryOrg = "",
+  starred = false,
+  onStar = () => {},
 }: ContactHeaderProps) {
   const classes = useStyles();
 
   return (
     <div className={classes.profileHeader}>
-      <Typography variant="h5" component="h1">
-        {firstName} {lastName}
-      </Typography>
+      <div className={classes.fullNameRow}>
+        <Typography variant="h5" component="h1">
+          {firstName} {lastName}
+        </Typography>
+        <IconButton onClick={onStar}>
+          {!starred && <StarsIcon style={{ fontSize: 35, color: COLORS.inactiveGrey }} />}
+          {starred && <StarIcon style={{ fontSize: 35, color: COLORS.starredYellow }} />}
+        </IconButton>
+      </div>
       <Typography variant="h6" component="h2">
         {title}
       </Typography>
@@ -47,9 +60,22 @@ const useStyles = makeStyles((theme) => ({
       textAlign: "center",
     },
   },
+  fullNameRow: {
+    display: "flex",
+    flexDirection: "row",
+    alignItems: "center",
+    [theme.breakpoints.down("md")]: {
+      justifyContent: 'center',
+    },
+  },
   organisationField: {
     flexGrow: 1,
-    marginTop: theme.spacing(),
+    marginTop: theme.spacing(2),
+    marginBottom: theme.spacing(2),
+    [theme.breakpoints.down("xs")]: {
+      marginTop: theme.spacing(),
+      marginBottom: 0,
+    },
   },
   responsiveRow: {
     display: "flex",

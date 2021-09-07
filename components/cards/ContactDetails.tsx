@@ -10,14 +10,42 @@ import {
   Instagram,
   Language,
 } from "@material-ui/icons";
-import { ContactDetailsType } from "../../pages/contacts/view";
+import { IManualContact } from "../DataTypes";
 
 interface ContactDetailsProps {
-  fieldValues: ContactDetailsType;
+  fieldValues?: IManualContact;
 }
 
 export default function ContactDetails({ fieldValues }: ContactDetailsProps) {
   const classes = useStyles();
+
+  const linksList = (fieldValues?: IManualContact) => {
+    const links = fieldValues?.links;
+    let list = [];
+    if (links?.facebook) {
+      list.push({ fieldType: "Facebook", fieldValue: links.facebook });
+    }
+    if (links?.instagram) {
+      list.push({ fieldType: "Instagram", fieldValue: links.instagram });
+    }
+    if (links?.linkedIn) {
+      list.push({ fieldType: "LinkedIn", fieldValue: links.linkedIn });
+    }
+    if (links?.twitter) {
+      list.push({ fieldType: "Twitter", fieldValue: links.twitter });
+    }
+    if (links?.website) {
+      list.push({ fieldType: "Website", fieldValue: links.website });
+    }
+    if (links?.other) {
+      const otherLinks = links.other.map((link) => ({
+        fieldType: "Other",
+        fieldValue: link,
+      }));
+      list = list.concat(otherLinks);
+    }
+    return list;
+  };
 
   const fieldCreator = (
     fieldType: string,
@@ -52,9 +80,15 @@ export default function ContactDetails({ fieldValues }: ContactDetailsProps) {
           <div className={`${classes.iconRow} ${classes.responsiveField}`}>
             <Mail className={classes.icon} />
             <div className={classes.inputFields}>
-              <Typography>{fieldValues.primaryEmail}</Typography>
+              <Typography>
+                {fieldValues?.email && fieldValues.email.length > 0
+                  ? fieldValues.email[0]
+                  : ""}
+              </Typography>
               <Typography className={classes.topSpacing}>
-                {fieldValues.secondaryEmail}
+                {fieldValues?.email && fieldValues.email.length > 1
+                  ? fieldValues.email[1]
+                  : ""}
               </Typography>
             </div>
           </div>
@@ -63,9 +97,15 @@ export default function ContactDetails({ fieldValues }: ContactDetailsProps) {
           >
             <Phone className={classes.icon} />
             <div className={classes.inputFields}>
-              <Typography>{fieldValues.primaryPhone}</Typography>
+              <Typography>
+                {fieldValues?.phone && fieldValues.phone.length > 0
+                  ? fieldValues.phone[0]
+                  : ""}
+              </Typography>
               <Typography className={classes.topSpacing}>
-                {fieldValues.secondaryPhone}
+                {fieldValues?.phone && fieldValues.phone.length > 1
+                  ? fieldValues.phone[1]
+                  : ""}
               </Typography>
             </div>
           </div>
@@ -73,13 +113,12 @@ export default function ContactDetails({ fieldValues }: ContactDetailsProps) {
         <div className={classes.iconRow}>
           <Business className={classes.icon} />
           <Typography className={classes.topSpacing}>
-            {fieldValues.address}
+            {fieldValues?.location}
           </Typography>
         </div>
-        {fieldValues.links &&
-          fieldValues.links.map((field, index) =>
-            fieldCreator(field.fieldType, field.fieldValue, index)
-          )}
+        {linksList(fieldValues).map((field, index) =>
+          fieldCreator(field.fieldType, field.fieldValue, index)
+        )}
       </Paper>
     </div>
   );
