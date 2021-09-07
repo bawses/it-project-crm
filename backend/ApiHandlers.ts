@@ -1,8 +1,8 @@
 import { Model } from "mongoose";
 import connectToDatabase from "./dbConnect";
 import { Request, Response } from "express";
-import { DataType, GET, POST, PUT, DELETE } from "../lib/DataTypes";
 import { Database } from "./models/DbMapping";
+import { DataType, GET, POST, PUT, DELETE } from "../lib/DataTypes";
 
 /* API handler for [ID] pages, allowing GET / PUT / DELETE requests */
 export async function idHandler(req: Request, res: Response, dataType: DataType): Promise<Response> {
