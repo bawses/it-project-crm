@@ -112,12 +112,10 @@ export default function LoginPage() {
 
   const handleEmail = (e: ChangeEvent<HTMLInputElement>) => {
     setEmail(e.target.value);
-    console.log(email);
   };
 
   const handlePassword = (e: ChangeEvent<HTMLInputElement>) => {
     setPassword(e.target.value);
-    console.log(password);
   };
 
   const handleSubmit = async (e: MouseEvent<HTMLButtonElement, globalThis.MouseEvent>) => {

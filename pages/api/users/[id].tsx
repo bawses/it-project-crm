@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import { idHandler } from "../../../backend/lib/ApiHandlers";
+import { idHandler } from "../../../backend/ApiHandlers";
 import { DataType } from "../../../components/DataTypes";
 
 export default async function handler(req: Request, res: Response): Promise<Response> {

@@ -1,8 +1,8 @@
 import { Model } from "mongoose";
 import connectToDatabase from "./dbConnect";
 import { Request, Response } from "express";
-import { DataType, GET, POST, PUT, DELETE } from "../../components/DataTypes";
-import { Database } from "../models/DbMapping";
+import { DataType, GET, POST, PUT, DELETE } from "../components/DataTypes";
+import { Database } from "./models/DbMapping";
 
 /* API handler for [ID] pages, allowing GET / PUT / DELETE requests */
 export async function idHandler(req: Request, res: Response, dataType: DataType): Promise<Response> {
@@ -40,10 +40,10 @@ export async function idHandler(req: Request, res: Response, dataType: DataType)
     if (!dbResponse) {
       throw new Error();
     }
-    return res.status(200).json({ success: true, data: dbResponse });
   } catch (error) {
     return res.status(400).json({ success: false });
   }
+  return res.status(200).json({ success: true, data: dbResponse });
 }
 
 /* API handler for INDEX pages, allowing GET / POST requests */
@@ -76,8 +76,8 @@ export async function indexHandler(req: Request, res: Response, dataType: DataTy
     if (!dbResponse) {
       throw new Error();
     }
-    return res.status(successStatus).json({ success: true, data: dbResponse });
   } catch (error) {
     return res.status(400).json({ success: false });
   }
+  return res.status(successStatus).json({ success: true, data: dbResponse });
 }
