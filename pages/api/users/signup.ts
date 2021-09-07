@@ -23,7 +23,7 @@ async function handler(req: Request, res: Response): Promise<void> {
     });
     return;
   }
-  const client = await connectToDatabase();
+  await connectToDatabase();
 
   // Find user based on email, with email being their unique key identifier
   const existingUser = await User.findOne({ email: email });

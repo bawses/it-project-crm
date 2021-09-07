@@ -11,8 +11,8 @@ type OrganisationId = ObjectId;
 
 export interface IAddedContact {
   _id?: ObjectId;
-  fromUserId: UserId;
-  toUserId: UserId;
+  fromUserId?: UserId;
+  toUserId?: UserId;
   notes?: string;
   tags?: string[];
   starred?: boolean;
@@ -20,8 +20,8 @@ export interface IAddedContact {
 
 export interface IManualContact {
   _id?: ObjectId;
-  ownerId: UserId;
-  name: { firstName: string; lastName: string };
+  ownerId?: UserId;
+  name?: { firstName: string; lastName: string };
   email?: string[];
   phone?: string[];
   job?: string;
@@ -42,9 +42,9 @@ export interface IManualContact {
 
 export interface IOrganisation {
   _id?: OrganisationId;
-  passwordHash: string;
-  name: string;
-  email: string[];
+  passwordHash?: string;
+  name?: string;
+  email?: string[];
   phone?: string[];
   location?: string;
   links?: {
@@ -62,9 +62,9 @@ export interface IOrganisation {
 
 export interface IUser {
   _id?: UserId;
-  passwordHash: string;
-  name: { firstName: string; lastName: string };
-  email: string[];
+  passwordHash?: string;
+  name?: { firstName: string; lastName: string };
+  email?: string[];
   phone?: string[];
   job?: string;
   location?: string;
