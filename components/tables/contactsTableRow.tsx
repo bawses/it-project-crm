@@ -1,7 +1,7 @@
 import { Avatar, Typography, TableRow, TableCell } from "@material-ui/core";
-import stockImage from '../public/stockImage.jpg'
+import stockImage from '../../public/stockImage.jpg'
 import StarsIcon from '@material-ui/icons/Stars';
-import { COLORS } from "../src/colors";
+import { COLORS } from "../../src/colors";
 
 export interface ContactsTableRowProps {
   name: string,

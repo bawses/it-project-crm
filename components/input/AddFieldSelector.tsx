@@ -3,7 +3,7 @@ import { makeStyles } from "@material-ui/core";
 import Select, { OnChangeValue } from "react-select";
 import { ExtraFieldType } from "../../pages/contacts/create";
 import { COLORS } from '../../src/colors';
-import { SelectValue } from "../contactsTableTags";
+import { SelectValue } from "../tables/contactsTableTags";
 
 const addFieldOptions = [
   "LinkedIn",

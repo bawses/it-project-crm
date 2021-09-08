@@ -1,6 +1,6 @@
 import { Paper, Table, TableBody, TableContainer } from '@material-ui/core';
 import ContactsTableRow from './contactsTableRow';
-import { IManualContact } from './DataTypes';
+import { IManualContact } from '../DataTypes';
 
 interface ContactsTableProps {
   contacts: IManualContact[]

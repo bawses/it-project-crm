@@ -1,13 +1,13 @@
 import Box from '@material-ui/core/Box';
 import { ChangeEvent, useEffect, useState } from 'react';
 import { OnChangeValue } from 'react-select';
-import ContactsTable from '../components/contactsTable';
-import ContactsTableCategory, { CategoryButton } from '../components/contactsTableCategory';
-import ContactsTableSort, { SortType } from '../components/contactsTableSort';
-import ContactsTableTags, { SelectValue } from '../components/contactsTableTags';
-import { IManualContact } from '../components/DataTypes';
-import { getAllManualContacts } from '../middleware/ManualContactQueries';
-import Layout from "../components/navLayout/Layout";
+import ContactsTable from '../../components/tables/contactsTable';
+import ContactsTableCategory, { CategoryButton } from '../../components/tables/contactsTableCategory';
+import ContactsTableSort, { SortType } from '../../components/tables/contactsTableSort';
+import ContactsTableTags, { SelectValue } from '../../components/tables/contactsTableTags';
+import { IManualContact } from '../../components/DataTypes';
+import { getAllManualContacts } from '../../middleware/ManualContactQueries';
+import Layout from "../../components/navLayout/Layout";
 
 async function getData(setAllContacts: (contacts: IManualContact[]) => void, setDisplayContacts: (contacts: IManualContact[]) => void) {
   try {

@@ -1,6 +1,6 @@
 import Select, { OnChangeValue, StylesConfig } from "react-select"
 import makeAnimated from "react-select/animated"
-import { COLORS } from "../src/colors";
+import { COLORS } from "../../src/colors";
 
 export type SelectValue = { value: string, label: string }
 
