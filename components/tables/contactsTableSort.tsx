@@ -9,8 +9,16 @@ const useStyles = makeStyles(() =>
   })
 )
 
+// Different types of sorting available for the table
+export enum SortType {
+  None = "",
+  FirstName = "firstName",
+  LastName = "lastName",
+  Role = "role"
+}
+
 interface ContactsTableSortProps {
-  sortValue: string,
+  sortValue: SortType,
   handleChange: (event: ChangeEvent<{ value: unknown }>) => void
 }
 
@@ -40,12 +48,12 @@ export default function ContactsTableSort({ sortValue, handleChange }: ContactsT
           value={sortValue}
           onChange={handleChange}
         >
-          <MenuItem value="">
+          <MenuItem value={SortType.None}>
             <em>None</em>
           </MenuItem>
-          <MenuItem value="ABC">ABC</MenuItem>
-          <MenuItem value="DEF">DEF</MenuItem>
-          <MenuItem value="GHI">GHI</MenuItem>
+          <MenuItem value={SortType.FirstName}>First Name</MenuItem>
+          <MenuItem value={SortType.LastName}>Last Name</MenuItem>
+          <MenuItem value={SortType.Role}>Role</MenuItem>
         </Select>
       </FormControl>
     </Box>

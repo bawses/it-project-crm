@@ -1,6 +1,6 @@
 import Select, { OnChangeValue, StylesConfig } from "react-select"
 import makeAnimated from "react-select/animated"
-import { COLORS } from "../lib/Colors";
+import { COLORS } from "../../lib/Colors";
 
 export type SelectValue = { value: string, label: string }
 
@@ -17,7 +17,9 @@ const options = [
   { value: "Coworkers", label: "Coworkers" },
   { value: "Friends", label: "Friends" },
   { value: "Family", label: "Family" },
-  { value: "Google Conference 2056", label: "Google Conference 2056" }
+  { value: "Google Conference 2056", label: "Google Conference 2056" },
+  { value: "Justice League", label: "Justice League" },
+  { value: "Superhero", label: "Superhero" },
 ]
 
 const colourStyles: StylesConfig<any, true> = {

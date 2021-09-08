@@ -1,7 +1,7 @@
 import React from "react";
 import { makeStyles } from "@material-ui/core";
 import Select, { OnChangeValue } from "react-select";
-import { SelectValue } from "../contactsTableTags";
+import { SelectValue } from "../tables/contactsTableTags";
 
 interface LocationSelectorProps {
   selectedLocation: OnChangeValue<SelectValue, false> | null;
