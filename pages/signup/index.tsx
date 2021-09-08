@@ -2,14 +2,16 @@ import { useRouter } from "next/router";
 import Link from "next/link";
 import { getSession } from "next-auth/client";
 import React, { useEffect, useState, ChangeEvent, MouseEvent } from "react";
-import { createUser } from "../../backend/lib/auth";
+import { createUser } from "../../middleware/UserQueries";
+import { IUser } from "../../lib/DataTypes";
 
+// styling imports
 import useMediaQuery from "@material-ui/core/useMediaQuery";
-import { useTheme } from '@material-ui/core/styles';
-import { Typography, TextField, Grid, Paper, Button } from '@material-ui/core';
-import { makeStyles, createStyles, Theme } from '@material-ui/core/styles';
-import { COLORS } from '../../src/colors';
-import PageLoadingBar from '../../components/pageLoadingBar';
+import { useTheme } from "@material-ui/core/styles";
+import { Typography, TextField, Grid, Paper, Button } from "@material-ui/core";
+import { makeStyles, createStyles, Theme } from "@material-ui/core/styles";
+import { COLORS } from "../../lib/Colors";
+import PageLoadingBar from "../../components/pageLoadingBar";
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -20,23 +22,23 @@ const useStyles = makeStyles((theme: Theme) =>
     btn: {
       color: COLORS.white,
       backgroundColor: COLORS.primaryBlue,
-      '&:hover': {
-        backgroundColor: COLORS.actionOrange
+      "&:hover": {
+        backgroundColor: COLORS.actionOrange,
       },
       maxWidth: 600,
-      height: '50px',
-      margin: "10px auto"
+      height: "50px",
+      margin: "10px auto",
     },
 
     logobox: {
-      [theme.breakpoints.down('sm')]: {
+      [theme.breakpoints.down("sm")]: {
         paddingTop: theme.spacing(2.5),
         paddingBottom: theme.spacing(2),
         paddingLeft: theme.spacing(2),
         marginLeft: theme.spacing(1),
         marginTop: theme.spacing(1),
       },
-      [theme.breakpoints.up('md')]: {
+      [theme.breakpoints.up("md")]: {
         backgroundColor: COLORS.white,
         marginLeft: theme.spacing(3),
       },
@@ -44,17 +46,17 @@ const useStyles = makeStyles((theme: Theme) =>
 
     logo: {
       color: COLORS.actionOrange,
-      fontWeight: "bold"
+      fontWeight: "bold",
     },
 
     formTitle: {
-      [theme.breakpoints.down('sm')]: {
+      [theme.breakpoints.down("sm")]: {
         paddingTop: 20,
       },
-      [theme.breakpoints.between('md', 'lg')]: {
+      [theme.breakpoints.between("md", "lg")]: {
         paddingTop: 60,
       },
-      [theme.breakpoints.up('xl')]: {
+      [theme.breakpoints.up("xl")]: {
         paddingTop: 150,
       },
       paddingBottom: 10,
@@ -78,26 +80,24 @@ const useStyles = makeStyles((theme: Theme) =>
 
     form: {
       paddingTop: "4.5%",
-      [theme.breakpoints.down('sm')]: {
-        marginTop: "5%"
+      [theme.breakpoints.down("sm")]: {
+        marginTop: "5%",
       },
-      [theme.breakpoints.up('sm')]: {
+      [theme.breakpoints.up("sm")]: {
         marginLeft: "-10%",
       },
-
     },
 
     textbox: {
       margin: "6px auto",
-      backgroundColor: COLORS.white
+      backgroundColor: COLORS.white,
     },
 
     links: {
       paddingTop: "1rem",
       marginTop: "10px auto",
-    }
-
-  }),
+    },
+  })
 );
 
 const initialState = {
@@ -105,7 +105,7 @@ const initialState = {
   lastName: "",
   email: "",
   password: "",
-  confirmPassword: ""
+  confirmPassword: "",
 };
 
 export default function SignUpPage() {
@@ -121,10 +121,7 @@ export default function SignUpPage() {
     setUserState({ ...userState, [e.target.name]: e.target.value });
   };
 
-  const handleSubmit = (
-    e: MouseEvent<HTMLButtonElement, globalThis.MouseEvent>
-  ) => {
-
+  const handleSubmit = (e: MouseEvent<HTMLButtonElement, globalThis.MouseEvent>) => {
     // make sure password is the same as confirm password
     if (userState.password !== userState.confirmPassword) {
       alert("Passwords are not identical. Try again.");
@@ -149,11 +146,11 @@ export default function SignUpPage() {
       }
     }
 
-    createUser(
-      { firstName: userState.firstName, lastName: userState.lastName },
-      userState.email,
-      userState.password
-    )
+    createUser({
+      name: { firstName: userState.firstName, lastName: userState.lastName },
+      email: [userState.email],
+      passwordHash: userState.password,
+    })
       .then((res) => {
         console.log(res);
         router.replace("/profile");
@@ -174,26 +171,21 @@ export default function SignUpPage() {
   }, [router]);
 
   if (isLoading) {
-    return (
-      <PageLoadingBar />
-    );
+    return <PageLoadingBar />;
   }
 
   return (
     <main>
-      <Grid
-        container
-        direction={isSmall ? "column" : "row"}
-        justify="center"
-        alignItems="center"
-      >
-
-        <Grid item xs={12} sm={12} md={6}
-          style={isSmall ? { textAlign: "center" } : { textAlign: "left" }}>
+      <Grid container direction={isSmall ? "column" : "row"} justify="center" alignItems="center">
+        <Grid item xs={12} sm={12} md={6} style={isSmall ? { textAlign: "center" } : { textAlign: "left" }}>
           <div className={classes.logobox}>
-            <Typography variant="h5" component="h5">Stay connected with</Typography>
+            <Typography variant="h5" component="h5">
+              Stay connected with
+            </Typography>
             <div className={classes.logo}>
-              <Typography variant="h3" component="h3" >CataLog</Typography>
+              <Typography variant="h3" component="h3">
+                CataLog
+              </Typography>
             </div>
           </div>
         </Grid>
@@ -203,7 +195,9 @@ export default function SignUpPage() {
               Create your personal account
             </Typography>
           ) : (
-            <Typography variant="h4" component="h4">Create your <br /> personal account</Typography>
+            <Typography variant="h4" component="h4">
+              Create your <br /> personal account
+            </Typography>
           )}
           <Paper className={classes.paper}>
             <Grid container spacing={2}>
@@ -270,7 +264,7 @@ export default function SignUpPage() {
               fullWidth
               variant="contained"
               className={classes.btn}
-              style={{ position: "relative", top: "5px", bottom: "5px", textTransform: 'none' }}
+              style={{ position: "relative", top: "5px", bottom: "5px", textTransform: "none" }}
             >
               Sign Up
             </Button>
@@ -280,13 +274,11 @@ export default function SignUpPage() {
                   Already have an account? &nbsp;&nbsp;
                   <Link href="/login">Log In</Link>
                 </Typography>
-
               </div>
               <div>
                 <Typography component="p">
                   <Link href="/login">Sign Up as an Organisation</Link>
                 </Typography>
-
               </div>
             </div>
           </Paper>
@@ -295,4 +287,3 @@ export default function SignUpPage() {
     </main>
   );
 }
-

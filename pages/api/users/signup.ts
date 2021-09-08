@@ -1,5 +1,5 @@
-import { hashPassword } from "../../../backend/lib/auth";
-import connectToDatabase from "../../../backend/lib/dbConnect";
+import { hash as hashPassword } from "bcryptjs";
+import connectToDatabase from "../../../backend/dbConnect";
 import User from "../../../backend/models/User";
 import { Request, Response } from "express";
 
@@ -23,7 +23,7 @@ async function handler(req: Request, res: Response): Promise<void> {
     });
     return;
   }
-  const client = await connectToDatabase();
+  await connectToDatabase();
 
   // Find user based on email, with email being their unique key identifier
   const existingUser = await User.findOne({ email: email });
@@ -36,7 +36,7 @@ async function handler(req: Request, res: Response): Promise<void> {
 
   // before hashing 
   console.log("Before Hashing");
-  const hashedPassword = await hashPassword(password);
+  const hashedPassword = await hashPassword(password, 10);
   console.log(`Hash Password: ${hashedPassword}`);
   const result = await User.create({
     name: name,

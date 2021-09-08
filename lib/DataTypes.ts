@@ -11,8 +11,8 @@ type OrganisationId = ObjectId;
 
 export interface IAddedContact {
   _id?: ObjectId;
-  fromUserId: UserId;
-  toUserId: UserId;
+  fromUserId?: UserId;
+  toUserId?: UserId;
   notes?: string;
   tags?: string[];
   starred?: boolean;
@@ -20,7 +20,7 @@ export interface IAddedContact {
 
 export interface IManualContact {
   _id?: ObjectId;
-  ownerId: UserId;
+  ownerId?: UserId;
   name: { firstName: string; lastName: string };
   email?: string[];
   phone?: string[];
@@ -42,9 +42,9 @@ export interface IManualContact {
 
 export interface IOrganisation {
   _id?: OrganisationId;
-  passwordHash: string;
-  name: string;
-  email: string[];
+  passwordHash?: string;
+  name?: string;
+  email?: string[];
   phone?: string[];
   location?: string;
   links?: {
@@ -62,9 +62,9 @@ export interface IOrganisation {
 
 export interface IUser {
   _id?: UserId;
-  passwordHash: string;
-  name: { firstName: string; lastName: string };
-  email: string[];
+  passwordHash?: string;
+  name?: { firstName: string; lastName: string };
+  email?: string[];
   phone?: string[];
   job?: string;
   location?: string;
@@ -82,3 +82,8 @@ export interface IUser {
 }
 
 export type DataInterface = IUser | IOrganisation | IManualContact | IAddedContact;
+
+export const GET = "GET";
+export const POST = "POST";
+export const PUT = "PUT";
+export const DELETE = "DELETE";

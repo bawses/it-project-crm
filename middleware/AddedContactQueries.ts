@@ -1,5 +1,5 @@
-import { DataType, IAddedContact } from "../components/DataTypes";
-import { createDbRecord, getAllDbRecords, getDbRecordById, updateDbRecord, deletedDbRecord } from "./Queries";
+import { DataType, IAddedContact } from "../lib/DataTypes";
+import { createDbRecord, getAllDbRecords, getDbRecordById, updateDbRecord, deleteDbRecord } from "./Queries";
 
 export const createAddedContact = (newObj: IAddedContact) => {
   return createDbRecord(DataType.AddedContact, newObj);
@@ -18,5 +18,5 @@ export const updateAddedContact = (id: string, newObj: IAddedContact) => {
 };
 
 export const deleteAddedContact = (id: string) => {
-  return deletedDbRecord(DataType.AddedContact, id);
+  return deleteDbRecord(DataType.AddedContact, id);
 };

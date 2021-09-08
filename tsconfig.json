@@ -24,8 +24,7 @@
     "**/*.js",
     "**/*.jsx",
     "**/*.tsx",
-    "pages/api/auth/[...nextauth].tsx",
-    "backend/lib/dbConnect.js"
+    "pages/api/auth/[...nextauth].ts"
   ],
   "exclude": [
     "node_modules"

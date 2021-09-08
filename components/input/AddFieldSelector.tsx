@@ -2,7 +2,7 @@ import React from "react";
 import { makeStyles } from "@material-ui/core";
 import Select, { OnChangeValue } from "react-select";
 import { ExtraFieldType } from "../../pages/contacts/create";
-import { COLORS } from '../../src/colors';
+import { COLORS } from '../../lib/Colors';
 import { SelectValue } from "../tables/contactsTableTags";
 
 const addFieldOptions = [
@@ -56,6 +56,7 @@ export default function AddFieldSelector({
       isSearchable={true}
       placeholder={"Add field..."}
       isClearable={true}
+      menuPlacement="auto"
     />
   );
 }

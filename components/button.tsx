@@ -1,5 +1,5 @@
 import Button from "@material-ui/core/Button";
-import { COLORS } from "../src/colors";
+import { COLORS } from "../lib/Colors";
 
 interface ButtonProps {
   type?: string;

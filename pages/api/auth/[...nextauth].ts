@@ -1,8 +1,8 @@
 import NextAuth from "next-auth";
 import Providers from "next-auth/providers";
 
-import { verifyPassword } from "../../../backend/lib/auth";
-import connectToDatabase from "../../../backend/lib/dbConnect";
+import { compare as verifyPassword } from "bcryptjs";
+import connectToDatabase from "../../../backend/dbConnect";
 import User from "../../../backend/models/User";
 
 export default NextAuth({
@@ -12,7 +12,7 @@ export default NextAuth({
   providers: [
     Providers.Credentials({
       async authorize(credentials: Record<string, string>) {
-        const client = await connectToDatabase();
+        await connectToDatabase();
 
         console.log(credentials.email);
         const user = await User.findOne({
