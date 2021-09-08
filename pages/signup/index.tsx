@@ -2,7 +2,7 @@ import { useRouter } from "next/router";
 import Link from "next/link";
 import { getSession } from "next-auth/client";
 import React, { useEffect, useState, ChangeEvent, MouseEvent } from "react";
-import { createUser } from "../../middleware/UserQueries";
+import { createUser } from "../../api_client/UserQueries";
 import { IUser } from "../../lib/DataTypes";
 
 // styling imports

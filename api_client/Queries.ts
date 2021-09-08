@@ -7,6 +7,13 @@ const requestHeaders = {
   "Content-Type": contentType,
 };
 
+enum FetchType {
+  DO_CREATE = "create",
+  DO_GET = "get",
+  DO_UPDATE = "update",
+  DO_DELETE = "delete",
+}
+
 /* Makes an API call to add a new entry into the database for the given dataType */
 export const createDbRecord = async (dataType: DataType, dataObj: DataInterface): Promise<DataInterface | null> => {
   try {
@@ -114,7 +121,53 @@ export const deleteDbRecord = async (dataType: DataType, recordId: string): Prom
     return data;
   } catch (error) {
     console.error(error);
-    console.log(`Failed to get ${dataType}`);
+    console.log(`Failed to delete ${dataType}`);
     return null;
   }
 };
+
+
+async function doFetch(
+  fetchType: FetchType,
+  dataType: string,
+  recordId: string,
+  dataObj: DataInterface
+): Promise<DataInterface | null> {
+  var url: string = "";
+  var method;
+  var body = dataObj ? JSON.stringify(dataObj) : null;
+  try {
+    switch (fetchType) {
+      case FetchType.DO_CREATE: {
+        url = `/api/${dataType}s`;
+        method = POST;
+      }
+
+      case FetchType.DO_GET: {
+      }
+
+      case FetchType.DO_UPDATE: {
+      }
+
+      case FetchType.DO_DELETE: {
+      }
+    }
+
+    var response = await fetch(url, {
+      method: POST,
+      headers: requestHeaders,
+      body: body,
+    });
+
+    // Throw error with status code in case Fetch API request failed
+    if (!response.ok) {
+      throw new Error(`${response.status}`);
+    }
+    var { data } = await response.json();
+  } catch (error) {
+    console.error(error);
+    console.error(`Failed to do operation: ${fetchType} for ${dataType}`);
+    return null;
+  }
+  return data;
+}
