@@ -88,9 +88,7 @@ const DUMMY_TAG_OPTIONS = [
 
 export default function ViewContact() {
   const classes = useStyles();
-  const [fieldValues, setFieldValues] = useState<IManualContact>({
-    name: {firstName:"", lastName:""}
-  });
+  const [fieldValues, setFieldValues] = useState<IManualContact>();
   const [isLoading, setIsLoading] = useState(true);
   const [isEditingNotes, setIsEditingNotes] = useState(false);
   const [notes, setNotes] = useState("");
@@ -136,7 +134,7 @@ export default function ViewContact() {
   };
 
   const updateContactNotes = useCallback(async () => {
-    if (fieldValues._id) {
+    if (fieldValues?._id) {
       try {
         const updateObject = {
           ownerId: "123",
@@ -171,7 +169,7 @@ export default function ViewContact() {
   };
 
   const updateContactTags = useCallback(async () => {
-    if (fieldValues._id) {
+    if (fieldValues?._id) {
       try {
         const updateObject = {
           ownerId: "123",
@@ -222,7 +220,7 @@ export default function ViewContact() {
   };
 
   const updateStarred = useCallback(async () => {
-    if (fieldValues._id) {
+    if (fieldValues?._id) {
       try {
         const updateObject = {
           ownerId: "123",
@@ -256,8 +254,8 @@ export default function ViewContact() {
           </Container>
           <ContactHeader
             firstName={fieldValues?.name.firstName}
-            lastName={fieldValues.name.lastName}
-            title={fieldValues.job}
+            lastName={fieldValues?.name.lastName}
+            title={fieldValues?.job}
             primaryOrg="Unimelb"
             secondaryOrg="Unimelb2"
             starred={isStarred}

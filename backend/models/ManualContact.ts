@@ -22,6 +22,7 @@ const ManualContactSchema = new mongoose.Schema<IManualContact>(
       website: String,
       other: [String],
     },
+    organisations: [String],
     notes: String,
     tags: [String],
     starred: Boolean,

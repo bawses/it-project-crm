@@ -6,7 +6,7 @@ export const createAddedContact = (dataObj: IAddedContact) => {
 };
 
 export const getAllAddedContacts = () => {
-  return searchDb(DataType.AddedContact, {});
+  return searchDb(DataType.AddedContact, undefined);
 };
 
 export const searchAddedContacts = (dataObj: IAddedContact) => {

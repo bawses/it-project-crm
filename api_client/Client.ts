@@ -7,7 +7,7 @@ export const createDbRecord = async (dataType: DataType, dataObj: DataInterface)
 };
 
 /* Makes an API call to search through all existing entries in the database for the given dataType */
-export const searchDb = async (dataType: DataType, dataObj: DataInterface): Promise<DataInterface[] | null> => {
+export const searchDb = async (dataType: DataType, dataObj?: DataInterface): Promise<DataInterface[] | null> => {
   return doFetch(RequestType.GET, dataType, undefined, dataObj);
 };
 

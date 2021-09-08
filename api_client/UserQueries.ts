@@ -6,7 +6,7 @@ export const createUser = (newObj: IUser) => {
 };
 
 export const getAllUsers = () => {
-  return searchDb(DataType.User, {});
+  return searchDb(DataType.User, undefined);
 };
 
 export const searchUsers = (dataObj: IUser) => {
