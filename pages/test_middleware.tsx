@@ -1,4 +1,4 @@
-import { createUser, getAllUsers, getUserById, updateUser, deleteUser } from "../middleware/UserQueries";
+import { createUser, getAllUsers, getUserById, updateUser, deleteUser } from "../api_client/UserQueries";
 
 export default function TestMiddleware() {
   return (

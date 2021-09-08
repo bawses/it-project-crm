@@ -59,7 +59,7 @@ export async function indexHandler(req: Request, res: Response, dataType: DataTy
     switch (requestType) {
       /* Find all the data in our database */
       case GET: {
-        dbResponse = await dbCollection.find({});
+        dbResponse = await dbCollection.find(req.body);
         successStatus = 200;
         break;
       }

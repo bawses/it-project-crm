@@ -1,6 +1,6 @@
-import { createTheme } from '@material-ui/core/styles';
-import { red } from '@material-ui/core/colors';
-import { COLORS } from './Colors';
+import { createTheme } from "@material-ui/core/styles";
+import { red } from "@material-ui/core/colors";
+import { COLORS } from "./Colors";
 
 // Create a theme instance.
 const theme = createTheme({
@@ -17,17 +17,11 @@ const theme = createTheme({
       main: red.A400,
     },
     background: {
-      default: '#fff',
+      default: "#fff",
     },
   },
   typography: {
-    fontFamily: [
-      'Nunito',
-      'Roboto',
-      '"Helvetica Neue"',
-      'Arial',
-      'sans-serif'
-    ].join(','),
+    fontFamily: ["Nunito", "Roboto", '"Helvetica Neue"', "Arial", "sans-serif"].join(","),
   },
   breakpoints: {
     values: {
