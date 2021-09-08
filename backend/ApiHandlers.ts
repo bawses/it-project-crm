@@ -8,6 +8,7 @@ import { DataType, RequestType } from "../lib/DataTypes";
 export async function idHandler(req: Request, res: Response, dataType: DataType): Promise<Response> {
   const id = req.query.id;
   const requestType = req.method;
+  req.body = req.body || {};
 
   await connectToDatabase();
   const dbCollection: Model<any, {}, {}> = Database[dataType];
@@ -49,6 +50,7 @@ export async function idHandler(req: Request, res: Response, dataType: DataType)
 /* API handler for INDEX pages, allowing GET / POST requests */
 export async function indexHandler(req: Request, res: Response, dataType: DataType): Promise<Response> {
   const requestType = req.method;
+  req.body = req.body || {};
 
   await connectToDatabase();
   const dbCollection: Model<any, {}, {}> = Database[dataType];
