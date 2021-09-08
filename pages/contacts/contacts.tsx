@@ -5,7 +5,7 @@ import ContactsTable from '../../components/tables/contactsTable';
 import ContactsTableCategory, { CategoryButton } from '../../components/tables/contactsTableCategory';
 import ContactsTableSort, { SortType } from '../../components/tables/contactsTableSort';
 import ContactsTableTags, { SelectValue } from '../../components/tables/contactsTableTags';
-import { IManualContact } from '../../components/DataTypes';
+import { IManualContact } from '../../lib/DataTypes';
 import { getAllManualContacts } from '../../middleware/ManualContactQueries';
 import Layout from "../../components/navLayout/Layout";
 
