@@ -2,7 +2,7 @@ import { Model } from "mongoose";
 import connectToDatabase from "./dbConnect";
 import { Request, Response } from "express";
 import { Database } from "./models/DbMapping";
-import { DataType, GET, POST, PUT, DELETE } from "../lib/DataTypes";
+import { DataType, RequestType } from "../lib/DataTypes";
 
 /* API handler for [ID] pages, allowing GET / PUT / DELETE requests */
 export async function idHandler(req: Request, res: Response, dataType: DataType): Promise<Response> {
@@ -16,12 +16,12 @@ export async function idHandler(req: Request, res: Response, dataType: DataType)
   try {
     switch (requestType) {
       /* Get a model by its ID */
-      case GET: {
+      case RequestType.GET: {
         dbResponse = await dbCollection.findById(id);
         break;
       }
       /* Edit a model by its ID */
-      case PUT: {
+      case RequestType.PUT: {
         dbResponse = await dbCollection.findByIdAndUpdate(id, req.body, {
           new: true,
           runValidators: true,
@@ -29,7 +29,7 @@ export async function idHandler(req: Request, res: Response, dataType: DataType)
         break;
       }
       /* Delete a model by its ID */
-      case DELETE: {
+      case RequestType.DELETE: {
         dbResponse = await dbCollection.deleteOne({ _id: id });
         break;
       }
@@ -58,13 +58,13 @@ export async function indexHandler(req: Request, res: Response, dataType: DataTy
   try {
     switch (requestType) {
       /* Find all the data in our database */
-      case GET: {
+      case RequestType.GET: {
         dbResponse = await dbCollection.find(req.body);
         successStatus = 200;
         break;
       }
       /* Create a new document/record in the database */
-      case POST: {
+      case RequestType.POST: {
         dbResponse = await dbCollection.create(req.body);
         successStatus = 201;
         break;
