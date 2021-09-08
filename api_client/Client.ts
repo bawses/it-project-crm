@@ -42,7 +42,7 @@ export const doFetch = async (
     // Use the right url for each fetchType
     switch (fetchType) {
       case RequestType.POST: {
-        url = `/api/${dataType}s`;
+        url = `/api/${dataType}s/signup`;      
         break;
       }
       case RequestType.GET: {
@@ -61,7 +61,7 @@ export const doFetch = async (
         throw new Error("400");
       }
     }
-
+    console.log(url)
     // Do the API call
     var response = await fetch(url, {
       method: fetchType,
@@ -71,7 +71,7 @@ export const doFetch = async (
       },
       body: body,
     });
-
+    console.log(response)
     // Throw error with status code in case Fetch API call failed
     if (!response.ok) {
       throw new Error(`${response.status}`);
