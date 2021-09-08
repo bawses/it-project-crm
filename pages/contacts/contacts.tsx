@@ -6,7 +6,7 @@ import ContactsTableCategory, { CategoryButton } from '../../components/tables/c
 import ContactsTableSort, { SortType } from '../../components/tables/contactsTableSort';
 import ContactsTableTags, { SelectValue } from '../../components/tables/contactsTableTags';
 import { IManualContact } from '../../lib/DataTypes';
-import { getAllManualContacts } from '../../middleware/ManualContactQueries';
+import { getAllManualContacts } from '../../api_client/ManualContactQueries';
 import Layout from "../../components/navLayout/Layout";
 
 async function getData(setAllContacts: (contacts: IManualContact[]) => void, setDisplayContacts: (contacts: IManualContact[]) => void) {
