@@ -1,5 +1,5 @@
 import { DataType, IAddedContact } from "../lib/DataTypes";
-import { createDbRecord, searchDb, getDbRecordById, updateDbRecord, deleteDbRecord } from "./Queries";
+import { createDbRecord, searchDb, getDbRecordById, updateDbRecord, deleteDbRecord } from "./Client";
 
 export const createAddedContact = (dataObj: IAddedContact) => {
   return createDbRecord(DataType.AddedContact, dataObj);

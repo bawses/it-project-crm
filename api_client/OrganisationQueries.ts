@@ -1,5 +1,5 @@
 import { DataType, IOrganisation } from "../lib/DataTypes";
-import { createDbRecord, searchDb, getDbRecordById, updateDbRecord, deleteDbRecord } from "./Queries";
+import { createDbRecord, searchDb, getDbRecordById, updateDbRecord, deleteDbRecord } from "./Client";
 
 export const createOrganisation = (dataObj: IOrganisation) => {
   return createDbRecord(DataType.Organisation, dataObj);

@@ -1,5 +1,5 @@
 import { DataType, IUser } from "../lib/DataTypes";
-import { createDbRecord, searchDb, getDbRecordById, updateDbRecord, deleteDbRecord } from "./Queries";
+import { createDbRecord, searchDb, getDbRecordById, updateDbRecord, deleteDbRecord } from "./Client";
 
 export const createUser = (newObj: IUser) => {
   return createDbRecord(DataType.User, newObj);
