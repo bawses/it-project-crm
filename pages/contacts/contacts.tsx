@@ -105,7 +105,7 @@ export default function Contacts() {
           </Box>
           <Box boxShadow={3}>
             {/* List of contacts */}
-            <ContactsTable contacts={displayContacts} />
+            <ContactsTable contacts={displayContacts} searchResultVariant={false} />
           </Box>
         </Box>
       </Box>
