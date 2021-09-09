@@ -1,10 +1,12 @@
-import { Box, Typography } from "@material-ui/core";
+import { Box, Typography, useMediaQuery } from "@material-ui/core";
+import { useTheme } from "@material-ui/core/styles";
 import { ChangeEvent, useEffect, useState } from "react";
 import { getAllManualContacts } from "../../api_client/ManualContactQueries";
 import Layout from "../../components/navLayout/Layout";
 import ContactsTable from "../../components/tables/contactsTable";
 import ContactsTableSort, { SortType } from "../../components/tables/contactsTableSort";
-import SearchCreateContactButton from "../../components/tables/SearchCreateContactButton";
+import CreateContactButtonLarge from "../../components/tables/CreateContactButtonLarge";
+import CreateContactButtonSmall from "../../components/tables/CreateContactButtonSmall";
 import { IManualContact } from '../../lib/DataTypes';
 
 async function getData(setAllContacts: (contacts: IManualContact[]) => void) {
@@ -34,17 +36,24 @@ export default function SearchPage() {
     setSortValue(event.target.value as SortType)
   }
 
+  // Adjust components based on screen size
+  const theme = useTheme()
+  const bigScreen = useMediaQuery(theme.breakpoints.up("md"))
+
   return (
     <Layout>
       <Box display="flex" flexDirection="row" justifyContent="centre" mx={{ sm: 0, md: 8, lg: 20 }} mt={5}>
         {/* Entire table, including sort and search results */}
-        <Box display="flex" flexDirection="column" mr={2} width="90%">
-          <Box fontSize={26}>
+        <Box display="flex" flexDirection="column" mr={bigScreen ? 2 : 0} width="100%">
+          <Box fontSize={bigScreen ? 26 : 18} ml={bigScreen ? 0 : 1}>
             Search results for:
           </Box>
-          <Box display="flex" flexDirection="row-reverse" py={2}>
+          <Box display="flex" py={2}>
+            <Box flexGrow={1} ml={bigScreen ? 0 : 1}>
+              {!bigScreen && <CreateContactButtonSmall />}
+            </Box>
             {/* Sort component */}
-            <Box width="50%">
+            <Box flexGrow={1}>
               <ContactsTableSort sortValue={sortValue} handleChange={handleNewSortVal} />
             </Box>
           </Box>
@@ -53,9 +62,7 @@ export default function SearchPage() {
             <ContactsTable contacts={contacts} searchResultVariant={true} />
           </Box>
         </Box>
-        <Box mt={18}>
-          <SearchCreateContactButton />
-        </Box>
+        {bigScreen && <Box mt={18}><CreateContactButtonLarge /></Box>}
       </Box>
     </Layout>
   )

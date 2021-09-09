@@ -1,5 +1,5 @@
 import { Box, Button, Theme, Typography } from "@material-ui/core";
-import { makeStyles } from "@material-ui/styles";
+import { makeStyles } from "@material-ui/core/styles";
 import PersonAddIcon from '@material-ui/icons/PersonAdd';
 import { COLORS } from "../../lib/Colors";
 
@@ -12,7 +12,7 @@ const useStyles = makeStyles((theme: Theme) => ({
   }
 }))
 
-export default function SearchCreateContactButton() {
+export default function CreateContactButtonLarge() {
   const classes = useStyles()
 
   return (
