@@ -1,16 +1,29 @@
-import { Paper, Table, TableBody, TableContainer } from '@material-ui/core';
+import { FormLabelBaseProps, Paper, Table, TableBody, TableContainer } from '@material-ui/core';
 import ContactsTableRow from './contactsTableRow';
 import { IManualContact } from '../../lib/DataTypes';
 
 interface ContactsTableProps {
-  contacts: IManualContact[]
+  contacts: IManualContact[],
+  searchResultVariant: boolean
 }
 
-export default function ContactsTable({ contacts }: ContactsTableProps) {
+function handleStar() { }
+
+function handleAdd() { }
+
+export default function ContactsTable({ contacts, searchResultVariant }: ContactsTableProps) {
   const rows: JSX.Element[] = []
   for (const contact of contacts) {
     const key = contact._id || contact.name.firstName
-    rows.push(<ContactsTableRow key={key} name={contact.name.firstName + " " + contact.name.lastName} role={contact.job} isStarred={contact.starred || false} />)
+    rows.push(
+      <ContactsTableRow
+        key={key}
+        name={contact.name.firstName + " " + contact.name.lastName}
+        role={contact.job}
+        isStarred={contact.starred || false}
+        {...(searchResultVariant ? { handleAdd: handleAdd } : { handleStar: handleStar })}
+      />
+    )
   }
 
   return (
