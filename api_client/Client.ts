@@ -37,12 +37,17 @@ export const doFetch = async (
   dataObj?: DataInterface
 ): Promise<any> => {
   var url: string = "";
-  var body = dataObj ? JSON.stringify(dataObj) : undefined;
+  var body = dataObj ?  JSON.stringify(dataObj) : undefined;
   try {
     // Use the right url for each fetchType
     switch (fetchType) {
       case RequestType.POST: {
-        url = `/api/${dataType}s/signup`;      
+        url = `/api/${dataType}s`;   
+
+        if (dataType === 'user'){
+          url = url.concat('/signup');
+          console.log(url);
+        }   
         break;
       }
       case RequestType.GET: {
@@ -61,7 +66,7 @@ export const doFetch = async (
         throw new Error("400");
       }
     }
-    console.log(url)
+
     // Do the API call
     var response = await fetch(url, {
       method: fetchType,
@@ -84,10 +89,8 @@ export const doFetch = async (
     }
   } catch (error) {
     /* If an error occurs anywhere in the process of making an API call, log it */
-    console.error(error);
     console.error(`Failed to do operation: ${fetchType} for ${dataType}`);
-    // console.error(`Object`)
-    return null;
+    return error;
   }
   return data;
 };

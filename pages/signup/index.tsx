@@ -152,10 +152,12 @@ export default function SignUpPage() {
       passwordHash: userState.password,
     })
       .then((res) => {
+        console.log("We got something!")
         console.log(res);
         router.replace("/profile");
       })
       .catch((err) => {
+        console.log("We got a fucking error");
         console.log(err);
       });
   };

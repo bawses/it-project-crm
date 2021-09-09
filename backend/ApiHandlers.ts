@@ -3,7 +3,7 @@ import connectToDatabase from "./dbConnect";
 import { Request, Response } from "express";
 import { Database } from "./models/DbMapping";
 import { DataType, RequestType } from "../lib/DataTypes";
-import { PermDeviceInformationTwoTone } from "@material-ui/icons";
+import { ContactSupportOutlined, PermDeviceInformationTwoTone, Restaurant } from "@material-ui/icons";
 
 /* API handler for [ID] pages, allowing GET / PUT / DELETE requests */
 export async function idHandler(req: Request, res: Response, dataType: DataType): Promise<Response> {
@@ -49,13 +49,19 @@ export async function idHandler(req: Request, res: Response, dataType: DataType)
 }
 
 /* API handler for INDEX pages, allowing GET / POST requests */
-export async function indexHandler(req: Request, res: Response, dataType: DataType, validate?: any): Promise<Response> {
+export async function indexHandler(req: Request, res: Response, dataType: DataType): Promise<Response> {
   const requestType = req.method;
   req.body = req.body || {};
 
+  // Connect to Database and select appropriate collection for use according to datatype
   await connectToDatabase();
   const dbCollection: Model<any, {}, {}> = Database[dataType];
-
+  if (dataType === "user" && requestType === "POST"){
+    let user = await dbCollection.findOne({email: req.body.email});
+    if (user){
+      throw new Error("Error occured. User exists.");
+    }
+  }
   var dbResponse;
   var successStatus: number;
   try {
@@ -68,11 +74,6 @@ export async function indexHandler(req: Request, res: Response, dataType: DataTy
       }
       /* Create a new document/record in the database *assumes no duplicates* */
       case RequestType.POST: {
-        let document = await dbCollection.find({email: req.body.email});
-        console.log(document.length)
-        if (document.length !== 0){
-          return res.status(422).json({message: "User already exists, cannot create under same email.", success: false})
-        }
         dbResponse = await dbCollection.create(req.body);
         successStatus = 201;
         break;
@@ -85,7 +86,7 @@ export async function indexHandler(req: Request, res: Response, dataType: DataTy
       throw new Error("Error occured in database operations.");
     }
   } catch (error) {
-    return res.status(400).json({ success: false });
+    return res.status(400).json({ success: false, error: error });
   }
   return res.status(successStatus).json({ success: true, data: dbResponse });
 }
