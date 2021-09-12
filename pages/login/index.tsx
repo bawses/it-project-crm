@@ -103,6 +103,7 @@ export default function LoginPage() {
   const theme = useTheme();
   const isSmall = useMediaQuery(theme.breakpoints.down("sm"));
 
+  const [showError, setError] = useState("");
   const [isLoading, setIsLoading] = useState(true);
   const router = useRouter();
 
@@ -127,8 +128,8 @@ export default function LoginPage() {
     });
 
     if (result?.error) {
-      console.log("Invalid User Credentials Entered");
       console.log(result.error);
+      setError("Invalid User Credentials Entered")
     } else {
       router.replace("/profile");
     }
@@ -214,6 +215,7 @@ export default function LoginPage() {
             >
               Log In
             </Button>
+            <h4 style = {{margin: "0%", color: "red"}}>{showError}</h4>
             <div className={classes.links}>
               <Typography component="p">Don&apos;t have an account yet?</Typography>
               <Typography component="p">

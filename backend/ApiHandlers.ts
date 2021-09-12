@@ -3,7 +3,6 @@ import connectToDatabase from "./dbConnect";
 import { Request, Response } from "express";
 import { Database } from "./models/DbMapping";
 import { DataType, RequestType } from "../lib/DataTypes";
-import { ContactSupportOutlined, PermDeviceInformationTwoTone, Restaurant } from "@material-ui/icons";
 
 /* API handler for [ID] pages, allowing GET / PUT / DELETE requests */
 export async function idHandler(req: Request, res: Response, dataType: DataType): Promise<Response> {
@@ -59,7 +58,7 @@ export async function indexHandler(req: Request, res: Response, dataType: DataTy
   if (dataType === "user" && requestType === "POST"){
     let user = await dbCollection.findOne({email: req.body.email});
     if (user){
-      throw new Error("Error occured. User exists.");
+      return res.status(400).json({ success: false, error: "User with email already exists!" });
     }
   }
   var dbResponse;

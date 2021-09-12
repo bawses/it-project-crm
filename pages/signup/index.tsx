@@ -113,6 +113,7 @@ export default function SignUpPage() {
   const theme = useTheme();
   const isSmall = useMediaQuery(theme.breakpoints.down("sm"));
 
+  const [showError, setError] = useState("");
   const [isLoading, setIsLoading] = useState(true);
   const router = useRouter();
   const [userState, setUserState] = useState(initialState);
@@ -152,13 +153,15 @@ export default function SignUpPage() {
       passwordHash: userState.password,
     })
       .then((res) => {
-        console.log("We got something!")
         console.log(res);
+        if (!res.success){
+          throw new Error(`${res.error}`)
+        }
         router.replace("/profile");
       })
       .catch((err) => {
-        console.log("We got a fucking error");
         console.log(err);
+        setError(err.message);
       });
   };
 
@@ -270,6 +273,7 @@ export default function SignUpPage() {
             >
               Sign Up
             </Button>
+            <h4 style = {{margin: "0%", color: "red"}}>{showError}</h4>
             <div className={classes.links}>
               <div>
                 <Typography component="p">
