@@ -25,7 +25,7 @@ async function getData(setAllContacts: (contacts: IManualContact[]) => void, set
   }
 }
 
-const sortFunctions = {
+export const sortFunctions = {
   [SortType.FirstName]: (a: IManualContact, b: IManualContact) => (a.name.firstName > b.name.firstName) ? 1 : -1,
   [SortType.LastName]: (a: IManualContact, b: IManualContact) => (a.name.lastName > b.name.lastName) ? 1 : -1,
   [SortType.Role]: (a: IManualContact, b: IManualContact) => {

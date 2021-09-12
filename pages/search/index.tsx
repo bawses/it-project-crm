@@ -1,6 +1,6 @@
 import { Box, Typography, useMediaQuery } from "@material-ui/core";
 import { useTheme } from "@material-ui/core/styles";
-import { ChangeEvent, useEffect, useState } from "react";
+import { ChangeEvent, useEffect, useMemo, useState } from "react";
 import { getAllManualContacts } from "../../api_client/ManualContactQueries";
 import Layout from "../../components/navLayout/Layout";
 import ContactsTable from "../../components/tables/contactsTable";
@@ -8,6 +8,7 @@ import ContactsTableSort, { SortType } from "../../components/tables/contactsTab
 import CreateContactButtonLarge from "../../components/tables/CreateContactButtonLarge";
 import CreateContactButtonSmall from "../../components/tables/CreateContactButtonSmall";
 import { IManualContact } from '../../lib/DataTypes';
+import { sortFunctions } from "../contacts/contacts";
 
 async function getData(setAllContacts: (contacts: IManualContact[]) => void) {
   try {
@@ -25,12 +26,22 @@ async function getData(setAllContacts: (contacts: IManualContact[]) => void) {
 
 export default function SearchPage() {
   const [sortValue, setSortValue] = useState<SortType>(SortType.None)
-  const [contacts, setContacts] = useState<IManualContact[]>([])
+  const [allContacts, setAllContacts] = useState<IManualContact[]>([])
 
   // Get contacts data
   useEffect(() => {
-    getData(setContacts)
+    getData(setAllContacts)
   }, [])
+
+  // Sort the contacts table based on changes to the sort value
+  const displayData = useMemo(() => {
+    if (sortValue !== SortType.None) {
+      return [...allContacts].sort(sortFunctions[sortValue])
+    }
+    return allContacts
+  },
+    [allContacts, sortValue]
+  )
 
   function handleNewSortVal(event: ChangeEvent<{ value: unknown }>) {
     setSortValue(event.target.value as SortType)
@@ -59,7 +70,7 @@ export default function SearchPage() {
           </Box>
           {/* Search results */}
           <Box boxShadow={3}>
-            <ContactsTable contacts={contacts} searchResultVariant={true} />
+            <ContactsTable contacts={displayData} searchResultVariant={true} />
           </Box>
         </Box>
         {bigScreen && <Box mt={18}><CreateContactButtonLarge /></Box>}
