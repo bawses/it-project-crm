@@ -125,7 +125,8 @@ export default function SignUpPage() {
   const handleSubmit = (e: MouseEvent<HTMLButtonElement, globalThis.MouseEvent>) => {
     // make sure password is the same as confirm password
     if (userState.password !== userState.confirmPassword) {
-      alert("Passwords are not identical. Try again.");
+      //alert("Passwords are not identical. Try again.");
+      setError("Passwords are not identical. Try again.")
       setUserState({
         firstName: userState.firstName,
         lastName: userState.lastName,
