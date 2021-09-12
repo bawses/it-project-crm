@@ -1,7 +1,7 @@
 import Container from "@material-ui/core/Container";
 import Typography from "@material-ui/core/Typography";
 import Box from "@material-ui/core/Box";
-import CustomButton from "../components/button";
+import TextButton from "../components/buttons/TextButton";
 import { COLORS } from "../lib/Colors";
 
 export default function Index() {
@@ -13,7 +13,7 @@ export default function Index() {
         </Typography>
       </Box>
 
-      <CustomButton color={COLORS.primaryBlue} textColor={COLORS.white} title="Nav bar blue" onClick={() => {}} />
+      <TextButton color={COLORS.primaryBlue} textColor={COLORS.white} title="Nav bar blue" onClick={() => {}} />
     </Container>
   );
 }

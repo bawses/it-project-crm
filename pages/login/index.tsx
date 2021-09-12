@@ -9,6 +9,7 @@ import { Typography, TextField, Grid, Paper, Button } from "@material-ui/core";
 import { makeStyles, createStyles, Theme } from "@material-ui/core/styles";
 import { COLORS } from "../../lib/Colors";
 import PageLoadingBar from "../../components/pageLoadingBar";
+import AuthButton from "../../components/buttons/AuthButton";
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -204,16 +205,7 @@ export default function LoginPage() {
                 placeholder="Enter your password here"
               />
             </Grid>
-
-            <Button
-              fullWidth
-              onClick={handleSubmit}
-              variant="contained"
-              className={classes.btn}
-              style={{ position: "relative", top: "5px", bottom: "5px" }}
-            >
-              Log In
-            </Button>
+            <AuthButton onClick={handleSubmit} className={classes.btn} title="Log In"/>
             <div className={classes.links}>
               <Typography component="p">Don&apos;t have an account yet?</Typography>
               <Typography component="p">

@@ -1,6 +1,7 @@
 import React, { SyntheticEvent } from "react";
-import { Button, makeStyles } from "@material-ui/core";
+import { makeStyles } from "@material-ui/core";
 import { COLORS } from "../../lib/Colors";
+import TextButton from "./TextButton";
 
 interface EditContactOptionsProps {
   onCancel?: () => void;
@@ -19,23 +20,19 @@ export default function EditContactOptions({
 
   return (
     <div className={classes.formOptions}>
-      <Button
-        variant="contained"
-        type="button"
+      <TextButton
         onClick={onCancel}
         className={`${classes.formButton} ${classes.cancelButton}`}
-      >
-        Cancel
-      </Button>
-      <Button
-        variant="contained"
+        title="Cancel"
+      />
+      <TextButton
         type={toSubmitForm ? "submit" : "button"}
         onClick={onSubmit}
-        color="secondary"
+        color={COLORS.actionOrange}
+        textColor={COLORS.white}
         className={`${classes.formButton} ${classes.submitButton}`}
-      >
-        {submitLabel}
-      </Button>
+        title={submitLabel}
+      />
     </div>
   );
 }
