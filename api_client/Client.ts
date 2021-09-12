@@ -2,17 +2,26 @@ import { mutate } from "swr";
 import { DataType, DataInterface, RequestType } from "../lib/DataTypes";
 
 /* Makes an API call to add a new entry into the database for the given dataType */
-export const createDbRecord = async (dataType: DataType, dataObj: DataInterface): Promise<DataInterface | null> => {
+export const createDbRecord = async (
+  dataType: DataType,
+  dataObj: DataInterface
+): Promise<DataInterface | undefined> => {
   return doFetch(RequestType.POST, dataType, undefined, dataObj);
 };
 
 /* Makes an API call to search through all existing entries in the database for the given dataType */
-export const searchDb = async (dataType: DataType, dataObj?: DataInterface): Promise<DataInterface[] | null> => {
+export const searchDb = async (
+  dataType: DataType,
+  dataObj?: DataInterface
+): Promise<DataInterface[] | undefined> => {
   return doFetch(RequestType.GET, dataType, undefined, dataObj);
 };
 
 /* Makes an API call to find an existing entry in the database for the given dataType */
-export const getDbRecordById = async (dataType: DataType, recordId: string): Promise<DataInterface | null> => {
+export const getDbRecordById = async (
+  dataType: DataType,
+  recordId: string
+): Promise<DataInterface | undefined> => {
   return doFetch(RequestType.GET, dataType, recordId, undefined);
 };
 
@@ -21,12 +30,15 @@ export const updateDbRecord = async (
   dataType: DataType,
   recordId: string,
   dataObj: DataInterface
-): Promise<DataInterface | null> => {
+): Promise<DataInterface | undefined> => {
   return doFetch(RequestType.PUT, dataType, recordId, dataObj);
 };
 
 /* Makes an API call to delete an existing entry in the database for the given dataType */
-export const deleteDbRecord = async (dataType: DataType, recordId: string): Promise<DataInterface | null> => {
+export const deleteDbRecord = async (
+  dataType: DataType,
+  recordId: string
+): Promise<DataInterface | undefined> => {
   return doFetch(RequestType.DELETE, dataType, recordId, undefined);
 };
 
@@ -37,17 +49,16 @@ export const doFetch = async (
   dataObj?: DataInterface
 ): Promise<any> => {
   var url: string = "";
-  var body = dataObj ?  JSON.stringify(dataObj) : undefined;
+  var body = dataObj ? JSON.stringify(dataObj) : undefined;
   try {
     // Use the right url for each fetchType
     switch (fetchType) {
       case RequestType.POST: {
-        url = `/api/${dataType}s`;   
-
-        if (dataType === 'user'){
-          url = url.concat('/signup');
+        url = `/api/${dataType}s`;
+        if (dataType === DataType.User) {
+          url = url.concat("/signup");
           console.log(url);
-        }   
+        }
         break;
       }
       case RequestType.GET: {
@@ -76,7 +87,7 @@ export const doFetch = async (
       },
       body: body,
     });
-    console.log(response)
+    console.log(response);
     // Throw error with status code in case Fetch API call failed
     if (!response.ok) {
       throw new Error(`${response.status}`);
@@ -89,8 +100,9 @@ export const doFetch = async (
     }
   } catch (error) {
     /* If an error occurs anywhere in the process of making an API call, log it */
+    console.error(error);
     console.error(`Failed to do operation: ${fetchType} for ${dataType}`);
-    return error;
+    return undefined;
   }
   return data;
 };
