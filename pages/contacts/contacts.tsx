@@ -5,7 +5,8 @@ import ContactsTable from '../../components/tables/contactsTable';
 import ContactsTableCategory, { CategoryButton } from '../../components/tables/contactsTableCategory';
 import ContactsTableSort, { SortType } from '../../components/tables/contactsTableSort';
 import ContactsTableTags, { SelectValue } from '../../components/tables/contactsTableTags';
-import { IManualContact } from '../../lib/DataTypes';
+import { IManualContact, IUser } from '../../lib/DataTypes';
+import { updateUser } from "../../api_client/UserQueries";
 import { getAllManualContacts } from '../../api_client/ManualContactQueries';
 import Layout from "../../components/navLayout/Layout";
 
@@ -40,6 +41,24 @@ export const sortFunctions = {
     }
     return -1
   }
+}
+
+// Swaps the given contact in the given contact list if it can find it, and then returns the list
+function swapContactInList(contactList: IManualContact[], contact: IManualContact) {
+  if (contact._id === undefined) {
+    return contactList
+  }
+
+  for (let i = 0; i < contactList.length; i++) {
+    if (contactList[i]._id) {
+      if (contactList[i]._id === contact._id) {
+        contactList[i] = contact
+        break
+      }
+    }
+  }
+
+  return contactList
 }
 
 export default function Contacts() {
@@ -89,6 +108,31 @@ export default function Contacts() {
     setTags(newTags)
   }
 
+  async function handleStarClick(target: IManualContact) {
+    if (!target._id) {
+      return false
+    }
+
+    try {
+      if (target.starred === undefined) {
+        target.starred = true
+      } else {
+        target.starred = !(target.starred)
+      }
+
+      const response = await updateUser(target._id, target as IUser)
+      if (response) {
+        const testList = [...allContacts]
+        setAllContacts(swapContactInList(testList, response as IManualContact))
+        return true
+      }
+
+      return false
+    } catch (error) {
+      console.error("Error updating user starred status")
+    }
+  }
+
   return (
     <Layout>
       <Box>
@@ -105,7 +149,7 @@ export default function Contacts() {
           </Box>
           <Box boxShadow={3}>
             {/* List of contacts */}
-            <ContactsTable contacts={displayContacts} searchResultVariant={false} />
+            <ContactsTable contacts={displayContacts} handleRowButtonClick={handleStarClick} />
           </Box>
         </Box>
       </Box>

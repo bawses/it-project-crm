@@ -2,20 +2,47 @@ import { Box, Typography, useMediaQuery } from "@material-ui/core";
 import { useTheme } from "@material-ui/core/styles";
 import { ChangeEvent, useEffect, useMemo, useState } from "react";
 import { getAllManualContacts } from "../../api_client/ManualContactQueries";
+import { updateUser } from "../../api_client/UserQueries";
 import Layout from "../../components/navLayout/Layout";
-import ContactsTable from "../../components/tables/contactsTable";
+import ContactsTable, { IdToContactMap } from "../../components/tables/contactsTable";
 import ContactsTableSort, { SortType } from "../../components/tables/contactsTableSort";
 import CreateContactButtonLarge from "../../components/tables/CreateContactButtonLarge";
 import CreateContactButtonSmall from "../../components/tables/CreateContactButtonSmall";
-import { IManualContact } from '../../lib/DataTypes';
+import { IManualContact, IUser } from '../../lib/DataTypes';
 import { sortFunctions } from "../contacts/contacts";
 
-async function getData(setAllContacts: (contacts: IManualContact[]) => void) {
+// Creates a map of contact ids to the respective contact
+function contactListToMap(contactList: IManualContact[]) {
+  const contactMap: IdToContactMap = {}
+  for (const contact of contactList) {
+    if (contact._id) {
+      contactMap[contact._id] = contact
+    }
+  }
+
+  return contactMap
+}
+
+async function getSearchResults(setSearchResults: (contacts: IManualContact[]) => void) {
   try {
     const data = await getAllManualContacts()
     if (data) {
-      // Save all contacts
-      setAllContacts(data as IManualContact[])
+      // Save all search results
+      setSearchResults(data as IManualContact[])
+    } else {
+      console.error("Error: Could not fetch search result data")
+    }
+  } catch (error) {
+    console.error(error)
+  }
+}
+
+async function getAddedContacts(setAddedContacts: (contacts: IdToContactMap) => void) {
+  try {
+    const data = await getAllManualContacts()
+    if (data) {
+      // Save all added contacts as a map to their respective ids
+      setAddedContacts(contactListToMap(data as IManualContact[]))
     } else {
       console.error("Error: Could not fetch contact data")
     }
@@ -24,27 +51,44 @@ async function getData(setAllContacts: (contacts: IManualContact[]) => void) {
   }
 }
 
+async function handleAdd(target: IManualContact) {
+  return true
+}
+
 export default function SearchPage() {
   const [sortValue, setSortValue] = useState<SortType>(SortType.None)
-  const [allContacts, setAllContacts] = useState<IManualContact[]>([])
+  const [searchResults, setSearchResults] = useState<IManualContact[]>([])
+  const [addedContacts, setAddedContacts] = useState<IdToContactMap>({})
 
   // Get contacts data
   useEffect(() => {
-    getData(setAllContacts)
+    // Placeholder for search results
+    getSearchResults(setSearchResults)
+
+    // Get contacts already added
+    getAddedContacts(setAddedContacts)
   }, [])
 
   // Sort the contacts table based on changes to the sort value
   const displayData = useMemo(() => {
     if (sortValue !== SortType.None) {
-      return [...allContacts].sort(sortFunctions[sortValue])
+      return [...searchResults].sort(sortFunctions[sortValue])
     }
-    return allContacts
+    return searchResults
   },
-    [allContacts, sortValue]
+    [searchResults, sortValue]
   )
 
   function handleNewSortVal(event: ChangeEvent<{ value: unknown }>) {
     setSortValue(event.target.value as SortType)
+  }
+
+  function handleContactAdd(target: IManualContact) {
+    if (target._id) {
+      const newMap = { ...addedContacts }
+      newMap[target._id] = target
+      setAddedContacts(newMap)
+    }
   }
 
   // Adjust components based on screen size
@@ -70,7 +114,7 @@ export default function SearchPage() {
           </Box>
           {/* Search results */}
           <Box boxShadow={3}>
-            <ContactsTable contacts={displayData} searchResultVariant={true} />
+            <ContactsTable contacts={displayData} handleRowButtonClick={handleAdd} idToContactMap={addedContacts} />
           </Box>
         </Box>
         {bigScreen && <Box mt={18}><CreateContactButtonLarge /></Box>}
