@@ -82,6 +82,11 @@ export interface IUser {
   organisations?: OrganisationId[];
 }
 
+export interface ErrorInterface {
+  status: number;
+  message?: string;
+}
+
 export type DataInterface = IUser | IOrganisation | IManualContact | IAddedContact;
 
 export enum RequestType {

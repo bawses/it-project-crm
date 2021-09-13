@@ -19,7 +19,7 @@ function validateCreateObject(dataObj: IUser) : boolean{
 export const createUser = async (dataObj: IUser) => {
   // Don't forget to hash the password!
   if (!validateCreateObject(dataObj)){
-    return new Error("Credentials entered in invalid format!");
+    return {success: false, error: "Credentials entered are of invalid format!"};
   }
   var hashedPassword, response;
   hashedPassword = await hashPassword(String(dataObj.passwordHash), 10)
