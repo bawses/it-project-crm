@@ -114,6 +114,7 @@ export default function SignUpPage() {
   const theme = useTheme();
   const isSmall = useMediaQuery(theme.breakpoints.down("sm"));
 
+  const [showError, setError] = useState("");
   const [isLoading, setIsLoading] = useState(true);
   const router = useRouter();
   const [userState, setUserState] = useState(initialState);
@@ -125,7 +126,8 @@ export default function SignUpPage() {
   const handleSubmit = (e: MouseEvent<HTMLButtonElement, globalThis.MouseEvent>) => {
     // make sure password is the same as confirm password
     if (userState.password !== userState.confirmPassword) {
-      alert("Passwords are not identical. Try again.");
+      //alert("Passwords are not identical. Try again.");
+      setError("Passwords are not identical. Try again.")
       setUserState({
         firstName: userState.firstName,
         lastName: userState.lastName,
@@ -153,13 +155,15 @@ export default function SignUpPage() {
       passwordHash: userState.password,
     })
       .then((res) => {
-        console.log("We got something!")
         console.log(res);
+        if (!res.success){
+          throw new Error(`${res.error}`)
+        }
         router.replace("/profile");
       })
       .catch((err) => {
-        console.log("We got a fucking error");
         console.log(err);
+        setError(err.message);
       });
   };
 
@@ -263,6 +267,7 @@ export default function SignUpPage() {
               />
             </Grid>
             <AuthButton onClick={handleSubmit} className={classes.btn} title="Sign Up"/>
+            <h4 style = {{margin: "0%", color: "red"}}>{showError}</h4>
             <div className={classes.links}>
               <div>
                 <Typography component="p">

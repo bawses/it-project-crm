@@ -1,8 +1,8 @@
 import { mutate } from "swr";
-import { DataType, DataInterface, RequestType } from "../lib/DataTypes";
+import { DataType, DataInterface, RequestType, ErrorInterface } from "../lib/DataTypes";
 
 /* Makes an API call to add a new entry into the database for the given dataType */
-export const createDbRecord = async (dataType: DataType, dataObj: DataInterface): Promise<DataInterface | null> => {
+export const createDbRecord = async (dataType: DataType, dataObj: DataInterface): Promise<DataInterface | null | any> => {
   return doFetch(RequestType.POST, dataType, undefined, dataObj);
 };
 
@@ -76,21 +76,26 @@ export const doFetch = async (
       },
       body: body,
     });
-    console.log(response)
+
     // Throw error with status code in case Fetch API call failed
-    if (!response.ok) {
-      throw new Error(`${response.status}`);
-    }
+    
+
     // Extract the data out of the JSON object in the form of a JavaScript object.
-    var { data } = await response.json();
+    var result = await response.json();
+    console.log(result);
+    if (!result.success){
+      console.log(result.error);
+      console.log(new Error(`${result.error}`))
+    }
+  
     // If this is an update request, update the local data without revalidation
     if (fetchType === RequestType.PUT) {
-      mutate(`/api/${dataType}s/${recordId}`, data, false);
+      mutate(`/api/${dataType}s/${recordId}`, result, false);
     }
   } catch (error) {
     /* If an error occurs anywhere in the process of making an API call, log it */
     console.error(`Failed to do operation: ${fetchType} for ${dataType}`);
     return error;
   }
-  return data;
+  return result;
 };
