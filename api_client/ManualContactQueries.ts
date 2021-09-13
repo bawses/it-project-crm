@@ -10,7 +10,7 @@ export const getAllManualContacts = () => {
 };
 
 export const searchManualContacts = (dataObj: IManualContact) => {
-  return searchDb(DataType.ManualContact, dataObj);
+  return searchDb<IManualContact[]>(DataType.ManualContact, dataObj);
 }
 
 export const getManualContactById = (id: string) => {
@@ -18,7 +18,7 @@ export const getManualContactById = (id: string) => {
 };
 
 export const updateManualContact = (id: string, dataObj: IManualContact) => {
-  return updateDbRecord(DataType.ManualContact, id, dataObj);
+  return updateDbRecord<IManualContact>(DataType.ManualContact, id, dataObj);
 };
 
 export const deleteManualContact = (id: string) => {
