@@ -3,6 +3,8 @@ import stockImage from '../../public/stockImage.jpg'
 import StarsIcon from '@material-ui/icons/Stars';
 import { COLORS } from "../../lib/Colors";
 import { makeStyles } from "@material-ui/styles";
+import React from "react";
+import TextButton from "../buttons/TextButton";
 
 export interface ContactsTableRowProps {
   name: string,
@@ -32,7 +34,7 @@ export default function ContactsTableRow({ name, role, isStarred, handleStar, ha
     }
     buttonComponent = <IconButton><StarsIcon htmlColor={starColor} /></IconButton>
   } else {
-    buttonComponent = <Button variant="contained" className={classes.addBtn}>Add</Button>
+    buttonComponent = <TextButton className={classes.addBtn} title="Add" />
   }
 
   return (

@@ -2,7 +2,7 @@ import Container from "@material-ui/core/Container";
 import Typography from "@material-ui/core/Typography";
 import Box from "@material-ui/core/Box";
 import { COLORS } from "../lib/Colors";
-import CustomButton from "../components/button";
+import TextButton from "../components/buttons/TextButton";
 
 export default function Colours() {
   return (
@@ -27,40 +27,40 @@ export default function Colours() {
         consectetur, neque doloribus, cupiditate numquam dignissimos laborum
         fugiat deleniti? Eum quasi quidem quibusdam.
       </Typography>
-      <CustomButton
+      <TextButton
         color={COLORS.primaryBlue}
         textColor={COLORS.white}
         title="Nav bar blue"
         onClick={() => {}}
       />
-      <CustomButton
+      <TextButton
         color={COLORS.actionOrange}
         textColor={COLORS.white}
         title="Action orange"
         onClick={() => {}}
       />
-      <CustomButton
+      <TextButton
         color={COLORS.primaryBlueLight}
         title="Tag light blue"
         onClick={() => {}}
       />
-      <CustomButton
+      <TextButton
         color={COLORS.starredYellow}
         title="Starred yellow"
         onClick={() => {}}
       />
-      <CustomButton
+      <TextButton
         color={COLORS.primaryBlueDark}
         textColor={COLORS.white}
         title="Primary blue dark"
         onClick={() => {}}
       />
-      <CustomButton
+      <TextButton
         color={COLORS.lightGrey}
         title="Light grey"
         onClick={() => {}}
       />
-      <CustomButton
+      <TextButton
         color={COLORS.inactiveGrey}
         title="Inactive grey"
         onClick={() => {}}

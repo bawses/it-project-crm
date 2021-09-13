@@ -12,6 +12,7 @@ import { Typography, TextField, Grid, Paper, Button } from "@material-ui/core";
 import { makeStyles, createStyles, Theme } from "@material-ui/core/styles";
 import { COLORS } from "../../lib/Colors";
 import PageLoadingBar from "../../components/pageLoadingBar";
+import AuthButton from "../../components/buttons/AuthButton";
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -265,15 +266,7 @@ export default function SignUpPage() {
                 placeholder="Confirm Password"
               />
             </Grid>
-            <Button
-              onClick={handleSubmit}
-              fullWidth
-              variant="contained"
-              className={classes.btn}
-              style={{ position: "relative", top: "5px", bottom: "5px", textTransform: "none" }}
-            >
-              Sign Up
-            </Button>
+            <AuthButton onClick={handleSubmit} className={classes.btn} title="Sign Up"/>
             <h4 style = {{margin: "0%", color: "red"}}>{showError}</h4>
             <div className={classes.links}>
               <div>
