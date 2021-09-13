@@ -13,11 +13,11 @@ import Layout from "../../components/navLayout/Layout";
 async function getData(setAllContacts: (contacts: IManualContact[]) => void, setDisplayContacts: (contacts: IManualContact[]) => void) {
   try {
     const data = await getAllManualContacts()
-    if (data) {
+    if (data.success) {
       // Save all contacts
-      setAllContacts(data as IManualContact[])
+      setAllContacts(data.data)
       // Make the display contacts initially just a copy of all contacts
-      setDisplayContacts([...data] as IManualContact[])
+      setDisplayContacts([...data.data] as IManualContact[])
     } else {
       console.error("Error: Could not fetch contact data")
     }
@@ -121,9 +121,9 @@ export default function Contacts() {
       }
 
       const response = await updateUser(target._id, target as IUser)
-      if (response) {
+      if (response.success) {
         const testList = [...allContacts]
-        setAllContacts(swapContactInList(testList, response as IManualContact))
+        setAllContacts(swapContactInList(testList, response.data as IManualContact))
         return true
       }
 

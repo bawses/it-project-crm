@@ -7,47 +7,47 @@ export const createDbRecord = async (dataType: DataType, dataObj: DataInterface)
 };
 
 /* Makes an API call to search through all existing entries in the database for the given dataType */
-export const searchDb = async (dataType: DataType, dataObj?: DataInterface): Promise<DataInterface[] | null> => {
-  return doFetch(RequestType.GET, dataType, undefined, dataObj);
+export const searchDb = async <T>(dataType: DataType, dataObj?: DataInterface) => {
+  return doFetch<T>(RequestType.GET, dataType, undefined, dataObj);
 };
 
 /* Makes an API call to find an existing entry in the database for the given dataType */
-export const getDbRecordById = async (dataType: DataType, recordId: string): Promise<DataInterface | null> => {
-  return doFetch(RequestType.GET, dataType, recordId, undefined);
+export const getDbRecordById = async <T>(dataType: DataType, recordId: string) => {
+  return doFetch<T>(RequestType.GET, dataType, recordId, undefined);
 };
 
 /* Makes an API call to edit an existing entry in the database for the given dataType */
-export const updateDbRecord = async (
+export const updateDbRecord = async <T>(
   dataType: DataType,
   recordId: string,
   dataObj: DataInterface
-): Promise<DataInterface | null> => {
-  return doFetch(RequestType.PUT, dataType, recordId, dataObj);
+) => {
+  return doFetch<T>(RequestType.PUT, dataType, recordId, dataObj);
 };
 
 /* Makes an API call to delete an existing entry in the database for the given dataType */
-export const deleteDbRecord = async (dataType: DataType, recordId: string): Promise<DataInterface | null> => {
-  return doFetch(RequestType.DELETE, dataType, recordId, undefined);
+export const deleteDbRecord = async <T>(dataType: DataType, recordId: string) => {
+  return doFetch<T>(RequestType.DELETE, dataType, recordId, undefined);
 };
 
-export const doFetch = async (
+export const doFetch = async <T>(
   fetchType: RequestType,
   dataType: string,
   recordId?: string,
   dataObj?: DataInterface
-): Promise<any> => {
+) => {
   var url: string = "";
-  var body = dataObj ?  JSON.stringify(dataObj) : undefined;
+  var body = dataObj ? JSON.stringify(dataObj) : undefined;
   try {
     // Use the right url for each fetchType
     switch (fetchType) {
       case RequestType.POST: {
-        url = `/api/${dataType}s`;   
+        url = `/api/${dataType}s`;
 
-        if (dataType === 'user'){
+        if (dataType === 'user') {
           url = url.concat('/signup');
           console.log(url);
-        }   
+        }
         break;
       }
       case RequestType.GET: {
@@ -78,16 +78,16 @@ export const doFetch = async (
     });
 
     // Throw error with status code in case Fetch API call failed
-    
+
 
     // Extract the data out of the JSON object in the form of a JavaScript object.
     var result = await response.json();
     console.log(result);
-    if (!result.success){
+    if (!result.success) {
       console.log(result.error);
       console.log(new Error(`${result.error}`))
     }
-  
+
     // If this is an update request, update the local data without revalidation
     if (fetchType === RequestType.PUT) {
       mutate(`/api/${dataType}s/${recordId}`, result, false);
@@ -95,7 +95,7 @@ export const doFetch = async (
   } catch (error) {
     /* If an error occurs anywhere in the process of making an API call, log it */
     console.error(`Failed to do operation: ${fetchType} for ${dataType}`);
-    return error;
+    return { success: false, error: error } as { success: false, error: any };
   }
-  return result;
+  return result as { success: false, error: undefined } | { success: true, data: T };
 };

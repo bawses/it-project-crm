@@ -26,9 +26,9 @@ function contactListToMap(contactList: IManualContact[]) {
 async function getSearchResults(setSearchResults: (contacts: IManualContact[]) => void) {
   try {
     const data = await getAllManualContacts()
-    if (data) {
+    if (data.success) {
       // Save all search results
-      setSearchResults(data as IManualContact[])
+      setSearchResults(data.data)
     } else {
       console.error("Error: Could not fetch search result data")
     }
@@ -40,9 +40,9 @@ async function getSearchResults(setSearchResults: (contacts: IManualContact[]) =
 async function getAddedContacts(setAddedContacts: (contacts: IdToContactMap) => void) {
   try {
     const data = await getAllManualContacts()
-    if (data) {
+    if (data.success) {
       // Save all added contacts as a map to their respective ids
-      setAddedContacts(contactListToMap(data as IManualContact[]))
+      setAddedContacts(contactListToMap(data.data))
     } else {
       console.error("Error: Could not fetch contact data")
     }
