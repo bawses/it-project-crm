@@ -6,10 +6,10 @@ import { updateUser } from "../../api_client/UserQueries";
 import Layout from "../../components/navLayout/Layout";
 import ContactsTable, { IdToContactMap } from "../../components/tables/contactsTable";
 import ContactsTableSort, { SortType } from "../../components/tables/contactsTableSort";
-import CreateContactButtonLarge from "../../components/tables/CreateContactButtonLarge";
-import CreateContactButtonSmall from "../../components/tables/CreateContactButtonSmall";
-import { IManualContact, IUser } from '../../lib/DataTypes';
 import { sortFunctions } from "../contacts/contacts";
+import CreateContactButtonLarge from "../../components/buttons/CreateContactButtonLarge";
+import CreateContactButtonSmall from "../../components/buttons/CreateContactButtonSmall";
+import { IManualContact } from '../../lib/DataTypes';
 
 // Creates a map of contact ids to the respective contact
 function contactListToMap(contactList: IManualContact[]) {

@@ -3,8 +3,9 @@ import stockImage from '../../public/stockImage.jpg'
 import StarsIcon from '@material-ui/icons/Stars';
 import { COLORS } from "../../lib/Colors";
 import { makeStyles } from "@material-ui/styles";
-import { useEffect, useState } from "react";
 import { IManualContact } from "../../lib/DataTypes";
+import React from "react";
+import TextButton from "../buttons/TextButton";
 
 export interface ContactsTableRowProps {
   contact: IManualContact,
@@ -36,14 +37,12 @@ export default function ContactsTableRow({ contact, starVariant, addVariant }: C
   } else {
     // Determine text and status for add variant
     buttonComponent = (
-      <Button
+      <TextButton
         disabled={addVariant?.alreadyAdded}
-        variant="contained"
         className={classes.addBtn}
         onClick={() => addVariant?.handleAdd(contact)}
-      >
-        {addVariant?.alreadyAdded ? "Added" : "Add"}
-      </Button>
+        title={addVariant?.alreadyAdded ? "Added" : "Add"}
+      />
     )
   }
 
