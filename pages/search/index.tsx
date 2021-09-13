@@ -5,8 +5,8 @@ import { getAllManualContacts } from "../../api_client/ManualContactQueries";
 import Layout from "../../components/navLayout/Layout";
 import ContactsTable from "../../components/tables/contactsTable";
 import ContactsTableSort, { SortType } from "../../components/tables/contactsTableSort";
-import CreateContactButtonLarge from "../../components/tables/CreateContactButtonLarge";
-import CreateContactButtonSmall from "../../components/tables/CreateContactButtonSmall";
+import CreateContactButtonLarge from "../../components/buttons/CreateContactButtonLarge";
+import CreateContactButtonSmall from "../../components/buttons/CreateContactButtonSmall";
 import { IManualContact } from '../../lib/DataTypes';
 
 async function getData(setAllContacts: (contacts: IManualContact[]) => void) {
