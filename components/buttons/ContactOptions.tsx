@@ -59,6 +59,8 @@ export default function ContactOptions({
         value={null}
         placeholder={"Added to my contacts"}
         onChange={onChange}
+        isSearchable={false}
+        isClearable={false}
       />
       <IconButton onClick={() => onPressEdit}>
         <Edit className={classes.editIcon} />

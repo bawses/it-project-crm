@@ -110,7 +110,7 @@ export default function ViewContact() {
       try {
         setIsLoading(true);
         const fetchedRawData = await getManualContactById(contactId);
-        const fetchedData = fetchedRawData as IManualContact;
+        const fetchedData = fetchedRawData?.data as IManualContact;
         setFieldValues(fetchedData);
         setNotes(fetchedData.notes ?? "");
         setEditedNotes(fetchedData.notes ?? "");

@@ -177,7 +177,7 @@ export default function CreateContact() {
       setIsLoading(true);
       const newContact = await createManualContact(contactToCreate);
       console.log(newContact);
-      router.replace(`/contacts/${newContact?._id}`);
+      router.replace(`/contacts/${newContact?.data._id}`);
       setIsLoading(false);
     } catch (e: any) {
       console.log(e);

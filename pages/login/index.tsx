@@ -132,7 +132,7 @@ export default function LoginPage() {
       console.log(result.error);
       setError("Invalid User Credentials Entered")
     } else {
-      router.replace("/profile");
+      router.replace("/contacts/contacts");
     }
   };
 
