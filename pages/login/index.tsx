@@ -8,7 +8,7 @@ import { useTheme } from "@material-ui/core/styles";
 import { Typography, TextField, Grid, Paper, Button } from "@material-ui/core";
 import { makeStyles, createStyles, Theme } from "@material-ui/core/styles";
 import { COLORS } from "../../lib/Colors";
-import PageLoadingBar from "../../components/pageLoadingBar";
+import PageLoadingBar from "../../components/PageLoadingBar";
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({

@@ -13,7 +13,7 @@ import AddFieldSelector from "../../components/input/AddFieldSelector";
 import { createManualContact } from "../../api_client/ManualContactQueries";
 import { IManualContact } from "../../lib/DataTypes";
 import Layout from "../../components/navLayout/Layout";
-import PageLoadingBar from "../../components/pageLoadingBar";
+import PageLoadingBar from "../../components/PageLoadingBar";
 import { useRouter } from "next/router";
 
 const useStyles = makeStyles((theme) => ({
