@@ -19,6 +19,7 @@ import { useRouter } from "next/router";
 import PageLoadingBar from "../../components/pageLoadingBar";
 import { OnChangeValue } from "react-select";
 import { deleteAddedContact } from "../../api_client/AddedContactQueries";
+import { getSession } from "next-auth/client";
 
 const useStyles = makeStyles((theme) => ({
   containerStyle: {
@@ -111,8 +112,7 @@ export default function ViewContact() {
     if (contactId && typeof contactId === "string") {
       try {
         setIsLoading(true);
-        const fetchedRawData = await getManualContactById(contactId);
-        const fetchedData = fetchedRawData?.data as IManualContact;
+        const fetchedData = await getManualContactById(contactId);
         setFieldValues(fetchedData);
         setNotes(fetchedData.notes ?? "");
         setEditedNotes(fetchedData.notes ?? "");
@@ -273,12 +273,9 @@ export default function ViewContact() {
   const deleteContact = useCallback(async () => {
     if (fieldValues?._id) {
       try {
-        
-        const updatedContact = await deleteManualContact(
-          fieldValues._id,
-        );
+        const updatedContact = await deleteManualContact(fieldValues._id);
         console.log(updatedContact);
-        router.replace('/contacts/contacts');
+        router.replace("/contacts/contacts");
       } catch (e) {
         console.log(e);
       }
@@ -299,15 +296,25 @@ export default function ViewContact() {
     value: OnChangeValue<{ value: string; label: string }, false> | null
   ) => {
     if (value) {
-      if (value.value === 'archive') {
-        setIsArchived(true)
-      } else if (value.value === 'unarchive') {
-        setIsArchived(false)
-      } else if (value.value === 'delete') {
+      if (value.value === "archive") {
+        setIsArchived(true);
+      } else if (value.value === "unarchive") {
+        setIsArchived(false);
+      } else if (value.value === "delete") {
         deleteContact();
       }
     }
   };
+
+  useEffect(() => {
+    getSession().then((session) => {
+      if (session) {
+        setIsLoading(false);
+      } else {
+        router.replace("/login");
+      }
+    });
+  }, [router]);
 
   if (isLoading) {
     return <PageLoadingBar />;
@@ -333,8 +340,16 @@ export default function ViewContact() {
             firstName={fieldValues?.name.firstName}
             lastName={fieldValues?.name.lastName}
             title={fieldValues?.job}
-            primaryOrg="Unimelb"
-            secondaryOrg="Unimelb2"
+            primaryOrg={
+              fieldValues?.organisations &&
+              fieldValues?.organisations.length > 0
+                ? fieldValues?.organisations[0]
+                : ""
+            }
+            secondaryOrg={fieldValues?.organisations &&
+              fieldValues?.organisations.length > 1
+                ? fieldValues?.organisations[1]
+                : ""}
             starred={isStarred}
             onStar={() => setIsStarred(!isStarred)}
           />
