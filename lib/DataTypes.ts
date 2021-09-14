@@ -65,7 +65,7 @@ export interface IUser {
   _id?: UserId;
   passwordHash?: string;
   name: { firstName: string; lastName: string };
-  email?: string[];
+  email: string[];
   phone?: string[];
   job?: string;
   location?: string;
@@ -81,6 +81,11 @@ export interface IUser {
   allTags?: string[];
   organisations?: OrganisationId[];
 }
+
+// export interface ErrorInterface {
+//   status: number;
+//   message?: string;
+// }
 
 export type DataInterface = IUser | IOrganisation | IManualContact | IAddedContact;
 

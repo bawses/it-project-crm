@@ -1,26 +1,26 @@
 import { DataType, IOrganisation } from "../lib/DataTypes";
 import { createDbRecord, searchDb, getDbRecordById, updateDbRecord, deleteDbRecord } from "./Client";
 
-export const createOrganisation = (dataObj: IOrganisation) => {
-  return createDbRecord(DataType.Organisation, dataObj);
+export const createOrganisation = async (dataObj: IOrganisation) => {
+  return createDbRecord<IOrganisation>(DataType.Organisation, dataObj);
 };
 
-export const getAllOrganisations = () => {
-  return searchDb(DataType.Organisation, undefined);
+export const getAllOrganisations = async () => {
+  return searchDb<IOrganisation>(DataType.Organisation, undefined);
 };
 
-export const searchAllOrganisations = (dataObj: IOrganisation) => {
-  return searchDb(DataType.Organisation, dataObj);
-}
-
-export const getOrganisationById = (id: string) => {
-  return getDbRecordById(DataType.Organisation, id);
+export const searchAllOrganisations = async (dataObj: IOrganisation) => {
+  return searchDb<IOrganisation>(DataType.Organisation, dataObj);
 };
 
-export const updateOrganisation = (id: string, dataObj: IOrganisation) => {
-  return updateDbRecord(DataType.Organisation, id, dataObj);
+export const getOrganisationById = async (id: string) => {
+  return getDbRecordById<IOrganisation>(DataType.Organisation, id);
 };
 
-export const deleteOrganisation = (id: string) => {
-  return deleteDbRecord(DataType.Organisation, id);
+export const updateOrganisation = async (id: string, dataObj: IOrganisation) => {
+  return updateDbRecord<IOrganisation>(DataType.Organisation, id, dataObj);
+};
+
+export const deleteOrganisation = async (id: string) => {
+  return deleteDbRecord<IOrganisation>(DataType.Organisation, id);
 };

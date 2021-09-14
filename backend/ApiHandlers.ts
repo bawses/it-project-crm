@@ -3,13 +3,15 @@ import connectToDatabase from "./dbConnect";
 import { Request, Response } from "express";
 import { Database } from "./models/DbMapping";
 import { DataType, RequestType } from "../lib/DataTypes";
-import { ContactSupportOutlined, PermDeviceInformationTwoTone, Restaurant } from "@material-ui/icons";
 
 /* API handler for [ID] pages, allowing GET / PUT / DELETE requests */
-export async function idHandler(req: Request, res: Response, dataType: DataType): Promise<Response> {
+export async function idHandler(
+  req: Request,
+  res: Response,
+  dataType: DataType
+): Promise<Response> {
   const id = req.query.id;
   const requestType = req.method;
-  req.body = req.body || {};
 
   await connectToDatabase();
   const dbCollection: Model<any, {}, {}> = Database[dataType];
@@ -24,6 +26,8 @@ export async function idHandler(req: Request, res: Response, dataType: DataType)
       }
       /* Edit a model by its ID */
       case RequestType.PUT: {
+        if (!req.body) throw new Error();
+        req.body._id = undefined;
         dbResponse = await dbCollection.findByIdAndUpdate(id, req.body, {
           new: true,
           runValidators: true,
@@ -49,31 +53,32 @@ export async function idHandler(req: Request, res: Response, dataType: DataType)
 }
 
 /* API handler for INDEX pages, allowing GET / POST requests */
-export async function indexHandler(req: Request, res: Response, dataType: DataType): Promise<Response> {
+export async function indexHandler(
+  req: Request,
+  res: Response,
+  dataType: DataType
+): Promise<Response> {
   const requestType = req.method;
-  req.body = req.body || {};
 
   // Connect to Database and select appropriate collection for use according to datatype
   await connectToDatabase();
   const dbCollection: Model<any, {}, {}> = Database[dataType];
-  if (dataType === "user" && requestType === "POST"){
-    let user = await dbCollection.findOne({email: req.body.email});
-    if (user){
-      throw new Error("Error occured. User exists.");
-    }
-  }
+
   var dbResponse;
   var successStatus: number;
   try {
     switch (requestType) {
       /* Find all the data in our database */
       case RequestType.GET: {
+        req.body = req.body || {}; // in case body is undefined
         dbResponse = await dbCollection.find(req.body);
         successStatus = 200;
         break;
       }
       /* Create a new document/record in the database *assumes no duplicates* */
       case RequestType.POST: {
+        if (!req.body) throw new Error();
+        req.body._id = undefined;
         dbResponse = await dbCollection.create(req.body);
         successStatus = 201;
         break;
@@ -86,7 +91,7 @@ export async function indexHandler(req: Request, res: Response, dataType: DataTy
       throw new Error("Error occured in database operations.");
     }
   } catch (error) {
-    return res.status(400).json({ success: false, error: error });
+    return res.status(400).json({ success: false });
   }
   return res.status(successStatus).json({ success: true, data: dbResponse });
 }

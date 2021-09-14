@@ -2,7 +2,7 @@ import { useRouter } from "next/router";
 import Link from "next/link";
 import { getSession } from "next-auth/client";
 import React, { useEffect, useState, ChangeEvent, MouseEvent } from "react";
-import { createUser } from "../../api_client/UserQueries";
+import { userSignUp } from "../../api_client/UserQueries";
 import { IUser } from "../../lib/DataTypes";
 
 // styling imports
@@ -12,6 +12,7 @@ import { Typography, TextField, Grid, Paper, Button } from "@material-ui/core";
 import { makeStyles, createStyles, Theme } from "@material-ui/core/styles";
 import { COLORS } from "../../lib/Colors";
 import PageLoadingBar from "../../components/pageLoadingBar";
+import AuthButton from "../../components/buttons/AuthButton";
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -113,6 +114,7 @@ export default function SignUpPage() {
   const theme = useTheme();
   const isSmall = useMediaQuery(theme.breakpoints.down("sm"));
 
+  const [showError, setError] = useState("");
   const [isLoading, setIsLoading] = useState(true);
   const router = useRouter();
   const [userState, setUserState] = useState(initialState);
@@ -124,7 +126,8 @@ export default function SignUpPage() {
   const handleSubmit = (e: MouseEvent<HTMLButtonElement, globalThis.MouseEvent>) => {
     // make sure password is the same as confirm password
     if (userState.password !== userState.confirmPassword) {
-      alert("Passwords are not identical. Try again.");
+      //alert("Passwords are not identical. Try again.");
+      setError("Passwords are not identical. Try again.");
       setUserState({
         firstName: userState.firstName,
         lastName: userState.lastName,
@@ -146,20 +149,12 @@ export default function SignUpPage() {
       }
     }
 
-    createUser({
-      name: { firstName: userState.firstName, lastName: userState.lastName },
-      email: [userState.email],
-      passwordHash: userState.password,
-    })
-      .then((res) => {
-        console.log("We got something!")
-        console.log(res);
-        router.replace("/profile");
-      })
-      .catch((err) => {
-        console.log("We got a fucking error");
-        console.log(err);
-      });
+    try {
+      userSignUp(userState.firstName, userState.lastName, userState.email, userState.password);
+      router.replace("/profile");
+    } catch (error) {
+      console.error(error);
+    }
   };
 
   useEffect(() => {
@@ -179,7 +174,13 @@ export default function SignUpPage() {
   return (
     <main>
       <Grid container direction={isSmall ? "column" : "row"} justify="center" alignItems="center">
-        <Grid item xs={12} sm={12} md={6} style={isSmall ? { textAlign: "center" } : { textAlign: "left" }}>
+        <Grid
+          item
+          xs={12}
+          sm={12}
+          md={6}
+          style={isSmall ? { textAlign: "center" } : { textAlign: "left" }}
+        >
           <div className={classes.logobox}>
             <Typography variant="h5" component="h5">
               Stay connected with
@@ -261,15 +262,8 @@ export default function SignUpPage() {
                 placeholder="Confirm Password"
               />
             </Grid>
-            <Button
-              onClick={handleSubmit}
-              fullWidth
-              variant="contained"
-              className={classes.btn}
-              style={{ position: "relative", top: "5px", bottom: "5px", textTransform: "none" }}
-            >
-              Sign Up
-            </Button>
+            <AuthButton onClick={handleSubmit} className={classes.btn} title="Sign Up" />
+            <h4 style={{ margin: "0%", color: "red" }}>{showError}</h4>
             <div className={classes.links}>
               <div>
                 <Typography component="p">
