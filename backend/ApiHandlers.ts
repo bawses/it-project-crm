@@ -5,10 +5,13 @@ import { Database } from "./models/DbMapping";
 import { DataType, RequestType } from "../lib/DataTypes";
 
 /* API handler for [ID] pages, allowing GET / PUT / DELETE requests */
-export async function idHandler(req: Request, res: Response, dataType: DataType): Promise<Response> {
+export async function idHandler(
+  req: Request,
+  res: Response,
+  dataType: DataType
+): Promise<Response> {
   const id = req.query.id;
   const requestType = req.method;
-  req.body = req.body || {};
 
   await connectToDatabase();
   const dbCollection: Model<any, {}, {}> = Database[dataType];
@@ -48,25 +51,24 @@ export async function idHandler(req: Request, res: Response, dataType: DataType)
 }
 
 /* API handler for INDEX pages, allowing GET / POST requests */
-export async function indexHandler(req: Request, res: Response, dataType: DataType): Promise<Response> {
+export async function indexHandler(
+  req: Request,
+  res: Response,
+  dataType: DataType
+): Promise<Response> {
   const requestType = req.method;
-  req.body = req.body || {};
 
   // Connect to Database and select appropriate collection for use according to datatype
   await connectToDatabase();
   const dbCollection: Model<any, {}, {}> = Database[dataType];
-  if (dataType === "user" && requestType === "POST"){
-    let user = await dbCollection.findOne({email: req.body.email});
-    if (user){
-      return res.status(400).json({ success: false, error: "User with email already exists!" });
-    }
-  }
+
   var dbResponse;
   var successStatus: number;
   try {
     switch (requestType) {
       /* Find all the data in our database */
       case RequestType.GET: {
+        req.body = req.body || {}; // in case body is undefined
         dbResponse = await dbCollection.find(req.body);
         successStatus = 200;
         break;
@@ -85,7 +87,7 @@ export async function indexHandler(req: Request, res: Response, dataType: DataTy
       throw new Error("Error occured in database operations.");
     }
   } catch (error) {
-    return res.status(400).json({ success: false, error: error });
+    return res.status(400).json({ success: false });
   }
   return res.status(successStatus).json({ success: true, data: dbResponse });
 }

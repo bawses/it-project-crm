@@ -82,12 +82,19 @@ export interface IUser {
   organisations?: OrganisationId[];
 }
 
-export interface ErrorInterface {
-  status: number;
-  message?: string;
-}
+// export interface ErrorInterface {
+//   status: number;
+//   message?: string;
+// }
 
 export type DataInterface = IUser | IOrganisation | IManualContact | IAddedContact;
+
+export type IContact = IUser | IManualContact;
+
+const defaultManualContact = { 
+  _id: "",
+  name: {}
+}
 
 export enum RequestType {
   GET = "GET",
