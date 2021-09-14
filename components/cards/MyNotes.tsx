@@ -10,6 +10,7 @@ import {
 import { Cancel } from "@material-ui/icons";
 import { COLORS } from "../../lib/Colors";
 import EditContactOptions from "../buttons/EditContactOptions";
+import TextButton from "../buttons/TextButton";
 
 interface MyNotesProps {
   isEditingNotes?: boolean;
@@ -44,15 +45,13 @@ export default function MyNotes({
               {notes}
             </Typography>
             <div className={classes.editNotes}>
-              <Button
-                variant="contained"
-                type="button"
+              <TextButton
                 onClick={toggleEditingMode}
-                color="secondary"
+                color={COLORS.actionOrange}
+                textColor={COLORS.white}
                 className={classes.editNotesBtn}
-              >
-                Edit
-              </Button>
+                title="Edit"
+              />
             </div>
           </div>
         )}
@@ -85,10 +84,10 @@ const useStyles = makeStyles((theme) => ({
     whiteSpace: "pre-line",
   },
   editNotes: {
-    width: '100%',
-    display: 'flex',
-    flexDirection: 'row',
-    justifyContent: 'flex-end',
+    width: "100%",
+    display: "flex",
+    flexDirection: "row",
+    justifyContent: "flex-end",
   },
   editNotesBtn: {
     fontWeight: "bold",

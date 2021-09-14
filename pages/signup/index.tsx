@@ -12,6 +12,7 @@ import { Typography, TextField, Grid, Paper, Button } from "@material-ui/core";
 import { makeStyles, createStyles, Theme } from "@material-ui/core/styles";
 import { COLORS } from "../../lib/Colors";
 import PageLoadingBar from "../../components/PageLoadingBar";
+import AuthButton from "../../components/buttons/AuthButton";
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -113,6 +114,7 @@ export default function SignUpPage() {
   const theme = useTheme();
   const isSmall = useMediaQuery(theme.breakpoints.down("sm"));
 
+  const [showError, setError] = useState("");
   const [isLoading, setIsLoading] = useState(true);
   const router = useRouter();
   const [userState, setUserState] = useState(initialState);
@@ -124,7 +126,8 @@ export default function SignUpPage() {
   const handleSubmit = (e: MouseEvent<HTMLButtonElement, globalThis.MouseEvent>) => {
     // make sure password is the same as confirm password
     if (userState.password !== userState.confirmPassword) {
-      alert("Passwords are not identical. Try again.");
+      //alert("Passwords are not identical. Try again.");
+      setError("Passwords are not identical. Try again.")
       setUserState({
         firstName: userState.firstName,
         lastName: userState.lastName,
@@ -153,10 +156,14 @@ export default function SignUpPage() {
     })
       .then((res) => {
         console.log(res);
+        if (!res.success){
+          throw new Error(`${res.error}`)
+        }
         router.replace("/profile");
       })
       .catch((err) => {
         console.log(err);
+        setError(err.message);
       });
   };
 
@@ -259,15 +266,8 @@ export default function SignUpPage() {
                 placeholder="Confirm Password"
               />
             </Grid>
-            <Button
-              onClick={handleSubmit}
-              fullWidth
-              variant="contained"
-              className={classes.btn}
-              style={{ position: "relative", top: "5px", bottom: "5px", textTransform: "none" }}
-            >
-              Sign Up
-            </Button>
+            <AuthButton onClick={handleSubmit} className={classes.btn} title="Sign Up"/>
+            <h4 style = {{margin: "0%", color: "red"}}>{showError}</h4>
             <div className={classes.links}>
               <div>
                 <Typography component="p">

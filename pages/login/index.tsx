@@ -9,6 +9,7 @@ import { Typography, TextField, Grid, Paper, Button } from "@material-ui/core";
 import { makeStyles, createStyles, Theme } from "@material-ui/core/styles";
 import { COLORS } from "../../lib/Colors";
 import PageLoadingBar from "../../components/PageLoadingBar";
+import AuthButton from "../../components/buttons/AuthButton";
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -103,6 +104,7 @@ export default function LoginPage() {
   const theme = useTheme();
   const isSmall = useMediaQuery(theme.breakpoints.down("sm"));
 
+  const [showError, setError] = useState("");
   const [isLoading, setIsLoading] = useState(true);
   const router = useRouter();
 
@@ -127,8 +129,8 @@ export default function LoginPage() {
     });
 
     if (result?.error) {
-      console.log("Invalid User Credentials Entered");
       console.log(result.error);
+      setError("Invalid User Credentials Entered")
     } else {
       router.replace("/profile");
     }
@@ -204,16 +206,8 @@ export default function LoginPage() {
                 placeholder="Enter your password here"
               />
             </Grid>
-
-            <Button
-              fullWidth
-              onClick={handleSubmit}
-              variant="contained"
-              className={classes.btn}
-              style={{ position: "relative", top: "5px", bottom: "5px" }}
-            >
-              Log In
-            </Button>
+            <AuthButton onClick={handleSubmit} className={classes.btn} title="Log In"/>
+            <h4 style = {{margin: "0%", color: "red"}}>{showError}</h4>
             <div className={classes.links}>
               <Typography component="p">Don&apos;t have an account yet?</Typography>
               <Typography component="p">

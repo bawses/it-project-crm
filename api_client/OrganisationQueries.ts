@@ -6,7 +6,7 @@ export const createOrganisation = (dataObj: IOrganisation) => {
 };
 
 export const getAllOrganisations = () => {
-  return searchDb(DataType.Organisation, {});
+  return searchDb(DataType.Organisation, undefined);
 };
 
 export const searchAllOrganisations = (dataObj: IOrganisation) => {

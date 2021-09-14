@@ -1,7 +1,7 @@
 import NextAuth from "next-auth";
 import Providers from "next-auth/providers";
 
-import { compare as verifyPassword } from "bcryptjs";
+import { compare as verifyPassword, hash } from "bcryptjs";
 import connectToDatabase from "../../../backend/dbConnect";
 import User from "../../../backend/models/User";
 
@@ -18,7 +18,8 @@ export default NextAuth({
         const user = await User.findOne({
           email: credentials.email,
         });
-
+        
+        // Should probably remove this in the future for security sake
         if (!user) {
           throw new Error("No user found!");
         }

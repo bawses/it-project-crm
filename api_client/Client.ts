@@ -1,13 +1,13 @@
 import { mutate } from "swr";
-import { DataType, DataInterface, RequestType } from "../lib/DataTypes";
+import { DataType, DataInterface, RequestType, ErrorInterface } from "../lib/DataTypes";
 
 /* Makes an API call to add a new entry into the database for the given dataType */
-export const createDbRecord = async (dataType: DataType, dataObj: DataInterface): Promise<DataInterface | null> => {
+export const createDbRecord = async (dataType: DataType, dataObj: DataInterface): Promise<DataInterface | null | any> => {
   return doFetch(RequestType.POST, dataType, undefined, dataObj);
 };
 
 /* Makes an API call to search through all existing entries in the database for the given dataType */
-export const searchDb = async (dataType: DataType, dataObj: DataInterface): Promise<DataInterface[] | null> => {
+export const searchDb = async (dataType: DataType, dataObj?: DataInterface): Promise<DataInterface[] | null> => {
   return doFetch(RequestType.GET, dataType, undefined, dataObj);
 };
 
@@ -37,12 +37,17 @@ export const doFetch = async (
   dataObj?: DataInterface
 ): Promise<any> => {
   var url: string = "";
-  var body = dataObj ? JSON.stringify(dataObj) : undefined;
+  var body = dataObj ?  JSON.stringify(dataObj) : undefined;
   try {
     // Use the right url for each fetchType
     switch (fetchType) {
       case RequestType.POST: {
-        url = `/api/${dataType}s`;
+        url = `/api/${dataType}s`;   
+
+        if (dataType === 'user'){
+          url = url.concat('/signup');
+          console.log(url);
+        }   
         break;
       }
       case RequestType.GET: {
@@ -73,21 +78,24 @@ export const doFetch = async (
     });
 
     // Throw error with status code in case Fetch API call failed
-    if (!response.ok) {
-      throw new Error(`${response.status}`);
-    }
+    
+
     // Extract the data out of the JSON object in the form of a JavaScript object.
-    var { data } = await response.json();
+    var result = await response.json();
+    console.log(result);
+    if (!result.success){
+      console.log(result.error);
+      console.log(new Error(`${result.error}`))
+    }
+  
     // If this is an update request, update the local data without revalidation
     if (fetchType === RequestType.PUT) {
-      mutate(`/api/${dataType}s/${recordId}`, data, false);
+      mutate(`/api/${dataType}s/${recordId}`, result, false);
     }
   } catch (error) {
     /* If an error occurs anywhere in the process of making an API call, log it */
-    console.error(error);
     console.error(`Failed to do operation: ${fetchType} for ${dataType}`);
-    // console.error(`Object`)
-    return null;
+    return error;
   }
-  return data;
+  return result;
 };
