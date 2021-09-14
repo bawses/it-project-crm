@@ -8,6 +8,7 @@ import ContactDetails from "../../components/cards/ContactDetails";
 import ContactOptions from "../../components/buttons/ContactOptions";
 import ContactHeader from "../../components/cards/ContactHeader";
 import {
+  deleteManualContact,
   getManualContactById,
   updateManualContact,
 } from "../../api_client/ManualContactQueries";
@@ -17,6 +18,7 @@ import Layout from "../../components/navLayout/Layout";
 import { useRouter } from "next/router";
 import PageLoadingBar from "../../components/pageLoadingBar";
 import { OnChangeValue } from "react-select";
+import { deleteAddedContact } from "../../api_client/AddedContactQueries";
 
 const useStyles = makeStyles((theme) => ({
   containerStyle: {
@@ -268,6 +270,21 @@ export default function ViewContact() {
     }
   }, [isArchived, fieldValues]);
 
+  const deleteContact = useCallback(async () => {
+    if (fieldValues?._id) {
+      try {
+        
+        const updatedContact = await deleteManualContact(
+          fieldValues._id,
+        );
+        console.log(updatedContact);
+        router.replace('/contacts/contacts');
+      } catch (e) {
+        console.log(e);
+      }
+    }
+  }, [fieldValues, router]);
+
   useEffect(() => {
     console.log("update starred");
     updateStarred();
@@ -287,7 +304,7 @@ export default function ViewContact() {
       } else if (value.value === 'unarchive') {
         setIsArchived(false)
       } else if (value.value === 'delete') {
-        console.log("Delete contact and redirect to home page?")
+        deleteContact();
       }
     }
   };
