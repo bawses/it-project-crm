@@ -5,22 +5,17 @@ import ContactsTable from '../../components/tables/contactsTable';
 import ContactsTableCategory, { CategoryButton } from '../../components/tables/contactsTableCategory';
 import ContactsTableSort, { SortType } from '../../components/tables/contactsTableSort';
 import ContactsTableTags, { SelectValue } from '../../components/tables/contactsTableTags';
-import { IManualContact, IUser } from '../../lib/DataTypes';
-import { updateUser } from "../../api_client/UserQueries";
-import { getAllManualContacts } from '../../api_client/ManualContactQueries';
+import { IManualContact } from '../../lib/DataTypes';
+import { getAllManualContacts, updateManualContact } from '../../api_client/ManualContactQueries';
 import Layout from "../../components/navLayout/Layout";
 
 async function getData(setAllContacts: (contacts: IManualContact[]) => void, setDisplayContacts: (contacts: IManualContact[]) => void) {
   try {
     const data = await getAllManualContacts()
-    if (data.success) {
-      // Save all contacts
-      setAllContacts(data.data)
-      // Make the display contacts initially just a copy of all contacts
-      setDisplayContacts([...data.data] as IManualContact[])
-    } else {
-      console.error("Error: Could not fetch contact data")
-    }
+    // Save all contacts
+    setAllContacts(data)
+    // Make the display contacts initially just a copy of all contacts
+    setDisplayContacts(data)
   } catch (error) {
     console.error(error)
   }
@@ -45,6 +40,7 @@ export const sortFunctions = {
 
 // Swaps the given contact in the given contact list if it can find it, and then returns the list
 function swapContactInList(contactList: IManualContact[], contact: IManualContact) {
+  console.log("starting list", contactList)
   if (contact._id === undefined) {
     return contactList
   }
@@ -53,11 +49,13 @@ function swapContactInList(contactList: IManualContact[], contact: IManualContac
     if (contactList[i]._id) {
       if (contactList[i]._id === contact._id) {
         contactList[i] = contact
+        console.log("Swapped element", contact)
         break
       }
     }
   }
 
+  console.log("Final element")
   return contactList
 }
 
@@ -120,16 +118,13 @@ export default function Contacts() {
         target.starred = !(target.starred)
       }
 
-      const response = await updateUser(target._id, target as IUser)
-      if (response.success) {
-        const testList = [...allContacts]
-        setAllContacts(swapContactInList(testList, response.data as IManualContact))
-        return true
-      }
-
-      return false
+      const response = await updateManualContact(target._id, target)
+      const newContactList = [...allContacts]
+      setAllContacts(swapContactInList(newContactList, response))
+      return true
     } catch (error) {
-      console.error("Error updating user starred status")
+      console.error("Error updating user starred status", error)
+      return false
     }
   }
 

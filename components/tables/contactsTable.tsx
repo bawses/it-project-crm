@@ -6,13 +6,14 @@ export type IdToContactMap = Record<string, IManualContact>
 
 interface ContactsTableProps {
   contacts: IManualContact[],
-  handleRowButtonClick: (target: IManualContact) => Promise<boolean | undefined>
+  handleRowButtonClick: (target: IManualContact) => Promise<boolean>
   idToContactMap?: IdToContactMap
 }
 
 export default function ContactsTable({ contacts, handleRowButtonClick, idToContactMap }: ContactsTableProps) {
   const rows: JSX.Element[] = []
   for (const contact of contacts) {
+    // For the search results variant, check if the each contact has been already added or not
     let alreadyAdded = false
     if (idToContactMap && contact._id) {
       if (contact._id in idToContactMap) {
@@ -20,13 +21,12 @@ export default function ContactsTable({ contacts, handleRowButtonClick, idToCont
       }
     }
 
-
     const key = contact._id || contact.name.firstName
     rows.push(
       <ContactsTableRow
         key={key}
         contact={contact}
-        {...(idToContactMap ? { addVariant: { alreadyAdded: alreadyAdded, handleAdd: handleRowButtonClick } } : { starVariant: { handleStar: handleRowButtonClick } })}
+        {...(idToContactMap ? { addVariant: { alreadyAdded: alreadyAdded, handleContactAdd: handleRowButtonClick } } : { starVariant: { handleStar: handleRowButtonClick } })}
       />
     )
   }

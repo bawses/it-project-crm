@@ -1,4 +1,4 @@
-import { Avatar, Typography, TableRow, TableCell, Button, IconButton } from "@material-ui/core";
+import { Avatar, Typography, TableRow, TableCell, IconButton } from "@material-ui/core";
 import stockImage from '../../public/stockImage.jpg'
 import StarsIcon from '@material-ui/icons/Stars';
 import { COLORS } from "../../lib/Colors";
@@ -9,8 +9,8 @@ import TextButton from "../buttons/TextButton";
 
 export interface ContactsTableRowProps {
   contact: IManualContact,
-  starVariant?: { handleStar: (target: IManualContact) => Promise<boolean | undefined> },
-  addVariant?: { alreadyAdded: boolean, handleAdd: (target: IManualContact) => Promise<boolean | undefined> }
+  starVariant?: { handleStar: (target: IManualContact) => Promise<boolean> },
+  addVariant?: { alreadyAdded: boolean, handleContactAdd: (target: IManualContact) => Promise<boolean> }
 }
 
 const useStyles = makeStyles({
@@ -40,7 +40,7 @@ export default function ContactsTableRow({ contact, starVariant, addVariant }: C
       <TextButton
         disabled={addVariant?.alreadyAdded}
         className={classes.addBtn}
-        onClick={() => addVariant?.handleAdd(contact)}
+        onClick={() => addVariant?.handleContactAdd(contact)}
         title={addVariant?.alreadyAdded ? "Added" : "Add"}
       />
     )

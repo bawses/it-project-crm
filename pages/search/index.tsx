@@ -1,8 +1,7 @@
-import { Box, Typography, useMediaQuery } from "@material-ui/core";
+import { Box, useMediaQuery } from "@material-ui/core";
 import { useTheme } from "@material-ui/core/styles";
 import { ChangeEvent, useEffect, useMemo, useState } from "react";
 import { getAllManualContacts } from "../../api_client/ManualContactQueries";
-import { updateUser } from "../../api_client/UserQueries";
 import Layout from "../../components/navLayout/Layout";
 import ContactsTable, { IdToContactMap } from "../../components/tables/contactsTable";
 import ContactsTableSort, { SortType } from "../../components/tables/contactsTableSort";
@@ -26,33 +25,21 @@ function contactListToMap(contactList: IManualContact[]) {
 async function getSearchResults(setSearchResults: (contacts: IManualContact[]) => void) {
   try {
     const data = await getAllManualContacts()
-    if (data.success) {
-      // Save all search results
-      setSearchResults(data.data)
-    } else {
-      console.error("Error: Could not fetch search result data")
-    }
+    // Save all search results
+    setSearchResults(data)
   } catch (error) {
-    console.error(error)
+    console.error("Error: Could not fetch search result data", error)
   }
 }
 
 async function getAddedContacts(setAddedContacts: (contacts: IdToContactMap) => void) {
   try {
     const data = await getAllManualContacts()
-    if (data.success) {
-      // Save all added contacts as a map to their respective ids
-      setAddedContacts(contactListToMap(data.data))
-    } else {
-      console.error("Error: Could not fetch contact data")
-    }
+    // Save all added contacts as a map to their respective ids
+    setAddedContacts(contactListToMap(data))
   } catch (error) {
-    console.error(error)
+    console.error("Error: Could not fetch contact data", error)
   }
-}
-
-async function handleAdd(target: IManualContact) {
-  return true
 }
 
 export default function SearchPage() {
@@ -83,12 +70,19 @@ export default function SearchPage() {
     setSortValue(event.target.value as SortType)
   }
 
-  function handleContactAdd(target: IManualContact) {
+  async function handleContactAdd(target: IManualContact) {
     if (target._id) {
+      //TODO: Send add request
+      // Database request code here
+
       const newMap = { ...addedContacts }
       newMap[target._id] = target
       setAddedContacts(newMap)
+
+      return true
     }
+
+    return false
   }
 
   // Adjust components based on screen size
@@ -114,7 +108,7 @@ export default function SearchPage() {
           </Box>
           {/* Search results */}
           <Box boxShadow={3}>
-            <ContactsTable contacts={displayData} handleRowButtonClick={handleAdd} idToContactMap={addedContacts} />
+            <ContactsTable contacts={displayData} handleRowButtonClick={handleContactAdd} idToContactMap={addedContacts} />
           </Box>
         </Box>
         {bigScreen && <Box mt={18}><CreateContactButtonLarge /></Box>}
