@@ -1,39 +1,88 @@
-import { Box, Typography, useMediaQuery } from "@material-ui/core";
+import { Box, useMediaQuery } from "@material-ui/core";
 import { useTheme } from "@material-ui/core/styles";
-import { ChangeEvent, useEffect, useState } from "react";
+import { ChangeEvent, useEffect, useMemo, useState } from "react";
 import { getAllManualContacts } from "../../api_client/ManualContactQueries";
 import Layout from "../../components/navLayout/Layout";
-import ContactsTable from "../../components/tables/contactsTable";
+import ContactsTable, { IdToContactMap } from "../../components/tables/contactsTable";
 import ContactsTableSort, { SortType } from "../../components/tables/contactsTableSort";
+import { sortFunctions } from "../contacts/contacts";
 import CreateContactButtonLarge from "../../components/buttons/CreateContactButtonLarge";
 import CreateContactButtonSmall from "../../components/buttons/CreateContactButtonSmall";
 import { IManualContact } from '../../lib/DataTypes';
 
-async function getData(setAllContacts: (contacts: IManualContact[]) => void) {
+// Creates a map of contact ids to the respective contact
+function contactListToMap(contactList: IManualContact[]) {
+  const contactMap: IdToContactMap = {}
+  for (const contact of contactList) {
+    if (contact._id) {
+      contactMap[contact._id] = contact
+    }
+  }
+
+  return contactMap
+}
+
+async function getSearchResults(setSearchResults: (contacts: IManualContact[]) => void) {
   try {
     const data = await getAllManualContacts()
-    if (data) {
-      // Save all contacts
-      setAllContacts(data as IManualContact[])
-    } else {
-      console.error("Error: Could not fetch contact data")
-    }
+    // Save all search results
+    setSearchResults(data)
   } catch (error) {
-    console.error(error)
+    console.error("Error: Could not fetch search result data", error)
+  }
+}
+
+async function getAddedContacts(setAddedContacts: (contacts: IdToContactMap) => void) {
+  try {
+    const data = await getAllManualContacts()
+    // Save all added contacts as a map to their respective ids
+    setAddedContacts(contactListToMap(data))
+  } catch (error) {
+    console.error("Error: Could not fetch contact data", error)
   }
 }
 
 export default function SearchPage() {
   const [sortValue, setSortValue] = useState<SortType>(SortType.None)
-  const [contacts, setContacts] = useState<IManualContact[]>([])
+  const [searchResults, setSearchResults] = useState<IManualContact[]>([])
+  const [addedContacts, setAddedContacts] = useState<IdToContactMap>({})
 
   // Get contacts data
   useEffect(() => {
-    getData(setContacts)
+    // Placeholder for search results
+    getSearchResults(setSearchResults)
+
+    // Get contacts already added
+    getAddedContacts(setAddedContacts)
   }, [])
+
+  // Sort the contacts table based on changes to the sort value
+  const displayData = useMemo(() => {
+    if (sortValue !== SortType.None) {
+      return [...searchResults].sort(sortFunctions[sortValue])
+    }
+    return searchResults
+  },
+    [searchResults, sortValue]
+  )
 
   function handleNewSortVal(event: ChangeEvent<{ value: unknown }>) {
     setSortValue(event.target.value as SortType)
+  }
+
+  async function handleContactAdd(target: IManualContact) {
+    if (target._id) {
+      //TODO: Send add request
+      // Database request code here
+
+      const newMap = { ...addedContacts }
+      newMap[target._id] = target
+      setAddedContacts(newMap)
+
+      return true
+    }
+
+    return false
   }
 
   // Adjust components based on screen size
@@ -59,7 +108,7 @@ export default function SearchPage() {
           </Box>
           {/* Search results */}
           <Box boxShadow={3}>
-            <ContactsTable contacts={contacts} searchResultVariant={true} />
+            <ContactsTable contacts={displayData} handleRowButtonClick={handleContactAdd} idToContactMap={addedContacts} />
           </Box>
         </Box>
         {bigScreen && <Box mt={18}><CreateContactButtonLarge /></Box>}

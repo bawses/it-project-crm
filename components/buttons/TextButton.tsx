@@ -7,9 +7,10 @@ interface ButtonProps {
   textColor?: string;
   title: string;
   href?: string;
+  disabled?: boolean,
   onClick?:
-    | ((event: React.SyntheticEvent) => void)
-    | ((event: React.SyntheticEvent) => Promise<void>);
+  | ((event: React.SyntheticEvent) => void)
+  | ((event: React.SyntheticEvent) => Promise<void>);
   className?: string | undefined;
 }
 
@@ -19,7 +20,8 @@ export default function TextButton({
   textColor = COLORS.black,
   title,
   href = "",
-  onClick = () => {},
+  disabled,
+  onClick = () => { },
   className = undefined,
 }: ButtonProps) {
   return (
@@ -35,6 +37,7 @@ export default function TextButton({
         fontSize: "1rem",
       }}
       href={href}
+      disabled={disabled}
       onClick={onClick}
       className={className}
     >

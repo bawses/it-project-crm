@@ -1,17 +1,16 @@
-import { Avatar, Typography, TableRow, TableCell, Button, IconButton } from "@material-ui/core";
+import { Avatar, Typography, TableRow, TableCell, IconButton } from "@material-ui/core";
 import stockImage from '../../public/stockImage.jpg'
 import StarsIcon from '@material-ui/icons/Stars';
 import { COLORS } from "../../lib/Colors";
 import { makeStyles } from "@material-ui/styles";
+import { IManualContact } from "../../lib/DataTypes";
 import React from "react";
 import TextButton from "../buttons/TextButton";
 
 export interface ContactsTableRowProps {
-  name: string,
-  role?: string,
-  isStarred?: boolean,
-  handleStar?: () => void,
-  handleAdd?: () => void
+  contact: IManualContact,
+  starVariant?: { handleStar: (target: IManualContact) => Promise<boolean> },
+  addVariant?: { alreadyAdded: boolean, handleContactAdd: (target: IManualContact) => Promise<boolean> }
 }
 
 const useStyles = makeStyles({
@@ -23,25 +22,37 @@ const useStyles = makeStyles({
   }
 })
 
-export default function ContactsTableRow({ name, role, isStarred, handleStar, handleAdd }: ContactsTableRowProps) {
+export default function ContactsTableRow({ contact, starVariant, addVariant }: ContactsTableRowProps) {
   const classes = useStyles()
 
   let buttonComponent: JSX.Element
-  if (handleStar) {
+  if (starVariant) {
+    // Determine colour for star variant
     let starColor = COLORS.inactiveGrey
-    if (isStarred) {
+    if (contact.starred) {
       starColor = COLORS.starredYellow
     }
-    buttonComponent = <IconButton><StarsIcon htmlColor={starColor} /></IconButton>
+
+    buttonComponent = <IconButton onClick={() => starVariant.handleStar(contact)}><StarsIcon htmlColor={starColor} /></IconButton>
   } else {
-    buttonComponent = <TextButton className={classes.addBtn} title="Add" />
+    // Determine text and status for add variant
+    buttonComponent = (
+      <TextButton
+        disabled={addVariant?.alreadyAdded}
+        className={classes.addBtn}
+        onClick={() => addVariant?.handleContactAdd(contact)}
+        title={addVariant?.alreadyAdded ? "Added" : "Add"}
+      />
+    )
   }
+
+  const name = contact.name.firstName + " " + contact.name.lastName
 
   return (
     <TableRow>
       <TableCell><Avatar src={stockImage.src} /></TableCell>
       <TableCell><Typography component="p" style={{ fontWeight: 600 }}>{name}</Typography></TableCell>
-      <TableCell><Typography component="p">{role}</Typography></TableCell>
+      <TableCell><Typography component="p">{contact.job}</Typography></TableCell>
       <TableCell>{buttonComponent}</TableCell>
     </TableRow>
   )
