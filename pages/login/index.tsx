@@ -1,5 +1,6 @@
 import { useRouter } from "next/router";
 import Link from "next/link";
+import Layout from "../../components/navLayout/Layout";
 import { getSession, signIn } from "next-auth/client";
 import React, { useEffect, useState, ChangeEvent, MouseEvent } from "react";
 import useMediaQuery from "@material-ui/core/useMediaQuery";
@@ -30,14 +31,12 @@ const useStyles = makeStyles((theme: Theme) =>
     },
 
     logobox: {
-      [theme.breakpoints.down("sm")]: {
-        paddingTop: theme.spacing(2.5),
-        paddingBottom: theme.spacing(2),
-        paddingLeft: theme.spacing(2),
-        marginLeft: theme.spacing(1),
-        marginTop: theme.spacing(1),
+      [theme.breakpoints.down("md")]: {
+        paddingTop: theme.spacing(2),
+        // paddingBottom: theme.spacing(2),
+        marginTop: theme.spacing(3),
       },
-      [theme.breakpoints.up("md")]: {
+      [theme.breakpoints.up("lg")]: {
         backgroundColor: COLORS.white,
         marginLeft: theme.spacing(3),
       },
@@ -51,6 +50,7 @@ const useStyles = makeStyles((theme: Theme) =>
     formTitle: {
       [theme.breakpoints.down("sm")]: {
         paddingTop: 20,
+        marginLeft:"2%",
       },
       [theme.breakpoints.between("md", "lg")]: {
         paddingTop: 60,
@@ -64,6 +64,9 @@ const useStyles = makeStyles((theme: Theme) =>
     formSubheading: {
       color: COLORS.primaryBlueDark,
       paddingBottom: 10,
+      [theme.breakpoints.down("sm")]: {
+        marginLeft:"2%",
+      },
     },
 
     paper: {
@@ -78,17 +81,20 @@ const useStyles = makeStyles((theme: Theme) =>
 
     form: {
       paddingTop: "3%",
-      paddingBottom: "3%",
-      [theme.breakpoints.down("sm")]: {
-        marginTop: "5%",
-      },
-      [theme.breakpoints.up("sm")]: {
+      paddingBottom: "5%",
+      [theme.breakpoints.up("md")]: {
         marginLeft: "-10%",
+        paddingTop: "3%",
       },
     },
 
     textbox: {
-      margin: "8px auto",
+      [theme.breakpoints.down("sm")]: {
+        margin: "6px auto",
+      },
+      [theme.breakpoints.up("md")]: {
+        margin: "8px auto",
+      },
       backgroundColor: COLORS.white,
     },
 
@@ -218,7 +224,7 @@ export default function LoginPage() {
           </Paper>
         </div>
       </Grid>
-      {/* </Grid> */}
     </main>
+    
   );
 }

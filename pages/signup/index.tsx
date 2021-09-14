@@ -32,12 +32,10 @@ const useStyles = makeStyles((theme: Theme) =>
     },
 
     logobox: {
-      [theme.breakpoints.down("sm")]: {
-        paddingTop: theme.spacing(2.5),
-        paddingBottom: theme.spacing(2),
-        paddingLeft: theme.spacing(2),
-        marginLeft: theme.spacing(1),
-        marginTop: theme.spacing(1),
+      [theme.breakpoints.down("md")]: {
+        paddingTop: theme.spacing(2),
+        // paddingBottom: theme.spacing(2),
+        marginTop: theme.spacing(3),
       },
       [theme.breakpoints.up("md")]: {
         backgroundColor: COLORS.white,
@@ -53,6 +51,7 @@ const useStyles = makeStyles((theme: Theme) =>
     formTitle: {
       [theme.breakpoints.down("sm")]: {
         paddingTop: 20,
+        marginLeft:"2%",
       },
       [theme.breakpoints.between("md", "lg")]: {
         paddingTop: 60,
@@ -60,11 +59,6 @@ const useStyles = makeStyles((theme: Theme) =>
       [theme.breakpoints.up("xl")]: {
         paddingTop: 150,
       },
-      paddingBottom: 10,
-    },
-
-    formSubheading: {
-      color: COLORS.primaryBlueDark,
       paddingBottom: 10,
     },
 

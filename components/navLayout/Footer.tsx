@@ -23,7 +23,8 @@ const useStyles = makeStyles((theme: Theme) =>
       maxHeight: "50px",
     },
     navButton: {
-      margin: theme.spacing(5),
+      marginLeft: theme.spacing(3),
+      marginRight: theme.spacing(3),
     },
   })
 );
@@ -38,7 +39,7 @@ export default function Footer({ pageType = "personal" }: FooterProps) {
   const router = useRouter();
   return (
     <div>
-      <AppBar position="fixed" color="primary" className={classes.appBar}>
+      <AppBar color="primary" className={classes.appBar}>
         <Toolbar className={classes.customizeToolbar}>
           <div className={classes.grow}>
             <Box display="flex" justifyContent="center">
