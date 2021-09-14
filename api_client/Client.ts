@@ -102,6 +102,7 @@ export const doFetch = async (
     /* If an error occurs anywhere in the process of making an API call, log it */
     console.error(error);
     console.error(`Failed to do operation: ${fetchType} for ${dataType}`);
+    throw new Error(`Failed to do operation: ${fetchType} for ${dataType}`);
     return undefined;
   }
   return data;
