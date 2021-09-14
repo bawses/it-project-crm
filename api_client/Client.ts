@@ -3,17 +3,17 @@ import { DataType, RequestType } from "../lib/DataTypes";
 
 /* Makes an API call to add a new entry into the database for the given dataType */
 export const createDbRecord = async <T>(dataType: DataType, dataObj: T): Promise<T> => {
-  return doFetch<T, T>(RequestType.POST, dataType, undefined, dataObj);
+  return await doFetch<T, T>(RequestType.POST, dataType, undefined, dataObj);
 };
 
 /* Makes an API call to search through all existing entries in the database for the given dataType */
 export const searchDb = async <T>(dataType: DataType, dataObj?: T): Promise<T[]> => {
-  return doFetch<T, T[]>(RequestType.GET, dataType, undefined, dataObj);
+  return await doFetch<T, T[]>(RequestType.GET, dataType, undefined, dataObj);
 };
 
 /* Makes an API call to find an existing entry in the database for the given dataType */
 export const getDbRecordById = async <T>(dataType: DataType, recordId: string): Promise<T> => {
-  return doFetch<T, T>(RequestType.GET, dataType, recordId, undefined);
+  return await doFetch<T, T>(RequestType.GET, dataType, recordId, undefined);
 };
 
 /* Makes an API call to edit an existing entry in the database for the given dataType */
@@ -22,12 +22,12 @@ export const updateDbRecord = async <T>(
   recordId: string,
   dataObj: T
 ): Promise<T> => {
-  return doFetch<T, T>(RequestType.PUT, dataType, recordId, dataObj);
+  return await doFetch<T, T>(RequestType.PUT, dataType, recordId, dataObj);
 };
 
 /* Makes an API call to delete an existing entry in the database for the given dataType */
 export const deleteDbRecord = async <T>(dataType: DataType, recordId: string): Promise<T> => {
-  return doFetch<T, T>(RequestType.DELETE, dataType, recordId, undefined);
+  return await doFetch<T, T>(RequestType.DELETE, dataType, recordId, undefined);
 };
 
 export const doFetch = async <T_input, T_output>(
@@ -44,7 +44,6 @@ export const doFetch = async <T_input, T_output>(
       case RequestType.POST: {
         url = `/api/${dataType}s`;
         if (dataType === DataType.User) url += "/signup";
-        console.log(url);
         break;
       }
       case RequestType.GET: {

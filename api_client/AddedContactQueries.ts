@@ -22,5 +22,5 @@ export const updateAddedContact = async (id: string, dataObj: IAddedContact) => 
 };
 
 export const deleteAddedContact = async (id: string) => {
-  return deleteDbRecord<IAddedContact>(DataType.AddedContact, id);
+  deleteDbRecord<IAddedContact>(DataType.AddedContact, id);
 };

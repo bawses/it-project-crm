@@ -26,8 +26,6 @@ export async function idHandler(
       }
       /* Edit a model by its ID */
       case RequestType.PUT: {
-        if (!req.body) throw new Error();
-        req.body._id = undefined;
         dbResponse = await dbCollection.findByIdAndUpdate(id, req.body, {
           new: true,
           runValidators: true,
@@ -77,8 +75,6 @@ export async function indexHandler(
       }
       /* Create a new document/record in the database *assumes no duplicates* */
       case RequestType.POST: {
-        if (!req.body) throw new Error();
-        req.body._id = undefined;
         dbResponse = await dbCollection.create(req.body);
         successStatus = 201;
         break;

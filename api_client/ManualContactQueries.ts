@@ -22,5 +22,5 @@ export const updateManualContact = async (id: string, dataObj: IManualContact) =
 };
 
 export const deleteManualContact = async (id: string) => {
-  return deleteDbRecord<IManualContact>(DataType.ManualContact, id);
+  deleteDbRecord<IManualContact>(DataType.ManualContact, id);
 };

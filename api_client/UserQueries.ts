@@ -72,5 +72,5 @@ export const updateUser = async (id: string, dataObj: IUser) => {
 };
 
 export const deleteUser = async (id: string) => {
-  return deleteDbRecord<IUser>(DataType.User, id);
+  deleteDbRecord<IUser>(DataType.User, id);
 };

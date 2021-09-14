@@ -22,5 +22,5 @@ export const updateOrganisation = async (id: string, dataObj: IOrganisation) => 
 };
 
 export const deleteOrganisation = async (id: string) => {
-  return deleteDbRecord<IOrganisation>(DataType.Organisation, id);
+  deleteDbRecord<IOrganisation>(DataType.Organisation, id);
 };
