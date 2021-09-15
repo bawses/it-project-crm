@@ -85,9 +85,6 @@ const useStyles = makeStyles((theme: Theme) =>
         marginLeft: "-10%",
         paddingTop: "5%",
       },
-      // [theme.breakpoints.up("lg")]: {
-      //   paddingTop: "10%",
-      // },
     },
 
     textbox: {
