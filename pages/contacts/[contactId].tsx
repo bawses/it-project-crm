@@ -275,7 +275,7 @@ export default function ViewContact() {
       try {
         const updatedContact = await deleteManualContact(fieldValues._id);
         console.log(updatedContact);
-        router.replace("/contacts/contacts");
+        router.replace("/contacts");
       } catch (e) {
         console.log(e);
       }
