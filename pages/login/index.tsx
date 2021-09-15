@@ -31,13 +31,11 @@ const useStyles = makeStyles((theme: Theme) =>
     },
 
     logobox: {
-      [theme.breakpoints.down("md")]: {
+      [theme.breakpoints.down("sm")]: {
         paddingTop: theme.spacing(2),
-        // paddingBottom: theme.spacing(2),
         marginTop: theme.spacing(3),
       },
-      [theme.breakpoints.up("lg")]: {
-        backgroundColor: COLORS.white,
+      [theme.breakpoints.up("md")]: {
         marginLeft: theme.spacing(3),
       },
     },
@@ -53,12 +51,11 @@ const useStyles = makeStyles((theme: Theme) =>
         marginLeft:"2%",
       },
       [theme.breakpoints.between("md", "lg")]: {
-        paddingTop: 60,
+        paddingTop: "5%",
       },
       [theme.breakpoints.up("xl")]: {
-        paddingTop: 150,
+        paddingTop: "40%",
       },
-      paddingBottom: 10,
     },
 
     formSubheading: {
@@ -70,9 +67,11 @@ const useStyles = makeStyles((theme: Theme) =>
     },
 
     paper: {
+      [theme.breakpoints.down("sm")]: {
+        minHeight: 380,
+      },
+      minHeight: 340,
       minWidth: theme.breakpoints.values.xs,
-      minHeight: 370,
-      maxHeight: 340,
       maxWidth: 500,
       padding: theme.spacing(4),
       marginBottom: theme.spacing(1),
@@ -80,12 +79,15 @@ const useStyles = makeStyles((theme: Theme) =>
     },
 
     form: {
-      paddingTop: "3%",
+      paddingTop: "5%",
       paddingBottom: "5%",
       [theme.breakpoints.up("md")]: {
         marginLeft: "-10%",
-        paddingTop: "3%",
+        paddingTop: "5%",
       },
+      // [theme.breakpoints.up("lg")]: {
+      //   paddingTop: "10%",
+      // },
     },
 
     textbox: {

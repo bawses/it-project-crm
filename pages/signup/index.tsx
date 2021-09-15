@@ -32,13 +32,11 @@ const useStyles = makeStyles((theme: Theme) =>
     },
 
     logobox: {
-      [theme.breakpoints.down("md")]: {
+      [theme.breakpoints.down("sm")]: {
         paddingTop: theme.spacing(2),
-        // paddingBottom: theme.spacing(2),
         marginTop: theme.spacing(3),
       },
       [theme.breakpoints.up("md")]: {
-        backgroundColor: COLORS.white,
         marginLeft: theme.spacing(3),
       },
     },
@@ -54,12 +52,11 @@ const useStyles = makeStyles((theme: Theme) =>
         marginLeft:"2%",
       },
       [theme.breakpoints.between("md", "lg")]: {
-        paddingTop: 60,
+        paddingTop: "5%",
       },
       [theme.breakpoints.up("xl")]: {
-        paddingTop: 150,
+        paddingTop: "40%",
       },
-      paddingBottom: 10,
     },
 
     paper: {
@@ -74,23 +71,29 @@ const useStyles = makeStyles((theme: Theme) =>
     },
 
     form: {
-      paddingTop: "4.5%",
-      [theme.breakpoints.down("sm")]: {
-        marginTop: "5%",
-      },
-      [theme.breakpoints.up("sm")]: {
+      paddingTop: "5%",
+      paddingBottom: "5%",
+      [theme.breakpoints.up("md")]: {
         marginLeft: "-10%",
+        paddingTop: "5%",
+      },
+      [theme.breakpoints.up("xl")]: {
+        paddingTop: "10%",
       },
     },
 
     textbox: {
       margin: "6px auto",
+      [theme.breakpoints.down("sm")]: {
+        margin: "7px auto",
+      },
       backgroundColor: COLORS.white,
     },
 
     links: {
       paddingTop: "1rem",
       marginTop: "10px auto",
+      paddingBottom: "1rem"
     },
   })
 );
@@ -120,7 +123,6 @@ export default function SignUpPage() {
   const handleSubmit = (e: MouseEvent<HTMLButtonElement, globalThis.MouseEvent>) => {
     // make sure password is the same as confirm password
     if (userState.password !== userState.confirmPassword) {
-      //alert("Passwords are not identical. Try again.");
       setError("Passwords are not identical. Try again.");
       setUserState({
         firstName: userState.firstName,
