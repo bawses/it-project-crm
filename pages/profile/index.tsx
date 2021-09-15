@@ -27,9 +27,7 @@ export default function Profile() {
   return (
     <main>
       <>
-        <h1>
-          Welcome to your profile page! There is nothing currently here though...
-        </h1>{" "}
+        <h1>Welcome to your profile page! There is nothing currently here though...</h1>{" "}
         <button onClick={handleSignOut}>Sign Out</button>
         <br />
       </>
