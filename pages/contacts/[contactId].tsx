@@ -1,7 +1,7 @@
 import { Container, Typography, makeStyles } from "@material-ui/core";
 import Image from "next/image";
 import DEFAULT_IMAGE from "../../assets/blank-profile-picture-973460_640.png";
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import MyTags from "../../components/cards/MyTags";
 import MyNotes from "../../components/cards/MyNotes";
 import ContactDetails from "../../components/cards/ContactDetails";
@@ -105,6 +105,7 @@ export default function ViewContact() {
   const [isStarred, setIsStarred] = useState(false);
   const [isArchived, setIsArchived] = useState(false);
 
+  const firstUpdate = useRef(true);
   const router = useRouter();
   const { contactId } = router.query;
 
@@ -127,6 +128,8 @@ export default function ViewContact() {
         /** TODO: redirect to error page */
         console.log(e);
         setIsLoading(false);
+      } finally {
+        firstUpdate.current = false;
       }
     }
   }, [contactId]);
@@ -160,8 +163,10 @@ export default function ViewContact() {
   }, [notes, fieldValues]);
 
   useEffect(() => {
-    console.log("update notes");
-    updateContactNotes();
+    if (!firstUpdate.current) {
+      console.log("update notes");
+      updateContactNotes();
+    }
   }, [notes, updateContactNotes]);
 
   const saveEditedNotes = () => {
@@ -198,8 +203,10 @@ export default function ViewContact() {
   }, [tags, fieldValues]);
 
   useEffect(() => {
-    console.log("update tags");
-    updateContactTags();
+    if (!firstUpdate.current) {
+      console.log("update tags");
+      updateContactTags();
+    }
   }, [tags, updateContactTags]);
 
   const deleteTag = (toDelete: string) => {
@@ -278,23 +285,30 @@ export default function ViewContact() {
   const deleteContact = useCallback(async () => {
     if (fieldValues?._id) {
       try {
+        setIsLoading(true);
         const updatedContact = await deleteManualContact(fieldValues._id);
         console.log(updatedContact);
+        setIsLoading(false);
         router.replace("/contacts");
       } catch (e) {
         console.log(e);
+        setIsLoading(false);
       }
     }
   }, [fieldValues, router]);
 
   useEffect(() => {
-    console.log("update starred");
-    updateStarred();
+    if (!firstUpdate.current) {
+      console.log("update starred");
+      updateStarred();
+    }
   }, [isStarred, updateStarred]);
 
   useEffect(() => {
-    console.log("update archived");
-    updateArchived();
+    if (!firstUpdate.current) {
+      console.log("update archived");
+      updateArchived();
+    }
   }, [isArchived, updateArchived]);
 
   const handleContactOption = (
