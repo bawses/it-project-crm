@@ -139,7 +139,7 @@ export default function LoginPage() {
   useEffect(() => {
     getSession().then((session) => {
       if (session) {
-        // redirect to profile
+        // redirect to home page (contacts list)
         router.replace("/contacts");
       } else {
         setIsLoading(false);
