@@ -1,56 +1,76 @@
 import { DataType, IUser } from "../lib/DataTypes";
-import { createDbRecord, searchDb, getDbRecordById, updateDbRecord, deleteDbRecord } from "./Client";
+import {
+  createDbRecord,
+  searchDb,
+  getDbRecordById,
+  updateDbRecord,
+  deleteDbRecord,
+} from "./Client";
 import { hash as hashPassword } from "bcryptjs";
 
-function validateCreateObject(dataObj: IUser) : boolean{
-  let {email, passwordHash} = dataObj;
-  let emailString = email[0];
-  console.log("----------")
-  console.log(emailString);
-  console.log(passwordHash);
-  console.log("----------")
-
-  if (!emailString || !emailString.includes("@") || !passwordHash || passwordHash.trim().length < 7) {
+function validateSignUpObject(
+  firstName: string,
+  lastName: string,
+  email: string,
+  password: string
+): boolean {
+  if (
+    !firstName ||
+    !lastName ||
+    !email ||
+    !email.includes("@") ||
+    !password ||
+    password.trim().length < 7
+  ) {
     return false;
   }
   return true;
 }
 
-export const createUser = async (dataObj: IUser) => {
+export const userSignUp = async (
+  firstName: string,
+  lastName: string,
+  email: string,
+  password: string
+) => {
   // Don't forget to hash the password!
-  if (!validateCreateObject(dataObj)){
-    return {success: false, error: "Credentials entered are of invalid format!"};
+  if (!validateSignUpObject(firstName, lastName, email, password)) {
+    throw Error("Credentials entered are of invalid format!");
   }
-  var hashedPassword, response;
-  hashedPassword = await hashPassword(String(dataObj.passwordHash), 10)
-  dataObj.passwordHash = hashedPassword;  
-  console.log("Data after hashing password!");
-  console.log(dataObj);
-
-
-  console.log("Creating DbRecord and returning response...")
-  response = await createDbRecord(DataType.User, dataObj);
-  console.log("In create user!")
-
-  return response;
+  var dataObj: IUser = {
+    name: {
+      firstName: firstName,
+      lastName: lastName,
+    },
+    email: [email],
+    passwordHash: await hashPassword(String(password), 10),
+  };
+  return createDbRecord<IUser>(DataType.User, dataObj);
 };
 
-export const getAllUsers = () => {
-  return searchDb(DataType.User, undefined);
+/* Do NOT use this method in production, this is only for testing! 
+   Creates a User object in the database.
+*/
+export const createUser = async (dataObj: IUser) => {
+  return createDbRecord<IUser>(DataType.User, dataObj);
 };
 
-export const searchUsers = (dataObj: IUser) => {
-  return searchDb(DataType.User, dataObj);
+export const getAllUsers = async () => {
+  return searchDb<IUser>(DataType.User, undefined);
 };
 
-export const getUserById = (id: string) => {
-  return getDbRecordById(DataType.User, id);
+export const searchUsers = async (dataObj: IUser) => {
+  return searchDb<IUser>(DataType.User, dataObj);
 };
 
-export const updateUser = (id: string, dataObj: IUser) => {
-  return updateDbRecord(DataType.User, id, dataObj);
+export const getUserById = async (id: string) => {
+  return getDbRecordById<IUser>(DataType.User, id);
 };
 
-export const deleteUser = (id: string) => {
-  return deleteDbRecord(DataType.User, id);
+export const updateUser = async (id: string, dataObj: IUser) => {
+  return updateDbRecord<IUser>(DataType.User, id, dataObj);
+};
+
+export const deleteUser = async (id: string) => {
+  deleteDbRecord<IUser>(DataType.User, id);
 };

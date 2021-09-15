@@ -6,26 +6,22 @@ import ContactsTableCategory, { CategoryButton } from '../../components/tables/c
 import ContactsTableSort, { SortType } from '../../components/tables/contactsTableSort';
 import ContactsTableTags, { SelectValue } from '../../components/tables/contactsTableTags';
 import { IManualContact } from '../../lib/DataTypes';
-import { getAllManualContacts } from '../../api_client/ManualContactQueries';
+import { getAllManualContacts, updateManualContact } from '../../api_client/ManualContactQueries';
 import Layout from "../../components/navLayout/Layout";
 
 async function getData(setAllContacts: (contacts: IManualContact[]) => void, setDisplayContacts: (contacts: IManualContact[]) => void) {
   try {
     const data = await getAllManualContacts()
-    if (data) {
-      // Save all contacts
-      setAllContacts(data as IManualContact[])
-      // Make the display contacts initially just a copy of all contacts
-      setDisplayContacts([...data] as IManualContact[])
-    } else {
-      console.error("Error: Could not fetch contact data")
-    }
+    // Save all contacts
+    setAllContacts(data)
+    // Make the display contacts initially just a copy of all contacts
+    setDisplayContacts(data)
   } catch (error) {
     console.error(error)
   }
 }
 
-const sortFunctions = {
+export const sortFunctions = {
   [SortType.FirstName]: (a: IManualContact, b: IManualContact) => (a.name.firstName > b.name.firstName) ? 1 : -1,
   [SortType.LastName]: (a: IManualContact, b: IManualContact) => (a.name.lastName > b.name.lastName) ? 1 : -1,
   [SortType.Role]: (a: IManualContact, b: IManualContact) => {
@@ -40,6 +36,27 @@ const sortFunctions = {
     }
     return -1
   }
+}
+
+// Swaps the given contact in the given contact list if it can find it, and then returns the list
+function swapContactInList(contactList: IManualContact[], contact: IManualContact) {
+  console.log("starting list", contactList)
+  if (contact._id === undefined) {
+    return contactList
+  }
+
+  for (let i = 0; i < contactList.length; i++) {
+    if (contactList[i]._id) {
+      if (contactList[i]._id === contact._id) {
+        contactList[i] = contact
+        console.log("Swapped element", contact)
+        break
+      }
+    }
+  }
+
+  console.log("Final element")
+  return contactList
 }
 
 export default function Contacts() {
@@ -89,6 +106,28 @@ export default function Contacts() {
     setTags(newTags)
   }
 
+  async function handleStarClick(target: IManualContact) {
+    if (!target._id) {
+      return false
+    }
+
+    try {
+      if (target.starred === undefined) {
+        target.starred = true
+      } else {
+        target.starred = !(target.starred)
+      }
+
+      const response = await updateManualContact(target._id, target)
+      const newContactList = [...allContacts]
+      setAllContacts(swapContactInList(newContactList, response))
+      return true
+    } catch (error) {
+      console.error("Error updating user starred status", error)
+      return false
+    }
+  }
+
   return (
     <Layout>
       <Box>
@@ -105,7 +144,7 @@ export default function Contacts() {
           </Box>
           <Box boxShadow={3}>
             {/* List of contacts */}
-            <ContactsTable contacts={displayContacts} searchResultVariant={false} />
+            <ContactsTable contacts={displayContacts} handleRowButtonClick={handleStarClick} />
           </Box>
         </Box>
       </Box>
