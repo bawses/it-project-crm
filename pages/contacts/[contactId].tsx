@@ -210,11 +210,16 @@ export default function ViewContact() {
   /** TODO */
   // const updateUserTags = useCallback(async () => {
   //   try {
-  //     const updateObject = {
-  //       allTags: tagOptions,
-  //     };
-  //     const updatedUser = await updateUser("123", updateObject);
-  //     console.log(updatedUser);
+  //     const currentUser = await getSession();
+  //     if (currentUser?.user) {
+  //       const updateObject = {
+  //         allTags: tagOptions,
+  //         name: currentUser?.user?.name,
+  //         email: currentUser?.user?.email ?? "",
+  //       };
+  //       const updatedUser = await updateUser("123", updateObject);
+  //       console.log(updatedUser);
+  //     }
   //   } catch (e) {
   //     console.log(e);
   //   }
@@ -222,7 +227,7 @@ export default function ViewContact() {
 
   // useEffect(() => {
   //   updateUserTags();
-  // },[tagOptions, updateUserTags]);
+  // }, [tagOptions, updateUserTags]);
 
   /** TODO: update user tags */
   const addTag = (toAdd: string) => {
@@ -346,10 +351,12 @@ export default function ViewContact() {
                 ? fieldValues?.organisations[0]
                 : ""
             }
-            secondaryOrg={fieldValues?.organisations &&
+            secondaryOrg={
+              fieldValues?.organisations &&
               fieldValues?.organisations.length > 1
                 ? fieldValues?.organisations[1]
-                : ""}
+                : ""
+            }
             starred={isStarred}
             onStar={() => setIsStarred(!isStarred)}
           />

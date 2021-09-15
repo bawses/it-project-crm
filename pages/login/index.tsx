@@ -140,7 +140,7 @@ export default function LoginPage() {
     getSession().then((session) => {
       if (session) {
         // redirect to profile
-        router.replace("/profile");
+        router.replace("/contacts");
       } else {
         setIsLoading(false);
       }
