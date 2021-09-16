@@ -160,7 +160,7 @@ export default function SignUpPage() {
   useEffect(() => {
     getSession().then((session) => {
       if (session) {
-        router.replace("/");
+        router.replace("/contacts");
       } else {
         setIsLoading(false);
       }
