@@ -73,8 +73,8 @@ export default function SearchPage() {
     [searchResults, sortValue]
   )
 
-  function handleNewSortVal(event: ChangeEvent<{ value: unknown }>) {
-    setSortValue(event.target.value as SortType)
+  function handleNewSortVal(newSortVal: SortType) {
+    setSortValue(newSortVal)
   }
 
   async function handleContactAdd(target: IManualContact) {
