@@ -23,6 +23,7 @@ const options = [
 ]
 
 const colourStyles: StylesConfig<any, true> = {
+  menu: (provided) => ({ ...provided, zIndex: 9999 }),
   option: (provided, state) => ({
     ...provided,
     color: state.data.color

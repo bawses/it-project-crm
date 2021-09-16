@@ -1,18 +1,25 @@
 import { Container, Typography, makeStyles } from "@material-ui/core";
 import Image from "next/image";
 import DEFAULT_IMAGE from "../../assets/blank-profile-picture-973460_640.png";
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import MyTags from "../../components/cards/MyTags";
 import MyNotes from "../../components/cards/MyNotes";
 import ContactDetails from "../../components/cards/ContactDetails";
 import ContactOptions from "../../components/buttons/ContactOptions";
 import ContactHeader from "../../components/cards/ContactHeader";
-import { getManualContactById, updateManualContact } from "../../api_client/ManualContactQueries";
+import {
+  deleteManualContact,
+  getManualContactById,
+  updateManualContact,
+} from "../../api_client/ManualContactQueries";
 import { IManualContact } from "../../lib/DataTypes";
 import { updateUser } from "../../api_client/UserQueries";
 import Layout from "../../components/navLayout/Layout";
 import { useRouter } from "next/router";
 import PageLoadingBar from "../../components/pageLoadingBar";
+import { OnChangeValue } from "react-select";
+import { deleteAddedContact } from "../../api_client/AddedContactQueries";
+import { getSession } from "next-auth/client";
 
 const useStyles = makeStyles((theme) => ({
   containerStyle: {
@@ -96,17 +103,17 @@ export default function ViewContact() {
   const [tags, setTags] = useState<string[]>([]);
   const [tagOptions, setTagOptions] = useState<string[]>([]);
   const [isStarred, setIsStarred] = useState(false);
+  const [isArchived, setIsArchived] = useState(false);
 
+  const firstUpdate = useRef(true);
   const router = useRouter();
   const { contactId } = router.query;
 
   const fetchContactDetails = useCallback(async () => {
     if (contactId && typeof contactId === "string") {
-      console.log(`TODO: fetch data of contact with id:${contactId}`);
       try {
         setIsLoading(true);
-        const fetchedRawData = await getManualContactById(contactId);
-        const fetchedData = fetchedRawData as IManualContact;
+        const fetchedData = await getManualContactById(contactId);
         setFieldValues(fetchedData);
         setNotes(fetchedData.notes ?? "");
         setEditedNotes(fetchedData.notes ?? "");
@@ -115,11 +122,14 @@ export default function ViewContact() {
         const fetchedTagOptions = DUMMY_TAG_OPTIONS;
         setTagOptions(fetchedTagOptions);
         setIsStarred(fetchedData.starred ?? false);
+        setIsArchived(fetchedData.archived ?? false);
         setIsLoading(false);
       } catch (e) {
         /** TODO: redirect to error page */
         console.log(e);
         setIsLoading(false);
+      } finally {
+        firstUpdate.current = false;
       }
     }
   }, [contactId]);
@@ -141,7 +151,10 @@ export default function ViewContact() {
           name: fieldValues.name,
           notes: notes,
         };
-        const updatedContact = await updateManualContact(fieldValues._id, updateObject);
+        const updatedContact = await updateManualContact(
+          fieldValues._id,
+          updateObject
+        );
         console.log(updatedContact);
       } catch (e) {
         console.log(e);
@@ -150,8 +163,10 @@ export default function ViewContact() {
   }, [notes, fieldValues]);
 
   useEffect(() => {
-    console.log("update notes");
-    updateContactNotes();
+    if (!firstUpdate.current) {
+      console.log("update notes");
+      updateContactNotes();
+    }
   }, [notes, updateContactNotes]);
 
   const saveEditedNotes = () => {
@@ -176,7 +191,10 @@ export default function ViewContact() {
           name: fieldValues.name,
           tags: tags,
         };
-        const updatedContact = await updateManualContact(fieldValues._id, updateObject);
+        const updatedContact = await updateManualContact(
+          fieldValues._id,
+          updateObject
+        );
         console.log(updatedContact);
       } catch (e) {
         console.log(e);
@@ -185,8 +203,10 @@ export default function ViewContact() {
   }, [tags, fieldValues]);
 
   useEffect(() => {
-    console.log("update tags");
-    updateContactTags();
+    if (!firstUpdate.current) {
+      console.log("update tags");
+      updateContactTags();
+    }
   }, [tags, updateContactTags]);
 
   const deleteTag = (toDelete: string) => {
@@ -197,11 +217,16 @@ export default function ViewContact() {
   /** TODO */
   // const updateUserTags = useCallback(async () => {
   //   try {
-  //     const updateObject = {
-  //       allTags: tagOptions,
-  //     };
-  //     const updatedUser = await updateUser("123", updateObject);
-  //     console.log(updatedUser);
+  //     const currentUser = await getSession();
+  //     if (currentUser?.user) {
+  //       const updateObject = {
+  //         allTags: tagOptions,
+  //         name: currentUser?.user?.name,
+  //         email: currentUser?.user?.email ?? "",
+  //       };
+  //       const updatedUser = await updateUser("123", updateObject);
+  //       console.log(updatedUser);
+  //     }
   //   } catch (e) {
   //     console.log(e);
   //   }
@@ -209,7 +234,7 @@ export default function ViewContact() {
 
   // useEffect(() => {
   //   updateUserTags();
-  // },[tagOptions, updateUserTags]);
+  // }, [tagOptions, updateUserTags]);
 
   /** TODO: update user tags */
   const addTag = (toAdd: string) => {
@@ -227,7 +252,10 @@ export default function ViewContact() {
           name: fieldValues.name,
           starred: isStarred,
         };
-        const updatedContact = await updateManualContact(fieldValues._id, updateObject);
+        const updatedContact = await updateManualContact(
+          fieldValues._id,
+          updateObject
+        );
         console.log(updatedContact);
       } catch (e) {
         console.log(e);
@@ -235,10 +263,77 @@ export default function ViewContact() {
     }
   }, [isStarred, fieldValues]);
 
+  const updateArchived = useCallback(async () => {
+    if (fieldValues?._id) {
+      try {
+        const updateObject = {
+          ownerId: "123",
+          name: fieldValues.name,
+          archived: isArchived,
+        };
+        const updatedContact = await updateManualContact(
+          fieldValues._id,
+          updateObject
+        );
+        console.log(updatedContact);
+      } catch (e) {
+        console.log(e);
+      }
+    }
+  }, [isArchived, fieldValues]);
+
+  const deleteContact = useCallback(async () => {
+    if (fieldValues?._id) {
+      try {
+        setIsLoading(true);
+        const updatedContact = await deleteManualContact(fieldValues._id);
+        console.log(updatedContact);
+        setIsLoading(false);
+        router.replace("/contacts");
+      } catch (e) {
+        console.log(e);
+        setIsLoading(false);
+      }
+    }
+  }, [fieldValues, router]);
+
   useEffect(() => {
-    console.log("update starred");
-    updateStarred();
+    if (!firstUpdate.current) {
+      console.log("update starred");
+      updateStarred();
+    }
   }, [isStarred, updateStarred]);
+
+  useEffect(() => {
+    if (!firstUpdate.current) {
+      console.log("update archived");
+      updateArchived();
+    }
+  }, [isArchived, updateArchived]);
+
+  const handleContactOption = (
+    value: OnChangeValue<{ value: string; label: string }, false> | null
+  ) => {
+    if (value) {
+      if (value.value === "archive") {
+        setIsArchived(true);
+      } else if (value.value === "unarchive") {
+        setIsArchived(false);
+      } else if (value.value === "delete") {
+        deleteContact();
+      }
+    }
+  };
+
+  useEffect(() => {
+    getSession().then((session) => {
+      if (session) {
+        setIsLoading(false);
+      } else {
+        router.replace("/login");
+      }
+    });
+  }, [router]);
 
   if (isLoading) {
     return <PageLoadingBar />;
@@ -247,17 +342,35 @@ export default function ViewContact() {
   return (
     <Layout>
       <Container className={classes.containerStyle}>
-        <ContactOptions onPressArchive={() => {}} onPressDelete={() => {}} onPressEdit={() => {}} />
+        <ContactOptions
+          isArchived={isArchived}
+          onChange={handleContactOption}
+          onPressEdit={() => {}}
+        />
         <div className={classes.primaryDetailsStyle}>
           <Container className={classes.profilePicDiv}>
-            <Image className={classes.profilePic} src={DEFAULT_IMAGE} alt="Profile picture" />
+            <Image
+              className={classes.profilePic}
+              src={DEFAULT_IMAGE}
+              alt="Profile picture"
+            />
           </Container>
           <ContactHeader
             firstName={fieldValues?.name.firstName}
             lastName={fieldValues?.name.lastName}
             title={fieldValues?.job}
-            primaryOrg="Unimelb"
-            secondaryOrg="Unimelb2"
+            primaryOrg={
+              fieldValues?.organisations &&
+              fieldValues?.organisations.length > 0
+                ? fieldValues?.organisations[0]
+                : ""
+            }
+            secondaryOrg={
+              fieldValues?.organisations &&
+              fieldValues?.organisations.length > 1
+                ? fieldValues?.organisations[1]
+                : ""
+            }
             starred={isStarred}
             onStar={() => setIsStarred(!isStarred)}
           />
@@ -268,7 +381,9 @@ export default function ViewContact() {
             <MyNotes
               isEditingNotes={isEditingNotes}
               toggleEditingMode={toggleEditingMode}
-              onChangeEdited={(event: any) => setEditedNotes(event.target.value)}
+              onChangeEdited={(event: any) =>
+                setEditedNotes(event.target.value)
+              }
               notes={notes}
               editedNotes={editedNotes}
               saveEditedNotes={saveEditedNotes}
@@ -276,7 +391,12 @@ export default function ViewContact() {
             />
           </div>
           <div className={classes.myTags}>
-            <MyTags tags={tags} tagOptions={tagOptions} deleteTag={deleteTag} addTag={addTag} />
+            <MyTags
+              tags={tags}
+              tagOptions={tagOptions}
+              deleteTag={deleteTag}
+              addTag={addTag}
+            />
           </div>
         </div>
       </Container>

@@ -5,10 +5,13 @@ import { getAllManualContacts } from "../../api_client/ManualContactQueries";
 import Layout from "../../components/navLayout/Layout";
 import ContactsTable, { IdToContactMap } from "../../components/tables/contactsTable";
 import ContactsTableSort, { SortType } from "../../components/tables/contactsTableSort";
-import { sortFunctions } from "../contacts/contacts";
+import { sortFunctions } from "../contacts";
 import CreateContactButtonLarge from "../../components/buttons/CreateContactButtonLarge";
 import CreateContactButtonSmall from "../../components/buttons/CreateContactButtonSmall";
 import { IManualContact } from '../../lib/DataTypes';
+import PageLoadingBar from "../../components/pageLoadingBar";
+import { useRouter } from "next/router";
+import { getSession } from "next-auth/client";
 
 // Creates a map of contact ids to the respective contact
 function contactListToMap(contactList: IManualContact[]) {
@@ -46,14 +49,18 @@ export default function SearchPage() {
   const [sortValue, setSortValue] = useState<SortType>(SortType.None)
   const [searchResults, setSearchResults] = useState<IManualContact[]>([])
   const [addedContacts, setAddedContacts] = useState<IdToContactMap>({})
+  const [isLoading, setIsLoading] = useState(true);
+  const router = useRouter()
 
   // Get contacts data
   useEffect(() => {
+    setIsLoading(true)
     // Placeholder for search results
     getSearchResults(setSearchResults)
 
     // Get contacts already added
     getAddedContacts(setAddedContacts)
+    setIsLoading(false)
   }, [])
 
   // Sort the contacts table based on changes to the sort value
@@ -88,6 +95,20 @@ export default function SearchPage() {
   // Adjust components based on screen size
   const theme = useTheme()
   const bigScreen = useMediaQuery(theme.breakpoints.up("md"))
+
+  useEffect(() => {
+    getSession().then((session) => {
+      if (session) {
+        setIsLoading(false);
+      } else {
+        router.replace("/login");
+      }
+    });
+  }, [router]);
+
+  if (isLoading) {
+    return <PageLoadingBar />;
+  }
 
   return (
     <Layout>

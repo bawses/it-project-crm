@@ -8,18 +8,9 @@ import ContactsTableTags, { SelectValue } from '../../components/tables/contacts
 import { IManualContact } from '../../lib/DataTypes';
 import { getAllManualContacts, updateManualContact } from '../../api_client/ManualContactQueries';
 import Layout from "../../components/navLayout/Layout";
-
-async function getData(setAllContacts: (contacts: IManualContact[]) => void, setDisplayContacts: (contacts: IManualContact[]) => void) {
-  try {
-    const data = await getAllManualContacts()
-    // Save all contacts
-    setAllContacts(data)
-    // Make the display contacts initially just a copy of all contacts
-    setDisplayContacts(data)
-  } catch (error) {
-    console.error(error)
-  }
-}
+import PageLoadingBar from "../../components/pageLoadingBar";
+import { useRouter } from 'next/router';
+import { getSession } from 'next-auth/client';
 
 export const sortFunctions = {
   [SortType.FirstName]: (a: IManualContact, b: IManualContact) => (a.name.firstName > b.name.firstName) ? 1 : -1,
@@ -65,6 +56,23 @@ export default function Contacts() {
   const [tags, setTags] = useState<OnChangeValue<SelectValue, true>>([])
   const [allContacts, setAllContacts] = useState<IManualContact[]>([])
   const [displayContacts, setDisplayContacts] = useState<IManualContact[]>([])
+  const [isLoading, setIsLoading] = useState(true)
+  const router = useRouter()
+
+  async function getData(setAllContacts: (contacts: IManualContact[]) => void, setDisplayContacts: (contacts: IManualContact[]) => void) {
+    try {
+      setIsLoading(true)
+      const data = await getAllManualContacts()
+      // Save all contacts
+      setAllContacts(data)
+      // Make the display contacts initially just a copy of all contacts
+      setDisplayContacts(data)
+      setIsLoading(false)
+    } catch (error) {
+      console.error(error)
+      setIsLoading(false)
+    }
+  }
 
   // Get contacts data
   useEffect(() => {
@@ -126,6 +134,20 @@ export default function Contacts() {
       console.error("Error updating user starred status", error)
       return false
     }
+  }
+
+  useEffect(() => {
+    getSession().then((session) => {
+      if (session) {
+        setIsLoading(false);
+      } else {
+        router.replace("/login");
+      }
+    });
+  }, [router]);
+
+  if (isLoading) {
+    return <PageLoadingBar />;
   }
 
   return (
