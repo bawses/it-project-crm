@@ -1,5 +1,5 @@
 import { Avatar, Typography, TableRow, TableCell, IconButton } from "@material-ui/core";
-import stockImage from '../../public/stockImage.jpg'
+import DEFAULT_IMAGE from "../../assets/blank-profile-picture-973460_640.png";
 import StarsIcon from '@material-ui/icons/Stars';
 import { COLORS } from "../../lib/Colors";
 import { makeStyles } from "@material-ui/styles";
@@ -67,7 +67,7 @@ export default function ContactsTableRow({ contact, starVariant, addVariant }: C
   return (
     <Link href={"contacts/" + contact._id} passHref>
       <TableRow className={classes.row} hover={true}>
-        <TableCell><Avatar src={stockImage.src} /></TableCell>
+        <TableCell><Avatar src={DEFAULT_IMAGE.src} /></TableCell>
         <TableCell><Typography component="p" style={{ fontWeight: 600 }}>{name}</Typography></TableCell>
         <TableCell><Typography component="p">{contact.job}</Typography></TableCell>
         <TableCell>{buttonComponent}</TableCell>
