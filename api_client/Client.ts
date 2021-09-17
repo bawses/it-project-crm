@@ -17,11 +17,7 @@ export const getDbRecordById = async <T>(dataType: DataType, recordId: string): 
 };
 
 /* Makes an API call to edit an existing entry in the database for the given dataType */
-export const updateDbRecord = async <T>(
-  dataType: DataType,
-  recordId: string,
-  dataObj: T
-): Promise<T> => {
+export const updateDbRecord = async <T>(dataType: DataType, recordId: string, dataObj: T): Promise<T> => {
   return await doFetch<T, T>(RequestType.PUT, dataType, recordId, dataObj);
 };
 
