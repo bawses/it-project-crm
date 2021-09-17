@@ -5,6 +5,7 @@ import {
   getDbRecordById,
   updateDbRecord,
   deleteDbRecord,
+  doRegexSearch,
 } from "./Client";
 import { hash as hashPassword } from "bcryptjs";
 
@@ -74,3 +75,7 @@ export const updateUser = async (id: string, dataObj: IUser) => {
 export const deleteUser = async (id: string) => {
   deleteDbRecord<IUser>(DataType.User, id);
 };
+
+export const searchUsersByName = async (name: string) => {
+  return doRegexSearch<IUser>(DataType.User, name);
+}

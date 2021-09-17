@@ -4,6 +4,7 @@ import {
   getUserById,
   updateUser,
   deleteUser,
+  searchUsersByName,
 } from "../../api_client/UserQueries";
 
 export default function TestUserApis() {
@@ -46,6 +47,11 @@ export default function TestUserApis() {
       console.log("Testing delete");
       await deleteUser(id);
       console.log("Delete success");
+
+      console.log("Testing regex");
+      const search = await searchUsersByName("tony");
+      console.log(search);
+
       console.log("Test success");
     } catch (err) {
       console.error(err);
