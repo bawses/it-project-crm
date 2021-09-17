@@ -160,6 +160,7 @@ export default function Navbar({ pageType = "personal" }: NavbarProps) {
                 className={classes.navButton}
                 color="inherit"
                 aria-label="myProfile"
+                onClick={() => router.push("/contacts")}
               >
                 <CollectionsBookmarkIcon fontSize="large" />
               </IconButton>
@@ -167,6 +168,7 @@ export default function Navbar({ pageType = "personal" }: NavbarProps) {
                 className={classes.navButton}
                 color="inherit"
                 aria-label="myProfile"
+                onClick={() => router.push("/profile")}
               >
                 <AccountCircleIcon fontSize="large" />
               </IconButton>

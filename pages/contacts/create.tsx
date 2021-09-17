@@ -2,7 +2,7 @@ import { Paper, Container, Typography, makeStyles, TextField, Button, IconButton
 import { Business } from "@material-ui/icons";
 import Image from "next/image";
 import DEFAULT_IMAGE from "../../assets/blank-profile-picture-973460_640.png";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { OnChangeValue } from "react-select";
 import EditContactOptions from "../../components/buttons/EditContactOptions";
 import ExtraField from "../../components/input/ExtraField";
@@ -15,6 +15,7 @@ import { IManualContact } from "../../lib/DataTypes";
 import Layout from "../../components/navLayout/Layout";
 import PageLoadingBar from "../../components/PageLoadingBar";
 import { useRouter } from "next/router";
+import { getSession } from "next-auth/client";
 
 const useStyles = makeStyles((theme) => ({
   containerStyle: {
@@ -123,7 +124,7 @@ export default function CreateContact() {
     address: "",
   });
   const [extraFields, setExtraFields] = useState<ExtraFieldType[]>([]);
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
   const router = useRouter();
 
   const fieldCreator = (index: number, fieldType: string, fieldValue: string) => {
@@ -168,6 +169,7 @@ export default function CreateContact() {
           .filter((field) => field.fieldType === "Other")
           .map((other) => other.fieldValue),
       },
+      organisations: [fieldValues.primaryOrg, fieldValues.secondaryOrg],
       notes: "",
       tags: [],
       starred: false,
@@ -214,6 +216,16 @@ export default function CreateContact() {
     event.preventDefault();
     createNewContact();
   };
+
+  useEffect(() => {
+    getSession().then((session) => {
+      if (session) {
+        setIsLoading(false);
+      } else {
+        router.replace("/login");
+      }
+    });
+  }, [router]);
 
   if (isLoading) {
     return <PageLoadingBar />;

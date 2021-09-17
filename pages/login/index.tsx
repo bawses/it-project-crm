@@ -137,15 +137,15 @@ export default function LoginPage() {
       console.log(result.error);
       setError("Invalid User Credentials Entered")
     } else {
-      router.replace("/profile");
+      router.replace("/contacts");
     }
   };
 
   useEffect(() => {
     getSession().then((session) => {
       if (session) {
-        // redirect to profile
-        router.replace("/profile");
+        // redirect to home page (contacts list)
+        router.replace("/contacts");
       } else {
         setIsLoading(false);
       }

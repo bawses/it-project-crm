@@ -147,7 +147,7 @@ export default function SignUpPage() {
 
     try {
       userSignUp(userState.firstName, userState.lastName, userState.email, userState.password);
-      router.replace("/profile");
+      router.replace("/contacts");
     } catch (error) {
       console.error(error);
     }
@@ -156,7 +156,7 @@ export default function SignUpPage() {
   useEffect(() => {
     getSession().then((session) => {
       if (session) {
-        router.replace("/");
+        router.replace("/contacts");
       } else {
         setIsLoading(false);
       }
