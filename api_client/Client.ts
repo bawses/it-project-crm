@@ -17,7 +17,11 @@ export const getDbRecordById = async <T>(dataType: DataType, recordId: string): 
 };
 
 /* Makes an API call to edit an existing entry in the database for the given dataType */
-export const updateDbRecord = async <T>(dataType: DataType, recordId: string, dataObj: T): Promise<T> => {
+export const updateDbRecord = async <T>(
+  dataType: DataType,
+  recordId: string,
+  dataObj: T
+): Promise<T> => {
   return await doFetch<T, T>(RequestType.PUT, dataType, recordId, dataObj);
 };
 
@@ -26,9 +30,9 @@ export const deleteDbRecord = async <T>(dataType: DataType, recordId: string): P
   return await doFetch<T, T>(RequestType.DELETE, dataType, recordId, undefined);
 };
 
-export const doFetch = async <T_input, T_output>(
+const doFetch = async <T_input, T_output>(
   fetchType: RequestType,
-  dataType: string,
+  dataType: DataType,
   recordId?: string,
   dataObj?: T_input
 ): Promise<T_output> => {
@@ -87,4 +91,31 @@ export const doFetch = async <T_input, T_output>(
     throw new Error(`Failed to do operation: ${fetchType} for ${dataType}`);
   }
   return data as T_output;
+};
+
+export const doRegexSearch = async <T>(dataType: DataType, regex: string) => {
+  var url = `/api/${dataType}s?search=${regex}`;
+
+  try {
+    var response = await fetch(url, {
+      method: RequestType.GET,
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json",
+      },
+    });
+
+    // Throw error with status code in case Fetch API call failed
+    if (!response.ok) throw new Error(`${response.status}`);
+
+    // Extract the data out of the JSON object in the form of a JavaScript object.
+    var { data } = await response.json();
+    if (!data) throw new Error(`${response.status}`);
+  } catch (error) {
+    /* If an error occurs anywhere in the process of making an API call, log it */
+    console.error(error);
+    console.error(`Failed to do operation: regexSearch for ${dataType}`);
+    throw new Error(`Failed to do operation: regexSearch for ${dataType}`);
+  }
+  return data as T[];
 };

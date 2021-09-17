@@ -1,5 +1,12 @@
 import { DataType, IManualContact } from "../lib/DataTypes";
-import { createDbRecord, searchDb, getDbRecordById, updateDbRecord, deleteDbRecord } from "./Client";
+import {
+  createDbRecord,
+  searchDb,
+  getDbRecordById,
+  updateDbRecord,
+  deleteDbRecord,
+  doRegexSearch,
+} from "./Client";
 
 export const createManualContact = async (dataObj: IManualContact) => {
   return createDbRecord<IManualContact>(DataType.ManualContact, dataObj);
@@ -23,4 +30,8 @@ export const updateManualContact = async (id: string, dataObj: IManualContact) =
 
 export const deleteManualContact = async (id: string) => {
   deleteDbRecord<IManualContact>(DataType.ManualContact, id);
+};
+
+export const searchManualContactsByName = async (name: string) => {
+  return doRegexSearch<IManualContact>(DataType.ManualContact, name);
 };
