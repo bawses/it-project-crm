@@ -2,26 +2,31 @@ import { FormLabelBaseProps, Paper, Table, TableBody, TableContainer } from '@ma
 import ContactsTableRow from './contactsTableRow';
 import { IManualContact } from '../../lib/DataTypes';
 
+export type IdToContactMap = Record<string, IManualContact>
+
 interface ContactsTableProps {
   contacts: IManualContact[],
-  searchResultVariant: boolean
+  handleRowButtonClick: (target: IManualContact) => Promise<boolean>
+  idToContactMap?: IdToContactMap
 }
 
-function handleStar() { }
-
-function handleAdd() { }
-
-export default function ContactsTable({ contacts, searchResultVariant }: ContactsTableProps) {
+export default function ContactsTable({ contacts, handleRowButtonClick, idToContactMap }: ContactsTableProps) {
   const rows: JSX.Element[] = []
   for (const contact of contacts) {
+    // For the search results variant, check if the each contact has been already added or not
+    let alreadyAdded = false
+    if (idToContactMap && contact._id) {
+      if (contact._id in idToContactMap) {
+        alreadyAdded = true
+      }
+    }
+
     const key = contact._id || contact.name.firstName
     rows.push(
       <ContactsTableRow
         key={key}
-        name={contact.name.firstName + " " + contact.name.lastName}
-        role={contact.job}
-        isStarred={contact.starred || false}
-        {...(searchResultVariant ? { handleAdd: handleAdd } : { handleStar: handleStar })}
+        contact={contact}
+        {...(idToContactMap ? { addVariant: { alreadyAdded: alreadyAdded, handleContactAdd: handleRowButtonClick } } : { starVariant: { handleStar: handleRowButtonClick } })}
       />
     )
   }

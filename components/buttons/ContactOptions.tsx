@@ -2,12 +2,16 @@ import React from "react";
 import { makeStyles, IconButton } from "@material-ui/core";
 import { Edit } from "@material-ui/icons";
 import { COLORS } from "../../lib/Colors";
-import Select from "react-select";
+import Select, { OnChangeValue } from "react-select";
 
 const options = [
   {
     value: "archive",
     label: "Archive contact",
+  },
+  {
+    value: "unarchive",
+    label: "Retrieve from archive",
   },
   {
     value: "delete",
@@ -16,8 +20,8 @@ const options = [
 ];
 
 interface ContactOptionsProps {
-  onPressArchive?: () => void;
-  onPressDelete?: () => void;
+  isArchived: boolean;
+  onChange: (value: OnChangeValue<{ value: string; label: string }, false>) => void;
   onPressEdit?: () => void;
 }
 
@@ -35,9 +39,9 @@ const contactOptionsStyles = {
 };
 
 export default function ContactOptions({
-  onPressArchive = () => { },
-  onPressDelete = () => { },
-  onPressEdit = () => { },
+  isArchived,
+  onChange,
+  onPressEdit = () => {},
 }: ContactOptionsProps) {
   const classes = useStyles();
 
@@ -47,9 +51,16 @@ export default function ContactOptions({
         className={classes.contactOptionsBtn}
         styles={contactOptionsStyles}
         instanceId="contactOptions"
-        options={options}
+        options={
+          isArchived
+            ? options.filter((option) => option.value !== "archive")
+            : options.filter((option) => option.value !== "unarchive")
+        }
         value={null}
         placeholder={"Added to my contacts"}
+        onChange={onChange}
+        isSearchable={false}
+        isClearable={false}
       />
       <IconButton onClick={() => onPressEdit}>
         <Edit className={classes.editIcon} />

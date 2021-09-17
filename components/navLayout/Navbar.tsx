@@ -41,6 +41,10 @@ const useStyles = makeStyles((theme: Theme) =>
       },
     },
     searchIcon: {
+      [theme.breakpoints.down("sm")]: {
+        padding: theme.spacing(0, 1),
+      },
+      
       padding: theme.spacing(0, 2),
       height: "100%",
       position: "absolute",
@@ -51,6 +55,9 @@ const useStyles = makeStyles((theme: Theme) =>
       color: COLORS.black,
     },
     inputInput: {
+      [theme.breakpoints.down("sm")]: {
+        padding: theme.spacing(1, 1, 1, 2.25),
+      },
       padding: theme.spacing(1, 1, 1, 0),
       // vertical padding + font size from searchIcon
       paddingLeft: `calc(1em + ${theme.spacing(4)}px)`,
@@ -71,7 +78,7 @@ const useStyles = makeStyles((theme: Theme) =>
     },
     sectionMobile: {
       display: "flex",
-      [theme.breakpoints.up("md")]: {
+      [theme.breakpoints.down("sm")]: {
         display: "none",
       },
     },
@@ -113,13 +120,23 @@ export default function Navbar({ pageType = "personal" }: NavbarProps) {
             <div className={classes.searchIcon}>
               <SearchIcon />
             </div>
-            <InputBase
-              placeholder="Search..."
-              classes={{
-                input: classes.inputInput,
-              }}
-              inputProps={{ "aria-label": "search" }}
-            />
+            {isMobile ? (
+              <InputBase
+                placeholder="Search... (press Enter)"
+                classes={{
+                  input: classes.inputInput,
+                }}
+                inputProps={{ "aria-label": "search" }}
+              />
+            ) : (
+              <InputBase
+                placeholder="Search..."
+                classes={{
+                  input: classes.inputInput,
+                }}
+                inputProps={{ "aria-label": "search" }}
+              />
+            )}
           </div>
 
           {/* icons */}
@@ -128,7 +145,6 @@ export default function Navbar({ pageType = "personal" }: NavbarProps) {
           ) : (
             // show icons in Navbar if not Mobile
             <React.Fragment>
-              {/* <NavLink className="nav-name" to="/customer/pastorders">Past Orders</NavLink> */}
               <div className={classes.searchAdd}>
                 <IconButton
                   className={classes.navButton}
@@ -144,6 +160,7 @@ export default function Navbar({ pageType = "personal" }: NavbarProps) {
                 className={classes.navButton}
                 color="inherit"
                 aria-label="myProfile"
+                onClick={() => router.push("/contacts")}
               >
                 <CollectionsBookmarkIcon fontSize="large" />
               </IconButton>
@@ -151,6 +168,7 @@ export default function Navbar({ pageType = "personal" }: NavbarProps) {
                 className={classes.navButton}
                 color="inherit"
                 aria-label="myProfile"
+                onClick={() => router.push("/profile")}
               >
                 <AccountCircleIcon fontSize="large" />
               </IconButton>

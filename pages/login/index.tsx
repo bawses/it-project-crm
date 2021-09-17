@@ -1,5 +1,6 @@
 import { useRouter } from "next/router";
 import Link from "next/link";
+import Layout from "../../components/navLayout/Layout";
 import { getSession, signIn } from "next-auth/client";
 import React, { useEffect, useState, ChangeEvent, MouseEvent } from "react";
 import useMediaQuery from "@material-ui/core/useMediaQuery";
@@ -8,7 +9,7 @@ import { useTheme } from "@material-ui/core/styles";
 import { Typography, TextField, Grid, Paper, Button } from "@material-ui/core";
 import { makeStyles, createStyles, Theme } from "@material-ui/core/styles";
 import { COLORS } from "../../lib/Colors";
-import PageLoadingBar from "../../components/pageLoadingBar";
+import PageLoadingBar from "../../components/PageLoadingBar";
 import AuthButton from "../../components/buttons/AuthButton";
 
 const useStyles = makeStyles((theme: Theme) =>
@@ -31,14 +32,10 @@ const useStyles = makeStyles((theme: Theme) =>
 
     logobox: {
       [theme.breakpoints.down("sm")]: {
-        paddingTop: theme.spacing(2.5),
-        paddingBottom: theme.spacing(2),
-        paddingLeft: theme.spacing(2),
-        marginLeft: theme.spacing(1),
-        marginTop: theme.spacing(1),
+        paddingTop: theme.spacing(2),
+        marginTop: theme.spacing(3),
       },
       [theme.breakpoints.up("md")]: {
-        backgroundColor: COLORS.white,
         marginLeft: theme.spacing(3),
       },
     },
@@ -51,25 +48,30 @@ const useStyles = makeStyles((theme: Theme) =>
     formTitle: {
       [theme.breakpoints.down("sm")]: {
         paddingTop: 20,
+        marginLeft:"2%",
       },
       [theme.breakpoints.between("md", "lg")]: {
-        paddingTop: 60,
+        paddingTop: "5%",
       },
       [theme.breakpoints.up("xl")]: {
-        paddingTop: 150,
+        paddingTop: "40%",
       },
-      paddingBottom: 10,
     },
 
     formSubheading: {
       color: COLORS.primaryBlueDark,
       paddingBottom: 10,
+      [theme.breakpoints.down("sm")]: {
+        marginLeft:"2%",
+      },
     },
 
     paper: {
+      [theme.breakpoints.down("sm")]: {
+        minHeight: 380,
+      },
+      minHeight: 340,
       minWidth: theme.breakpoints.values.xs,
-      minHeight: 370,
-      maxHeight: 340,
       maxWidth: 500,
       padding: theme.spacing(4),
       marginBottom: theme.spacing(1),
@@ -77,18 +79,21 @@ const useStyles = makeStyles((theme: Theme) =>
     },
 
     form: {
-      paddingTop: "3%",
-      paddingBottom: "3%",
-      [theme.breakpoints.down("sm")]: {
-        marginTop: "5%",
-      },
-      [theme.breakpoints.up("sm")]: {
+      paddingTop: "5%",
+      paddingBottom: "5%",
+      [theme.breakpoints.up("md")]: {
         marginLeft: "-10%",
+        paddingTop: "5%",
       },
     },
 
     textbox: {
-      margin: "8px auto",
+      [theme.breakpoints.down("sm")]: {
+        margin: "6px auto",
+      },
+      [theme.breakpoints.up("md")]: {
+        margin: "8px auto",
+      },
       backgroundColor: COLORS.white,
     },
 
@@ -132,15 +137,15 @@ export default function LoginPage() {
       console.log(result.error);
       setError("Invalid User Credentials Entered")
     } else {
-      router.replace("/profile");
+      router.replace("/contacts");
     }
   };
 
   useEffect(() => {
     getSession().then((session) => {
       if (session) {
-        // redirect to profile
-        router.replace("/profile");
+        // redirect to home page (contacts list)
+        router.replace("/contacts");
       } else {
         setIsLoading(false);
       }
@@ -218,7 +223,7 @@ export default function LoginPage() {
           </Paper>
         </div>
       </Grid>
-      {/* </Grid> */}
     </main>
+    
   );
 }

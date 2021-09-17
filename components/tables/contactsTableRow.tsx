@@ -1,17 +1,18 @@
-import { Avatar, Typography, TableRow, TableCell, Button, IconButton } from "@material-ui/core";
-import stockImage from '../../public/stockImage.jpg'
+import { Avatar, Typography, TableRow, TableCell, IconButton, useMediaQuery } from "@material-ui/core";
+import { useTheme } from "@material-ui/core/styles";
+import DEFAULT_IMAGE from "../../assets/blank-profile-picture-973460_640.png";
 import StarsIcon from '@material-ui/icons/Stars';
 import { COLORS } from "../../lib/Colors";
 import { makeStyles } from "@material-ui/styles";
+import { IManualContact } from "../../lib/DataTypes";
 import React from "react";
 import TextButton from "../buttons/TextButton";
+import Link from "next/link"
 
 export interface ContactsTableRowProps {
-  name: string,
-  role?: string,
-  isStarred?: boolean,
-  handleStar?: () => void,
-  handleAdd?: () => void
+  contact: IManualContact,
+  starVariant?: { handleStar: (target: IManualContact) => Promise<boolean> },
+  addVariant?: { alreadyAdded: boolean, handleContactAdd: (target: IManualContact) => Promise<boolean> }
 }
 
 const useStyles = makeStyles({
@@ -20,29 +21,70 @@ const useStyles = makeStyles({
     backgroundColor: COLORS.actionOrange,
     color: COLORS.white,
     fontWeight: "bold"
+  },
+  row: {
+    "&:hover": {
+      cursor: 'pointer'
+    }
   }
 })
 
-export default function ContactsTableRow({ name, role, isStarred, handleStar, handleAdd }: ContactsTableRowProps) {
+export default function ContactsTableRow({ contact, starVariant, addVariant }: ContactsTableRowProps) {
   const classes = useStyles()
 
   let buttonComponent: JSX.Element
-  if (handleStar) {
+  if (starVariant) {
+    // Determine colour for star variant
     let starColor = COLORS.inactiveGrey
-    if (isStarred) {
+    if (contact.starred) {
       starColor = COLORS.starredYellow
     }
-    buttonComponent = <IconButton><StarsIcon htmlColor={starColor} /></IconButton>
+
+    buttonComponent = (
+      <IconButton onClick={(event) => {
+        event.stopPropagation()
+        starVariant.handleStar(contact)
+      }}>
+        <StarsIcon htmlColor={starColor} />
+      </IconButton>
+    )
   } else {
-    buttonComponent = <TextButton className={classes.addBtn} title="Add" />
+    // Determine text and status for add variant
+    buttonComponent = (
+      <TextButton
+        disabled={addVariant?.alreadyAdded}
+        className={classes.addBtn}
+        onClick={(event) => {
+          event.stopPropagation()
+          addVariant?.handleContactAdd(contact)
+        }}
+        title={addVariant?.alreadyAdded ? "Added" : "Add"}
+      />
+    )
   }
 
+  const name = contact.name.firstName + " " + contact.name.lastName
+  const nameComponent = <Typography component="p" style={{ fontWeight: 600 }}>{name}</Typography>
+  const roleComponent = <Typography component="p">{contact.job}</Typography>
+
+  // Adjust component based on screen size
+  const theme = useTheme()
+  const bigScreen = useMediaQuery(theme.breakpoints.up("md"))
+
   return (
-    <TableRow>
-      <TableCell><Avatar src={stockImage.src} /></TableCell>
-      <TableCell><Typography component="p" style={{ fontWeight: 600 }}>{name}</Typography></TableCell>
-      <TableCell><Typography component="p">{role}</Typography></TableCell>
-      <TableCell>{buttonComponent}</TableCell>
-    </TableRow>
+    <Link href={"contacts/" + contact._id} passHref>
+      <TableRow className={classes.row} hover={true}>
+        <TableCell><Avatar src={DEFAULT_IMAGE.src} /></TableCell>
+        {bigScreen
+          ?
+          <>
+            <TableCell>{nameComponent}</TableCell>
+            <TableCell>{roleComponent}</TableCell>
+          </>
+          : <TableCell>{nameComponent} {roleComponent}</TableCell>
+        }
+        <TableCell>{buttonComponent}</TableCell>
+      </TableRow>
+    </Link>
   )
 }

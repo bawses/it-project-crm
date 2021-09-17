@@ -3,7 +3,7 @@ import { COLORS } from "../../lib/Colors";
 import { Box, IconButton, AppBar, Toolbar } from "@material-ui/core";
 import { createStyles, Theme, makeStyles } from "@material-ui/core/styles";
 
-// MaterialUI Icons
+// MaterialUI Icon
 import CollectionsBookmarkIcon from "@material-ui/icons/CollectionsBookmark";
 import AccountCircleIcon from "@material-ui/icons/AccountCircle";
 import PersonAddIcon from "@material-ui/icons/PersonAdd";
@@ -23,7 +23,8 @@ const useStyles = makeStyles((theme: Theme) =>
       maxHeight: "50px",
     },
     navButton: {
-      margin: theme.spacing(5),
+      marginLeft: theme.spacing(3),
+      marginRight: theme.spacing(3),
     },
   })
 );
@@ -38,7 +39,7 @@ export default function Footer({ pageType = "personal" }: FooterProps) {
   const router = useRouter();
   return (
     <div>
-      <AppBar position="fixed" color="primary" className={classes.appBar}>
+      <AppBar color="primary" className={classes.appBar}>
         <Toolbar className={classes.customizeToolbar}>
           <div className={classes.grow}>
             <Box display="flex" justifyContent="center">
