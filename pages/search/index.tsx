@@ -1,4 +1,4 @@
-import { Box, useMediaQuery } from "@material-ui/core";
+import { Box, Typography, useMediaQuery } from "@material-ui/core";
 import { useTheme } from "@material-ui/core/styles";
 import { ChangeEvent, useEffect, useMemo, useState } from "react";
 import { getAllManualContacts } from "../../api_client/ManualContactQueries";
@@ -73,8 +73,8 @@ export default function SearchPage() {
     [searchResults, sortValue]
   )
 
-  function handleNewSortVal(event: ChangeEvent<{ value: unknown }>) {
-    setSortValue(event.target.value as SortType)
+  function handleNewSortVal(newSortVal: SortType) {
+    setSortValue(newSortVal)
   }
 
   async function handleContactAdd(target: IManualContact) {
@@ -112,15 +112,24 @@ export default function SearchPage() {
 
   return (
     <Layout>
-      <Box display="flex" flexDirection="row" justifyContent="centre" mx={{ sm: 0, md: 8, lg: 20 }} mt={5}>
+      <Box display="flex" flexDirection="row" justifyContent="centre" mx={{ sm: 0, md: 8, lg: 20 }} mt={{ sm: 1, md: 5 }}>
         {/* Entire table, including sort and search results */}
         <Box display="flex" flexDirection="column" mr={bigScreen ? 2 : 0} width="100%">
-          <Box fontSize={bigScreen ? 26 : 18} ml={bigScreen ? 0 : 1}>
-            Search results for:
-          </Box>
+          {
+            bigScreen &&
+            <Box fontSize={bigScreen ? 26 : 18} ml={bigScreen ? 0 : 1}>
+              Search results for: <strong>John</strong>
+            </Box>
+          }
           <Box display="flex" py={2}>
-            <Box flexGrow={1} ml={bigScreen ? 0 : 1}>
-              {!bigScreen && <CreateContactButtonSmall />}
+            <Box flexGrow={1} flexDirection="column" ml={bigScreen ? 0 : 1}>
+              {
+                !bigScreen &&
+                <>
+                  <Typography component="p">Search results for:</Typography>
+                  <Typography component="p"><strong>John Appleseed</strong></Typography>
+                </>
+              }
             </Box>
             {/* Sort component */}
             <Box flexGrow={1}>

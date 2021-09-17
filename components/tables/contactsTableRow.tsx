@@ -1,4 +1,5 @@
-import { Avatar, Typography, TableRow, TableCell, IconButton } from "@material-ui/core";
+import { Avatar, Typography, TableRow, TableCell, IconButton, useMediaQuery } from "@material-ui/core";
+import { useTheme } from "@material-ui/core/styles";
 import DEFAULT_IMAGE from "../../assets/blank-profile-picture-973460_640.png";
 import StarsIcon from '@material-ui/icons/Stars';
 import { COLORS } from "../../lib/Colors";
@@ -63,13 +64,25 @@ export default function ContactsTableRow({ contact, starVariant, addVariant }: C
   }
 
   const name = contact.name.firstName + " " + contact.name.lastName
+  const nameComponent = <Typography component="p" style={{ fontWeight: 600 }}>{name}</Typography>
+  const roleComponent = <Typography component="p">{contact.job}</Typography>
+
+  // Adjust component based on screen size
+  const theme = useTheme()
+  const bigScreen = useMediaQuery(theme.breakpoints.up("md"))
 
   return (
     <Link href={"contacts/" + contact._id} passHref>
       <TableRow className={classes.row} hover={true}>
         <TableCell><Avatar src={DEFAULT_IMAGE.src} /></TableCell>
-        <TableCell><Typography component="p" style={{ fontWeight: 600 }}>{name}</Typography></TableCell>
-        <TableCell><Typography component="p">{contact.job}</Typography></TableCell>
+        {bigScreen
+          ?
+          <>
+            <TableCell>{nameComponent}</TableCell>
+            <TableCell>{roleComponent}</TableCell>
+          </>
+          : <TableCell>{nameComponent} {roleComponent}</TableCell>
+        }
         <TableCell>{buttonComponent}</TableCell>
       </TableRow>
     </Link>

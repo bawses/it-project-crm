@@ -102,8 +102,8 @@ export default function Contacts() {
     setDisplayContacts(toDisplay)
   }, [allContacts, categoryButton, tags, sortValue])
 
-  function handleNewSortVal(event: ChangeEvent<{ value: unknown }>) {
-    setSortValue(event.target.value as SortType)
+  function handleNewSortVal(newSortVal: SortType) {
+    setSortValue(newSortVal)
   }
 
   function handleButtonPress(button: CategoryButton) {
