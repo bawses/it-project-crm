@@ -8,7 +8,7 @@ import ContactsTableTags, { SelectValue } from '../../components/tables/contacts
 import { IManualContact } from '../../lib/DataTypes';
 import { getAllManualContacts, updateManualContact } from '../../api_client/ManualContactQueries';
 import Layout from "../../components/navLayout/Layout";
-import PageLoadingBar from "../../components/pageLoadingBar";
+import PageLoadingBar from "../../components/PageLoadingBar";
 import { useRouter } from 'next/router';
 import { getSession } from 'next-auth/client';
 
