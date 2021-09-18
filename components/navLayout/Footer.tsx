@@ -1,4 +1,4 @@
-import React from 'react';
+import React from "react";
 import { COLORS } from "../../lib/Colors";
 import { Box, IconButton, AppBar, Toolbar } from "@material-ui/core";
 import { createStyles, Theme, makeStyles } from "@material-ui/core/styles";
@@ -48,10 +48,15 @@ export default function Footer({ pageType = "personal" }: FooterProps) {
                 color="inherit"
                 aria-label="open drawer"
                 className={classes.navButton}
+                onClick={() => router.push("/profile")}
               >
                 <AccountCircleIcon fontSize="large" />
               </IconButton>
-              <IconButton color="inherit" className={classes.navButton}>
+              <IconButton
+                color="inherit"
+                className={classes.navButton}
+                onClick={() => router.push("/contacts")}
+              >
                 <CollectionsBookmarkIcon fontSize="large" />
               </IconButton>
               <IconButton
