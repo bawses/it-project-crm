@@ -144,8 +144,13 @@ export default function CreateContact() {
 
   const createNewContact = async () => {
     /** TODO: input validation, don't create empty contacts */
+    let session = await getSession();
+    let ownerId;
+    if (session){
+      ownerId = session?.user?._id;
+    }
     const contactToCreate: IManualContact = {
-      ownerId: "123",
+      ownerId: ownerId,
       name: {
         firstName: fieldValues.firstName,
         lastName: fieldValues.lastName,

@@ -12,16 +12,16 @@ export const createManualContact = async (dataObj: IManualContact) => {
   return createDbRecord<IManualContact>(DataType.ManualContact, dataObj);
 };
 
-export const getAllManualContacts = async () => {
-  return searchDb<IManualContact>(DataType.ManualContact, undefined);
+export const getAllManualContacts = async (ownerId: string) => {
+  return searchDb<IManualContact>(DataType.ManualContact, undefined, ownerId);
 };
 
 export const searchManualContacts = async (dataObj: IManualContact) => {
   return searchDb<IManualContact>(DataType.ManualContact, dataObj);
 };
 
-export const getManualContactById = async (id: string) => {
-  return getDbRecordById<IManualContact>(DataType.ManualContact, id);
+export const getManualContactById = async (recordId: string) => {
+  return getDbRecordById<IManualContact>(DataType.ManualContact, recordId);
 };
 
 export const updateManualContact = async (id: string, dataObj: IManualContact) => {

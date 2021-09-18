@@ -11,6 +11,7 @@ import Layout from "../../components/navLayout/Layout";
 import PageLoadingBar from "../../components/PageLoadingBar";
 import { useRouter } from 'next/router';
 import { getSession } from 'next-auth/client';
+import { Session } from 'next-auth';
 
 export const sortFunctions = {
   [SortType.FirstName]: (a: IManualContact, b: IManualContact) => (a.name.firstName > b.name.firstName) ? 1 : -1,
@@ -62,7 +63,16 @@ export default function Contacts() {
   async function getData(setAllContacts: (contacts: IManualContact[]) => void, setDisplayContacts: (contacts: IManualContact[]) => void) {
     try {
       setIsLoading(true)
-      const data = await getAllManualContacts()
+      const session = await getSession() || null;
+      let data;
+      console.log(session?.user);
+      if (session){
+        data = await getAllManualContacts(session?.user?._id);
+        console.log(data);
+      }
+      else{
+        throw new Error("Invalid Request. No User Session!")
+      }
       // Save all contacts
       setAllContacts(data)
       // Make the display contacts initially just a copy of all contacts

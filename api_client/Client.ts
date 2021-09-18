@@ -7,8 +7,8 @@ export const createDbRecord = async <T>(dataType: DataType, dataObj: T): Promise
 };
 
 /* Makes an API call to search through all existing entries in the database for the given dataType */
-export const searchDb = async <T>(dataType: DataType, dataObj?: T): Promise<T[]> => {
-  return await doFetch<T, T[]>(RequestType.GET, dataType, undefined, dataObj);
+export const searchDb = async <T>(dataType: DataType, dataObj?: T, ownerId?: string): Promise<T[]> => {
+  return await doFetch<T, T[]>(RequestType.GET, dataType, undefined, dataObj, ownerId);
 };
 
 /* Makes an API call to find an existing entry in the database for the given dataType */
@@ -34,7 +34,8 @@ const doFetch = async <T_input, T_output>(
   fetchType: RequestType,
   dataType: DataType,
   recordId?: string,
-  dataObj?: T_input
+  dataObj?: T_input,
+  ownerId?: string,
 ): Promise<T_output> => {
   var url: string = "";
   var body = dataObj ? JSON.stringify(dataObj) : undefined;
@@ -49,6 +50,7 @@ const doFetch = async <T_input, T_output>(
       case RequestType.GET: {
         url = `/api/${dataType}s`;
         if (recordId) url += `/${recordId}`;
+        if (ownerId) url += `?owner=${ownerId}`;
         break;
       }
       case RequestType.PUT: {
@@ -65,6 +67,7 @@ const doFetch = async <T_input, T_output>(
     }
 
     // Do the API call
+    console.log(url);
     var response = await fetch(url, {
       method: fetchType,
       headers: {
@@ -73,6 +76,8 @@ const doFetch = async <T_input, T_output>(
       },
       body: body,
     });
+    console.log(response);
+    
     // Throw error with status code in case Fetch API call failed
     if (!response.ok) throw new Error(`${response.status}`);
 
