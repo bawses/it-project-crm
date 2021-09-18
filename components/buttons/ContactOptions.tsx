@@ -73,10 +73,6 @@ const useStyles = makeStyles((theme) => ({
   contactOptionsBtn: {
     fontSize: "1rem",
     width: 220,
-    [theme.breakpoints.down("sm")]: {
-      width: 200,
-      fontSize: "0.8rem",
-    },
   },
   contactOptionsMenu: {
     display: "flex",
