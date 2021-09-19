@@ -4,7 +4,9 @@ import {
   getManualContactById,
   updateManualContact,
   deleteManualContact,
+  searchManualContactsByName,
 } from "../../api_client/ManualContactQueries";
+import { IManualContact } from "../../lib/DataTypes";
 
 export default function TestManualContactApis() {
   var testSignUp = {};
@@ -43,6 +45,11 @@ export default function TestManualContactApis() {
       console.log("Testing delete");
       await deleteManualContact(id);
       console.log("Delete success");
+
+      console.log("Testing regex");
+      const search = await searchManualContactsByName("tony");
+      console.log(search);
+      
       console.log("Test success");
     } catch (err) {
       console.error(err);

@@ -27,7 +27,9 @@ export default function Layout({ children, title = 'CataLog' }: Props) {
       {/* Responsive design - Show bottom navigation if mobile */}
       {isMobile ? (
         <Footer pageType="personal"/>
-        ) : ( <> </> 
+      ) : ( 
+        <> 
+        </> 
       )}
     </div>
   ) 

@@ -68,8 +68,7 @@ export async function indexHandler(
     switch (requestType) {
       /* Find all the data in our database */
       case RequestType.GET: {
-        req.body = req.body || {}; // in case body is undefined
-        dbResponse = await dbCollection.find(req.body);
+        dbResponse = await dbCollection.find({});
         successStatus = 200;
         break;
       }
@@ -80,11 +79,46 @@ export async function indexHandler(
         break;
       }
       default: {
-        throw new Error("Request Type is not of GET or POST!");
+        throw new Error("Request Type is not GET or POST!");
       }
     }
     if (!dbResponse) {
-      throw new Error("Error occured in database operations.");
+      throw new Error("Error occurred in database operations.");
+    }
+  } catch (error) {
+    return res.status(400).json({ success: false });
+  }
+  return res.status(successStatus).json({ success: true, data: dbResponse });
+}
+
+export async function searchHandler(
+  req: Request,
+  res: Response,
+  dataType: DataType
+): Promise<Response> {
+  const requestType = req.method;
+
+  // Connect to Database and select appropriate collection for use according to datatype
+  await connectToDatabase();
+  const dbCollection: Model<any, {}, {}> = Database[dataType];
+
+  var dbResponse;
+  var successStatus: number;
+  try {
+    switch (requestType) {
+      /* Find all the data in our database */
+      case RequestType.GET: {
+        req.body = req.body || []; // in case body is undefined
+        dbResponse = await dbCollection.find().or(req.body);
+        successStatus = 200;
+        break;
+      }
+      default: {
+        throw new Error("Request Type is not GET!");
+      }
+    }
+    if (!dbResponse) {
+      throw new Error("Error occurred in database operations.");
     }
   } catch (error) {
     return res.status(400).json({ success: false });
