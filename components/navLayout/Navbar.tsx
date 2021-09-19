@@ -3,13 +3,12 @@ import { Typography, AppBar, Toolbar, InputBase, IconButton } from "@material-ui
 import { COLORS } from "../../lib/Colors";
 import { createStyles, alpha, Theme, makeStyles, useTheme } from '@material-ui/core/styles';
 import useMediaQuery from "@material-ui/core/useMediaQuery";
+import { useRouter } from "next/router";
+import Searchbar from "./Searchbar";
 
-// MaterialUI Icons
 import AccountCircleIcon from "@material-ui/icons/AccountCircle";
 import CollectionsBookmarkIcon from "@material-ui/icons/CollectionsBookmark";
 import PersonAddIcon from "@material-ui/icons/PersonAdd";
-import SearchIcon from "@material-ui/icons/Search";
-import { useRouter } from "next/router";
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -23,51 +22,6 @@ const useStyles = makeStyles((theme: Theme) =>
     title: {
       [theme.breakpoints.up("xs")]: {
         flexGrow: 0.5,
-      },
-    },
-    search: {
-      position: "relative",
-      borderRadius: theme.shape.borderRadius,
-      backgroundColor: alpha(theme.palette.common.white, 0.9),
-      "&:hover": {
-        backgroundColor: alpha(theme.palette.common.white, 1),
-      },
-      marginRight: theme.spacing(2),
-      width: "100%",
-      marginLeft: theme.spacing(2),
-      [theme.breakpoints.up("sm")]: {
-        marginLeft: theme.spacing(2),
-        width: "auto",
-      },
-    },
-    searchIcon: {
-      [theme.breakpoints.down("sm")]: {
-        padding: theme.spacing(0, 1),
-      },
-      
-      padding: theme.spacing(0, 2),
-      height: "100%",
-      position: "absolute",
-      pointerEvents: "none",
-      display: "flex",
-      alignItems: "center",
-      justifyContent: "center",
-      color: COLORS.black,
-    },
-    inputInput: {
-      [theme.breakpoints.down("sm")]: {
-        padding: theme.spacing(1, 1, 1, 2.25),
-      },
-      padding: theme.spacing(1, 1, 1, 0),
-      // vertical padding + font size from searchIcon
-      paddingLeft: `calc(1em + ${theme.spacing(4)}px)`,
-      marginLeft: theme.spacing(2),
-      color: COLORS.black,
-      transition: theme.transitions.create("width"),
-      width: "100%",
-      height: "2.75ch",
-      [theme.breakpoints.up("md")]: {
-        width: "50ch",
       },
     },
     sectionDesktop: {
@@ -116,28 +70,7 @@ export default function Navbar({ pageType = "personal" }: NavbarProps) {
           </Typography>
 
           {/* search bar */}
-          <div className={classes.search}>
-            <div className={classes.searchIcon}>
-              <SearchIcon />
-            </div>
-            {isMobile ? (
-              <InputBase
-                placeholder="Search... (press Enter)"
-                classes={{
-                  input: classes.inputInput,
-                }}
-                inputProps={{ "aria-label": "search" }}
-              />
-            ) : (
-              <InputBase
-                placeholder="Search..."
-                classes={{
-                  input: classes.inputInput,
-                }}
-                inputProps={{ "aria-label": "search" }}
-              />
-            )}
-          </div>
+          <Searchbar/>
 
           {/* icons */}
           {isMobile ? (
