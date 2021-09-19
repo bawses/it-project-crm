@@ -147,7 +147,7 @@ export default function CreateContact() {
     /** TODO: input validation, don't create empty contacts */
     const session : Session = await getSession();
     console.log(session)
-    let userId : string = session?.user.sub; // accesses the userId
+    let userId : string = session?.user.sub; // accesses the userId and puts it in ManualContact
 
     const contactToCreate: IManualContact = {
       ownerId: userId,

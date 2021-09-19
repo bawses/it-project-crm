@@ -41,7 +41,7 @@ const doFetch = async <T_input, T_output>(
 ): Promise<T_output> => {
   var url: string = "";
   var body = dataObj ? JSON.stringify(dataObj) : undefined;
-  let ownerId = getSessionId();
+  let ownerId = await getSessionId();
   try {
     // Use the right url for each fetchType
     switch (fetchType) {

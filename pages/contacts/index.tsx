@@ -64,15 +64,11 @@ export default function Contacts() {
     try {
       setIsLoading(true)
       // Get session which contains the user's Id
-      const session : Session = await getSession();
-      console.log(session)
-      let userId : string = session?.user.sub; // accesses the userId
-      let data;
-      if (userId){
-        data = await getAllManualContacts();
-        console.log(data);
-      }
-      else{
+      
+      let data = await getAllManualContacts();
+      console.log(data);
+      
+      if (!data){
         throw new Error("Invalid Request. No User Session!")
       }
       // Save all contacts
