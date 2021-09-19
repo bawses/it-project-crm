@@ -133,7 +133,7 @@ export const getSessionId = async () => {
   if (session){
     return session.user.sub;
   } else{
-    throw new Error(`Can't get session ID! Invalid user!`);
+    return null;
   }
 
 }
