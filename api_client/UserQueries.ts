@@ -46,34 +46,34 @@ export const userSignUp = async (
     email: [email],
     passwordHash: await hashPassword(String(password), 10),
   };
-  return createDbRecord<IUser>(DataType.User, dataObj);
+  return createDbRecord<IUser>(DataType.User, false, dataObj);
 };
 
 /* Do NOT use this method in production, this is only for testing! 
    Creates a User object in the database.
 */
 export const createUser = async (dataObj: IUser) => {
-  return createDbRecord<IUser>(DataType.User, dataObj);
+  return createDbRecord<IUser>(DataType.User, false, dataObj);
 };
 
 export const getAllUsers = async () => {
-  return searchDb<IUser>(DataType.User, undefined);
+  return searchDb<IUser>(DataType.User, false, undefined);
 };
 
 export const searchUsers = async (dataObj: IUser) => {
-  return searchDb<IUser>(DataType.User, dataObj);
+  return searchDb<IUser>(DataType.User, false, dataObj);
 };
 
 export const getUserById = async (id: string) => {
-  return getDbRecordById<IUser>(DataType.User, id);
+  return getDbRecordById<IUser>(DataType.User, false, id);
 };
 
 export const updateUser = async (id: string, dataObj: IUser) => {
-  return updateDbRecord<IUser>(DataType.User, id, dataObj);
+  return updateDbRecord<IUser>(DataType.User, false, id, dataObj);
 };
 
 export const deleteUser = async (id: string) => {
-  deleteDbRecord<IUser>(DataType.User, id);
+  deleteDbRecord<IUser>(DataType.User, false, id);
 };
 
 export const searchUsersByName = async (name: string) => {
