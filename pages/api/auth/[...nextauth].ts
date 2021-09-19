@@ -1,4 +1,4 @@
-import NextAuth from "next-auth";
+import NextAuth, { Account, Profile, TokenSet } from "next-auth";
 import Providers from "next-auth/providers";
 import { Session, User as authUser} from "next-auth";
 import { JWT } from "next-auth/jwt";
@@ -39,20 +39,20 @@ export default NextAuth({
     }),
   ],
   callbacks:{
-    jwt: async (token, user, account, profile, isNewUser) => {
+    jwt: async (token: JWT, user?: authUser | undefined, account?: Account | undefined, profile?: Profile | undefined, isNewUser?: boolean | undefined) => {
         //  "user" parameter is the object received from "authorize"
         //  "token" is being send below to "session" callback...
         //  ...so we set "user" param of "token" to object from "authorize"...
         //  ...and return it...
-        user && (token.user = user);
         return Promise.resolve(token)   // ...here
     },
-    session: async (session: Session, userOrToken: authUser | JWT) : Promise<Session> => {
+    session: async (session: Session, userOrToken: authUser) : Promise<Session> => {
         //  "session" is current session object
         //  below we set "user" param of "session" to value received from "jwt" callback
-        if (session){
-          session.user = userOrToken.user;       
-        }
+        console.log("---------------------------------------------------")
+        console.log(userOrToken);
+        console.log("---------------------------------------------------")
+        session.user = userOrToken;
         return Promise.resolve(session)
     }
   }

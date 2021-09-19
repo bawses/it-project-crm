@@ -9,27 +9,27 @@ import {
 } from "./Client";
 
 export const createManualContact = async (dataObj: IManualContact) => {
-  return createDbRecord<IManualContact>(DataType.ManualContact, dataObj);
+  return createDbRecord<IManualContact>(DataType.ManualContact, false, dataObj);
 };
 
-export const getAllManualContacts = async (ownerId: string) => {
-  return searchDb<IManualContact>(DataType.ManualContact, undefined, ownerId);
+export const getAllManualContacts = async () => {
+  return searchDb<IManualContact>(DataType.ManualContact, false, undefined);
 };
 
 export const searchManualContacts = async (dataObj: IManualContact) => {
-  return searchDb<IManualContact>(DataType.ManualContact, dataObj);
+  return searchDb<IManualContact>(DataType.ManualContact, false, dataObj);
 };
 
 export const getManualContactById = async (recordId: string) => {
-  return getDbRecordById<IManualContact>(DataType.ManualContact, recordId);
+  return getDbRecordById<IManualContact>(DataType.ManualContact, false, recordId);
 };
 
 export const updateManualContact = async (id: string, dataObj: IManualContact) => {
-  return updateDbRecord<IManualContact>(DataType.ManualContact, id, dataObj);
+  return updateDbRecord<IManualContact>(DataType.ManualContact, false, id, dataObj);
 };
 
 export const deleteManualContact = async (id: string) => {
-  deleteDbRecord<IManualContact>(DataType.ManualContact, id);
+  deleteDbRecord<IManualContact>(DataType.ManualContact, false, id);
 };
 
 export const searchManualContactsByName = async (name: string) => {

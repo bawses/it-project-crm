@@ -1,5 +1,6 @@
 import { Request, Response } from "express";
 import { indexHandler, searchHandler } from "../../../backend/ApiHandlers";
+import connectToDatabase from "../../../backend/dbConnect";
 import ManualContact from "../../../backend/models/ManualContact";
 import { DataType } from "../../../lib/DataTypes";
 
@@ -7,10 +8,13 @@ export default async function handler(req: Request, res: Response): Promise<Resp
   
   if (req.query.owner){
     // Perform operation here that obtains all manual contacts that has the associated owner ID
-    const results = await ManualContact.find({ownerId: req.query.owner});
-    console.log(results);
-
-    return res.status(200).json({ success: true, data: results });
+    req.body = [
+      {
+        ownerId: req.query.owner
+      }
+    ]
+    console.log(req.body);
+    return await searchHandler(req, res, DataType.ManualContact);
   }
 
   if (req.query.search) {

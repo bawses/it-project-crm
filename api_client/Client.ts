@@ -1,44 +1,47 @@
+import { getSession } from "next-auth/client";
 import { mutate } from "swr";
 import { DataType, RequestType } from "../lib/DataTypes";
 
 /* Makes an API call to add a new entry into the database for the given dataType */
-export const createDbRecord = async <T>(dataType: DataType, dataObj: T): Promise<T> => {
-  return await doFetch<T, T>(RequestType.POST, dataType, undefined, dataObj);
+export const createDbRecord = async <T>(dataType: DataType, isGlobal: boolean, dataObj: T): Promise<T> => {
+  return await doFetch<T, T>(RequestType.POST, dataType, isGlobal, undefined, dataObj);
 };
 
 /* Makes an API call to search through all existing entries in the database for the given dataType */
-export const searchDb = async <T>(dataType: DataType, dataObj?: T, ownerId?: string): Promise<T[]> => {
-  return await doFetch<T, T[]>(RequestType.GET, dataType, undefined, dataObj, ownerId);
+export const searchDb = async <T>(dataType: DataType, isGlobal: boolean, dataObj?: T): Promise<T[]> => {
+  return await doFetch<T, T[]>(RequestType.GET, dataType, isGlobal, undefined, dataObj);
 };
 
 /* Makes an API call to find an existing entry in the database for the given dataType */
-export const getDbRecordById = async <T>(dataType: DataType, recordId: string): Promise<T> => {
-  return await doFetch<T, T>(RequestType.GET, dataType, recordId, undefined);
+export const getDbRecordById = async <T>(dataType: DataType, isGlobal: boolean, recordId: string): Promise<T> => {
+  return await doFetch<T, T>(RequestType.GET, dataType, isGlobal, recordId, undefined);
 };
 
 /* Makes an API call to edit an existing entry in the database for the given dataType */
 export const updateDbRecord = async <T>(
   dataType: DataType,
+  isGlobal: boolean,
   recordId: string,
   dataObj: T
 ): Promise<T> => {
-  return await doFetch<T, T>(RequestType.PUT, dataType, recordId, dataObj);
+  return await doFetch<T, T>(RequestType.PUT, dataType, false, recordId, dataObj);
 };
 
 /* Makes an API call to delete an existing entry in the database for the given dataType */
-export const deleteDbRecord = async <T>(dataType: DataType, recordId: string): Promise<T> => {
-  return await doFetch<T, T>(RequestType.DELETE, dataType, recordId, undefined);
+export const deleteDbRecord = async <T>(dataType: DataType, isGlobal: boolean, recordId: string): Promise<T> => {
+  return await doFetch<T, T>(RequestType.DELETE, dataType, isGlobal, recordId, undefined);
 };
 
 const doFetch = async <T_input, T_output>(
   fetchType: RequestType,
   dataType: DataType,
+  isGlobal: boolean,
   recordId?: string,
   dataObj?: T_input,
-  ownerId?: string,
 ): Promise<T_output> => {
   var url: string = "";
   var body = dataObj ? JSON.stringify(dataObj) : undefined;
+  let ownerId = getSessionId();
   try {
     // Use the right url for each fetchType
     switch (fetchType) {
@@ -124,3 +127,13 @@ export const doRegexSearch = async <T>(dataType: DataType, regex: string) => {
   }
   return data as T[];
 };
+
+export const getSessionId = async () => {
+  let session = await getSession();
+  if (session){
+    return session.user.sub;
+  } else{
+    throw new Error(`Can't get session ID! Invalid user!`);
+  }
+
+}

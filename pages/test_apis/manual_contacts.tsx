@@ -7,6 +7,7 @@ import {
   searchManualContactsByName,
 } from "../../api_client/ManualContactQueries";
 import { IManualContact } from "../../lib/DataTypes";
+import { getSession } from 'next-auth/client';
 
 export default function TestManualContactApis() {
   var testSignUp = {};
@@ -23,6 +24,7 @@ export default function TestManualContactApis() {
   };
 
   async function test() {
+
     try {
       console.log("Testing create");
       testSignUp = await createManualContact(manualContact);

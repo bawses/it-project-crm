@@ -16,6 +16,7 @@ import Layout from "../../components/navLayout/Layout";
 import PageLoadingBar from "../../components/PageLoadingBar";
 import { useRouter } from "next/router";
 import { getSession } from "next-auth/client";
+import { Session } from "next-auth";
 
 const useStyles = makeStyles((theme) => ({
   containerStyle: {
@@ -144,13 +145,12 @@ export default function CreateContact() {
 
   const createNewContact = async () => {
     /** TODO: input validation, don't create empty contacts */
-    let session = await getSession();
-    let ownerId;
-    if (session){
-      ownerId = session?.user?._id;
-    }
+    const session : Session = await getSession();
+    console.log(session)
+    let userId : string = session?.user.sub; // accesses the userId
+
     const contactToCreate: IManualContact = {
-      ownerId: ownerId,
+      ownerId: userId,
       name: {
         firstName: fieldValues.firstName,
         lastName: fieldValues.lastName,
