@@ -1,5 +1,5 @@
 import React from "react";
-import { makeStyles, IconButton } from "@material-ui/core";
+import { makeStyles, IconButton, Tooltip } from "@material-ui/core";
 import { Edit } from "@material-ui/icons";
 import { COLORS } from "../../lib/Colors";
 import Select, { OnChangeValue } from "react-select";
@@ -67,21 +67,27 @@ export default function ContactOptions({
 
   return (
     <div className={classes.contactOptionsMenu}>
-      {isAdded && <Select
-        className={classes.contactOptionsBtn}
-        styles={contactOptionsStyles}
-        instanceId="contactOptions"
-        options={setOptions()}
-        value={null}
-        placeholder={"Added to my contacts"}
-        onChange={onChange}
-        isSearchable={false}
-        isClearable={false}
-      />}
-      {!isAdded && <TextButton title="Add to my contacts" onClick={() => {}}/>}
-      {isManual && <IconButton onClick={() => onPressEdit}>
-        <Edit className={classes.editIcon} />
-      </IconButton>}
+      {isAdded && (
+        <Select
+          className={classes.contactOptionsBtn}
+          styles={contactOptionsStyles}
+          instanceId="contactOptions"
+          options={setOptions()}
+          value={null}
+          placeholder={"Added to my contacts"}
+          onChange={onChange}
+          isSearchable={false}
+          isClearable={false}
+        />
+      )}
+      {!isAdded && <TextButton title="Add to my contacts" onClick={() => {}} />}
+      {isManual && (
+        <Tooltip title="Edit">
+          <IconButton onClick={() => onPressEdit}>
+            <Edit className={classes.editIcon} />
+          </IconButton>
+        </Tooltip>
+      )}
     </div>
   );
 }
