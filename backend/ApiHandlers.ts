@@ -109,7 +109,7 @@ export async function searchHandler(
       /* Find all the data in our database */
       case RequestType.GET: {
         req.body = req.body || []; // in case body is undefined
-        dbResponse = await dbCollection.find().or(req.body);
+        dbResponse = await dbCollection.find(req.body.authId).or(req.body);
         successStatus = 200;
         break;
       }

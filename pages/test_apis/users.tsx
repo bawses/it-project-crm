@@ -1,67 +1,103 @@
 import {
-  userSignUp,
-  getAllUsers,
-  getUserById,
-  updateUser,
-  deleteUser,
-  searchUsersByName,
+	userSignUp,
+	getAllUsers,
+	getUserById,
+	updateUser,
+	deleteUser,
+	searchUsersByName,
 } from "../../api_client/UserQueries";
+import { doGlobalFetch } from "../../api_client/Client";
+import { DataType, IUser } from "../../lib/DataTypes";
+import { RequestType } from "../../lib/DataTypes";
 
 export default function TestUserApis() {
-  var testSignUp = {};
-  var testGet = {};
-  var testUpdate = {};
+	var testGet = {};
+	var testUpdate = {};
 
-  var user = {
-    firstName: "Test",
-    lastName: "User",
-    email: "test_tony_oop@user.com",
-    password: "testing_user",
-  };
+	var user = {
+		firstName: "Test",
+		lastName: "User",
+		email: "test_tony_oop24@user.com",
+		password: "testing_user",
+	};
 
-  async function test() {
-    try {
-      console.log("Testing sign up");
-      testSignUp = await userSignUp(user.firstName, user.lastName, user.email, user.password);
-      console.log(testSignUp);
+	async function test() {
+		try {
+			console.log("Testing sign up");
+			const testSignUp: IUser = await userSignUp(
+				user.firstName,
+				user.lastName,
+				user.email,
+				user.password
+			);
+			console.log(testSignUp);
+			console.log(
+				"------------------------------------------------------------------"
+			);
 
-      console.log("Testing get all");
-      const users = await getAllUsers();
-      console.log(users);
+			const id = testSignUp._id || "";
 
-      console.log("Testing get");
-      const id = users[users.length - 1]._id || "";
-      testGet = await getUserById(id);
-      console.log(testGet);
+			console.log("Testing get all");
+			const users = await getAllUsers();
+			console.log(users);
+			console.log(
+				"------------------------------------------------------------------"
+			);
+			console.log("Testing global fetch on users");
+			const usersGlobal = await doGlobalFetch<IUser>(
+				RequestType.POST,
+				DataType.User,
+				{ email: "chuenleylow@gmail.com" }
+			);
+			console.log(usersGlobal);
+			console.log(
+				"------------------------------------------------------------------"
+			);
+			console.log("Testing get");
 
-      console.log("Testing update");
-      testUpdate = await updateUser(id, {
-        name: {
-          firstName: user.firstName,
-          lastName: user.lastName,
-        },
-        email: [user.email + "_testSucceeded"],
-      });
-      console.log(testUpdate);
+			testGet = await getUserById(id);
+			console.log(testGet);
+			console.log(
+				"------------------------------------------------------------------"
+			);
 
-      console.log("Testing delete");
-      await deleteUser(id);
-      console.log("Delete success");
+			console.log("Testing update");
+			testUpdate = await updateUser(id, {
+				name: {
+					firstName: user.firstName,
+					lastName: user.lastName,
+				},
+				email: [user.email + "_testSucceeded"],
+			});
+			console.log(testUpdate);
+			console.log(
+				"------------------------------------------------------------------"
+			);
 
-      console.log("Testing regex");
-      const search = await searchUsersByName("tony");
-      console.log(search);
+			console.log("Testing delete");
+			await deleteUser(id);
+			console.log("Delete success");
+			console.log(
+				"------------------------------------------------------------------"
+			);
 
-      console.log("Test success");
-    } catch (err) {
-      console.error(err);
-    }
-  }
+			console.log("Testing regex");
+			const search = await searchUsersByName("tony");
+			console.log(search);
+			console.log(
+				"------------------------------------------------------------------"
+			);
 
-  return (
-    <div>
-      See console for test
-      <button onClick={() => test()}>Test</button>
-    </div>
-  );
+			console.log("Test success");
+		} catch (err) {
+			console.error(err);
+		}
+	}
+
+	return (
+		<div>
+			See console for test
+			<button onClick={() => test()}>Test</button>
+		</div>
+	);
 }

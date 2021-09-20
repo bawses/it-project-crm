@@ -6,6 +6,7 @@ import connectToDatabase from "../../../backend/dbConnect";
 
 async function handler(req: Request, res: Response): Promise<any> {
   // SignUp method has to be of method POST
+  console.log(req);
   if (req.method !== "POST") {
     res.status(422).json({ error: "Request method is not POST" });
   }
@@ -17,8 +18,12 @@ async function handler(req: Request, res: Response): Promise<any> {
       return res.status(400).json({ success: false, error: "User with email already exists" });
     }
   }
-
+  
   let response = await indexHandler(req, res, DataType.User);
+  console.log(
+    "-----"
+  )
+  console.log(response);
   return response;
 }
 

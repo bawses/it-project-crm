@@ -2,7 +2,7 @@ import { DataType, IAddedContact } from "../lib/DataTypes";
 import { createDbRecord, searchDb, getDbRecordById, updateDbRecord, deleteDbRecord } from "./Client";
 
 export const createAddedContact = async (dataObj: IAddedContact) => {
-  return createDbRecord<IAddedContact>(DataType.AddedContact, false, dataObj);
+  return createDbRecord<IAddedContact>(DataType.AddedContact, dataObj);
 };
 
 export const getAllAddedContacts = async () => {
@@ -14,13 +14,13 @@ export const searchAddedContacts = async (dataObj: IAddedContact) => {
 }
 
 export const getAddedContactById = async (id: string) => {
-  return getDbRecordById<IAddedContact>(DataType.AddedContact, false, id);
+  return getDbRecordById<IAddedContact>(DataType.AddedContact, id);
 };
 
 export const updateAddedContact = async (id: string, dataObj: IAddedContact) => {
-  return updateDbRecord<IAddedContact>(DataType.AddedContact, false, id, dataObj);
+  return updateDbRecord<IAddedContact>(DataType.AddedContact, id, dataObj);
 };
 
 export const deleteAddedContact = async (id: string) => {
-  deleteDbRecord<IAddedContact>(DataType.AddedContact, false, id);
+  deleteDbRecord<IAddedContact>(DataType.AddedContact, id);
 };

@@ -49,9 +49,9 @@ export default NextAuth({
     session: async (session: Session, userOrToken: authUser) : Promise<Session> => {
         //  "session" is current session object
         //  below we set "user" param of "session" to value received from "jwt" callback
-        console.log("---------------------------------------------------")
+/*         console.log("---------------------------------------------------")
         console.log(userOrToken);
-        console.log("---------------------------------------------------")
+        console.log("---------------------------------------------------") */
         session.user = userOrToken;
         return Promise.resolve(session)
     }

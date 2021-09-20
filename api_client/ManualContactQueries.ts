@@ -9,7 +9,7 @@ import {
 } from "./Client";
 
 export const createManualContact = async (dataObj: IManualContact) => {
-  return createDbRecord<IManualContact>(DataType.ManualContact, false, dataObj);
+  return createDbRecord<IManualContact>(DataType.ManualContact, dataObj);
 };
 
 export const getAllManualContacts = async () => {
@@ -21,15 +21,15 @@ export const searchManualContacts = async (dataObj: IManualContact) => {
 };
 
 export const getManualContactById = async (recordId: string) => {
-  return getDbRecordById<IManualContact>(DataType.ManualContact, false, recordId);
+  return getDbRecordById<IManualContact>(DataType.ManualContact, recordId);
 };
 
 export const updateManualContact = async (id: string, dataObj: IManualContact) => {
-  return updateDbRecord<IManualContact>(DataType.ManualContact, false, id, dataObj);
+  return updateDbRecord<IManualContact>(DataType.ManualContact, id, dataObj);
 };
 
 export const deleteManualContact = async (id: string) => {
-  deleteDbRecord<IManualContact>(DataType.ManualContact, false, id);
+  deleteDbRecord<IManualContact>(DataType.ManualContact, id);
 };
 
 export const searchManualContactsByName = async (name: string) => {
