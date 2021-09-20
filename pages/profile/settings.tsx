@@ -3,6 +3,7 @@ import { getSession, signIn, signOut } from "next-auth/client";
 import React, { useEffect, useState, MouseEvent } from "react";
 import Layout from "../../components/navLayout/Layout";
 import TextButton from "../../components/buttons/TextButton";
+import PageLoadingBar from "../../components/PageLoadingBar";
 import { Container, makeStyles } from "@material-ui/core";
 import { COLORS } from "../../lib/Colors";
 
@@ -39,7 +40,7 @@ export default function Settings() {
   }, [router]);
 
   if (isLoading) {
-    return <p>Loading...</p>;
+    return <PageLoadingBar />;
   }
 
   return (
