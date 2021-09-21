@@ -1,9 +1,10 @@
+// search bar and search results (fetching from API Client)
 import React, { useState } from 'react';
 import { COLORS } from "../../lib/Colors";
 import { DataType, IUser } from "../../lib/DataTypes";
 import SearchResultTable from './SearchResultTable';
 import {searchUsersByName } from "../../api_client/UserQueries"
-import { InputBase } from "@material-ui/core";
+import { InputBase, Typography } from "@material-ui/core";
 import { createStyles, alpha, Theme, makeStyles, useTheme } from '@material-ui/core/styles';
 import useMediaQuery from "@material-ui/core/useMediaQuery";
 import { useRouter } from "next/router";
@@ -25,14 +26,11 @@ const useStyles = makeStyles((theme: Theme) =>
       "&:hover": {
         backgroundColor: alpha(theme.palette.common.white, 1),
       },
-
-     
       [theme.breakpoints.down("xs")]: {
         marginLeft: theme.spacing(1),
         marginRight: theme.spacing(1),
         width: "95%",
       },
-
       [theme.breakpoints.up("sm")]: {
         marginLeft: theme.spacing(2),
         marginRight: theme.spacing(2),
@@ -42,8 +40,7 @@ const useStyles = makeStyles((theme: Theme) =>
     searchIcon: {
       [theme.breakpoints.down("sm")]: {
         padding: theme.spacing(0, 1),
-      },
-      
+      }, 
       padding: theme.spacing(0, 2),
       height: "100%",
       position: "absolute",
@@ -70,37 +67,63 @@ const useStyles = makeStyles((theme: Theme) =>
       },
     },
 
+    resultsTable: {
+      position: "absolute",
+      top: "45px",
+    },
+
   })
 );
 
-type SearchbarProps = {
-  pageType?: string;
-};
+// type SearchbarProps = {
+//   pageType?: string;
+// };
 
-export default function Searchbar({ pageType = "personal" }: SearchbarProps) {
+export default function Searchbar() {
   const classes = useStyles();
   const theme = useTheme<Theme>();
   const isMobile = useMediaQuery(theme.breakpoints.down("xs"));
   const [searchString, setSearchString] = useState<string>("");
-  const [predictiveResults, setPredictiveResults] = useState<IUser[]>();
-  const router = useRouter();
+  const [predictiveResults, setPredictiveResults] = useState<IUser[]>([]);
+  // const router = useRouter();
 
   async function handleNewSearchString(newSearchString: string) {
     setSearchString(newSearchString);
     console.log(newSearchString); 
     try {
       const fetchedPredictions = await searchUsersByName(searchString);
+      console.log(fetchedPredictions);
       setPredictiveResults(fetchedPredictions); 
-      displayPredictiveResults(predictiveResults);
+      // if (predictiveResults.length <= 0) {
+      //   displayResultsError(undefined);
+      // }
+      // else {
+      //   // console.log(predictiveResults[0].name);
+      //   displayPredictiveResults(predictiveResults);
+      // }
+
     } catch (e) {
       // TODO: Display error to user on webpage
       console.log(e);
     }
   }
 
-  function displayPredictiveResults(results: IUser[] | undefined) {
-    console.log("Hello");
-  }
+  // function displayPredictiveResults(predictiveResults: IUser[]) {
+  //   console.log("displayPredictiveResultscalled")
+
+  //   return(
+  //     // <div className={classes.root}>
+  //       <div className={classes.resultsTable}> 
+  //         <SearchResultTable searchResults={predictiveResults} />
+  //       </div>
+  //     // </div>  
+  //   )
+  // }
+
+  // function displayResultsError(predictiveResults: undefined) {
+  //   // TODO Create Error display
+  //   console.log("ERROR")
+  // }
 
   return (
     <div className={classes.root}>
@@ -128,6 +151,10 @@ export default function Searchbar({ pageType = "personal" }: SearchbarProps) {
                 inputProps={{ "aria-label": "search" }}
               />
             )}
+            {/* the search results */}
+            <div className={classes.resultsTable}> 
+              <SearchResultTable searchResults={predictiveResults} />
+            </div>
           </div>
     </div>
   );

@@ -104,7 +104,8 @@ export const doRegexSearch = async <T>(dataType: DataType, regex: string) => {
         "Content-Type": "application/json",
       },
     });
-
+    // console.log(response);
+    
     // Throw error with status code in case Fetch API call failed
     if (!response.ok) throw new Error(`${response.status}`);
 

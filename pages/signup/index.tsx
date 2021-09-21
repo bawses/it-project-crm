@@ -1,9 +1,10 @@
+// Sign Up Page that currently redirects to Login Page but should redirect to Home Page
+
 import { useRouter } from "next/router";
 import Link from "next/link";
 import { getSession } from "next-auth/client";
 import React, { useEffect, useState, ChangeEvent, MouseEvent } from "react";
 import { userSignUp } from "../../api_client/UserQueries";
-import { IUser } from "../../lib/DataTypes";
 
 // styling imports
 import useMediaQuery from "@material-ui/core/useMediaQuery";

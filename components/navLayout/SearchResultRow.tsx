@@ -5,7 +5,6 @@ import { COLORS } from "../../lib/Colors";
 import { makeStyles, createStyles, Theme  } from "@material-ui/core/styles";
 import { IUser } from "../../lib/DataTypes";
 import React from "react";
-import TextButton from "../buttons/TextButton";
 import Link from "next/link"
 
 export interface SearchResultRowProps {
@@ -35,6 +34,8 @@ export default function SearchResultRow({profile}: SearchResultRowProps) {
   // Adjust component based on screen size
   const theme = useTheme()
   const bigScreen = useMediaQuery(theme.breakpoints.up("md"))
+
+  // console.log("row rendered")
 
   return (
     <Link href={"contacts/" + profile._id} passHref>

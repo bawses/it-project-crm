@@ -1,31 +1,36 @@
-import { FormLabelBaseProps, Paper, Table, TableBody, TableContainer } from '@material-ui/core';
+import { Paper, Table, TableBody, TableContainer } from '@material-ui/core';
 import SearchResultRow from './SearchResultRow';
+import NoResultsRow from './NoResultsRow';
 import { IUser } from '../../lib/DataTypes';
 
 export type IdToProfileMap = Record<string, IUser>
 
 interface SearchResultTableProps {
-  searchResults: IUser[],
-  handleRowButtonClick: (target: IUser) => Promise<boolean>
-  idToProfileMap?: IdToProfileMap
+  searchResults: IUser[] ,
 }
 
-export default function SearchResultsTable({ searchResults, handleRowButtonClick, idToProfileMap }: SearchResultTableProps ) {
+export default function SearchResultsTable({ searchResults }: SearchResultTableProps ) {
   const rows: JSX.Element[] = []
-  for (const profile of searchResults) {
-
-    const key = profile._id || profile.name.firstName
+  if (searchResults.length > 0) {
+    for (const profile of searchResults) {
+      const key = profile._id || profile.name.firstName
+      rows.push(
+        <SearchResultRow
+          key={key}
+          profile={profile}
+        />
+      );
+    }
+  } else {
     rows.push(
-      <SearchResultRow
-        key={key}
-        profile={profile}
-      />
-    )
+      <NoResultsRow />
+    );
   }
-
+    
   return (
-    <TableContainer component={Paper}>
-      <Table>
+    // TODO: fix width
+    <TableContainer component={Paper} style={{ width: "50ch"}}>
+      <Table >
         <TableBody>
           {rows}
         </TableBody>
