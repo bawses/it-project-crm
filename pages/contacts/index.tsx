@@ -1,183 +1,220 @@
-import Box from '@material-ui/core/Box';
-import { ChangeEvent, useEffect, useState } from 'react';
-import { OnChangeValue } from 'react-select';
-import ContactsTable from '../../components/tables/contactsTable';
-import ContactsTableCategory, { CategoryButton } from '../../components/tables/contactsTableCategory';
-import ContactsTableSort, { SortType } from '../../components/tables/contactsTableSort';
-import ContactsTableTags, { SelectValue } from '../../components/tables/contactsTableTags';
-import { IManualContact } from '../../lib/DataTypes';
-import { getAllManualContacts, updateManualContact } from '../../api_client/ManualContactQueries';
+import Box from "@material-ui/core/Box";
+import { ChangeEvent, useEffect, useState } from "react";
+import { OnChangeValue } from "react-select";
+import ContactsTable from "../../components/tables/contactsTable";
+import ContactsTableCategory, {
+	CategoryButton,
+} from "../../components/tables/contactsTableCategory";
+import ContactsTableSort, {
+	SortType,
+} from "../../components/tables/contactsTableSort";
+import ContactsTableTags, {
+	SelectValue,
+} from "../../components/tables/contactsTableTags";
+import { IManualContact } from "../../lib/DataTypes";
+import {
+	getAllManualContacts,
+	updateManualContact,
+} from "../../api_client/ManualContactQueries";
 import Layout from "../../components/navLayout/Layout";
 import PageLoadingBar from "../../components/PageLoadingBar";
-import { useRouter } from 'next/router';
-import { getSession } from 'next-auth/client';
-import { Session, User as authUser} from "next-auth";
+import { useRouter } from "next/router";
+import { getSession } from "next-auth/client";
+import { Session, User as authUser } from "next-auth";
 
 export const sortFunctions = {
-  [SortType.FirstName]: (a: IManualContact, b: IManualContact) => (a.name.firstName > b.name.firstName) ? 1 : -1,
-  [SortType.LastName]: (a: IManualContact, b: IManualContact) => (a.name.lastName > b.name.lastName) ? 1 : -1,
-  [SortType.Role]: (a: IManualContact, b: IManualContact) => {
-    if (!a.job) {
-      return 1
-    }
-    if (!b.job) {
-      return -1
-    }
-    if (a.job > b.job) {
-      return 1
-    }
-    return -1
-  }
-}
+	[SortType.FirstName]: (a: IManualContact, b: IManualContact) =>
+		a.name.firstName > b.name.firstName ? 1 : -1,
+	[SortType.LastName]: (a: IManualContact, b: IManualContact) =>
+		a.name.lastName > b.name.lastName ? 1 : -1,
+	[SortType.Role]: (a: IManualContact, b: IManualContact) => {
+		if (!a.job) {
+			return 1;
+		}
+		if (!b.job) {
+			return -1;
+		}
+		if (a.job > b.job) {
+			return 1;
+		}
+		return -1;
+	},
+};
 
 // Swaps the given contact in the given contact list if it can find it, and then returns the list
-function swapContactInList(contactList: IManualContact[], contact: IManualContact) {
-  console.log("starting list", contactList)
-  if (contact._id === undefined) {
-    return contactList
-  }
+function swapContactInList(
+	contactList: IManualContact[],
+	contact: IManualContact
+) {
+	console.log("starting list", contactList);
+	if (contact._id === undefined) {
+		return contactList;
+	}
 
-  for (let i = 0; i < contactList.length; i++) {
-    if (contactList[i]._id) {
-      if (contactList[i]._id === contact._id) {
-        contactList[i] = contact
-        console.log("Swapped element", contact)
-        break
-      }
-    }
-  }
+	for (let i = 0; i < contactList.length; i++) {
+		if (contactList[i]._id) {
+			if (contactList[i]._id === contact._id) {
+				contactList[i] = contact;
+				console.log("Swapped element", contact);
+				break;
+			}
+		}
+	}
 
-  console.log("Final element")
-  return contactList
+	console.log("Final element");
+	return contactList;
 }
 
 export default function Contacts() {
-  const [sortValue, setSortValue] = useState<SortType>(SortType.None)
-  const [categoryButton, setCategoryButton] = useState<CategoryButton>("all")
-  const [tags, setTags] = useState<OnChangeValue<SelectValue, true>>([])
-  const [allContacts, setAllContacts] = useState<IManualContact[]>([])
-  const [displayContacts, setDisplayContacts] = useState<IManualContact[]>([])
-  const [isLoading, setIsLoading] = useState(true)
-  const router = useRouter()
+	const [sortValue, setSortValue] = useState<SortType>(SortType.None);
+	const [categoryButton, setCategoryButton] = useState<CategoryButton>("all");
+	const [tags, setTags] = useState<OnChangeValue<SelectValue, true>>([]);
+	const [allContacts, setAllContacts] = useState<IManualContact[]>([]);
+	const [displayContacts, setDisplayContacts] = useState<IManualContact[]>([]);
+	const [isLoading, setIsLoading] = useState(true);
+	const router = useRouter();
 
-  async function getData(setAllContacts: (contacts: IManualContact[]) => void, setDisplayContacts: (contacts: IManualContact[]) => void) {
-    try {
-      setIsLoading(true)
-      // Get session which contains the user's Id
-      
-      let data = await getAllManualContacts();
-      console.log(data);
-      
-      if (!data){
-        throw new Error("Invalid Request. No User Session!")
-      }
-      // Save all contacts
-      setAllContacts(data)
-      // Make the display contacts initially just a copy of all contacts
-      setDisplayContacts(data)
-      setIsLoading(false)
-    } catch (error) {
-      console.error(error)
-      setIsLoading(false)
-    }
-  }
+	async function getData(
+		setAllContacts: (contacts: IManualContact[]) => void,
+		setDisplayContacts: (contacts: IManualContact[]) => void
+	) {
+		try {
+			setIsLoading(true);
+			// Get session which contains the user's Id
 
-  // Get contacts data
-  useEffect(() => {
-    getData(setAllContacts, setDisplayContacts)
-  }, [])
+			let data = await getAllManualContacts(false);
+			console.log(data);
 
-  // Change the displayed list of contacts depending on various filter changes
-  useEffect(() => {
-    // Starts with all contacts
-    let toDisplay = [...allContacts]
+			if (!data) {
+				throw new Error("Invalid Request. No User Session!");
+			}
+			// Save all contacts
+			setAllContacts(data);
+			// Make the display contacts initially just a copy of all contacts
+			setDisplayContacts(data);
+			setIsLoading(false);
+		} catch (error) {
+			console.error(error);
+			setIsLoading(false);
+		}
+	}
 
-    // Remove contacts which are not in the right category
-    if (categoryButton !== "all") {
-      toDisplay = toDisplay.filter(contact => contact[categoryButton])
-    }
+	// Get contacts data
+	useEffect(() => {
+		getData(setAllContacts, setDisplayContacts);
+	}, []);
 
-    // Remove contacts which do not have all selected tags
-    for (const tag of tags) {
-      toDisplay = toDisplay.filter(contact => (contact.tags && contact.tags.includes(tag.value)))
-    }
+	// Change the displayed list of contacts depending on various filter changes
+	useEffect(() => {
+		// Starts with all contacts
+		let toDisplay = [...allContacts];
 
-    // Now sort the contacts based on the chosen sort value
-    if (sortValue !== SortType.None) {
-      toDisplay.sort(sortFunctions[sortValue])
-    }
+		// Remove contacts which are not in the right category
+		if (categoryButton !== "all") {
+			toDisplay = toDisplay.filter((contact) => contact[categoryButton]);
+		}
 
-    setDisplayContacts(toDisplay)
-  }, [allContacts, categoryButton, tags, sortValue])
+		// Remove contacts which do not have all selected tags
+		for (const tag of tags) {
+			toDisplay = toDisplay.filter(
+				(contact) => contact.tags && contact.tags.includes(tag.value)
+			);
+		}
 
-  function handleNewSortVal(newSortVal: SortType) {
-    setSortValue(newSortVal)
-  }
+		// Now sort the contacts based on the chosen sort value
+		if (sortValue !== SortType.None) {
+			toDisplay.sort(sortFunctions[sortValue]);
+		}
 
-  function handleButtonPress(button: CategoryButton) {
-    setCategoryButton(button)
-  }
+		setDisplayContacts(toDisplay);
+	}, [allContacts, categoryButton, tags, sortValue]);
 
-  function handleTagChange(newTags: OnChangeValue<SelectValue, true>) {
-    setTags(newTags)
-  }
+	function handleNewSortVal(newSortVal: SortType) {
+		setSortValue(newSortVal);
+	}
 
-  async function handleStarClick(target: IManualContact) {
-    if (!target._id) {
-      return false
-    }
+	function handleButtonPress(button: CategoryButton) {
+		setCategoryButton(button);
+	}
 
-    try {
-      if (target.starred === undefined) {
-        target.starred = true
-      } else {
-        target.starred = !(target.starred)
-      }
+	function handleTagChange(newTags: OnChangeValue<SelectValue, true>) {
+		setTags(newTags);
+	}
 
-      const response = await updateManualContact(target._id, target)
-      const newContactList = [...allContacts]
-      setAllContacts(swapContactInList(newContactList, response))
-      return true
-    } catch (error) {
-      console.error("Error updating user starred status", error)
-      return false
-    }
-  }
+	async function handleStarClick(target: IManualContact) {
+		if (!target._id) {
+			return false;
+		}
 
-  useEffect(() => {
-    getSession().then((session) => {
-      if (session) {
-        setIsLoading(false);
-      } else {
-        router.replace("/login");
-      }
-    });
-  }, [router]);
+		try {
+			if (target.starred === undefined) {
+				target.starred = true;
+			} else {
+				target.starred = !target.starred;
+			}
 
-  if (isLoading) {
-    return <PageLoadingBar />;
-  }
+			const response = await updateManualContact(target._id, target);
+			const newContactList = [...allContacts];
+			setAllContacts(swapContactInList(newContactList, response));
+			return true;
+		} catch (error) {
+			console.error("Error updating user starred status", error);
+			return false;
+		}
+	}
 
-  return (
-    <Layout>
-      <Box>
-        <Box display="flex" flexDirection="column" justifyContent="centre" mx={{ sm: 0, md: 8, lg: 20 }} mt={5}>
-          {/* Entire table, including filters and tags */}
-          <Box boxShadow={3}>
-            {/* Tags */}
-            <ContactsTableTags instanceId="1" handleTagChange={handleTagChange} />
-          </Box>
-          <Box display="flex" py={2}>
-            {/* Sort and filtering elements */}
-            <ContactsTableCategory pressedButton={categoryButton} handleButtonPress={handleButtonPress} />
-            <ContactsTableSort sortValue={sortValue} handleChange={handleNewSortVal} />
-          </Box>
-          <Box boxShadow={3}>
-            {/* List of contacts */}
-            <ContactsTable contacts={displayContacts} handleRowButtonClick={handleStarClick} />
-          </Box>
-        </Box>
-      </Box>
-    </Layout>
-  );
+	useEffect(() => {
+		getSession().then((session) => {
+			if (session) {
+				setIsLoading(false);
+			} else {
+				router.replace("/login");
+			}
+		});
+	}, [router]);
+
+	if (isLoading) {
+		return <PageLoadingBar />;
+	}
+
+	return (
+		<Layout>
+			<Box>
+				<Box
+					display="flex"
+					flexDirection="column"
+					justifyContent="centre"
+					mx={{ sm: 0, md: 8, lg: 20 }}
+					mt={5}
+				>
+					{/* Entire table, including filters and tags */}
+					<Box boxShadow={3}>
+						{/* Tags */}
+						<ContactsTableTags
+							instanceId="1"
+							handleTagChange={handleTagChange}
+						/>
+					</Box>
+					<Box display="flex" py={2}>
+						{/* Sort and filtering elements */}
+						<ContactsTableCategory
+							pressedButton={categoryButton}
+							handleButtonPress={handleButtonPress}
+						/>
+						<ContactsTableSort
+							sortValue={sortValue}
+							handleChange={handleNewSortVal}
+						/>
+					</Box>
+					<Box boxShadow={3}>
+						{/* List of contacts */}
+						<ContactsTable
+							contacts={displayContacts}
+							handleRowButtonClick={handleStarClick}
+						/>
+					</Box>
+				</Box>
+			</Box>
+		</Layout>
+	);
 }

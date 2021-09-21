@@ -12,8 +12,8 @@ export const createManualContact = async (dataObj: IManualContact) => {
   return createDbRecord<IManualContact>(DataType.ManualContact, dataObj);
 };
 
-export const getAllManualContacts = async () => {
-  return searchDb<IManualContact>(DataType.ManualContact, false, undefined);
+export const getAllManualContacts = async (isGlobal: boolean, dataObj?: IManualContact) => {
+  return searchDb<IManualContact>(DataType.ManualContact, isGlobal, dataObj);
 };
 
 export const searchManualContacts = async (dataObj: IManualContact) => {

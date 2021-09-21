@@ -10,8 +10,11 @@ export const createDbRecord = async <T>(dataType: DataType, dataObj: T): Promise
 /* Makes an API call to search through all existing entries in the database for the given dataType */
 export const searchDb = async <T>(dataType: DataType, isGlobal: boolean, dataObj?: T): Promise<T[]> => {
   if (isGlobal){
-    /* Do global fetch */
+    console.log("Getting Global Fetch...");
+    let obj: Object = dataObj as Object;
+    return await doGlobalFetch(RequestType.POST, dataType, obj);
   }
+  console.log("Doing Normal Fetch")
   return await doFetch<T, T[]>(RequestType.GET, dataType, undefined, dataObj);
 };
 
@@ -57,7 +60,7 @@ const doFetch = async <T_input, T_output>(
       case RequestType.GET: {
         url = `/api/${dataType}s`;
         if (recordId) url += `/${recordId}`;
-        if (authId) url += `?authId=${authId}`;
+        else if (authId) url += `?authId=${authId}`;
         break;
       }
       case RequestType.PUT: {
@@ -74,8 +77,12 @@ const doFetch = async <T_input, T_output>(
     }
 
     // Do the API call to the specified url
-    console.log(url);
-    console.log(dataObj);
+    console.log("----")
+    console.log(url)
+    console.log(authId);
+    console.log(recordId);
+    console.log(body);
+    console.log("----")
     var response = await fetch(url, {
       method: fetchType,
       headers: {
@@ -84,7 +91,7 @@ const doFetch = async <T_input, T_output>(
       },
       body: body,
     });
-    
+
     // Throw error with status code in case Fetch API call failed
     if (!response.ok) throw new Error(`${response.status}`);
 
@@ -108,7 +115,6 @@ const doFetch = async <T_input, T_output>(
 export const doRegexSearch = async <T>(dataType: DataType, regex: string) => {
   const authId = await getSessionId();
   var url = `/api/${dataType}s?search=${regex}&authId=${authId}`;
-
   try {
     var response = await fetch(url, {
       method: RequestType.GET,

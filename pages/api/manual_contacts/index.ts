@@ -15,7 +15,7 @@ export default async function handler(req: Request, res: Response): Promise<Resp
     ]
     
     if (req.query.search) {
-      req.body.concat([
+      req.body = req.body.concat([
         {
           "name.firstName": {
             $regex: req.query.search,
@@ -30,7 +30,7 @@ export default async function handler(req: Request, res: Response): Promise<Resp
         },
       ])
     }
-    console.log(req.body);
+
     return await searchHandler(req, res, DataType.ManualContact);
   }
   else if (req.method !== "GET"){
