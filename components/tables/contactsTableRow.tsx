@@ -1,4 +1,4 @@
-import { Avatar, Typography, TableRow, TableCell, IconButton, useMediaQuery } from "@material-ui/core";
+import { Avatar, Typography, TableRow, TableCell, IconButton, useMediaQuery, Color } from "@material-ui/core";
 import { useTheme } from "@material-ui/core/styles";
 import DEFAULT_IMAGE from "../../assets/blank-profile-picture-973460_640.png";
 import StarsIcon from '@material-ui/icons/Stars';

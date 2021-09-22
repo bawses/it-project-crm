@@ -1,5 +1,5 @@
 import Box from '@material-ui/core/Box';
-import { ChangeEvent, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { OnChangeValue } from 'react-select';
 import ContactsTable from '../../components/tables/contactsTable';
 import ContactsTableCategory, { CategoryButton } from '../../components/tables/contactsTableCategory';
@@ -126,8 +126,12 @@ export default function Contacts() {
         target.starred = !(target.starred)
       }
 
-      const response = await updateManualContact(target._id, target)
       const newContactList = [...allContacts]
+      // Optimistically set the state of the starred status to change the star color of the component
+      setAllContacts(swapContactInList(newContactList, target))
+
+      const response = await updateManualContact(target._id, target)
+      // Now reset the starred based on the actual database response
       setAllContacts(swapContactInList(newContactList, response))
       return true
     } catch (error) {
