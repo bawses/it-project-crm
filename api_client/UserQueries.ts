@@ -46,13 +46,13 @@ export const userSignUp = async (
     email: [email],
     passwordHash: await hashPassword(String(password), 10),
   };
-  return createDbRecord<IUser>(DataType.User, dataObj);
+  return createUser(dataObj);
 };
 
 /* Do NOT use this method in production, this is only for testing! 
    Creates a User object in the database.
 */
-export const createUser = async (dataObj: IUser) => {
+const createUser = async (dataObj: IUser) => {
   return createDbRecord<IUser>(DataType.User, dataObj);
 };
 
