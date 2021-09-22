@@ -45,7 +45,7 @@ export default function ContactsTableSort({ sortValue, handleChange }: ContactsT
   function handleDropDownMenuClose(sortVal?: SortType) {
     setAnchorEl(null)
 
-    if (sortVal) {
+    if (sortVal !== undefined) {
       handleChange(sortVal)
     }
   }
