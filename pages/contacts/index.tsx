@@ -157,7 +157,7 @@ export default function Contacts() {
   return (
     <Layout>
       <Box>
-        <Box display="flex" flexDirection="column" justifyContent="centre" mx={{ sm: 0, md: 8, lg: 20 }} mt={5}>
+        <Box display="flex" flexDirection="column" justifyContent="centre" mx={{ sm: 0, md: 8, lg: 20 }} mt={5} mb={6}>
           {/* Entire table, including filters and tags */}
           <Box boxShadow={3}>
             {/* Tags */}
