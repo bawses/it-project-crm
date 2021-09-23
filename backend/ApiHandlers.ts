@@ -107,9 +107,8 @@ export async function searchHandler(
   try {
     switch (requestType) {
       /* Find all the data in our database */
-      case RequestType.GET: {
-        req.body = req.body || []; // in case body is undefined
-        dbResponse = await dbCollection.find(req.body.authId).or(req.body);
+      case RequestType.POST: {
+        dbResponse = await dbCollection.find(req.body);
         successStatus = 200;
         break;
       }
