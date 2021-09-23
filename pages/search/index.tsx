@@ -1,13 +1,12 @@
 import { Box, Typography, useMediaQuery } from "@material-ui/core";
 import { useTheme } from "@material-ui/core/styles";
-import { ChangeEvent, useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { getAllManualContacts } from "../../api_client/ManualContactQueries";
 import Layout from "../../components/navLayout/Layout";
 import ContactsTable, { IdToContactMap } from "../../components/tables/contactsTable";
 import ContactsTableSort, { SortType } from "../../components/tables/contactsTableSort";
 import { sortFunctions } from "../contacts";
 import CreateContactButtonLarge from "../../components/buttons/CreateContactButtonLarge";
-import CreateContactButtonSmall from "../../components/buttons/CreateContactButtonSmall";
 import { IManualContact } from '../../lib/DataTypes';
 import PageLoadingBar from "../../components/PageLoadingBar";
 import { useRouter } from "next/router";
@@ -137,7 +136,7 @@ export default function SearchPage() {
             </Box>
           </Box>
           {/* Search results */}
-          <Box boxShadow={3}>
+          <Box boxShadow={3} borderRadius={8}>
             <ContactsTable contacts={displayData} handleRowButtonClick={handleContactAdd} idToContactMap={addedContacts} />
           </Box>
         </Box>

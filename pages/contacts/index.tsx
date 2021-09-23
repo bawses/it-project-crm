@@ -11,6 +11,8 @@ import Layout from "../../components/navLayout/Layout";
 import PageLoadingBar from "../../components/PageLoadingBar";
 import { useRouter } from 'next/router';
 import { getSession } from 'next-auth/client';
+import { useTheme } from "@material-ui/core/styles";
+import { useMediaQuery } from "@material-ui/core";
 import SearchBar from '../../components/input/SearchBar';
 
 export const sortFunctions = {
@@ -60,6 +62,10 @@ export default function Contacts() {
   const [displayContacts, setDisplayContacts] = useState<IManualContact[]>([])
   const [isLoading, setIsLoading] = useState(true)
   const router = useRouter()
+
+  // Adjust components based on screen size
+  const theme = useTheme()
+  const bigScreen = useMediaQuery(theme.breakpoints.up("md"))
 
   async function getData(setAllContacts: (contacts: IManualContact[]) => void, setDisplayContacts: (contacts: IManualContact[]) => void) {
     try {
@@ -168,7 +174,7 @@ export default function Contacts() {
   return (
     <Layout>
       <Box>
-        <Box display="flex" flexDirection="column" justifyContent="centre" mx={{ sm: 0, md: 8, lg: 20 }} mt={5} mb={6}>
+        <Box display="flex" flexDirection="column" justifyContent="centre" mx={{ sm: 0, md: 8, lg: 20 }} mt={bigScreen ? 4 : 1} mb={6}>
           {/* Entire table, including filters and tags */}
           <Box boxShadow={3}>
             {/* Tags */}
