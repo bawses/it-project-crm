@@ -7,11 +7,11 @@ export const createOrganisation = async (dataObj: IOrganisation) => {
 };
 
 export const getAllOrganisations = async () => {
-  return searchDb<IOrganisation>(DataType.Organisation, false, undefined);
+  return searchDb<IOrganisation>(DataType.Organisation, undefined);
 };
 
 export const searchAllOrganisations = async (dataObj: IOrganisation) => {
-  return searchDb<IOrganisation>(DataType.Organisation, false, dataObj);
+  return searchDb<IOrganisation>(DataType.Organisation, dataObj);
 };
 
 export const getOrganisationById = async (id: string) => {

@@ -8,12 +8,7 @@ export const createDbRecord = async <T>(dataType: DataType, dataObj: T): Promise
 };
 
 /* Makes an API call to search through all existing entries in the database for the given dataType */
-export const searchDb = async <T>(dataType: DataType, isGlobal: boolean, dataObj?: Object): Promise<T[]> => {
-  if (isGlobal){
-    console.log("Getting Global Fetch...");
-    return await doGlobalFetch(RequestType.POST, dataType, dataObj);
-  }
-  console.log("Doing Normal Fetch")
+export const searchDb = async <T>(dataType: DataType, dataObj?: Object): Promise<T[]> => {
   return await doSearch<T>(dataType, dataObj);
 };
 
@@ -148,52 +143,6 @@ export const doSearch = async <T>(dataType: DataType, searchObj: any) => {
   }
   return data as T[];
 };
-
-// Performs a global get request
-export const doGlobalFetch = async <T>(
-  fetchType: RequestType,
-  dataType: DataType,
-  searchObj?: Object,
-): Promise<T[]> => {
-  var url: string = "";
-
-  try {
-    if (fetchType == RequestType.POST){ // Only Accepts GET Requests
-      url = `/api/${dataType}s/test`;
-    }
-    else{
-      throw new Error("400");
-    }
-    
-    const body = await JSON.stringify(searchObj);
-
-    // Do the API call
-    console.log(url);
-    var response = await fetch(url, {
-      method: fetchType,
-      headers: {
-        Accept: "application/json",
-        "Content-Type": "application/json",
-      },
-      body: body,
-    });
-    console.log(response);
-    
-    // Throw error with status code in case Fetch API call failed
-    if (!response.ok) throw new Error(`${response.status}`);
-
-    // Extract the data out of the JSON object in the form of a JavaScript object.
-    var { data } = await response.json();
-    if (!data) throw new Error(`${response.status}`);
-  } catch (error) {
-    /* If an error occurs anywhere in the process of making an API call, log it */
-    console.error(error);
-    console.error(`Failed to do operation: ${fetchType} for ${dataType}`);
-    throw new Error(`Failed to do operation: ${fetchType} for ${dataType}`);
-  }
-  return data as T[];
-  
-}
 
 export const getSessionId = async () => {
   let session = await getSession();

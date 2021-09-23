@@ -22,6 +22,7 @@ export interface IManualContact {
   _id?: ObjectId;
   ownerId: UserId;
   name: { firstName: string; lastName: string };
+  fullName?: string;
   email?: string[];
   phone?: string[];
   job?: string;
@@ -65,6 +66,7 @@ export interface IUser {
   _id?: UserId;
   passwordHash?: string;
   name: { firstName: string; lastName: string };
+  fullName?: string;
   email: string[];
   phone?: string[];
   job?: string;

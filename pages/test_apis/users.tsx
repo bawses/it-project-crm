@@ -6,7 +6,6 @@ import {
 	deleteUser,
 	searchUsersByName,
 } from "../../api_client/UserQueries";
-import { doGlobalFetch } from "../../api_client/Client";
 import { DataType, IUser } from "../../lib/DataTypes";
 import { RequestType } from "../../lib/DataTypes";
 
@@ -44,11 +43,7 @@ export default function TestUserApis() {
 				"------------------------------------------------------------------"
 			);
 			console.log("Testing global fetch on users");
-			const usersGlobal = await doGlobalFetch<IUser>(
-				RequestType.POST,
-				DataType.User,
-				{ email: "chuenleylow@gmail.com" }
-			);
+			const usersGlobal = await searchUsersByName("Dang");
 			console.log(usersGlobal);
 			console.log(
 				"------------------------------------------------------------------"

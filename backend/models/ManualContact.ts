@@ -9,6 +9,7 @@ const UserId = String;
 const ManualContactSchema = new mongoose.Schema<IManualContact>(
   {
     ownerId: { type: String, required: true },
+    fullName: {type: String},
     name: { type: { firstName: String, lastName: String }, required: true },
     email: [String],
     phone: [String],

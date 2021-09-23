@@ -16,6 +16,7 @@ export default function TestManualContactApis() {
 
 	var manualContact = {
 		ownerId: "613a3bd347d28094c81ec920",
+		fullName: "Test ManualContact",
 		name: {
 			firstName: "Test",
 			lastName: "ManualContact",
@@ -48,7 +49,7 @@ export default function TestManualContactApis() {
 			console.log("Delete success");
 
 			console.log("Testing regex");
-			const search = await searchManualContactsByName("tony");
+			const search = await searchManualContactsByName("Contact");
 			console.log(search);
 
 			console.log("Test success");

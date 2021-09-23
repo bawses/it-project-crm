@@ -6,11 +6,11 @@ export const createAddedContact = async (dataObj: IAddedContact) => {
 };
 
 export const getAllAddedContacts = async () => {
-  return searchDb<IAddedContact>(DataType.AddedContact, false, undefined);
+  return searchDb<IAddedContact>(DataType.AddedContact, undefined);
 };
 
 export const searchAddedContacts = async (dataObj: IAddedContact) => {
-  return searchDb<IAddedContact>(DataType.AddedContact, false, dataObj);
+  return searchDb<IAddedContact>(DataType.AddedContact,dataObj);
 }
 
 export const getAddedContactById = async (id: string) => {

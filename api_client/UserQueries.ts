@@ -43,10 +43,11 @@ export const userSignUp = async (
       firstName: firstName,
       lastName: lastName,
     },
+    fullName: firstName + " " + lastName,
     email: [email],
     passwordHash: await hashPassword(String(password), 10),
   };
-  return createDbRecord<IUser>(DataType.User, dataObj);
+  return createUser(dataObj);
 };
 
 /* Do NOT use this method in production, this is only for testing! 
@@ -57,11 +58,11 @@ export const createUser = async (dataObj: IUser) => {
 };
 
 export const getAllUsers = async () => {
-  return searchDb<IUser>(DataType.User, false, undefined);
+  return searchDb<IUser>(DataType.User, undefined);
 };
 
 export const searchUsers = async (dataObj: IUser) => {
-  return searchDb<IUser>(DataType.User, false, dataObj);
+  return searchDb<IUser>(DataType.User, dataObj);
 };
 
 export const getUserById = async (id: string) => {
@@ -77,21 +78,11 @@ export const deleteUser = async (id: string) => {
 };
 
 export const searchUsersByName = async (name: string) => {
-  let dataObjFirst: Object = {
-    "name.firstName": {
+  let dataObj: Object = {
+    "fullName": {
         "$regex": name,
         "$options": "i"
     }
   }
-  let firstResult: IUser[] = await doSearch<IUser>(DataType.User, dataObjFirst);
-  
-  let dataObjLast: Object = {
-    "name.lastName": {
-        "$regex": name,
-        "$options": "i"
-    }
-  }
-  let lastResult: IUser[] = await doSearch<IUser>(DataType.User, dataObjLast);
-  let totalResult = firstResult.concat(lastResult);
-  return totalResult;
+  return await doSearch<IUser>(DataType.User, dataObj);;
 }

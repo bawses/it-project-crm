@@ -18,14 +18,14 @@ export const getManualContacts = async () => {
   const authId = await getSessionId();
   if (authId){
     let dataObj: Object = {ownerId: authId}
-    return searchDb<IManualContact>(DataType.ManualContact, false, dataObj);
+    return searchDb<IManualContact>(DataType.ManualContact, dataObj);
   }
 
   throw new Error ("No Valid Session Id!");
 };
 
 export const searchManualContacts = async (dataObj: Object) => {
-  return searchDb<IManualContact>(DataType.ManualContact, false, dataObj);
+  return searchDb<IManualContact>(DataType.ManualContact, dataObj);
 };
 
 export const getManualContactById = async (recordId: string) => {
@@ -43,21 +43,10 @@ export const deleteManualContact = async (id: string) => {
 export const searchManualContactsByName = async (name: string) => {
   
   let dataObjFirst: Object = {
-    "name.firstName": {
+    "fullName": {
         "$regex": name,
         "$options": "i"
     }
   }
-  let firstResult: IManualContact[] = await doSearch<IManualContact>(DataType.ManualContact, dataObjFirst);
-  
-  let dataObjLast: Object = {
-    "name.lastName": {
-        "$regex": name,
-        "$options": "i"
-    }
-  }
-  let lastResult: IManualContact[] = await doSearch<IManualContact>(DataType.ManualContact, dataObjLast);
-  let totalResult = firstResult.concat(lastResult);
-  return totalResult;
-
+  return await doSearch<IManualContact>(DataType.ManualContact, dataObjFirst);
 };
