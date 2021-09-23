@@ -11,6 +11,9 @@ import Layout from "../../components/navLayout/Layout";
 import PageLoadingBar from "../../components/PageLoadingBar";
 import { useRouter } from 'next/router';
 import { getSession } from 'next-auth/client';
+import { useTheme } from "@material-ui/core/styles";
+import { useMediaQuery } from "@material-ui/core";
+import SearchBar from '../../components/input/SearchBar';
 
 export const sortFunctions = {
   [SortType.FirstName]: (a: IManualContact, b: IManualContact) => (a.name.firstName > b.name.firstName) ? 1 : -1,
@@ -54,10 +57,15 @@ export default function Contacts() {
   const [sortValue, setSortValue] = useState<SortType>(SortType.None)
   const [categoryButton, setCategoryButton] = useState<CategoryButton>("all")
   const [tags, setTags] = useState<OnChangeValue<SelectValue, true>>([])
+  const [searchValue, setSearchValue] = useState<string>("")
   const [allContacts, setAllContacts] = useState<IManualContact[]>([])
   const [displayContacts, setDisplayContacts] = useState<IManualContact[]>([])
   const [isLoading, setIsLoading] = useState(true)
   const router = useRouter()
+
+  // Adjust components based on screen size
+  const theme = useTheme()
+  const bigScreen = useMediaQuery(theme.breakpoints.up("md"))
 
   async function getData(setAllContacts: (contacts: IManualContact[]) => void, setDisplayContacts: (contacts: IManualContact[]) => void) {
     try {
@@ -89,6 +97,15 @@ export default function Contacts() {
       toDisplay = toDisplay.filter(contact => contact[categoryButton])
     }
 
+    // Remove contacts which do not match the given search value in the local search bar
+    // Note that local search is case-insensitive
+    if (searchValue !== "") {
+      toDisplay = toDisplay.filter((contact) => {
+        const fullName = (contact.name.firstName + " " + contact.name.lastName).toLowerCase()
+        return fullName.includes(searchValue.toLowerCase())
+      })
+    }
+
     // Remove contacts which do not have all selected tags
     for (const tag of tags) {
       toDisplay = toDisplay.filter(contact => (contact.tags && contact.tags.includes(tag.value)))
@@ -100,7 +117,7 @@ export default function Contacts() {
     }
 
     setDisplayContacts(toDisplay)
-  }, [allContacts, categoryButton, tags, sortValue])
+  }, [allContacts, categoryButton, searchValue, tags, sortValue])
 
   function handleNewSortVal(newSortVal: SortType) {
     setSortValue(newSortVal)
@@ -157,18 +174,22 @@ export default function Contacts() {
   return (
     <Layout>
       <Box>
-        <Box display="flex" flexDirection="column" justifyContent="centre" mx={{ sm: 0, md: 8, lg: 20 }} mt={5} mb={6}>
+        <Box display="flex" flexDirection="column" justifyContent="centre" mx={{ sm: 0, md: 8, lg: 20 }} mt={bigScreen ? 4 : 1} mb={6}>
           {/* Entire table, including filters and tags */}
           <Box boxShadow={3}>
             {/* Tags */}
             <ContactsTableTags instanceId="1" handleTagChange={handleTagChange} />
           </Box>
-          <Box display="flex" py={2}>
+          <Box display="flex" paddingTop={2} paddingBottom={1}>
             {/* Sort and filtering elements */}
             <ContactsTableCategory pressedButton={categoryButton} handleButtonPress={handleButtonPress} />
             <ContactsTableSort sortValue={sortValue} handleChange={handleNewSortVal} />
           </Box>
-          <Box boxShadow={3}>
+          <Box>
+            {/* Local search bar */}
+            <SearchBar value={searchValue} handleChange={setSearchValue} />
+          </Box>
+          <Box boxShadow={3} borderRadius={8}>
             {/* List of contacts */}
             <ContactsTable contacts={displayContacts} handleRowButtonClick={handleStarClick} />
           </Box>
