@@ -1,4 +1,3 @@
-import { Model } from "mongoose";
 import connectToDatabase from "./dbConnect";
 import { Request, Response } from "express";
 import { Database } from "./models/DbMapping";
@@ -14,7 +13,7 @@ export async function idHandler(
   const requestType = req.method;
 
   await connectToDatabase();
-  const dbCollection: Model<any, {}, {}> = Database[dataType];
+  const dbCollection = Database[dataType];
 
   var dbResponse;
   try {
@@ -38,14 +37,14 @@ export async function idHandler(
         break;
       }
       default: {
-        throw new Error();
+        throw new Error("Invalid request type. Must be GET, PUT, or DELETE.");
       }
     }
     if (!dbResponse) {
-      throw new Error();
+      throw new Error("Error occurred in database operations.");
     }
-  } catch (error) {
-    return res.status(400).json({ success: false });
+  } catch (err) {
+    return res.status(400).json({ success: false, error: err });
   }
   return res.status(200).json({ success: true, data: dbResponse });
 }
@@ -60,7 +59,7 @@ export async function indexHandler(
 
   // Connect to Database and select appropriate collection for use according to datatype
   await connectToDatabase();
-  const dbCollection: Model<any, {}, {}> = Database[dataType];
+  const dbCollection = Database[dataType];
 
   var dbResponse;
   var successStatus: number;
@@ -80,14 +79,14 @@ export async function indexHandler(
         break;
       }
       default: {
-        throw new Error("Request Type is not GET or POST!");
+        throw new Error("Invalid request type. Must be GET or POST.");
       }
     }
     if (!dbResponse) {
       throw new Error("Error occurred in database operations.");
     }
-  } catch (error) {
-    return res.status(400).json({ success: false });
+  } catch (err) {
+    return res.status(400).json({ success: false, error: err });
   }
   return res.status(successStatus).json({ success: true, data: dbResponse });
 }
@@ -101,28 +100,23 @@ export async function searchHandler(
 
   // Connect to Database and select appropriate collection for use according to datatype
   await connectToDatabase();
-  const dbCollection: Model<any, {}, {}> = Database[dataType];
+  const dbCollection = Database[dataType];
 
   var dbResponse;
   var successStatus: number;
   try {
-    switch (requestType) {
-      /* Find all the data in our database */
-      case RequestType.GET: {
-        req.body = req.body || []; // in case body is undefined
-        dbResponse = await dbCollection.find().or(req.body);
-        successStatus = 200;
-        break;
-      }
-      default: {
-        throw new Error("Request Type is not GET!");
-      }
+    /* Find all the data in our database */
+    if (requestType === RequestType.POST) {
+      dbResponse = await dbCollection.find(req.body);
+      successStatus = 200;
+    } else {
+      throw new Error("Invalid request type. Must be POST.");
     }
     if (!dbResponse) {
       throw new Error("Error occurred in database operations.");
     }
-  } catch (error) {
-    return res.status(400).json({ success: false });
+  } catch (err) {
+    return res.status(400).json({ success: false, error: err });
   }
   return res.status(successStatus).json({ success: true, data: dbResponse });
 }

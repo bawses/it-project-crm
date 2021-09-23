@@ -5,7 +5,7 @@ import {
   getDbRecordById,
   updateDbRecord,
   deleteDbRecord,
-  doRegexSearch,
+  doSearch,
 } from "./Client";
 import { hash as hashPassword } from "bcryptjs";
 
@@ -43,6 +43,7 @@ export const userSignUp = async (
       firstName: firstName,
       lastName: lastName,
     },
+    fullName: firstName + " " + lastName,
     email: [email],
     passwordHash: await hashPassword(String(password), 10),
   };
@@ -77,5 +78,11 @@ export const deleteUser = async (id: string) => {
 };
 
 export const searchUsersByName = async (name: string) => {
-  return doRegexSearch<IUser>(DataType.User, name);
+  let dataObj: Object = {
+    "fullName": {
+        "$regex": name,
+        "$options": "i"
+    }
+  }
+  return await doSearch<IUser>(DataType.User, dataObj);;
 }

@@ -10,7 +10,7 @@ export const getAllAddedContacts = async () => {
 };
 
 export const searchAddedContacts = async (dataObj: IAddedContact) => {
-  return searchDb<IAddedContact>(DataType.AddedContact, dataObj);
+  return searchDb<IAddedContact>(DataType.AddedContact,dataObj);
 }
 
 export const getAddedContactById = async (id: string) => {

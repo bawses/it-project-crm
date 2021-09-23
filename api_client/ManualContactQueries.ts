@@ -5,23 +5,31 @@ import {
   getDbRecordById,
   updateDbRecord,
   deleteDbRecord,
-  doRegexSearch,
+  doSearch,
+  getSessionId
 } from "./Client";
 
 export const createManualContact = async (dataObj: IManualContact) => {
   return createDbRecord<IManualContact>(DataType.ManualContact, dataObj);
 };
 
-export const getAllManualContacts = async () => {
-  return searchDb<IManualContact>(DataType.ManualContact, undefined);
+export const getManualContacts = async () => {
+  // Get authentication Id
+  const authId = await getSessionId();
+  if (authId){
+    let dataObj: Object = {ownerId: authId}
+    return searchDb<IManualContact>(DataType.ManualContact, dataObj);
+  }
+
+  throw new Error ("No Valid Session Id!");
 };
 
-export const searchManualContacts = async (dataObj: IManualContact) => {
+export const searchManualContacts = async (dataObj: Object) => {
   return searchDb<IManualContact>(DataType.ManualContact, dataObj);
 };
 
-export const getManualContactById = async (id: string) => {
-  return getDbRecordById<IManualContact>(DataType.ManualContact, id);
+export const getManualContactById = async (recordId: string) => {
+  return getDbRecordById<IManualContact>(DataType.ManualContact, recordId);
 };
 
 export const updateManualContact = async (id: string, dataObj: IManualContact) => {
@@ -33,5 +41,12 @@ export const deleteManualContact = async (id: string) => {
 };
 
 export const searchManualContactsByName = async (name: string) => {
-  return doRegexSearch<IManualContact>(DataType.ManualContact, name);
+  
+  let dataObjFirst: Object = {
+    "fullName": {
+        "$regex": name,
+        "$options": "i"
+    }
+  }
+  return await doSearch<IManualContact>(DataType.ManualContact, dataObjFirst);
 };

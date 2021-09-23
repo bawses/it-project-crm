@@ -1,19 +1,20 @@
+import { getSession } from "next-auth/client";
 import { mutate } from "swr";
 import { DataType, RequestType } from "../lib/DataTypes";
 
 /* Makes an API call to add a new entry into the database for the given dataType */
 export const createDbRecord = async <T>(dataType: DataType, dataObj: T): Promise<T> => {
-  return await doFetch<T, T>(RequestType.POST, dataType, undefined, dataObj);
+  return await doFetch<Object, T>(RequestType.POST, dataType, undefined, dataObj);
 };
 
 /* Makes an API call to search through all existing entries in the database for the given dataType */
-export const searchDb = async <T>(dataType: DataType, dataObj?: T): Promise<T[]> => {
-  return await doFetch<T, T[]>(RequestType.GET, dataType, undefined, dataObj);
+export const searchDb = async <T>(dataType: DataType, dataObj?: Object): Promise<T[]> => {
+  return await doSearch<T>(dataType, dataObj);
 };
 
 /* Makes an API call to find an existing entry in the database for the given dataType */
 export const getDbRecordById = async <T>(dataType: DataType, recordId: string): Promise<T> => {
-  return await doFetch<T, T>(RequestType.GET, dataType, recordId, undefined);
+  return await doFetch<Object, T>(RequestType.GET, dataType, recordId, undefined);
 };
 
 /* Makes an API call to edit an existing entry in the database for the given dataType */
@@ -34,10 +35,11 @@ const doFetch = async <T_input, T_output>(
   fetchType: RequestType,
   dataType: DataType,
   recordId?: string,
-  dataObj?: T_input
+  dataObj?: T_input,
 ): Promise<T_output> => {
   var url: string = "";
   var body = dataObj ? JSON.stringify(dataObj) : undefined;
+
   try {
     // Use the right url for each fetchType
     switch (fetchType) {
@@ -64,7 +66,12 @@ const doFetch = async <T_input, T_output>(
       }
     }
 
-    // Do the API call
+    // Do the API call to the specified url
+    console.log("----")
+    console.log(url)
+    console.log(recordId);
+    console.log(body);
+    console.log("----")
     var response = await fetch(url, {
       method: fetchType,
       headers: {
@@ -73,6 +80,7 @@ const doFetch = async <T_input, T_output>(
       },
       body: body,
     });
+
     // Throw error with status code in case Fetch API call failed
     if (!response.ok) throw new Error(`${response.status}`);
 
@@ -93,16 +101,32 @@ const doFetch = async <T_input, T_output>(
   return data as T_output;
 };
 
-export const doRegexSearch = async <T>(dataType: DataType, regex: string) => {
-  var url = `/api/${dataType}s?search=${regex}`;
+export const doSearch = async <T>(dataType: DataType, searchObj: any) => {
+  let authId: string | null = await getSessionId();
+  if (!authId){
+    throw new Error ("No Valid Session Id!");
+  } 
 
+  switch(dataType){
+    case DataType.AddedContact:
+      searchObj.fromUserId = authId;
+      break;                           
+    case DataType.ManualContact:
+      searchObj.ownerId = authId;
+      break;
+  }
+
+  var url = `/api/${dataType}s/search`;
+  
   try {
+    let body = JSON.stringify(searchObj);
     var response = await fetch(url, {
-      method: RequestType.GET,
+      method: RequestType.POST,
       headers: {
         Accept: "application/json",
         "Content-Type": "application/json",
       },
+      body: body,
     });
 
     // Throw error with status code in case Fetch API call failed
@@ -119,3 +143,13 @@ export const doRegexSearch = async <T>(dataType: DataType, regex: string) => {
   }
   return data as T[];
 };
+
+export const getSessionId = async () => {
+  let session = await getSession();
+  if (session){
+    return session.user.sub;
+  } else{
+    return null;
+  }
+
+}

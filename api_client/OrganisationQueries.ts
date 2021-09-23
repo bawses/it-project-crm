@@ -1,6 +1,7 @@
 import { DataType, IOrganisation } from "../lib/DataTypes";
 import { createDbRecord, searchDb, getDbRecordById, updateDbRecord, deleteDbRecord } from "./Client";
 
+/* TODO: CLarify here which of these are global operations and which these are user specific */
 export const createOrganisation = async (dataObj: IOrganisation) => {
   return createDbRecord<IOrganisation>(DataType.Organisation, dataObj);
 };

@@ -8,6 +8,7 @@ const OrganisationId = String;
 const UserSchema = new mongoose.Schema<IUser>(
   {
     passwordHash: { type: String, required: true },
+    fullName: {type: String},
     name: { type: { firstName: String, lastName: String }, required: true },
     email: { type: [String], required: true },
     phone: [String],
