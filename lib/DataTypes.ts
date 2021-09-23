@@ -92,6 +92,7 @@ export interface IUser {
 export interface IContact {
   _id?: string;
   name: { firstName: string; lastName: string };
+  fullName?: string,
   email?: string[];
   phone?: string[];
   job?: string;
