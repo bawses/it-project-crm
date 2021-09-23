@@ -1,4 +1,3 @@
-import { Model } from "mongoose";
 import connectToDatabase from "./dbConnect";
 import { Request, Response } from "express";
 import { Database } from "./models/DbMapping";
@@ -14,7 +13,7 @@ export async function idHandler(
   const requestType = req.method;
 
   await connectToDatabase();
-  const dbCollection: Model<any, {}, {}> = Database[dataType];
+  const dbCollection = Database[dataType];
 
   var dbResponse;
   try {
@@ -44,8 +43,8 @@ export async function idHandler(
     if (!dbResponse) {
       throw new Error("Error occurred in database operations.");
     }
-  } catch (error) {
-    return res.status(400).json({ success: false, error: error });
+  } catch (err) {
+    return res.status(400).json({ success: false, error: err });
   }
   return res.status(200).json({ success: true, data: dbResponse });
 }
@@ -60,7 +59,7 @@ export async function indexHandler(
 
   // Connect to Database and select appropriate collection for use according to datatype
   await connectToDatabase();
-  const dbCollection: Model<any, {}, {}> = Database[dataType];
+  const dbCollection = Database[dataType];
 
   var dbResponse;
   var successStatus: number;
@@ -85,8 +84,8 @@ export async function indexHandler(
     if (!dbResponse) {
       throw new Error("Error occurred in database operations.");
     }
-  } catch (error) {
-    return res.status(400).json({ success: false, error: error });
+  } catch (err) {
+    return res.status(400).json({ success: false, error: err });
   }
   return res.status(successStatus).json({ success: true, data: dbResponse });
 }
@@ -100,7 +99,7 @@ export async function searchHandler(
 
   // Connect to Database and select appropriate collection for use according to datatype
   await connectToDatabase();
-  const dbCollection: Model<any, {}, {}> = Database[dataType];
+  const dbCollection = Database[dataType];
 
   var dbResponse;
   var successStatus: number;
@@ -115,8 +114,8 @@ export async function searchHandler(
     if (!dbResponse) {
       throw new Error("Error occurred in database operations.");
     }
-  } catch (error) {
-    return res.status(400).json({ success: false, error: error });
+  } catch (err) {
+    return res.status(400).json({ success: false, error: err });
   }
   return res.status(successStatus).json({ success: true, data: dbResponse });
 }

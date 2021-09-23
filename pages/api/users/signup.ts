@@ -10,19 +10,19 @@ async function handler(req: Request, res: Response): Promise<any> {
     res.status(422).json({ error: "Request method is not POST" });
   }
 
-  if (req.body.email) {
+  try {
     await connectToDatabase();
-    let user = await User.findOne({ email: req.body.email });
-    if (user) {
-      return res.status(400).json({ success: false, error: "User with email already exists" });
+    if (!req.body.email) {
+      throw new Error("No email provided");
     }
+    let user = await User.findOne({ email: req.body.email });
+    if (!user) {
+      throw new Error("User with email already exists");
+    }
+    var response = await indexHandler(req, res, DataType.User);
+  } catch (err) {
+    return res.status(400).json({ success: false, error: err });
   }
-  
-  let response = await indexHandler(req, res, DataType.User);
-  console.log(
-    "-----"
-  )
-  console.log(response);
   return response;
 }
 
