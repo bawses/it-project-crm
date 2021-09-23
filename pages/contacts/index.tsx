@@ -11,6 +11,7 @@ import Layout from "../../components/navLayout/Layout";
 import PageLoadingBar from "../../components/PageLoadingBar";
 import { useRouter } from 'next/router';
 import { getSession } from 'next-auth/client';
+import SearchBar from '../../components/input/SearchBar';
 
 export const sortFunctions = {
   [SortType.FirstName]: (a: IManualContact, b: IManualContact) => (a.name.firstName > b.name.firstName) ? 1 : -1,
@@ -54,6 +55,7 @@ export default function Contacts() {
   const [sortValue, setSortValue] = useState<SortType>(SortType.None)
   const [categoryButton, setCategoryButton] = useState<CategoryButton>("all")
   const [tags, setTags] = useState<OnChangeValue<SelectValue, true>>([])
+  const [searchValue, setSearchValue] = useState<string>("")
   const [allContacts, setAllContacts] = useState<IManualContact[]>([])
   const [displayContacts, setDisplayContacts] = useState<IManualContact[]>([])
   const [isLoading, setIsLoading] = useState(true)
@@ -163,12 +165,16 @@ export default function Contacts() {
             {/* Tags */}
             <ContactsTableTags instanceId="1" handleTagChange={handleTagChange} />
           </Box>
-          <Box display="flex" py={2}>
+          <Box display="flex" py={1}>
             {/* Sort and filtering elements */}
             <ContactsTableCategory pressedButton={categoryButton} handleButtonPress={handleButtonPress} />
             <ContactsTableSort sortValue={sortValue} handleChange={handleNewSortVal} />
           </Box>
-          <Box boxShadow={3}>
+          <Box>
+            {/* Local search bar */}
+            <SearchBar value={searchValue} handleChange={setSearchValue} />
+          </Box>
+          <Box boxShadow={3} borderRadius={8}>
             {/* List of contacts */}
             <ContactsTable contacts={displayContacts} handleRowButtonClick={handleStarClick} />
           </Box>
