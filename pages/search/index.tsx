@@ -112,7 +112,7 @@ export default function SearchPage() {
 
   return (
     <Layout>
-      <Box display="flex" flexDirection="row" justifyContent="centre" mx={{ sm: 0, md: 8, lg: 20 }} mt={{ sm: 1, md: 5 }}>
+      <Box display="flex" flexDirection="row" justifyContent="centre" mx={{ sm: 0, md: 8, lg: 20 }} mt={{ sm: 1, md: 5 }} mb={6}>
         {/* Entire table, including sort and search results */}
         <Box display="flex" flexDirection="column" mr={bigScreen ? 2 : 0} width="100%">
           {

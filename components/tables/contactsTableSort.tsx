@@ -1,7 +1,7 @@
 import { Box, FormControl, InputLabel, Select, Menu, MenuItem, makeStyles, createStyles, useMediaQuery, IconButton } from "@material-ui/core";
 import { useTheme } from "@material-ui/core/styles";
 import SortIcon from '@material-ui/icons/Sort';
-import { ChangeEvent, useState } from "react";
+import { useState } from "react";
 
 const useStyles = makeStyles(() =>
   createStyles({
@@ -42,9 +42,12 @@ export default function ContactsTableSort({ sortValue, handleChange }: ContactsT
     setAnchorEl(event.currentTarget)
   }
 
-  function handleDropDownMenuClick(sortVal: SortType) {
+  function handleDropDownMenuClose(sortVal?: SortType) {
     setAnchorEl(null)
-    handleChange(sortVal)
+
+    if (sortVal !== undefined) {
+      handleChange(sortVal)
+    }
   }
 
   let dropDownMenu = (
@@ -89,17 +92,17 @@ export default function ContactsTableSort({ sortValue, handleChange }: ContactsT
           id="basic-menu"
           anchorEl={anchorEl}
           open={dropDownOpen}
-          onClose={handleClose}
+          onClose={() => handleDropDownMenuClose()}
           MenuListProps={{
             'aria-labelledby': 'mobile-dropdown-button',
           }}
         >
-          <MenuItem onClick={() => handleDropDownMenuClick(SortType.None)}>
+          <MenuItem onClick={() => handleDropDownMenuClose(SortType.None)}>
             <em>None</em>
           </MenuItem>
-          <MenuItem onClick={() => handleDropDownMenuClick(SortType.FirstName)}>First Name</MenuItem>
-          <MenuItem onClick={() => handleDropDownMenuClick(SortType.LastName)}>Last Name</MenuItem>
-          <MenuItem onClick={() => handleDropDownMenuClick(SortType.Role)}>Role</MenuItem>
+          <MenuItem onClick={() => handleDropDownMenuClose(SortType.FirstName)}>First Name</MenuItem>
+          <MenuItem onClick={() => handleDropDownMenuClose(SortType.LastName)}>Last Name</MenuItem>
+          <MenuItem onClick={() => handleDropDownMenuClose(SortType.Role)}>Role</MenuItem>
         </Menu>
       </>
     )
