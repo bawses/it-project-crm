@@ -1,6 +1,6 @@
 import {
 	createManualContact,
-	getAllManualContacts,
+	getManualContacts,
 	getManualContactById,
 	updateManualContact,
 	deleteManualContact,
@@ -30,7 +30,7 @@ export default function TestManualContactApis() {
 			console.log(testSignUp);
 
 			console.log("Testing get all");
-			const manualContacts = await getAllManualContacts(true);
+			const manualContacts = await getManualContacts();
 			console.log(manualContacts);
 
 			console.log("Testing get");

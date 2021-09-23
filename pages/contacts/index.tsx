@@ -13,7 +13,7 @@ import ContactsTableTags, {
 } from "../../components/tables/contactsTableTags";
 import { IManualContact } from "../../lib/DataTypes";
 import {
-	getAllManualContacts,
+	getManualContacts,
 	updateManualContact,
 } from "../../api_client/ManualContactQueries";
 import Layout from "../../components/navLayout/Layout";
@@ -82,7 +82,7 @@ export default function Contacts() {
 			setIsLoading(true);
 			// Get session which contains the user's Id
 
-			let data = await getAllManualContacts(false);
+			let data = await getManualContacts();
 			console.log(data);
 
 			if (!data) {

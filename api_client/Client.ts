@@ -4,23 +4,22 @@ import { DataType, RequestType } from "../lib/DataTypes";
 
 /* Makes an API call to add a new entry into the database for the given dataType */
 export const createDbRecord = async <T>(dataType: DataType, dataObj: T): Promise<T> => {
-  return await doFetch<T, T>(RequestType.POST, dataType, undefined, dataObj);
+  return await doFetch<Object, T>(RequestType.POST, dataType, undefined, dataObj);
 };
 
 /* Makes an API call to search through all existing entries in the database for the given dataType */
-export const searchDb = async <T>(dataType: DataType, isGlobal: boolean, dataObj?: T): Promise<T[]> => {
+export const searchDb = async <T>(dataType: DataType, isGlobal: boolean, dataObj?: Object): Promise<T[]> => {
   if (isGlobal){
     console.log("Getting Global Fetch...");
-    let obj: Object = dataObj as Object;
-    return await doGlobalFetch(RequestType.POST, dataType, obj);
+    return await doGlobalFetch(RequestType.POST, dataType, dataObj);
   }
   console.log("Doing Normal Fetch")
-  return await doFetch<T, T[]>(RequestType.GET, dataType, undefined, dataObj);
+  return await doSearch<T>(dataType, dataObj);
 };
 
 /* Makes an API call to find an existing entry in the database for the given dataType */
 export const getDbRecordById = async <T>(dataType: DataType, recordId: string): Promise<T> => {
-  return await doFetch<T, T>(RequestType.GET, dataType, recordId, undefined);
+  return await doFetch<Object, T>(RequestType.GET, dataType, recordId, undefined);
 };
 
 /* Makes an API call to edit an existing entry in the database for the given dataType */
@@ -46,9 +45,6 @@ const doFetch = async <T_input, T_output>(
   var url: string = "";
   var body = dataObj ? JSON.stringify(dataObj) : undefined;
 
-  // Get authentication Id
-  const authId = await getSessionId();
-
   try {
     // Use the right url for each fetchType
     switch (fetchType) {
@@ -60,7 +56,6 @@ const doFetch = async <T_input, T_output>(
       case RequestType.GET: {
         url = `/api/${dataType}s`;
         if (recordId) url += `/${recordId}`;
-        else if (authId) url += `?authId=${authId}`;
         break;
       }
       case RequestType.PUT: {
@@ -79,7 +74,6 @@ const doFetch = async <T_input, T_output>(
     // Do the API call to the specified url
     console.log("----")
     console.log(url)
-    console.log(authId);
     console.log(recordId);
     console.log(body);
     console.log("----")
@@ -112,16 +106,32 @@ const doFetch = async <T_input, T_output>(
   return data as T_output;
 };
 
-export const doRegexSearch = async <T>(dataType: DataType, regex: string) => {
-  const authId = await getSessionId();
-  var url = `/api/${dataType}s?search=${regex}&authId=${authId}`;
+export const doSearch = async <T>(dataType: DataType, searchObj: any) => {
+  let authId: string | null = await getSessionId();
+  if (!authId){
+    throw new Error ("No Valid Session Id!");
+  } 
+
+  switch(dataType){
+    case DataType.AddedContact:
+      searchObj.fromUserId = authId;
+      break;                           
+    case DataType.ManualContact:
+      searchObj.ownerId = authId;
+      break;
+  }
+
+  var url = `/api/${dataType}s/search`;
+  
   try {
+    let body = JSON.stringify(searchObj);
     var response = await fetch(url, {
-      method: RequestType.GET,
+      method: RequestType.POST,
       headers: {
         Accept: "application/json",
         "Content-Type": "application/json",
       },
+      body: body,
     });
 
     // Throw error with status code in case Fetch API call failed
@@ -143,7 +153,7 @@ export const doRegexSearch = async <T>(dataType: DataType, regex: string) => {
 export const doGlobalFetch = async <T>(
   fetchType: RequestType,
   dataType: DataType,
-  searchObj: Object,
+  searchObj?: Object,
 ): Promise<T[]> => {
   var url: string = "";
 

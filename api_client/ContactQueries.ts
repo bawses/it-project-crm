@@ -3,7 +3,7 @@
 - function getting archived contacts
 */
 
-import { getAllManualContacts } from "./ManualContactQueries";
+import { getManualContacts } from "./ManualContactQueries";
 
 export const getAllContacts = async () => {
     
