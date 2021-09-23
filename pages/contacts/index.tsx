@@ -91,6 +91,15 @@ export default function Contacts() {
       toDisplay = toDisplay.filter(contact => contact[categoryButton])
     }
 
+    // Remove contacts which do not match the given search value in the local search bar
+    // Note that local search is case-insensitive
+    if (searchValue !== "") {
+      toDisplay = toDisplay.filter((contact) => {
+        const fullName = (contact.name.firstName + " " + contact.name.lastName).toLowerCase()
+        return fullName.includes(searchValue.toLowerCase())
+      })
+    }
+
     // Remove contacts which do not have all selected tags
     for (const tag of tags) {
       toDisplay = toDisplay.filter(contact => (contact.tags && contact.tags.includes(tag.value)))
@@ -102,7 +111,7 @@ export default function Contacts() {
     }
 
     setDisplayContacts(toDisplay)
-  }, [allContacts, categoryButton, tags, sortValue])
+  }, [allContacts, categoryButton, searchValue, tags, sortValue])
 
   function handleNewSortVal(newSortVal: SortType) {
     setSortValue(newSortVal)
@@ -165,7 +174,7 @@ export default function Contacts() {
             {/* Tags */}
             <ContactsTableTags instanceId="1" handleTagChange={handleTagChange} />
           </Box>
-          <Box display="flex" py={1}>
+          <Box display="flex" paddingTop={2} paddingBottom={1}>
             {/* Sort and filtering elements */}
             <ContactsTableCategory pressedButton={categoryButton} handleButtonPress={handleButtonPress} />
             <ContactsTableSort sortValue={sortValue} handleChange={handleNewSortVal} />
