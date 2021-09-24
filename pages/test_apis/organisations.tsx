@@ -24,7 +24,7 @@ export default function TestOrganisationApis() {
       console.log(orgs);
 
       console.log("Testing get");
-      const id = orgs[orgs.length - 1]._id;
+      const id = testCreate._id;
       let testGet = await getOrganisationById(id);
       console.log(testGet);
 

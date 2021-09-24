@@ -148,7 +148,6 @@ export const archiveContact = async (contact: IContact): Promise<IContact> => {
 
 export const searchContacts_Manual = async (searchObj: Object): Promise<IContact[]> => {
   let manualContacts = await searchManualContacts(searchObj);
-  console.log(manualContacts);
   return manualContacts.map(convert_ManualContact_to_Contact);
 };
 

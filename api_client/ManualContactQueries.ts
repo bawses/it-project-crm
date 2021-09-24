@@ -22,7 +22,6 @@ export const createManualContact = async (createObj: IManualContact_Create) => {
   createObj_.archived = false;
   createObj_.starred = false;
   createObj_.fullName = createObj.name.firstName + " " + createObj.name.lastName;
-  console.log(createObj_);
   return createDbRecord<IManualContact>(DataType.ManualContact, createObj_);
 };
 
