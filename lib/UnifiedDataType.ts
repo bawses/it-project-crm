@@ -27,7 +27,7 @@ export interface IContact {
   isAddedContact: boolean;
 }
 
-export const convert_ManualContact_to_IContact = (manualContact: IManualContact): IContact => {
+export const convert_ManualContact_to_Contact = (manualContact: IManualContact): IContact => {
   return {
     _id: manualContact._id,
     name: manualContact.name,
@@ -47,7 +47,7 @@ export const convert_ManualContact_to_IContact = (manualContact: IManualContact)
   };
 };
 
-export const convert_User_to_IContact = (user: IUser): IContact => {
+export const convert_User_to_Contact = (user: IUser): IContact => {
   return {
     _id: user._id,
     name: user.name,
@@ -63,10 +63,13 @@ export const convert_User_to_IContact = (user: IUser): IContact => {
   };
 };
 
-export const convert_AddedUser_to_IContact = (
+export const convert_AddedUser_to_Contact = (
   addedContact: IAddedContact,
   user: IUser
 ): IContact => {
+  if (addedContact.toUserId !== user._id) {
+    throw new Error("Added contact object and user object have uncommon ID fields (addedContact.toUserId must match with user._id");
+  }
   return {
     _id: user._id,
     name: user.name,

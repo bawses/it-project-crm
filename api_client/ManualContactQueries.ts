@@ -21,12 +21,13 @@ export const createManualContact = async (createObj: IManualContact_Create) => {
   createObj_.ownerId = authId;
   createObj_.archived = false;
   createObj_.starred = false;
-  createObj_.fullName = createObj_.firstName + " " + createObj_.lastName;
+  createObj_.fullName = createObj.name.firstName + " " + createObj.name.lastName;
+  console.log(createObj_);
   return createDbRecord<IManualContact>(DataType.ManualContact, createObj_);
 };
 
-export const getManualContactById = async (recordId: string) => {
-  return getDbRecordById<IManualContact>(DataType.ManualContact, recordId);
+export const getManualContactById = async (id: string) => {
+  return getDbRecordById<IManualContact>(DataType.ManualContact, id);
 };
 
 export const updateManualContact = async (id: string, updateObj: IManualContact_Update) => {
@@ -41,8 +42,11 @@ export const deleteManualContact = async (id: string) => {
   deleteDbRecord<IManualContact>(DataType.ManualContact, id);
 };
 
-const searchManualContacts = async (searchObj: Object) => {
-  return searchDb<IManualContact>(DataType.ManualContact, searchObj);
+export const searchManualContacts = async (searchObj: Object) => {
+  // Only search for un-archived manual contacts
+  let searchObj_ = searchObj as any;
+  searchObj_.archived = { $in: [false, null] };
+  return searchDb<IManualContact>(DataType.ManualContact, searchObj_);
 };
 
 export const getManualContacts = async () => {
@@ -50,11 +54,6 @@ export const getManualContacts = async () => {
 };
 
 export const searchManualContactsByName = async (name: string) => {
-  let searchObj = {
-    fullName: {
-      $regex: name,
-      $options: "i",
-    },
-  };
+  let searchObj = { fullName: { $regex: name, $options: "i" } };
   return await searchManualContacts(searchObj);
 };

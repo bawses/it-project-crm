@@ -9,7 +9,7 @@ import {
 export default function TestAddedContactApis() {
   async function test() {
     try {
-      let toUserId = "19084759083475hf";
+      let toUserId = "6132318dcdb5a11c5d2e82a7";
 
       console.log("Testing create");
       let testSignUp = await createAddedContact(toUserId);

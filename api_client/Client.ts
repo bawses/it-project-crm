@@ -45,10 +45,7 @@ export const updateDbRecord = async <T_output>(
 };
 
 /* Makes an API call to delete an existing entry in the database for the given dataType */
-export const deleteDbRecord = async <T_output>(
-  dataType: DataType,
-  recordId: string
-) => {
+export const deleteDbRecord = async <T_output>(dataType: DataType, recordId: string) => {
   await doFetch<T_output>(RequestType.DELETE, dataType, recordId, undefined);
 };
 
@@ -87,12 +84,6 @@ const doFetch = async <T_output>(
       }
     }
 
-    // Do the API call to the specified url
-    // console.log("----");
-    // console.log(url);
-    // console.log(recordId);
-    // console.log(body);
-    // console.log("----");
     var response = await fetch(url, {
       method: fetchType,
       headers: {
@@ -163,8 +154,8 @@ const doSearch = async <T_output>(dataType: DataType, searchObj: any) => {
   } catch (error) {
     /* If an error occurs anywhere in the process of making an API call, log it */
     console.error(error);
-    console.error(`Failed to do operation: regexSearch for ${dataType}`);
-    throw new Error(`Failed to do operation: regexSearch for ${dataType}`);
+    console.error(`Failed to do operation: search for ${dataType}`);
+    throw new Error(`Failed to do operation: search for ${dataType}`);
   }
   return data as T_output;
 };

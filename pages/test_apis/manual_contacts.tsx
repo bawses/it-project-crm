@@ -12,10 +12,10 @@ export default function TestManualContactApis() {
     try {
       let manualContact = {
         name: {
-          firstName: "Tony",
+          firstName: "Tony Test",
           lastName: "Dang",
         },
-        email: ["test_tony_oop@ManualContact.com"],
+        email: ["testest@ManualContact.com"],
       };
 
       console.log("Testing create");
@@ -27,12 +27,12 @@ export default function TestManualContactApis() {
       console.log(manualContacts);
 
       console.log("Testing get");
-      const id = manualContacts[manualContacts.length - 1]._id;
+      const id = testSignUp._id;
       let testGet = await getManualContactById(id);
       console.log(testGet);
 
       console.log("Testing search");
-      const testSearch = await searchManualContactsByName("Tony");
+      const testSearch = await searchManualContactsByName("Dang");
       console.log(testSearch);
 
       console.log("Testing update");
