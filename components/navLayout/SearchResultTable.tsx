@@ -14,41 +14,39 @@ interface SearchResultTableProps {
 }
 
 export default function SearchResultsTable({ searchString, searchResults }: SearchResultTableProps ) {
-  const ref = useRef();
-  const [isOpen, setIsOpen] = useState(false);
-  useOnClickOutside(ref, () => setIsOpen(false));
-  // const router = useRouter();
-
+  // const ref = useRef();
+  // const [isOpen, setIsOpen] = useState(false);
+  // useOnClickOutside(ref, () => setIsOpen(false));
 
   //  function to handle a click outside (to hide the search results)
   //  reference: https://github.com/Pomax/react-onclickoutside/issues/310
-  function useOnClickOutside(ref: any, handler: any) {
-    useEffect(
-      () => {
-        const listener = (event: any) => {
-          if (!ref.current || ref.current.contains(event.target)) {
-            return;
-          } 
-          handler(event);
+  // function useOnClickOutside(ref: any, handler: any) {
+  //   useEffect(
+  //     () => {
+  //       const listener = (event: any) => {
+  //         if (!ref.current || ref.current.contains(event.target)) {
+  //           return;
+  //         } 
+  //         handler(event);
           
-        };
+  //       };
 
-        document.addEventListener('mousedown', listener);
-        document.addEventListener('touchstart', listener);
+  //       document.addEventListener('mousedown', listener);
+  //       document.addEventListener('touchstart', listener);
 
-        return () => {
+  //       return () => {
         
-          document.removeEventListener('mousedown', listener);
-          document.removeEventListener('touchstart', listener);
-        };
-      },
-      [ref, handler]
-    );
-  }
+  //         document.removeEventListener('mousedown', listener);
+  //         document.removeEventListener('touchstart', listener);
+  //       };
+  //     },
+  //     [ref, handler]
+  //   );
+  // }
 
-  if (searchString.length > 0) {
-    setIsOpen(true);
-  }
+  // if (searchString.length > 0) {
+  //   setIsOpen(true);
+  // }
 
   //  Populating search results table
   const rows: JSX.Element[] = []
@@ -71,7 +69,6 @@ export default function SearchResultsTable({ searchString, searchResults }: Sear
   return (
     // TODO: fix width 
     <>
-      {isOpen? (
         <TableContainer component={Paper} style={{ width: "50ch"}}>
           <Table >
             <TableBody>
@@ -79,9 +76,6 @@ export default function SearchResultsTable({ searchString, searchResults }: Sear
             </TableBody>
           </Table>
         </TableContainer>
-      )
-    :(<></>)
-    }
     </>
   )
 

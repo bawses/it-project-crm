@@ -87,43 +87,47 @@ export default function Searchbar() {
   const [searchString, setSearchString] = useState<string>("");
   const [predictiveResults, setPredictiveResults] = useState<IUser[]>([]);
 
-  // const ref = useRef();
-  // const [isOpen, setIsOpen] = useState(false);
-  // useOnClickOutside(ref, () => setIsOpen(false));
-  // const router = useRouter();
+  const ref = useRef();
+  const [isOpen, setIsOpen] = useState(false);
+  useOnClickOutside(ref, () => setIsOpen(false));
 
+  //  function to handle a click outside (to hide the search results)
+  //  reference: https://github.com/Pomax/react-onclickoutside/issues/310
+  function useOnClickOutside(ref: any, handler: any) {
+    useEffect(
+      () => {
+        const listener = (event: any) => {
+          if (!ref.current || ref.current.contains(event.target)) {
+            // setIsOpen(false);
+            return;
+          } 
+          handler(event);
+          
+        };
 
-//  function to handle a click outside (to hide the search results)
-//  reference: https://github.com/Pomax/react-onclickoutside/issues/310
-// function useOnClickOutside(ref: any, handler: any) {
-//   useEffect(
-//     () => {
-//       const listener = (event: any) => {
-//         if (!ref.current || ref.current.contains(event.target)) {
-//           setIsOpen(false);
-//           return;
-//         } 
-//         handler(event);
+        document.addEventListener('mousedown', listener);
+        document.addEventListener('touchstart', listener);
+
+        return () => {
         
-//       };
+          document.removeEventListener('mousedown', listener);
+          document.removeEventListener('touchstart', listener);
+        };
+      },
+      [ref, handler]
+    );
+  }
 
-//       document.addEventListener('mousedown', listener);
-//       document.addEventListener('touchstart', listener);
 
-//       return () => {
-       
-//         document.removeEventListener('mousedown', listener);
-//         document.removeEventListener('touchstart', listener);
-//       };
-//     },
-//     [ref, handler]
-//   );
-// }
 
   // driver function for when a search string is inputted
   async function handleNewSearchString(newSearchString: string) {
     setSearchString(newSearchString);
-    
+
+    if (newSearchString.length > 0) {
+      setIsOpen(true);
+    }
+
     console.log(newSearchString); 
     try {
       const fetchedPredictions = await searchUsersByName(searchString);
@@ -186,9 +190,16 @@ export default function Searchbar() {
                 inputProps={{ "aria-label": "search" }}
               />
             )}
-            <div className={classes.resultsTable}> 
-              <SearchResultTable searchResults={predictiveResults} searchString = {searchString} />
-            </div>
+            {isOpen? (
+              <div className={classes.resultsTable}> 
+                <SearchResultTable searchResults={predictiveResults} searchString = {searchString} />
+              </div>
+            ): (
+            <></>
+            )}
+            {/* <div className={classes.resultsTable}> 
+                  <SearchResultTable searchResults={predictiveResults} searchString = {searchString} />
+                </div> */}
           </div>
     </div>
   );
