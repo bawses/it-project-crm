@@ -1,5 +1,5 @@
 // search bar and search results (fetching from API Client)
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { COLORS } from "../../lib/Colors";
 import { IUser } from "../../lib/DataTypes";
 import SearchResultTable from './SearchResultTable';
@@ -7,19 +7,15 @@ import {searchUsersByName } from "../../api_client/UserQueries"
 import { InputBase } from "@material-ui/core";
 import { createStyles, alpha, Theme, makeStyles, useTheme } from '@material-ui/core/styles';
 import useMediaQuery from "@material-ui/core/useMediaQuery";
-import { useRouter } from "next/router";
-
 
 // MaterialUI Icons
 import SearchIcon from "@material-ui/icons/Search";
-import { type } from 'os';
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     root: {
       flexGrow: 1,
     },
-
     search: {
       position: "relative",
       borderRadius: theme.shape.borderRadius,
@@ -67,18 +63,13 @@ const useStyles = makeStyles((theme: Theme) =>
         width: "50ch",
       },
     },
-
     resultsTable: {
       position: "absolute",
       top: "45px",
+      width: "100%",
     },
-
   })
 );
-
-// type SearchbarProps = {
-//   pageType?: string;
-// };
 
 export default function Searchbar() {
   const classes = useStyles();
@@ -87,8 +78,10 @@ export default function Searchbar() {
   const [searchString, setSearchString] = useState<string>("");
   const [predictiveResults, setPredictiveResults] = useState<IUser[]>([]);
 
-  const ref = useRef();
+  //  thank you Tony
+  const ref = React.useRef() as React.MutableRefObject<HTMLInputElement>;
   const [isOpen, setIsOpen] = useState(false);
+
   useOnClickOutside(ref, () => setIsOpen(false));
 
   //  function to handle a click outside (to hide the search results)
@@ -97,19 +90,17 @@ export default function Searchbar() {
     useEffect(
       () => {
         const listener = (event: any) => {
+          // Do nothing if clicking ref's element or descendent elements
           if (!ref.current || ref.current.contains(event.target)) {
-            // setIsOpen(false);
             return;
           } 
-          handler(event);
-          
+          handler();
         };
 
         document.addEventListener('mousedown', listener);
         document.addEventListener('touchstart', listener);
 
         return () => {
-        
           document.removeEventListener('mousedown', listener);
           document.removeEventListener('touchstart', listener);
         };
@@ -117,8 +108,6 @@ export default function Searchbar() {
       [ref, handler]
     );
   }
-
-
 
   // driver function for when a search string is inputted
   async function handleNewSearchString(newSearchString: string) {
@@ -129,78 +118,53 @@ export default function Searchbar() {
     }
 
     console.log(newSearchString); 
+
     try {
       const fetchedPredictions = await searchUsersByName(searchString);
       console.log(fetchedPredictions);
       setPredictiveResults(fetchedPredictions); 
-      // if (predictiveResults.length <= 0) {
-      //   displayResultsError(undefined);
-      // }
-      // else {
-      //   // console.log(predictiveResults[0].name);
-      //   displayPredictiveResults(predictiveResults);
-      // }
-
     } catch (e) {
       // TODO: Display error to user on webpage
       console.log(e);
     }
   }
 
-  // function displayPredictiveResults(predictiveResults: IUser[]) {
-  //   console.log("displayPredictiveResultscalled")
-
-  //   return(
-  //     // <div className={classes.root}>
-  //       <div className={classes.resultsTable}> 
-  //         <SearchResultTable searchResults={predictiveResults} />
-  //       </div>
-  //     // </div>  
-  //   )
-  // }
-
-  // function displayResultsError(predictiveResults: undefined) {
-  //   // TODO Create Error display
-  //   console.log("ERROR")
-  // }
-
   return (
-    <div className={classes.root}>
-          {/* search bar */}
-          <div className={classes.search}>
-            <div className={classes.searchIcon}>
-              <SearchIcon />
-            </div>
-            {isMobile ? (
-              <InputBase
-                placeholder="Search..."
-                classes={{
-                  input: classes.inputInput
-                }}
-                onChange={(event) => handleNewSearchString(event.target.value)}
-                inputProps={{ "aria-label": "search" }}
-              />
-            ) : (
-              <InputBase
-                placeholder="Search..."
-                classes={{
-                  input: classes.inputInput
-                }}
-                onChange={(event) => handleNewSearchString(event.target.value)}
-                inputProps={{ "aria-label": "search" }}
-              />
-            )}
-            {isOpen? (
-              <div className={classes.resultsTable}> 
-                <SearchResultTable searchResults={predictiveResults} searchString = {searchString} />
-              </div>
-            ): (
-            <></>
-            )}
-            {/* <div className={classes.resultsTable}> 
-                  <SearchResultTable searchResults={predictiveResults} searchString = {searchString} />
-                </div> */}
+    <div className={classes.root} ref={ref}>
+      {/* search bar */}
+      <div className={classes.search}>
+        <div className={classes.searchIcon}>
+          <SearchIcon />
+        </div>
+        {isMobile ? (
+          <InputBase
+            placeholder="Search..."
+            classes={{
+              input: classes.inputInput
+            }}
+            onChange={(event) => handleNewSearchString(event.target.value)}
+            inputProps={{ "aria-label": "search" }}
+          />
+        ) : (
+          <InputBase
+            placeholder="Search..."
+            classes={{
+              input: classes.inputInput
+            }}
+            onChange={(event) => handleNewSearchString(event.target.value)}
+            inputProps={{ "aria-label": "search" }}
+          />
+        )}
+        {/* Show search results if the model hasn't been clicked away AND the search string is longer than 0*/}
+        {(isOpen && searchString.length > 0) ? (
+          <div className={classes.resultsTable}> 
+            <SearchResultTable searchResults={predictiveResults.slice(0,5)} />
           </div>
+        ): (
+          <>
+          </>
+        )}
+      </div>
     </div>
   );
 }
