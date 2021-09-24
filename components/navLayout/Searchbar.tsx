@@ -1,10 +1,10 @@
 // search bar and search results (fetching from API Client)
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { COLORS } from "../../lib/Colors";
-import { DataType, IUser } from "../../lib/DataTypes";
+import { IUser } from "../../lib/DataTypes";
 import SearchResultTable from './SearchResultTable';
 import {searchUsersByName } from "../../api_client/UserQueries"
-import { InputBase, Typography } from "@material-ui/core";
+import { InputBase } from "@material-ui/core";
 import { createStyles, alpha, Theme, makeStyles, useTheme } from '@material-ui/core/styles';
 import useMediaQuery from "@material-ui/core/useMediaQuery";
 import { useRouter } from "next/router";
@@ -12,6 +12,7 @@ import { useRouter } from "next/router";
 
 // MaterialUI Icons
 import SearchIcon from "@material-ui/icons/Search";
+import { type } from 'os';
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -85,10 +86,44 @@ export default function Searchbar() {
   const isMobile = useMediaQuery(theme.breakpoints.down("xs"));
   const [searchString, setSearchString] = useState<string>("");
   const [predictiveResults, setPredictiveResults] = useState<IUser[]>([]);
+
+  // const ref = useRef();
+  // const [isOpen, setIsOpen] = useState(false);
+  // useOnClickOutside(ref, () => setIsOpen(false));
   // const router = useRouter();
 
+
+//  function to handle a click outside (to hide the search results)
+//  reference: https://github.com/Pomax/react-onclickoutside/issues/310
+// function useOnClickOutside(ref: any, handler: any) {
+//   useEffect(
+//     () => {
+//       const listener = (event: any) => {
+//         if (!ref.current || ref.current.contains(event.target)) {
+//           setIsOpen(false);
+//           return;
+//         } 
+//         handler(event);
+        
+//       };
+
+//       document.addEventListener('mousedown', listener);
+//       document.addEventListener('touchstart', listener);
+
+//       return () => {
+       
+//         document.removeEventListener('mousedown', listener);
+//         document.removeEventListener('touchstart', listener);
+//       };
+//     },
+//     [ref, handler]
+//   );
+// }
+
+  // driver function for when a search string is inputted
   async function handleNewSearchString(newSearchString: string) {
     setSearchString(newSearchString);
+    
     console.log(newSearchString); 
     try {
       const fetchedPredictions = await searchUsersByName(searchString);
@@ -151,9 +186,8 @@ export default function Searchbar() {
                 inputProps={{ "aria-label": "search" }}
               />
             )}
-            {/* the search results */}
             <div className={classes.resultsTable}> 
-              <SearchResultTable searchResults={predictiveResults} />
+              <SearchResultTable searchResults={predictiveResults} searchString = {searchString} />
             </div>
           </div>
     </div>

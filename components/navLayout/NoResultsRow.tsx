@@ -27,7 +27,7 @@ export default function NoResultsRow() {
   return (
     <TableRow className={classes.row} hover={true}>
       <TableCell>
-        <Typography variant="h4" component="h4">No Results Found</Typography>
+        <Typography component="p">No Results Found</Typography>
       </TableCell>
     </TableRow>
   )
