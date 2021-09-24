@@ -1,52 +1,60 @@
-import { DataType, IManualContact } from "../lib/DataTypes";
+import { IManualContact } from "../lib/DataTypes_Get";
+import { IManualContact_Create } from "../lib/DataTypes_Create";
+import { IManualContact_Update } from "../lib/DataTypes_Update";
+import { DataType } from "../lib/EnumTypes";
+
 import {
   createDbRecord,
   searchDb,
   getDbRecordById,
   updateDbRecord,
   deleteDbRecord,
-  doSearch,
-  getSessionId
+  getSessionId,
 } from "./Client";
 
-export const createManualContact = async (dataObj: IManualContact) => {
-  return createDbRecord<IManualContact>(DataType.ManualContact, dataObj);
-};
-
-export const getManualContacts = async () => {
-  // Get authentication Id
+export const createManualContact = async (createObj: IManualContact_Create) => {
   const authId = await getSessionId();
-  if (authId){
-    let dataObj: Object = {ownerId: authId}
-    return searchDb<IManualContact>(DataType.ManualContact, dataObj);
+  if (!authId) {
+    throw new Error("No Valid Session Id!");
   }
-
-  throw new Error ("No Valid Session Id!");
-};
-
-export const searchManualContacts = async (dataObj: Object) => {
-  return searchDb<IManualContact>(DataType.ManualContact, dataObj);
+  let createObj_ = createObj as any;
+  createObj_.ownerId = authId;
+  createObj_.archived = false;
+  createObj_.starred = false;
+  createObj_.fullName = createObj_.firstName + " " + createObj_.lastName;
+  return createDbRecord<IManualContact>(DataType.ManualContact, createObj_);
 };
 
 export const getManualContactById = async (recordId: string) => {
   return getDbRecordById<IManualContact>(DataType.ManualContact, recordId);
 };
 
-export const updateManualContact = async (id: string, dataObj: IManualContact) => {
-  return updateDbRecord<IManualContact>(DataType.ManualContact, id, dataObj);
+export const updateManualContact = async (id: string, updateObj: IManualContact_Update) => {
+  var updateObj_ = updateObj as any;
+  if (updateObj.name) {
+    updateObj_.fullName = updateObj.name.firstName + " " + updateObj.name.lastName;
+  }
+  return updateDbRecord<IManualContact>(DataType.ManualContact, id, updateObj_);
 };
 
 export const deleteManualContact = async (id: string) => {
   deleteDbRecord<IManualContact>(DataType.ManualContact, id);
 };
 
+const searchManualContacts = async (searchObj: Object) => {
+  return searchDb<IManualContact>(DataType.ManualContact, searchObj);
+};
+
+export const getManualContacts = async () => {
+  return searchManualContacts({});
+};
+
 export const searchManualContactsByName = async (name: string) => {
-  
-  let dataObjFirst: Object = {
-    "fullName": {
-        "$regex": name,
-        "$options": "i"
-    }
-  }
-  return await doSearch<IManualContact>(DataType.ManualContact, dataObjFirst);
+  let searchObj = {
+    fullName: {
+      $regex: name,
+      $options: "i",
+    },
+  };
+  return await searchManualContacts(searchObj);
 };

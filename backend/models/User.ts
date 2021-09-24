@@ -1,5 +1,5 @@
 import mongoose from "mongoose";
-import { IUser } from "../../lib/DataTypes";
+import { IUser } from "../../lib/DataTypes_Get";
 
 /*TODO: add min/max length for Strings and error message for required fields */
 

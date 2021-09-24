@@ -11,7 +11,7 @@ import ContactsTableSort, {
 import ContactsTableTags, {
 	SelectValue,
 } from "../../components/tables/contactsTableTags";
-import { IManualContact } from "../../lib/DataTypes";
+import { IManualContact } from "../../lib/DataTypes_Get";
 import {
 	getManualContacts,
 	updateManualContact,

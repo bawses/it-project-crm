@@ -1,25 +1,28 @@
-import { DataType, IOrganisation } from "../lib/DataTypes";
+import { IOrganisation } from "../lib/DataTypes_Get";
+import { IOrganisation_Create } from "../lib/DataTypes_Create";
+import { IOrganisation_Update } from "../lib/DataTypes_Update";
+import { DataType } from "../lib/EnumTypes";
 import { createDbRecord, searchDb, getDbRecordById, updateDbRecord, deleteDbRecord } from "./Client";
 
 /* TODO: CLarify here which of these are global operations and which these are user specific */
-export const createOrganisation = async (dataObj: IOrganisation) => {
-  return createDbRecord<IOrganisation>(DataType.Organisation, dataObj);
+export const createOrganisation = async (createObj: IOrganisation_Create) => {
+  return createDbRecord<IOrganisation>(DataType.Organisation, createObj);
 };
 
-export const getAllOrganisations = async () => {
-  return searchDb<IOrganisation>(DataType.Organisation, undefined);
+export const getOrganisations = async () => {
+  return searchDb<IOrganisation>(DataType.Organisation, {});
 };
 
-export const searchAllOrganisations = async (dataObj: IOrganisation) => {
-  return searchDb<IOrganisation>(DataType.Organisation, dataObj);
+export const searchOrganisations = async (searchObj: Object) => {
+  return searchDb<IOrganisation>(DataType.Organisation, searchObj);
 };
 
 export const getOrganisationById = async (id: string) => {
   return getDbRecordById<IOrganisation>(DataType.Organisation, id);
 };
 
-export const updateOrganisation = async (id: string, dataObj: IOrganisation) => {
-  return updateDbRecord<IOrganisation>(DataType.Organisation, id, dataObj);
+export const updateOrganisation = async (id: string, updateObj: IOrganisation_Update) => {
+  return updateDbRecord<IOrganisation>(DataType.Organisation, id, updateObj);
 };
 
 export const deleteOrganisation = async (id: string) => {

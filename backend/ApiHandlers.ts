@@ -1,7 +1,7 @@
 import connectToDatabase from "./dbConnect";
 import { Request, Response } from "express";
 import { Database } from "./models/DbMapping";
-import { DataType, RequestType } from "../lib/DataTypes";
+import { DataType, RequestType } from "../lib/EnumTypes";
 
 /* API handler for [ID] pages, allowing GET / PUT / DELETE requests */
 export async function idHandler(

@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
 import { indexHandler } from "../../../backend/ApiHandlers";
-import { DataType } from "../../../lib/DataTypes";
+import { DataType } from "../../../lib/EnumTypes";
 import User from "../../../backend/models/User";
 import connectToDatabase from "../../../backend/dbConnect";
 

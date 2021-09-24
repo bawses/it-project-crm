@@ -12,7 +12,7 @@ import ContactsTableSort, {
 import { sortFunctions } from "../contacts";
 import CreateContactButtonLarge from "../../components/buttons/CreateContactButtonLarge";
 import CreateContactButtonSmall from "../../components/buttons/CreateContactButtonSmall";
-import { IManualContact } from "../../lib/DataTypes";
+import { IManualContact } from "../../lib/DataTypes_Get";
 import PageLoadingBar from "../../components/PageLoadingBar";
 import { useRouter } from "next/router";
 import { getSession } from "next-auth/client";
