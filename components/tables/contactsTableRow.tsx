@@ -1,10 +1,10 @@
-import { Avatar, Typography, TableRow, TableCell, IconButton, useMediaQuery } from "@material-ui/core";
+import { Avatar, Typography, TableRow, TableCell, IconButton, useMediaQuery, Color } from "@material-ui/core";
 import { useTheme } from "@material-ui/core/styles";
 import DEFAULT_IMAGE from "../../assets/blank-profile-picture-973460_640.png";
 import StarsIcon from '@material-ui/icons/Stars';
 import { COLORS } from "../../lib/Colors";
 import { makeStyles } from "@material-ui/styles";
-import { IManualContact } from "../../lib/DataTypes_Get";
+import { IManualContact } from "../../lib/DataTypes";
 import React from "react";
 import TextButton from "../buttons/TextButton";
 import Link from "next/link"

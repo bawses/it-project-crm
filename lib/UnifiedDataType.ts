@@ -1,4 +1,4 @@
-import { IManualContact, IAddedContact, IUser } from "./DataTypes_Get"
+import { IManualContact, IAddedContact, IUser } from "./DataTypes"
 
 type ObjectId = string;
 

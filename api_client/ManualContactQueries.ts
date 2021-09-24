@@ -1,4 +1,4 @@
-import { IManualContact } from "../lib/DataTypes_Get";
+import { IManualContact } from "../lib/DataTypes";
 import { IManualContact_Create } from "../lib/DataTypes_Create";
 import { IManualContact_Update } from "../lib/DataTypes_Update";
 import { DataType } from "../lib/EnumTypes";

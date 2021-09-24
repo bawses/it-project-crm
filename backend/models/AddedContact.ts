@@ -1,5 +1,5 @@
 import mongoose from "mongoose";
-import { IAddedContact } from "../../lib/DataTypes_Get";
+import { IAddedContact } from "../../lib/DataTypes";
 
 /*TODO: add min/max length for Strings and error message for required fields */
 

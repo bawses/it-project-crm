@@ -1,4 +1,4 @@
-import { IOrganisation } from "../lib/DataTypes_Get";
+import { IOrganisation } from "../lib/DataTypes";
 import { IOrganisation_Create } from "../lib/DataTypes_Create";
 import { IOrganisation_Update } from "../lib/DataTypes_Update";
 import { DataType } from "../lib/EnumTypes";

@@ -1,4 +1,4 @@
-import { IAddedContact } from "../lib/DataTypes_Get";
+import { IAddedContact } from "../lib/DataTypes";
 import { IAddedContact_Create } from "../lib/DataTypes_Create";
 import { IAddedContact_Update } from "../lib/DataTypes_Update";
 import { DataType } from "../lib/EnumTypes";

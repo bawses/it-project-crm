@@ -1,4 +1,4 @@
-import { IUser } from "../lib/DataTypes_Get";
+import { IUser } from "../lib/DataTypes";
 import { IUser_Create } from "../lib/DataTypes_Create";
 import { IUser_Update } from "../lib/DataTypes_Update";
 import { DataType } from "../lib/EnumTypes";

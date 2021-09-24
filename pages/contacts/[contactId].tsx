@@ -12,7 +12,7 @@ import {
   getManualContactById,
   updateManualContact,
 } from "../../api_client/ManualContactQueries";
-import { IManualContact } from "../../lib/DataTypes_Get";
+import { IManualContact } from "../../lib/DataTypes";
 import { updateUser } from "../../api_client/UserQueries";
 import Layout from "../../components/navLayout/Layout";
 import { useRouter } from "next/router";

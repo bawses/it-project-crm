@@ -10,7 +10,7 @@ import {
   Instagram,
   Language,
 } from "@material-ui/icons";
-import { IManualContact } from "../../lib/DataTypes_Get";
+import { IManualContact } from "../../lib/DataTypes";
 
 interface ContactDetailsProps {
   fieldValues?: IManualContact;
