@@ -1,6 +1,6 @@
 import {
   userSignUp,
-  getUsers,
+  getAllUsers,
   getUserById,
   updateUserById,
   deleteUserById,
@@ -24,7 +24,7 @@ export default function TestUserApis() {
       console.log("--------------------------");
       let id = testSignUp._id;
       console.log("Testing get all");
-      let users = await getUsers();
+      let users = await getAllUsers();
       console.log(users);
 
       console.log("--------------------------");
