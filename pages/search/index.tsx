@@ -1,13 +1,16 @@
 import { Box, Typography, useMediaQuery } from "@material-ui/core";
 import { useTheme } from "@material-ui/core/styles";
-import { ChangeEvent, useEffect, useMemo, useState } from "react";
-import { getAllManualContacts } from "../../api_client/ManualContactQueries";
+import { useEffect, useMemo, useState } from "react";
+import { getManualContacts } from "../../api_client/ManualContactQueries";
 import Layout from "../../components/navLayout/Layout";
-import ContactsTable, { IdToContactMap } from "../../components/tables/contactsTable";
-import ContactsTableSort, { SortType } from "../../components/tables/contactsTableSort";
+import ContactsTable, {
+	IdToContactMap,
+} from "../../components/tables/contactsTable";
+import ContactsTableSort, {
+	SortType,
+} from "../../components/tables/contactsTableSort";
 import { sortFunctions } from "../contacts";
 import CreateContactButtonLarge from "../../components/buttons/CreateContactButtonLarge";
-import CreateContactButtonSmall from "../../components/buttons/CreateContactButtonSmall";
 import { IManualContact } from '../../lib/DataTypes';
 import PageLoadingBar from "../../components/PageLoadingBar";
 import { useRouter } from "next/router";
@@ -15,34 +18,38 @@ import { getSession } from "next-auth/client";
 
 // Creates a map of contact ids to the respective contact
 function contactListToMap(contactList: IManualContact[]) {
-  const contactMap: IdToContactMap = {}
-  for (const contact of contactList) {
-    if (contact._id) {
-      contactMap[contact._id] = contact
-    }
-  }
+	const contactMap: IdToContactMap = {};
+	for (const contact of contactList) {
+		if (contact._id) {
+			contactMap[contact._id] = contact;
+		}
+	}
 
-  return contactMap
+	return contactMap;
 }
 
-async function getSearchResults(setSearchResults: (contacts: IManualContact[]) => void) {
-  try {
-    const data = await getAllManualContacts()
-    // Save all search results
-    setSearchResults(data)
-  } catch (error) {
-    console.error("Error: Could not fetch search result data", error)
-  }
+async function getSearchResults(
+	setSearchResults: (contacts: IManualContact[]) => void
+) {
+	try {
+		const data = await getManualContacts();
+		// Save all search results
+		setSearchResults(data);
+	} catch (error) {
+		console.error("Error: Could not fetch search result data", error);
+	}
 }
 
-async function getAddedContacts(setAddedContacts: (contacts: IdToContactMap) => void) {
-  try {
-    const data = await getAllManualContacts()
-    // Save all added contacts as a map to their respective ids
-    setAddedContacts(contactListToMap(data))
-  } catch (error) {
-    console.error("Error: Could not fetch contact data", error)
-  }
+async function getAddedContacts(
+	setAddedContacts: (contacts: IdToContactMap) => void
+) {
+	try {
+		const data = await getManualContacts();
+		// Save all added contacts as a map to their respective ids
+		setAddedContacts(contactListToMap(data));
+	} catch (error) {
+		console.error("Error: Could not fetch contact data", error);
+	}
 }
 
 export default function SearchPage() {
@@ -137,7 +144,7 @@ export default function SearchPage() {
             </Box>
           </Box>
           {/* Search results */}
-          <Box boxShadow={3}>
+          <Box boxShadow={3} borderRadius={8}>
             <ContactsTable contacts={displayData} handleRowButtonClick={handleContactAdd} idToContactMap={addedContacts} />
           </Box>
         </Box>

@@ -11,11 +11,12 @@ import VerticalFieldPair from "../../components/input/VerticalFieldPair";
 import LocationSelector from "../../components/input/LocationSelector";
 import AddFieldSelector from "../../components/input/AddFieldSelector";
 import { createManualContact } from "../../api_client/ManualContactQueries";
-import { IManualContact } from "../../lib/DataTypes";
+import { IManualContact_Create } from "../../lib/DataTypes_Create";
 import Layout from "../../components/navLayout/Layout";
 import PageLoadingBar from "../../components/PageLoadingBar";
 import { useRouter } from "next/router";
 import { getSession } from "next-auth/client";
+import { Session } from "next-auth";
 
 const useStyles = makeStyles((theme) => ({
   containerStyle: {
@@ -144,8 +145,7 @@ export default function CreateContact() {
 
   const createNewContact = async () => {
     /** TODO: input validation, don't create empty contacts */
-    const contactToCreate: IManualContact = {
-      ownerId: "123",
+    const contactToCreate: IManualContact_Create = {
       name: {
         firstName: fieldValues.firstName,
         lastName: fieldValues.lastName,
@@ -172,8 +172,6 @@ export default function CreateContact() {
       organisations: [fieldValues.primaryOrg, fieldValues.secondaryOrg],
       notes: "",
       tags: [],
-      starred: false,
-      archived: false,
     };
     try {
       setIsLoading(true);

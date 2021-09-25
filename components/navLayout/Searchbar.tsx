@@ -1,10 +1,10 @@
 // search bar and search results (fetching from API Client)
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect} from 'react';
 import { COLORS } from "../../lib/Colors";
 import { IUser } from "../../lib/DataTypes";
 import SearchResultTable from './SearchResultTable';
 import {searchUsersByName } from "../../api_client/UserQueries"
-import { InputBase } from "@material-ui/core";
+import { InputBase, Popover } from "@material-ui/core";
 import { createStyles, alpha, Theme, makeStyles, useTheme } from '@material-ui/core/styles';
 import useMediaQuery from "@material-ui/core/useMediaQuery";
 
@@ -74,6 +74,15 @@ const useStyles = makeStyles((theme: Theme) =>
 export default function Searchbar() {
   const classes = useStyles();
   const theme = useTheme<Theme>();
+  
+  const [anchorEl, setAnchorEl] = React.useState<HTMLButtonElement | null>(null);
+  const handleClose = () => {
+    setAnchorEl(null);
+  };
+  
+  const open = Boolean(anchorEl);
+  const id = open ? 'simple-popover' : undefined;
+
   const isMobile = useMediaQuery(theme.breakpoints.down("xs"));
   const [searchString, setSearchString] = useState<string>("");
   const [predictiveResults, setPredictiveResults] = useState<IUser[]>([]);
@@ -110,11 +119,14 @@ export default function Searchbar() {
   }
 
   // driver function for when a search string is inputted
-  async function handleNewSearchString(newSearchString: string) {
+  async function handleNewSearchString(event: any) {
+    const newSearchString = event.target.value;
     setSearchString(newSearchString);
 
     if (newSearchString.length > 0) {
       setIsOpen(true);
+      setAnchorEl(event.currentTarget);
+      
     }
 
     console.log(newSearchString); 
@@ -123,6 +135,7 @@ export default function Searchbar() {
       const fetchedPredictions = await searchUsersByName(searchString);
       console.log(fetchedPredictions);
       setPredictiveResults(fetchedPredictions); 
+     
     } catch (e) {
       // TODO: Display error to user on webpage
       console.log(e);
@@ -142,7 +155,7 @@ export default function Searchbar() {
             classes={{
               input: classes.inputInput
             }}
-            onChange={(event) => handleNewSearchString(event.target.value)}
+            onChange={(event) => handleNewSearchString(event)}
             inputProps={{ "aria-label": "search" }}
           />
         ) : (
@@ -151,19 +164,38 @@ export default function Searchbar() {
             classes={{
               input: classes.inputInput
             }}
-            onChange={(event) => handleNewSearchString(event.target.value)}
+            onChange={(event) => handleNewSearchString(event)}
             inputProps={{ "aria-label": "search" }}
           />
         )}
         {/* Show search results if the model hasn't been clicked away AND the search string is longer than 0*/}
-        {(isOpen && searchString.length > 0) ? (
-          <div className={classes.resultsTable}> 
-            <SearchResultTable searchResults={predictiveResults.slice(0,5)} />
-          </div>
-        ): (
-          <>
-          </>
-        )}
+        {/* <Popover 
+          id={id}
+          open={open}
+          anchorOrigin={{
+            vertical: 'top',
+            horizontal: 'center',
+          }}
+          transformOrigin={{
+            vertical: 'top',
+            horizontal: 'left',
+          }}
+          onClose={handleClose}
+        > */}
+        {/* <div > 
+        <SearchResultTable searchResults={predictiveResults.slice(0,5)} />
+      </div> */}
+    
+          {(isOpen && searchString.length > 0) ? (
+            <div className={classes.resultsTable} style={{zIndex:100}} > 
+              <SearchResultTable searchResults={predictiveResults.slice(0,5)} />
+            </div>
+          ): (
+            <>
+            </>
+          )}
+
+        {/* </Popover> */}
       </div>
     </div>
   );

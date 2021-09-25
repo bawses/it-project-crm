@@ -4,7 +4,7 @@ import { Paper, Table, TableBody, TableContainer } from '@material-ui/core';
 import SearchResultRow from './SearchResultRow';
 import NoResultsRow from './NoResultsRow';
 import { IUser } from '../../lib/DataTypes';
-import { createStyles, Theme, makeStyles, useTheme } from '@material-ui/core/styles';
+import React from 'react';
 
 export type IdToProfileMap = Record<string, IUser>
 
@@ -13,7 +13,7 @@ interface SearchResultTableProps {
 }
 
 export default function SearchResultsTable({ searchResults }: SearchResultTableProps ) {
-  const classes = useStyles();
+  
   //  Populating search results table
   const rows: JSX.Element[] = []
   if (searchResults.length > 0) {
@@ -31,18 +31,16 @@ export default function SearchResultsTable({ searchResults }: SearchResultTableP
       <NoResultsRow />
     );
   }
-    
+
+
   return (
-    // TODO: fix width 
-    <>
-        <TableContainer component={Paper}>
-          <Table >
-            <TableBody>
-              {rows}
-            </TableBody>
-          </Table>
-        </TableContainer>
-    </>
+    <TableContainer component={Paper}>
+      <Table >
+        <TableBody>
+          {rows}
+        </TableBody>
+      </Table>
+    </TableContainer>
   )
 
 }

@@ -1,47 +1,42 @@
 import {
   createAddedContact,
-  getAllAddedContacts,
-  getAddedContactById,
+  getAddedContacts,
+  getAddedContact,
   updateAddedContact,
   deleteAddedContact,
 } from "../../api_client/AddedContactQueries";
 
 export default function TestAddedContactApis() {
-  var testSignUp = {};
-  var testGet = {};
-  var testUpdate = {};
-
-  var addedContact = {
-    fromUserId: "adlfkjasldfj10394",
-    toUserId: "19084759083475hf",
-  };
-
   async function test() {
     try {
+      let toUserId = "6132318dcdb5a11c5d2e82a7";
+
       console.log("Testing create");
-      testSignUp = await createAddedContact(addedContact);
+      let testSignUp = await createAddedContact(toUserId);
       console.log(testSignUp);
 
       console.log("Testing get all");
-      const addedContacts = await getAllAddedContacts();
+      const addedContacts = await getAddedContacts();
       console.log(addedContacts);
 
       console.log("Testing get");
-      const id = addedContacts[addedContacts.length - 1]._id || "";
-      testGet = await getAddedContactById(id);
+      let testGet = await getAddedContact(toUserId);
       console.log(testGet);
 
+      let updateObj = {
+        notes: "THIS IS THE UPDATED INFO. DANG THIS IS HOT.",
+      };
       console.log("Testing update");
-      addedContact.toUserId = "abcdefghijklmnop";
-      testUpdate = await updateAddedContact(id, addedContact);
+      let testUpdate = await updateAddedContact(toUserId, updateObj);
       console.log(testUpdate);
 
       console.log("Testing delete");
-      await deleteAddedContact, id;
+      await deleteAddedContact(toUserId);
       console.log("Delete success");
       console.log("Test success");
     } catch (err) {
       console.error(err);
+      console.log("Test failure");
     }
   }
 

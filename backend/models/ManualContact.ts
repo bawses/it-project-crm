@@ -8,7 +8,8 @@ const UserId = String;
 /* ManualContact will correspond to the "manualcontacts" collection in the MongoDB database. */
 const ManualContactSchema = new mongoose.Schema<IManualContact>(
   {
-    ownerId: { type: UserId, required: true },
+    ownerId: { type: String, required: true },
+    fullName: {type: String},
     name: { type: { firstName: String, lastName: String }, required: true },
     email: [String],
     phone: [String],
