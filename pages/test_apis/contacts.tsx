@@ -9,6 +9,7 @@ import {
   archiveContact,
   searchContactsByName,
   addTagToContact,
+  removeTagFromContact,
 } from "../../api_client/ContactClient";
 import { getAllTags } from "../../api_client/UserClient";
 
@@ -57,7 +58,10 @@ export default function TestContactApis() {
       console.log("Testing tags");
       let testTag = await addTagToContact(testCreateManual, "TEST TAG");
       console.log(testTag);
-      console.log(getAllTags());
+      console.log(await getAllTags());
+      testTag = await removeTagFromContact(testCreateManual, "TEST TAG");
+      console.log(testTag);
+      console.log(await getAllTags());
 
       console.log("Testing delete");
       await deleteContact(testGetAddedUser);

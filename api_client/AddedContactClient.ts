@@ -15,10 +15,12 @@ export const createAddedContact = async (toUserId: string) => {
   if (!authId) {
     throw new Error("No Valid Session Id!");
   }
+  if ((await searchAddedContacts({fromUserId: authId, toUserId: toUserId})).length > 0) {
+    throw new Error("User already added.");
+  }
   let createObj = {
     fromUserId: authId,
     toUserId: toUserId,
-    archived: false,
     starred: false,
   };
   return createDbRecord<IAddedContact>(DataType.AddedContact, createObj);
