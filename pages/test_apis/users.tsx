@@ -5,7 +5,7 @@ import {
   updateUserById,
   deleteUserById,
   searchUsersByName,
-} from "../../api_client/UserQueries";
+} from "../../api_client/UserClient";
 
 export default function TestUserApis() {
   async function test() {

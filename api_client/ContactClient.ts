@@ -5,15 +5,16 @@ import {
   updateManualContact,
   deleteManualContact,
   searchManualContacts,
-} from "./ManualContactQueries";
+} from "./ManualContactClient";
 import {
   createAddedContact,
   getAddedContact,
   getAddedContacts,
   updateAddedContact,
   deleteAddedContact,
-} from "./AddedContactQueries";
-import { searchUsers, getUserById } from "./UserQueries";
+  searchAddedContacts,
+} from "./AddedContactClient";
+import { searchUsers, getUserById, updateUser } from "./UserClient";
 
 // Data types
 import { IManualContact_Create } from "../lib/DataTypes_Create";
@@ -80,22 +81,21 @@ const updateContact_AddedUser = async (
 
 // id : object ID for manual contact OR user ID (toUserId) for added user.
 export const updateContact = async (
-  id: string,
-  isManualContact: boolean,
+  contact: IContact,
   updateObj: IManualContact_Update | IAddedContact_Update
 ): Promise<IContact> => {
-  if (isManualContact) {
-    return updateContact_Manual(id, updateObj);
+  if (contact.isManualContact) {
+    return updateContact_Manual(contact._id, updateObj);
   } else {
-    return updateContact_AddedUser(id, updateObj);
+    return updateContact_AddedUser(contact._id, updateObj);
   }
 };
 
-export const deleteContact = async (id: string, isManualContact: boolean): Promise<void> => {
-  if (isManualContact) {
-    deleteManualContact(id);
+export const deleteContact = async (contact: IContact): Promise<void> => {
+  if (contact.isManualContact) {
+    deleteManualContact(contact._id);
   } else {
-    deleteAddedContact(id);
+    deleteAddedContact(contact._id);
   }
 };
 
@@ -111,19 +111,22 @@ export const getContacts_AddedUser = async (): Promise<IContact[]> => {
       }
     }
   }
+  addedUsers = addedUsers.sort(compare);
   return addedUsers;
 };
 
 export const getContacts_Manual = async (): Promise<IContact[]> => {
   const manualContacts = await getManualContacts();
-  return manualContacts.map(convert_ManualContact_to_Contact);
+  let contacts = manualContacts.map(convert_ManualContact_to_Contact);
+  contacts = contacts.sort(compare);
+  return contacts;
 };
 
 export const getContacts = async (): Promise<IContact[]> => {
   var contacts: IContact[] = [];
   contacts = contacts.concat(await getContacts_Manual());
   contacts = contacts.concat(await getContacts_AddedUser());
-  return contacts;
+  return contacts.sort(compare);
 };
 
 export const starContact = async (contact: IContact): Promise<IContact> => {
@@ -146,6 +149,49 @@ export const archiveContact = async (contact: IContact): Promise<IContact> => {
   } else {
     throw new Error("Not a manual contact. Cannot archive.");
   }
+};
+
+export const addTagToContact = async (contact: IContact, tag: string): Promise<IContact> => {
+  let updateObj = { $addToSet: { tags: tag } };
+  if (!contact.isManualContact && !contact.isAddedContact) {
+    throw new Error("Not a manual contact or added contact. Cannot add tag.");
+  }
+  let newObj;
+  if (contact.isManualContact) {
+    let manualContact = await updateManualContact(contact._id, updateObj);
+    newObj = convert_ManualContact_to_Contact(manualContact);
+  } else {
+    let addedContact = await updateAddedContact(contact._id, updateObj);
+    let user = await getUserById(contact._id);
+    newObj = convert_AddedUser_to_Contact(addedContact, user);
+  }
+  await updateUser({ $addToSet: { allTags: tag } });
+  return newObj;
+};
+
+export const removeTagFromContact = async (contact: IContact, tag: string): Promise<IContact> => {
+  let updateObj = { $pull: { tags: tag } };
+  if (!contact.isManualContact && !contact.isAddedContact) {
+    throw new Error("Not a manual contact or added contact. Cannot remove tag.");
+  }
+  let newObj;
+  if (contact.isManualContact) {
+    let manualContact = await updateManualContact(contact._id, updateObj);
+    newObj = convert_ManualContact_to_Contact(manualContact);
+  } else {
+    let addedContact = await updateAddedContact(contact._id, updateObj);
+    let addedUser = await getUserById(contact._id);
+    newObj = convert_AddedUser_to_Contact(addedContact, addedUser);
+  }
+
+  // See if this tag still exists in the user's contacts, otherwise remove it from all tags
+  let searchObj = { tags: tag };
+  let a = await searchAddedContacts(searchObj);
+  let b = await searchManualContacts(searchObj);
+  if (!a.length && !b.length) {
+    await updateUser({ $pull: { allTags: tag } });
+  }
+  return newObj;
 };
 
 export const searchContacts_Manual = async (searchObj: Object): Promise<IContact[]> => {

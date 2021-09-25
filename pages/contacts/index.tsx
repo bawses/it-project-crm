@@ -6,7 +6,7 @@ import ContactsTableCategory, { CategoryButton } from '../../components/tables/c
 import ContactsTableSort, { SortType } from '../../components/tables/contactsTableSort';
 import ContactsTableTags, { SelectValue } from '../../components/tables/contactsTableTags';
 import { IManualContact } from '../../lib/DataTypes';
-import { getManualContacts, updateManualContact } from '../../api_client/ManualContactQueries';
+import { getManualContacts, updateManualContact } from '../../api_client/ManualContactClient';
 import Layout from "../../components/navLayout/Layout";
 import PageLoadingBar from "../../components/PageLoadingBar";
 import { useRouter } from 'next/router';

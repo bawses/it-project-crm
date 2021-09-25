@@ -11,14 +11,14 @@ import {
   deleteManualContact,
   getManualContactById,
   updateManualContact,
-} from "../../api_client/ManualContactQueries";
+} from "../../api_client/ManualContactClient";
 import { IManualContact } from "../../lib/DataTypes";
-import { updateUser } from "../../api_client/UserQueries";
+import { updateUser } from "../../api_client/UserClient";
 import Layout from "../../components/navLayout/Layout";
 import { useRouter } from "next/router";
 import PageLoadingBar from "../../components/PageLoadingBar";
 import { OnChangeValue } from "react-select";
-import { deleteAddedContact } from "../../api_client/AddedContactQueries";
+import { deleteAddedContact } from "../../api_client/AddedContactClient";
 import { getSession } from "next-auth/client";
 
 const useStyles = makeStyles((theme) => ({
