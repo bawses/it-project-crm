@@ -2,6 +2,7 @@ import { IManualContact, IAddedContact, IUser } from "./DataTypes"
 
 type ObjectId = string;
 
+// Represents a Manual Contact / User / Added Contact + User (Added User) object
 export interface IContact {
   _id: ObjectId;
   name: { firstName: string; lastName: string };
