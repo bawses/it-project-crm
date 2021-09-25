@@ -6,6 +6,7 @@ export interface IAddedContact_Update {
   notes?: string;
   tags?: string[];
   starred?: boolean;
+  $addToSet?: any;
 }
 
 export interface IManualContact_Update {
@@ -27,6 +28,7 @@ export interface IManualContact_Update {
   tags?: string[];
   starred?: boolean;
   archived?: boolean;
+  $addToSet?: any;
 }
 
 export interface IOrganisation_Update {
@@ -64,25 +66,5 @@ export interface IUser_Update {
   about?: string;
   allTags?: string[];
   organisations?: OrganisationId[];
-}
-
-export interface IContact_Update {
-  name?: { firstName: string; lastName: string };
-  email?: string[];
-  phone?: string[];
-  job?: string;
-  location?: string;
-  links?: {
-    facebook?: string;
-    linkedIn?: string;
-    instagram?: string;
-    twitter?: string;
-    website?: string;
-    other?: string[];
-  };
-  organisations?: string[];
-  notes?: string;
-  tags?: string[];
-  starred?: boolean;
-  archived?: boolean;
+  $addToSet?: any;
 }

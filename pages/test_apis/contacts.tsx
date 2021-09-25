@@ -8,7 +8,9 @@ import {
   starContact,
   archiveContact,
   searchContactsByName,
+  addTagToContact,
 } from "../../api_client/ContactClient";
+import { getAllTags } from "../../api_client/UserClient";
 
 export default function TestContactApis() {
   async function test() {
@@ -39,7 +41,7 @@ export default function TestContactApis() {
       console.log(testGetAddedUser);
 
       console.log("Testing update added user");
-      let testUpdateAddedUser = await updateContact(id, false, {
+      let testUpdateAddedUser = await updateContact(testGetAddedUser, {
         notes: "THIS IS UPDATED KABOOP",
       });
       console.log(testUpdateAddedUser);
@@ -49,12 +51,17 @@ export default function TestContactApis() {
       console.log(testStarredAddedUser);
 
       console.log("Testing search contacts");
-      const testSearch = await searchContactsByName("Dang");
+      let testSearch = await searchContactsByName("Dang");
       console.log(testSearch);
 
+      console.log("Testing tags");
+      let testTag = await addTagToContact(testCreateManual, "TEST TAG");
+      console.log(testTag);
+      console.log(getAllTags());
+
       console.log("Testing delete");
-      await deleteContact(id, false);
-      await deleteContact(testCreateManual._id, true);
+      await deleteContact(testGetAddedUser);
+      await deleteContact(testCreateManual);
       console.log("Delete success");
 
       console.log("Test success");
