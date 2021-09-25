@@ -7,6 +7,7 @@ export interface IAddedContact_Update {
   tags?: string[];
   starred?: boolean;
   $addToSet?: any;
+  $pull?: any;
 }
 
 export interface IManualContact_Update {
@@ -29,6 +30,7 @@ export interface IManualContact_Update {
   starred?: boolean;
   archived?: boolean;
   $addToSet?: any;
+  $pull?: any;
 }
 
 export interface IOrganisation_Update {
@@ -67,4 +69,5 @@ export interface IUser_Update {
   allTags?: string[];
   organisations?: OrganisationId[];
   $addToSet?: any;
+  $pull?: any;
 }
