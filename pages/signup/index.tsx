@@ -2,7 +2,7 @@ import { useRouter } from "next/router";
 import Link from "next/link";
 import { getSession } from "next-auth/client";
 import React, { useEffect, useState, ChangeEvent, MouseEvent } from "react";
-import { userSignUp } from "../../api_client/UserQueries";
+import { userSignUp } from "../../api_client/UserClient";
 
 // styling imports
 import useMediaQuery from "@material-ui/core/useMediaQuery";

@@ -4,7 +4,7 @@ import {
   getAddedContact,
   updateAddedContact,
   deleteAddedContact,
-} from "../../api_client/AddedContactQueries";
+} from "../../api_client/AddedContactClient";
 
 export default function TestAddedContactApis() {
   async function test() {

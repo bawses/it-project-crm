@@ -5,7 +5,7 @@ import {
   updateManualContact,
   deleteManualContact,
   searchManualContactsByName,
-} from "../../api_client/ManualContactQueries";
+} from "../../api_client/ManualContactClient";
 
 export default function TestManualContactApis() {
   async function test() {

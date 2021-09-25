@@ -5,15 +5,15 @@ import {
   updateManualContact,
   deleteManualContact,
   searchManualContacts,
-} from "./ManualContactQueries";
+} from "./ManualContactClient";
 import {
   createAddedContact,
   getAddedContact,
   getAddedContacts,
   updateAddedContact,
   deleteAddedContact,
-} from "./AddedContactQueries";
-import { searchUsers, getUserById } from "./UserQueries";
+} from "./AddedContactClient";
+import { searchUsers, getUserById } from "./UserClient";
 
 // Data types
 import { IManualContact_Create } from "../lib/DataTypes_Create";
