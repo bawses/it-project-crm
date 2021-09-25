@@ -1,7 +1,7 @@
 import { Box, Typography, useMediaQuery } from "@material-ui/core";
 import { useTheme } from "@material-ui/core/styles";
 import { useEffect, useMemo, useState } from "react";
-import { getManualContacts } from "../../api_client/ManualContactQueries";
+import { getManualContacts } from "../../api_client/ManualContactClient";
 import Layout from "../../components/navLayout/Layout";
 import ContactsTable, {
 	IdToContactMap,

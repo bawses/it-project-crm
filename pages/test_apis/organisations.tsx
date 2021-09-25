@@ -4,7 +4,7 @@ import {
   getOrganisationById,
   updateOrganisation,
   deleteOrganisation,
-} from "../../api_client/OrganisationQueries";
+} from "../../api_client/OrganisationClient";
 
 export default function TestOrganisationApis() {
   async function test() {

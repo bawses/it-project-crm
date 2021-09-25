@@ -10,7 +10,7 @@ import ResponsiveFieldPair from "../../components/input/ResponsiveFieldPair";
 import VerticalFieldPair from "../../components/input/VerticalFieldPair";
 import LocationSelector from "../../components/input/LocationSelector";
 import AddFieldSelector from "../../components/input/AddFieldSelector";
-import { createManualContact } from "../../api_client/ManualContactQueries";
+import { createManualContact } from "../../api_client/ManualContactClient";
 import { IManualContact_Create } from "../../lib/DataTypes_Create";
 import Layout from "../../components/navLayout/Layout";
 import PageLoadingBar from "../../components/PageLoadingBar";
