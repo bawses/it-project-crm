@@ -118,3 +118,7 @@ export const searchUsersByName = async (name: string) => {
   };
   return searchUsers(searchObj);
 };
+
+export const getAllTags = async (): Promise<string[]> => {
+  return (await getUser()).allTags || [];
+};

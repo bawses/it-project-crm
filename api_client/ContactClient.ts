@@ -13,7 +13,7 @@ import {
   updateAddedContact,
   deleteAddedContact,
 } from "./AddedContactClient";
-import { searchUsers, getUserById } from "./UserClient";
+import { searchUsers, getUserById, updateUser } from "./UserClient";
 
 // Data types
 import { IManualContact_Create } from "../lib/DataTypes_Create";
@@ -80,22 +80,21 @@ const updateContact_AddedUser = async (
 
 // id : object ID for manual contact OR user ID (toUserId) for added user.
 export const updateContact = async (
-  id: string,
-  isManualContact: boolean,
+  contact: IContact,
   updateObj: IManualContact_Update | IAddedContact_Update
 ): Promise<IContact> => {
-  if (isManualContact) {
-    return updateContact_Manual(id, updateObj);
+  if (contact.isManualContact) {
+    return updateContact_Manual(contact._id, updateObj);
   } else {
-    return updateContact_AddedUser(id, updateObj);
+    return updateContact_AddedUser(contact._id, updateObj);
   }
 };
 
-export const deleteContact = async (id: string, isManualContact: boolean): Promise<void> => {
-  if (isManualContact) {
-    deleteManualContact(id);
+export const deleteContact = async (contact: IContact): Promise<void> => {
+  if (contact.isManualContact) {
+    deleteManualContact(contact._id);
   } else {
-    deleteAddedContact(id);
+    deleteAddedContact(contact._id);
   }
 };
 
@@ -147,6 +146,23 @@ export const archiveContact = async (contact: IContact): Promise<IContact> => {
     throw new Error("Not a manual contact. Cannot archive.");
   }
 };
+
+export const addTagToContact = async (contact: IContact, tag: string): Promise<IContact> => {
+  let updateObj = { $addToSet: { tags: tag } };
+  let userUpdateObj = { $addToSet: { allTags: tag } };
+  if (contact.isManualContact) {
+    let manualContact = await updateManualContact(contact._id, updateObj);
+    await updateUser(userUpdateObj);
+    return convert_ManualContact_to_Contact(manualContact);
+  } else if (contact.isAddedContact) {
+    let addedContact = await updateAddedContact(contact._id, updateObj);
+    let addedUser = await getUserById(contact._id);
+    await updateUser(userUpdateObj);
+    return convert_AddedUser_to_Contact(addedContact, addedUser);
+  } else {
+    throw new Error("Not a manual contact or added contact. Cannot add tag.");
+  }
+}
 
 export const searchContacts_Manual = async (searchObj: Object): Promise<IContact[]> => {
   let manualContacts = await searchManualContacts(searchObj);
