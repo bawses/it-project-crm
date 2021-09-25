@@ -6,7 +6,7 @@ import ContactsTableCategory, { CategoryButton } from '../../components/tables/c
 import ContactsTableSort, { SortType } from '../../components/tables/contactsTableSort';
 import ContactsTableTags, { SelectValue } from '../../components/tables/contactsTableTags';
 import { IManualContact } from '../../lib/DataTypes';
-import { getAllManualContacts, updateManualContact } from '../../api_client/ManualContactQueries';
+import { getManualContacts, updateManualContact } from '../../api_client/ManualContactQueries';
 import Layout from "../../components/navLayout/Layout";
 import PageLoadingBar from "../../components/PageLoadingBar";
 import { useRouter } from 'next/router';
@@ -16,41 +16,46 @@ import { useMediaQuery } from "@material-ui/core";
 import SearchBar from '../../components/input/SearchBar';
 
 export const sortFunctions = {
-  [SortType.FirstName]: (a: IManualContact, b: IManualContact) => (a.name.firstName > b.name.firstName) ? 1 : -1,
-  [SortType.LastName]: (a: IManualContact, b: IManualContact) => (a.name.lastName > b.name.lastName) ? 1 : -1,
-  [SortType.Role]: (a: IManualContact, b: IManualContact) => {
-    if (!a.job) {
-      return 1
-    }
-    if (!b.job) {
-      return -1
-    }
-    if (a.job > b.job) {
-      return 1
-    }
-    return -1
-  }
-}
+	[SortType.FirstName]: (a: IManualContact, b: IManualContact) =>
+		a.name.firstName > b.name.firstName ? 1 : -1,
+	[SortType.LastName]: (a: IManualContact, b: IManualContact) =>
+		a.name.lastName > b.name.lastName ? 1 : -1,
+	[SortType.Role]: (a: IManualContact, b: IManualContact) => {
+		if (!a.job) {
+			return 1;
+		}
+		if (!b.job) {
+			return -1;
+		}
+		if (a.job > b.job) {
+			return 1;
+		}
+		return -1;
+	},
+};
 
 // Swaps the given contact in the given contact list if it can find it, and then returns the list
-function swapContactInList(contactList: IManualContact[], contact: IManualContact) {
-  console.log("starting list", contactList)
-  if (contact._id === undefined) {
-    return contactList
-  }
+function swapContactInList(
+	contactList: IManualContact[],
+	contact: IManualContact
+) {
+	console.log("starting list", contactList);
+	if (contact._id === undefined) {
+		return contactList;
+	}
 
-  for (let i = 0; i < contactList.length; i++) {
-    if (contactList[i]._id) {
-      if (contactList[i]._id === contact._id) {
-        contactList[i] = contact
-        console.log("Swapped element", contact)
-        break
-      }
-    }
-  }
+	for (let i = 0; i < contactList.length; i++) {
+		if (contactList[i]._id) {
+			if (contactList[i]._id === contact._id) {
+				contactList[i] = contact;
+				console.log("Swapped element", contact);
+				break;
+			}
+		}
+	}
 
-  console.log("Final element")
-  return contactList
+	console.log("Final element");
+	return contactList;
 }
 
 export default function Contacts() {
@@ -70,7 +75,7 @@ export default function Contacts() {
   async function getData(setAllContacts: (contacts: IManualContact[]) => void, setDisplayContacts: (contacts: IManualContact[]) => void) {
     try {
       setIsLoading(true)
-      const data = await getAllManualContacts()
+      const data = await getManualContacts()
       // Save all contacts
       setAllContacts(data)
       // Make the display contacts initially just a copy of all contacts
