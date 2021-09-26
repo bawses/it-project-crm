@@ -84,6 +84,9 @@ export const updateContact = async (
   contact: IContact,
   updateObj: IManualContact_Update | IAddedContact_Update
 ): Promise<IContact> => {
+  if (!contact.isManualContact && !contact.isAddedContact) {
+    throw new Error("Not a manual contact or added contact. Cannot update.");
+  }
   if (contact.isManualContact) {
     return updateContact_Manual(contact._id, updateObj);
   } else {
@@ -129,26 +132,15 @@ export const getContacts = async (): Promise<IContact[]> => {
   return contacts.sort(compare);
 };
 
-export const starContact = async (contact: IContact): Promise<IContact> => {
-  if (contact.isManualContact) {
-    let manualContact = await updateManualContact(contact._id, { starred: true });
-    return convert_ManualContact_to_Contact(manualContact);
-  } else if (contact.isAddedContact) {
-    let addedContact = await updateAddedContact(contact._id, { starred: true });
-    let user = await getUserById(contact._id);
-    return convert_AddedUser_to_Contact(addedContact, user);
-  } else {
-    throw new Error("Not a manual contact or added contact. Cannot star.");
-  }
+export const toggleStarContact = async (contact: IContact): Promise<IContact> => {
+  return updateContact(contact, { starred: !contact.starred });
 };
 
-export const archiveContact = async (contact: IContact): Promise<IContact> => {
-  if (contact.isManualContact) {
-    let manualContact = await updateManualContact(contact._id, { archived: true });
-    return convert_ManualContact_to_Contact(manualContact);
-  } else {
+export const toggleArchiveContact = async (contact: IContact): Promise<IContact> => {
+  if (!contact.isManualContact) {
     throw new Error("Not a manual contact. Cannot archive.");
   }
+  return updateContact_Manual(contact._id, { archived: !contact.archived });
 };
 
 export const addTagToContact = async (contact: IContact, tag: string): Promise<IContact> => {

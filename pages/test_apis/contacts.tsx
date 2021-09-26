@@ -5,8 +5,8 @@ import {
   updateContact,
   deleteContact,
   getContacts,
-  starContact,
-  archiveContact,
+  toggleStarContact,
+  toggleArchiveContact,
   searchContactsByName,
   addTagToContact,
   removeTagFromContact,
@@ -48,8 +48,16 @@ export default function TestContactApis() {
       console.log(testUpdateAddedUser);
 
       console.log("Testing star added user");
-      let testStarredAddedUser = await starContact(testUpdateAddedUser);
-      console.log(testStarredAddedUser);
+      let testStar = await toggleStarContact(testUpdateAddedUser);
+      console.log(testStar);
+      testStar = await toggleStarContact(testStar);
+      console.log(testStar);
+
+      console.log("Testing archive manual contact");
+      let testArchive = await toggleArchiveContact(testCreateManual);
+      console.log(testArchive);
+      testArchive = await toggleArchiveContact(testArchive);
+      console.log(testArchive);
 
       console.log("Testing search contacts");
       let testSearch = await searchContactsByName("Dang");
