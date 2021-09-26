@@ -102,7 +102,7 @@ export default function ViewContact() {
     if (contactId && typeof contactId === "string") {
       try {
         setIsLoading(true);
-        const fetchedData = await getContact(contactId, true);
+        const fetchedData = await getContact(contactId, false);
         setInitialContactData(fetchedData);
         console.log(fetchedData);
         setNotes(fetchedData.notes ?? "");
@@ -256,9 +256,9 @@ export default function ViewContact() {
     <Layout>
       <Container className={classes.containerStyle}>
         <ContactOptions
-          isManual={true}
+          isAdded={initialContactData?.isAddedContact}
+          isManual={false}
           onChange={handleContactOption}
-          onPressEdit={() => {}}
         />
         <div className={classes.primaryDetailsStyle}>
           <Container className={classes.profilePicDiv}>
