@@ -1,7 +1,6 @@
 /**
  * Display in Search Results that no results could be found
  */
-
 import { Typography, TableRow, TableCell } from "@material-ui/core";
 import { useTheme } from "@material-ui/core/styles";
 import { makeStyles, createStyles, Theme } from "@material-ui/core/styles";

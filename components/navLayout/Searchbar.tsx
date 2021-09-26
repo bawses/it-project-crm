@@ -1,7 +1,6 @@
 /**
- * Search bar and search results (fetching from API Client) 
+ * Search bar and search results (fetching from API Client)
  */
-
 import React, { useState, useEffect } from "react";
 import { COLORS } from "../../lib/Colors";
 import SearchResultTable from "./SearchResultTable";
@@ -130,11 +129,13 @@ export default function Searchbar() {
     }
 
     try {
-      const fetchedPredictions = await searchContactsByName(searchString);
-      console.log(fetchedPredictions);
-      setPredictiveResults(fetchedPredictions);
+      var fetchedPredictions = await searchContactsByName(searchString);
+      const filteredPredictions = fetchedPredictions.filter(
+        (contact) => !contact.archived
+      );
+      setPredictiveResults(filteredPredictions);
     } catch (e) {
-      // TODO: Display error to user on webpage
+      // TODO (NICE TO HAVE): Display error to user on webpage
       console.log(e);
     }
   }
