@@ -41,7 +41,10 @@ export const updateDbRecord = async <T_output>(
   recordId: string,
   updateObj: Object
 ): Promise<T_output> => {
-  return await doFetch<T_output>(RequestType.PUT, dataType, recordId, updateObj);
+  const data = await doFetch<T_output>(RequestType.PUT, dataType, recordId, updateObj);
+  // This is an update request, update the local data without revalidation
+  mutate(`/api/${dataType}s/${recordId}`, data, false);
+  return data;
 };
 
 /* Makes an API call to delete an existing entry in the database for the given dataType */
@@ -99,11 +102,6 @@ const doFetch = async <T_output>(
     // Extract the data out of the JSON object in the form of a JavaScript object.
     var { data } = await response.json();
     if (!data) throw new Error(`${response.status}`);
-
-    // If this is an update request, update the local data without revalidation
-    if (fetchType === RequestType.PUT) {
-      mutate(`/api/${dataType}s/${recordId}`, data, false);
-    }
   } catch (error) {
     /* If an error occurs anywhere in the process of making an API call, log it */
     console.error(error);

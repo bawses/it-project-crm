@@ -105,7 +105,7 @@ export const searchUsers = async (searchObj: Object) => {
   return searchDb<IUser>(DataType.User, searchObj);
 };
 
-export const getUsers = async () => {
+export const getAllUsers = async () => {
   return searchUsers({});
 };
 
