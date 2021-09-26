@@ -87,8 +87,6 @@ export default function TestContactApis() {
       await deleteContact(addedUser);
       console.log("Delete success");
 
-      console.log(await getAllTags());
-
       console.log("Test success");
     } catch (err) {
       console.error(err);
