@@ -44,7 +44,6 @@ export const deleteManualContact = async (id: string) => {
 export const searchManualContacts = async (searchObj: Object) => {
   // Only search for un-archived manual contacts
   let searchObj_ = searchObj as any;
-  searchObj_.archived = { $in: [false, null] };
   return searchDb<IManualContact>(DataType.ManualContact, searchObj_);
 };
 
