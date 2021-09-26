@@ -1,12 +1,12 @@
 import { FormLabelBaseProps, Paper, Table, TableBody, TableContainer } from '@material-ui/core';
 import ContactsTableRow from './contactsTableRow';
-import { IManualContact } from '../../lib/DataTypes';
+import { IContact } from '../../lib/UnifiedDataType';
 
-export type IdToContactMap = Record<string, IManualContact>
+export type IdToContactMap = Record<string, IContact>
 
 interface ContactsTableProps {
-  contacts: IManualContact[],
-  handleRowButtonClick: (target: IManualContact) => Promise<boolean>
+  contacts: IContact[],
+  handleRowButtonClick: (target: IContact) => Promise<boolean>
   idToContactMap?: IdToContactMap
 }
 
