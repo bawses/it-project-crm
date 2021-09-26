@@ -143,43 +143,30 @@ export const toggleArchiveContact = async (contact: IContact): Promise<IContact>
   return updateContact_Manual(contact._id, { archived: !contact.archived });
 };
 
+export const addFieldToContact = async (contact: IContact, fieldObj: Object): Promise<IContact> => {
+  return updateContact(contact, { $addToSet: fieldObj });
+};
+
+export const removeFieldFromContact = async (
+  contact: IContact,
+  fieldObj: Object
+): Promise<IContact> => {
+  return updateContact(contact, { $pull: fieldObj });
+};
+
 export const addTagToContact = async (contact: IContact, tag: string): Promise<IContact> => {
-  let updateObj = { $addToSet: { tags: tag } };
-  if (!contact.isManualContact && !contact.isAddedContact) {
-    throw new Error("Not a manual contact or added contact. Cannot add tag.");
-  }
-  let newObj;
-  if (contact.isManualContact) {
-    let manualContact = await updateManualContact(contact._id, updateObj);
-    newObj = convert_ManualContact_to_Contact(manualContact);
-  } else {
-    let addedContact = await updateAddedContact(contact._id, updateObj);
-    let user = await getUserById(contact._id);
-    newObj = convert_AddedUser_to_Contact(addedContact, user);
-  }
+  let newObj = await addFieldToContact(contact, { tags: tag });
   await updateUser({ $addToSet: { allTags: tag } });
   return newObj;
 };
 
 export const removeTagFromContact = async (contact: IContact, tag: string): Promise<IContact> => {
-  let updateObj = { $pull: { tags: tag } };
-  if (!contact.isManualContact && !contact.isAddedContact) {
-    throw new Error("Not a manual contact or added contact. Cannot remove tag.");
-  }
-  let newObj;
-  if (contact.isManualContact) {
-    let manualContact = await updateManualContact(contact._id, updateObj);
-    newObj = convert_ManualContact_to_Contact(manualContact);
-  } else {
-    let addedContact = await updateAddedContact(contact._id, updateObj);
-    let addedUser = await getUserById(contact._id);
-    newObj = convert_AddedUser_to_Contact(addedContact, addedUser);
-  }
-
+  let newObj = await removeFieldFromContact(contact, { tags: tag });
   // See if this tag still exists in the user's contacts, otherwise remove it from all tags
   let searchObj = { tags: tag };
   let a = await searchAddedContacts(searchObj);
   let b = await searchManualContacts(searchObj);
+  console.log(a, b);
   if (!a.length && !b.length) {
     await updateUser({ $pull: { allTags: tag } });
   }
