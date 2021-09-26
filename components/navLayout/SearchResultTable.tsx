@@ -3,13 +3,11 @@
 import { Paper, Table, TableBody, TableContainer } from '@material-ui/core';
 import SearchResultRow from './SearchResultRow';
 import NoResultsRow from './NoResultsRow';
-import { IUser } from '../../lib/DataTypes';
+import { IContact } from '../../lib/UnifiedDataType';
 import React from 'react';
 
-export type IdToProfileMap = Record<string, IUser>
-
 interface SearchResultTableProps {
-  searchResults: IUser[],
+  searchResults: IContact[],
 }
 
 export default function SearchResultsTable({ searchResults }: SearchResultTableProps ) {
@@ -32,7 +30,6 @@ export default function SearchResultsTable({ searchResults }: SearchResultTableP
     );
   }
 
-
   return (
     <TableContainer component={Paper}>
       <Table >
@@ -42,5 +39,4 @@ export default function SearchResultsTable({ searchResults }: SearchResultTableP
       </Table>
     </TableContainer>
   )
-
 }

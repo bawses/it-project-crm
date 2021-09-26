@@ -1,15 +1,15 @@
 // search bar and search results (fetching from API Client)
 import React, { useState, useEffect} from 'react';
 import { COLORS } from "../../lib/Colors";
-import { IUser } from "../../lib/DataTypes";
 import SearchResultTable from './SearchResultTable';
-import {searchUsersByName } from "../../api_client/UserQueries"
-import { InputBase, Popover } from "@material-ui/core";
+import {searchContactsByName } from "../../api_client/ContactClient"
+import { InputBase } from "@material-ui/core";
 import { createStyles, alpha, Theme, makeStyles, useTheme } from '@material-ui/core/styles';
 import useMediaQuery from "@material-ui/core/useMediaQuery";
 
 // MaterialUI Icons
 import SearchIcon from "@material-ui/icons/Search";
+import { IContact } from '../../lib/UnifiedDataType';
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -74,18 +74,11 @@ const useStyles = makeStyles((theme: Theme) =>
 export default function Searchbar() {
   const classes = useStyles();
   const theme = useTheme<Theme>();
-  
-  const [anchorEl, setAnchorEl] = React.useState<HTMLButtonElement | null>(null);
-  const handleClose = () => {
-    setAnchorEl(null);
-  };
-  
-  const open = Boolean(anchorEl);
-  const id = open ? 'simple-popover' : undefined;
+  const MAX_ZINDEX = 200;
 
   const isMobile = useMediaQuery(theme.breakpoints.down("xs"));
   const [searchString, setSearchString] = useState<string>("");
-  const [predictiveResults, setPredictiveResults] = useState<IUser[]>([]);
+  const [predictiveResults, setPredictiveResults] = useState<IContact[]>([]);
 
   //  thank you Tony
   const ref = React.useRef() as React.MutableRefObject<HTMLInputElement>;
@@ -125,14 +118,10 @@ export default function Searchbar() {
 
     if (newSearchString.length > 0) {
       setIsOpen(true);
-      setAnchorEl(event.currentTarget);
-      
     }
 
-    console.log(newSearchString); 
-
     try {
-      const fetchedPredictions = await searchUsersByName(searchString);
+      const fetchedPredictions = await searchContactsByName(searchString);
       console.log(fetchedPredictions);
       setPredictiveResults(fetchedPredictions); 
      
@@ -168,34 +157,14 @@ export default function Searchbar() {
             inputProps={{ "aria-label": "search" }}
           />
         )}
-        {/* Show search results if the model hasn't been clicked away AND the search string is longer than 0*/}
-        {/* <Popover 
-          id={id}
-          open={open}
-          anchorOrigin={{
-            vertical: 'top',
-            horizontal: 'center',
-          }}
-          transformOrigin={{
-            vertical: 'top',
-            horizontal: 'left',
-          }}
-          onClose={handleClose}
-        > */}
-        {/* <div > 
-        <SearchResultTable searchResults={predictiveResults.slice(0,5)} />
-      </div> */}
-    
-          {(isOpen && searchString.length > 0) ? (
-            <div className={classes.resultsTable} style={{zIndex:100}} > 
-              <SearchResultTable searchResults={predictiveResults.slice(0,5)} />
-            </div>
+        {(isOpen && searchString.length > 0) ? (
+          <div className={classes.resultsTable} style={{zIndex:MAX_ZINDEX}} > 
+            <SearchResultTable searchResults={predictiveResults.slice(0,5)} />
+          </div>
           ): (
             <>
             </>
           )}
-
-        {/* </Popover> */}
       </div>
     </div>
   );
