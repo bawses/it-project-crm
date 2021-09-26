@@ -166,7 +166,6 @@ export const removeTagFromContact = async (contact: IContact, tag: string): Prom
   let searchObj = { tags: tag };
   let a = await searchAddedContacts(searchObj);
   let b = await searchManualContacts(searchObj);
-  console.log(a, b);
   if (!a.length && !b.length) {
     await updateUser({ $pull: { allTags: tag } });
   }

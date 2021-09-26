@@ -30,15 +30,15 @@ export default function TestContactApis() {
 
       const id: string = "614c7d7ce45a3d36b09a6a5a";
       console.log("Testing add user contact");
-      // let addedUser = await addContact_User(id);
-      // console.log(addedUser);
+      let addedUser = await addContact_User(id);
+      console.log(addedUser);
 
       console.log("Testing get all contacts");
       let contacts = await getContacts();
       console.log(contacts);
 
       console.log("Testing get added user");
-      let addedUser = await getContact(id, false);
+      addedUser = await getContact(id, false);
       console.log(addedUser);
 
       console.log("Testing update added user");
@@ -64,18 +64,23 @@ export default function TestContactApis() {
       console.log(searchResult);
 
       console.log("Testing tags");
+      let allTags;
       manualContact = await addTagToContact(manualContact, "TEST TAG");
       console.log(manualContact);
-      console.log(await getAllTags());
+      allTags = await getAllTags();
+      console.assert(allTags.length > 0);
       addedUser = await addTagToContact(addedUser, "TEST TAG");
       console.log(addedUser);
-      console.log(await getAllTags());
+      allTags = await getAllTags();
+      console.assert(allTags.length > 0);
       manualContact = await removeTagFromContact(manualContact, "TEST TAG");
       console.log(manualContact);
-      console.log(await getAllTags());
+      allTags = await getAllTags();
+      console.assert(allTags.length > 0);
       addedUser = await removeTagFromContact(addedUser, "TEST TAG");
       console.log(addedUser);
-      console.log(await getAllTags());
+      allTags = await getAllTags();
+      console.assert(allTags.length === 0);
 
       console.log("Testing delete");
       await deleteContact(manualContact);
