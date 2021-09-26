@@ -1,60 +1,60 @@
 import { Box, Typography, useMediaQuery } from "@material-ui/core";
 import { useTheme } from "@material-ui/core/styles";
 import { useEffect, useMemo, useState } from "react";
-import { getManualContacts } from "../../api_client/ManualContactClient";
 import Layout from "../../components/navLayout/Layout";
 import ContactsTable, {
-	IdToContactMap,
+  IdToContactMap,
 } from "../../components/tables/contactsTable";
 import ContactsTableSort, {
-	SortType,
+  SortType,
 } from "../../components/tables/contactsTableSort";
 import { sortFunctions } from "../contacts";
 import CreateContactButtonLarge from "../../components/buttons/CreateContactButtonLarge";
-import { IManualContact } from '../../lib/DataTypes';
 import PageLoadingBar from "../../components/PageLoadingBar";
 import { useRouter } from "next/router";
 import { getSession } from "next-auth/client";
+import { IContact } from "../../lib/UnifiedDataType";
+import { getContacts } from "../../api_client/ContactClient";
 
 // Creates a map of contact ids to the respective contact
-function contactListToMap(contactList: IManualContact[]) {
-	const contactMap: IdToContactMap = {};
-	for (const contact of contactList) {
-		if (contact._id) {
-			contactMap[contact._id] = contact;
-		}
-	}
+function contactListToMap(contactList: IContact[]) {
+  const contactMap: IdToContactMap = {};
+  for (const contact of contactList) {
+    if (contact._id) {
+      contactMap[contact._id] = contact;
+    }
+  }
 
-	return contactMap;
+  return contactMap;
 }
 
 async function getSearchResults(
-	setSearchResults: (contacts: IManualContact[]) => void
+  setSearchResults: (contacts: IContact[]) => void
 ) {
-	try {
-		const data = await getManualContacts();
-		// Save all search results
-		setSearchResults(data);
-	} catch (error) {
-		console.error("Error: Could not fetch search result data", error);
-	}
+  try {
+    const data = await getContacts();
+    // Save all search results
+    setSearchResults(data);
+  } catch (error) {
+    console.error("Error: Could not fetch search result data", error);
+  }
 }
 
 async function getAddedContacts(
-	setAddedContacts: (contacts: IdToContactMap) => void
+  setAddedContacts: (contacts: IdToContactMap) => void
 ) {
-	try {
-		const data = await getManualContacts();
-		// Save all added contacts as a map to their respective ids
-		setAddedContacts(contactListToMap(data));
-	} catch (error) {
-		console.error("Error: Could not fetch contact data", error);
-	}
+  try {
+    const data = await getContacts();
+    // Save all added contacts as a map to their respective ids
+    setAddedContacts(contactListToMap(data));
+  } catch (error) {
+    console.error("Error: Could not fetch contact data", error);
+  }
 }
 
 export default function SearchPage() {
   const [sortValue, setSortValue] = useState<SortType>(SortType.None)
-  const [searchResults, setSearchResults] = useState<IManualContact[]>([])
+  const [searchResults, setSearchResults] = useState<IContact[]>([])
   const [addedContacts, setAddedContacts] = useState<IdToContactMap>({})
   const [isLoading, setIsLoading] = useState(true);
   const router = useRouter()
@@ -84,7 +84,7 @@ export default function SearchPage() {
     setSortValue(newSortVal)
   }
 
-  async function handleContactAdd(target: IManualContact) {
+  async function handleContactAdd(target: IContact) {
     if (target._id) {
       //TODO: Send add request
       // Database request code here
