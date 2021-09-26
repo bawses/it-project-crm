@@ -3,6 +3,7 @@ import { makeStyles, IconButton } from "@material-ui/core";
 import { Edit } from "@material-ui/icons";
 import { COLORS } from "../../lib/Colors";
 import Select, { OnChangeValue } from "react-select";
+import TextButton from "./TextButton";
 
 const options = [
   {
@@ -17,11 +18,19 @@ const options = [
     value: "delete",
     label: "Delete contact",
   },
+  {
+    value: "remove",
+    label: "Remove from contacts",
+  },
 ];
 
 interface ContactOptionsProps {
-  isArchived: boolean;
-  onChange: (value: OnChangeValue<{ value: string; label: string }, false>) => void;
+  isArchived?: boolean;
+  isManual: boolean;
+  isAdded?: boolean;
+  onChange: (
+    value: OnChangeValue<{ value: string; label: string }, false>
+  ) => void;
   onPressEdit?: () => void;
 }
 
@@ -39,32 +48,40 @@ const contactOptionsStyles = {
 };
 
 export default function ContactOptions({
-  isArchived,
+  isArchived = false,
+  isManual,
+  isAdded = true,
   onChange,
   onPressEdit = () => {},
 }: ContactOptionsProps) {
   const classes = useStyles();
 
+  const setOptions = () => {
+    const finalOptions = isManual
+      ? options.filter((option) => option.value !== "remove")
+      : options.filter((option) => option.value === "remove");
+    return isArchived
+      ? finalOptions.filter((option) => option.value !== "archive")
+      : finalOptions.filter((option) => option.value !== "unarchive");
+  };
+
   return (
     <div className={classes.contactOptionsMenu}>
-      <Select
+      {isAdded && <Select
         className={classes.contactOptionsBtn}
         styles={contactOptionsStyles}
         instanceId="contactOptions"
-        options={
-          isArchived
-            ? options.filter((option) => option.value !== "archive")
-            : options.filter((option) => option.value !== "unarchive")
-        }
+        options={setOptions()}
         value={null}
         placeholder={"Added to my contacts"}
         onChange={onChange}
         isSearchable={false}
         isClearable={false}
-      />
-      <IconButton onClick={() => onPressEdit}>
+      />}
+      {!isAdded && <TextButton title="Add to my contacts" onClick={() => {}}/>}
+      {isManual && <IconButton onClick={() => onPressEdit}>
         <Edit className={classes.editIcon} />
-      </IconButton>
+      </IconButton>}
     </div>
   );
 }

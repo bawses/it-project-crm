@@ -1,17 +1,17 @@
 import { Container, Typography, makeStyles } from "@material-ui/core";
 import Image from "next/image";
-import DEFAULT_IMAGE from "../../assets/blank-profile-picture-973460_640.png";
+import DEFAULT_IMAGE from "../../../assets/blank-profile-picture-973460_640.png";
 import { useState, useEffect, useCallback, useRef } from "react";
-import MyTags from "../../components/cards/MyTags";
-import MyNotes from "../../components/cards/MyNotes";
-import ContactDetails from "../../components/cards/ContactDetails";
-import ContactOptions from "../../components/buttons/ContactOptions";
-import ContactHeader from "../../components/cards/ContactHeader";
-import { IContact } from "../../lib/UnifiedDataType";
-import { getAllTags } from "../../api_client/UserClient";
-import Layout from "../../components/navLayout/Layout";
+import MyTags from "../../../components/cards/MyTags";
+import MyNotes from "../../../components/cards/MyNotes";
+import ContactDetails from "../../../components/cards/ContactDetails";
+import ContactOptions from "../../../components/buttons/ContactOptions";
+import ContactHeader from "../../../components/cards/ContactHeader";
+import { IContact } from "../../../lib/UnifiedDataType";
+import { getAllTags } from "../../../api_client/UserClient";
+import Layout from "../../../components/navLayout/Layout";
 import { useRouter } from "next/router";
-import PageLoadingBar from "../../components/PageLoadingBar";
+import PageLoadingBar from "../../../components/PageLoadingBar";
 import { OnChangeValue } from "react-select";
 import { getSession } from "next-auth/client";
 import {
@@ -21,7 +21,8 @@ import {
   removeTagFromContact,
   addTagToContact,
   toggleStarContact,
-} from "../../api_client/ContactClient";
+  toggleArchiveContact,
+} from "../../../api_client/ContactClient";
 
 const useStyles = makeStyles((theme) => ({
   containerStyle: {
@@ -83,7 +84,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-export default function ViewContact() {
+export default function ViewManualContact() {
   const classes = useStyles();
   const [fieldValues, setFieldValues] = useState<IContact>();
   const [isLoading, setIsLoading] = useState(true);
@@ -92,6 +93,7 @@ export default function ViewContact() {
   const [editedNotes, setEditedNotes] = useState("");
   const [tagOptions, setTagOptions] = useState<string[]>([]);
   const [isStarred, setIsStarred] = useState(false);
+  const [isArchived, setIsArchived] = useState(false);
 
   const firstUpdate = useRef(true);
   const router = useRouter();
@@ -101,7 +103,7 @@ export default function ViewContact() {
     if (contactId && typeof contactId === "string") {
       try {
         setIsLoading(true);
-        const fetchedData = await getContact(contactId, false);
+        const fetchedData = await getContact(contactId, true);
         setFieldValues(fetchedData);
         console.log(fetchedData);
         setNotes(fetchedData.notes ?? "");
@@ -109,6 +111,7 @@ export default function ViewContact() {
         const fetchedTagOptions = await getAllTags();
         setTagOptions(fetchedTagOptions);
         setIsStarred(fetchedData.starred ?? false);
+        setIsArchived(fetchedData.archived ?? false);
         setIsLoading(false);
       } catch (e) {
         /** TODO: redirect to error page */
@@ -136,8 +139,9 @@ export default function ViewContact() {
           notes: editedNotes,
         };
         const updatedContact = await updateContact(fieldValues, updateObject);
-        setFieldValues(updatedContact);
-        setEditedNotes(updatedContact?.notes ?? "");
+        console.log(updatedContact);
+        setNotes(updatedContact.notes ?? "");
+        setEditedNotes(updatedContact.notes ?? "");
       } catch (e) {
         console.log(e);
       }
@@ -152,7 +156,7 @@ export default function ViewContact() {
   };
 
   const cancelEditedNotes = () => {
-    setEditedNotes(fieldValues?.notes ?? "");
+    setEditedNotes(notes);
     if (isEditingNotes) {
       toggleEditingMode();
     }
@@ -198,7 +202,18 @@ export default function ViewContact() {
     }
   }, [fieldValues]);
 
-  const removeThisContact = useCallback(async () => {
+  const updateArchived = useCallback(async () => {
+    if (fieldValues) {
+      try {
+        const updatedContact = await toggleArchiveContact(fieldValues);
+        console.log(updatedContact);
+      } catch (e) {
+        console.log(e);
+      }
+    }
+  }, [fieldValues]);
+
+  const deleteThisContact = useCallback(async () => {
     if (fieldValues) {
       try {
         setIsLoading(true);
@@ -220,11 +235,24 @@ export default function ViewContact() {
     }
   }, [isStarred, updateStarred]);
 
+  useEffect(() => {
+    if (!firstUpdate.current) {
+      console.log("update archived");
+      updateArchived();
+    }
+  }, [isArchived, updateArchived]);
+
   const handleContactOption = (
     value: OnChangeValue<{ value: string; label: string }, false> | null
   ) => {
-    if (value && value.value === "remove") {
-      removeThisContact();
+    if (value) {
+      if (value.value === "archive") {
+        setIsArchived(true);
+      } else if (value.value === "unarchive") {
+        setIsArchived(false);
+      } else if (value.value === "delete") {
+        deleteThisContact();
+      }
     }
   };
 
@@ -246,9 +274,10 @@ export default function ViewContact() {
     <Layout>
       <Container className={classes.containerStyle}>
         <ContactOptions
-          isAdded={fieldValues?.isAddedContact}
-          isManual={false}
+          isManual={true}
+          isArchived={isArchived}
           onChange={handleContactOption}
+          onPressEdit={() => {}}
         />
         <div className={classes.primaryDetailsStyle}>
           <Container className={classes.profilePicDiv}>
@@ -278,32 +307,30 @@ export default function ViewContact() {
             onStar={() => setIsStarred(!isStarred)}
           />
         </div>
-        {fieldValues?.isAddedContact && (
-          <div className={classes.responsiveSections}>
-            <div className={classes.detailsAndNotes}>
-              <ContactDetails fieldValues={fieldValues} />
-              <MyNotes
-                isEditingNotes={isEditingNotes}
-                toggleEditingMode={toggleEditingMode}
-                onChangeEdited={(event: any) =>
-                  setEditedNotes(event.target.value)
-                }
-                notes={fieldValues?.notes}
-                editedNotes={editedNotes}
-                saveEditedNotes={saveEditedNotes}
-                cancelEditedNotes={cancelEditedNotes}
-              />
-            </div>
-            <div className={classes.myTags}>
-              <MyTags
-                tags={fieldValues?.tags}
-                tagOptions={tagOptions}
-                deleteTag={deleteTag}
-                addTag={addTag}
-              />
-            </div>
+        <div className={classes.responsiveSections}>
+          <div className={classes.detailsAndNotes}>
+            <ContactDetails fieldValues={fieldValues} />
+            <MyNotes
+              isEditingNotes={isEditingNotes}
+              toggleEditingMode={toggleEditingMode}
+              onChangeEdited={(event: any) =>
+                setEditedNotes(event.target.value)
+              }
+              notes={notes}
+              editedNotes={editedNotes}
+              saveEditedNotes={saveEditedNotes}
+              cancelEditedNotes={cancelEditedNotes}
+            />
           </div>
-        )}
+          <div className={classes.myTags}>
+            <MyTags
+              tags={fieldValues?.tags}
+              tagOptions={tagOptions}
+              deleteTag={deleteTag}
+              addTag={addTag}
+            />
+          </div>
+        </div>
       </Container>
     </Layout>
   );
