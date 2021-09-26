@@ -1,4 +1,7 @@
-// search bar and search results (fetching from API Client)
+/**
+ * Search bar and search results (fetching from API Client) 
+ */
+
 import React, { useState, useEffect } from "react";
 import { COLORS } from "../../lib/Colors";
 import SearchResultTable from "./SearchResultTable";

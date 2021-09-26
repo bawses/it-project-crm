@@ -1,7 +1,10 @@
-// One row indicating that no results could be found 
+/**
+ * Display in Search Results that no results could be found
+ */
+
 import { Typography, TableRow, TableCell } from "@material-ui/core";
 import { useTheme } from "@material-ui/core/styles";
-import { makeStyles, createStyles, Theme  } from "@material-ui/core/styles";
+import { makeStyles, createStyles, Theme } from "@material-ui/core/styles";
 import React from "react";
 
 const useStyles = makeStyles((theme: Theme) =>
@@ -11,8 +14,8 @@ const useStyles = makeStyles((theme: Theme) =>
     },
     row: {
       "&:hover": {
-        cursor: 'pointer'
-      }
+        cursor: "pointer",
+      },
     },
   })
 );
@@ -20,7 +23,6 @@ const useStyles = makeStyles((theme: Theme) =>
 export default function NoResultsRow() {
   const classes = useStyles();
   const theme = useTheme();
-  // const bigScreen = useMediaQuery(theme.breakpoints.up("md"))
 
   return (
     <TableRow className={classes.row} hover={true}>
@@ -28,5 +30,5 @@ export default function NoResultsRow() {
         <Typography component="p">No Results Found</Typography>
       </TableCell>
     </TableRow>
-  )
+  );
 }

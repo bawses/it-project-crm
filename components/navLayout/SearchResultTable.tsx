@@ -1,42 +1,37 @@
-/* predictive search results drop down - appears when a search string is being typed;
-   disappears when clicked away from OR when the search string is empty */
-import { Paper, Table, TableBody, TableContainer } from '@material-ui/core';
-import SearchResultRow from './SearchResultRow';
-import NoResultsRow from './NoResultsRow';
-import { IContact } from '../../lib/UnifiedDataType';
-import React from 'react';
+/**
+ * Predictive search results drop down table - appears when a search string
+ * is being typed & disappears when clicked away from OR when the search
+ * string is empty
+ */
+import { Paper, Table, TableBody, TableContainer } from "@material-ui/core";
+import SearchResultRow from "./SearchResultRow";
+import NoResultsRow from "./NoResultsRow";
+import { IContact } from "../../lib/UnifiedDataType";
+import React from "react";
 
 interface SearchResultTableProps {
-  searchResults: IContact[],
+  searchResults: IContact[];
 }
 
-export default function SearchResultsTable({ searchResults }: SearchResultTableProps ) {
-  
+export default function SearchResultsTable({
+  searchResults,
+}: SearchResultTableProps) {
   //  Populating search results table
-  const rows: JSX.Element[] = []
+  const rows: JSX.Element[] = [];
   if (searchResults.length > 0) {
     for (const profile of searchResults) {
-      const key = profile._id || profile.name.firstName
-      rows.push(
-        <SearchResultRow
-          key={key}
-          profile={profile}
-        />
-      );
+      const key = profile._id || profile.name.firstName;
+      rows.push(<SearchResultRow key={key} profile={profile} />);
     }
   } else {
-    rows.push(
-      <NoResultsRow />
-    );
+    rows.push(<NoResultsRow />);
   }
 
   return (
     <TableContainer component={Paper}>
-      <Table >
-        <TableBody>
-          {rows}
-        </TableBody>
+      <Table>
+        <TableBody>{rows}</TableBody>
       </Table>
     </TableContainer>
-  )
+  );
 }

@@ -1,3 +1,6 @@
+/**
+ * Search Result Table row 
+ */
 import {
   Avatar,
   Typography,

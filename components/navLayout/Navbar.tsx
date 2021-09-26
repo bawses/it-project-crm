@@ -1,3 +1,6 @@
+/**
+ * CataLog top NavBar for Personal account
+ */
 import React from "react";
 import { AppBar, Toolbar, IconButton } from "@material-ui/core";
 import { COLORS } from "../../lib/Colors";

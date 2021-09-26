@@ -1,5 +1,7 @@
+/**
+ * CataLog Home button that shows on the Navbar
+ */
 import { Button, Typography } from "@material-ui/core";
-// import { makeStyles } from "@material-ui/core/styles";
 import React from "react";
 import { COLORS } from "../../lib/Colors";
 
