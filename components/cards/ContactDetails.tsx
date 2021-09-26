@@ -10,16 +10,17 @@ import {
   Instagram,
   Language,
 } from "@material-ui/icons";
-import { IManualContact } from "../../lib/DataTypes";
+import { IContact } from "../../lib/UnifiedDataType";
+import { IUser } from "../../lib/DataTypes";
 
 interface ContactDetailsProps {
-  fieldValues?: IManualContact;
+  fieldValues?: IContact | IUser;
 }
 
 export default function ContactDetails({ fieldValues }: ContactDetailsProps) {
   const classes = useStyles();
 
-  const linksList = (fieldValues?: IManualContact) => {
+  const linksList = (fieldValues?: IContact | IUser) => {
     const links = fieldValues?.links;
     let list = [];
     if (links?.facebook) {
