@@ -1,15 +1,21 @@
 // search bar and search results (fetching from API Client)
-import React, { useState, useEffect} from 'react';
+import React, { useState, useEffect } from "react";
 import { COLORS } from "../../lib/Colors";
-import SearchResultTable from './SearchResultTable';
-import {searchContactsByName } from "../../api_client/ContactClient"
+import SearchResultTable from "./SearchResultTable";
+import { searchContactsByName } from "../../api_client/ContactClient";
 import { InputBase } from "@material-ui/core";
-import { createStyles, alpha, Theme, makeStyles, useTheme } from '@material-ui/core/styles';
+import {
+  createStyles,
+  alpha,
+  Theme,
+  makeStyles,
+  useTheme,
+} from "@material-ui/core/styles";
 import useMediaQuery from "@material-ui/core/useMediaQuery";
 
 // MaterialUI Icons
 import SearchIcon from "@material-ui/icons/Search";
-import { IContact } from '../../lib/UnifiedDataType';
+import { IContact } from "../../lib/UnifiedDataType";
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -37,7 +43,7 @@ const useStyles = makeStyles((theme: Theme) =>
     searchIcon: {
       [theme.breakpoints.down("sm")]: {
         padding: theme.spacing(0, 1),
-      }, 
+      },
       padding: theme.spacing(0, 2),
       height: "100%",
       position: "absolute",
@@ -84,31 +90,31 @@ export default function Searchbar() {
   const ref = React.useRef() as React.MutableRefObject<HTMLInputElement>;
   const [isOpen, setIsOpen] = useState(false);
 
+  const DESKTOP_ROW_LIMIT = 5;
+  const MOBILE_ROW_LIMIT = 3;
+
   useOnClickOutside(ref, () => setIsOpen(false));
 
   //  function to handle a click outside (to hide the search results)
   //  reference: https://github.com/Pomax/react-onclickoutside/issues/310
   function useOnClickOutside(ref: any, handler: any) {
-    useEffect(
-      () => {
-        const listener = (event: any) => {
-          // Do nothing if clicking ref's element or descendent elements
-          if (!ref.current || ref.current.contains(event.target)) {
-            return;
-          } 
-          handler();
-        };
+    useEffect(() => {
+      const listener = (event: any) => {
+        // Do nothing if clicking ref's element or descendent elements
+        if (!ref.current || ref.current.contains(event.target)) {
+          return;
+        }
+        handler();
+      };
 
-        document.addEventListener('mousedown', listener);
-        document.addEventListener('touchstart', listener);
+      document.addEventListener("mousedown", listener);
+      document.addEventListener("touchstart", listener);
 
-        return () => {
-          document.removeEventListener('mousedown', listener);
-          document.removeEventListener('touchstart', listener);
-        };
-      },
-      [ref, handler]
-    );
+      return () => {
+        document.removeEventListener("mousedown", listener);
+        document.removeEventListener("touchstart", listener);
+      };
+    }, [ref, handler]);
   }
 
   // driver function for when a search string is inputted
@@ -123,8 +129,7 @@ export default function Searchbar() {
     try {
       const fetchedPredictions = await searchContactsByName(searchString);
       console.log(fetchedPredictions);
-      setPredictiveResults(fetchedPredictions); 
-     
+      setPredictiveResults(fetchedPredictions);
     } catch (e) {
       // TODO: Display error to user on webpage
       console.log(e);
@@ -142,7 +147,7 @@ export default function Searchbar() {
           <InputBase
             placeholder="Search..."
             classes={{
-              input: classes.inputInput
+              input: classes.inputInput,
             }}
             onChange={(event) => handleNewSearchString(event)}
             inputProps={{ "aria-label": "search" }}
@@ -151,20 +156,38 @@ export default function Searchbar() {
           <InputBase
             placeholder="Search..."
             classes={{
-              input: classes.inputInput
+              input: classes.inputInput,
             }}
             onChange={(event) => handleNewSearchString(event)}
             inputProps={{ "aria-label": "search" }}
           />
         )}
-        {(isOpen && searchString.length > 0) ? (
-          <div className={classes.resultsTable} style={{zIndex:MAX_ZINDEX}} > 
-            <SearchResultTable searchResults={predictiveResults.slice(0,5)} />
-          </div>
-          ): (
-            <>
-            </>
-          )}
+        {isOpen && searchString.length > 0
+          ? [
+              isMobile ? (
+                <div
+                  className={classes.resultsTable}
+                  style={{ zIndex: MAX_ZINDEX }}
+                >
+                  <SearchResultTable
+                    searchResults={predictiveResults.slice(0, MOBILE_ROW_LIMIT)}
+                  />
+                </div>
+              ) : (
+                <div
+                  className={classes.resultsTable}
+                  style={{ zIndex: MAX_ZINDEX }}
+                >
+                  <SearchResultTable
+                    searchResults={predictiveResults.slice(
+                      0,
+                      DESKTOP_ROW_LIMIT
+                    )}
+                  />
+                </div>
+              ),
+            ]
+          : [<></>]}
       </div>
     </div>
   );

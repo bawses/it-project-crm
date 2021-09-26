@@ -12,7 +12,6 @@ import Searchbar from "./Searchbar";
 import { useRouter } from "next/router";
 import Tooltip from "@material-ui/core/Tooltip";
 import HomeButton from "../buttons/HomeButton";
-import TextButton from "../buttons/TextButton";
 
 import AccountCircleIcon from "@material-ui/icons/AccountCircle";
 import CollectionsBookmarkIcon from "@material-ui/icons/CollectionsBookmark";
@@ -31,12 +30,6 @@ const useStyles = makeStyles((theme: Theme) =>
       },
     },
     title: {
-      // [theme.breakpoints.up("md")]: {
-      //   flexGrow: 0.3,
-      // },
-      // [theme.breakpoints.up("md")]: {
-      //   flexGrow: 0.5,
-      // },
       padding: 0,
     },
     sectionDesktop: {
@@ -77,10 +70,6 @@ export default function Navbar({ pageType = "personal" }: NavbarProps) {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("xs"));
   const router = useRouter();
-
-  const handleRedirect = () => {
-    router.push("/contacts");
-  };
 
   return (
     <div className={classes.root}>
