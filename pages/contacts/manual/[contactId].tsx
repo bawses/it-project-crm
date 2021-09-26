@@ -141,6 +141,7 @@ export default function ViewManualContact() {
           notes: editedNotes,
         };
         const updatedContact = await updateContact(initialContactData, updateObject);
+        console.log("After updating notes");
         console.log(updatedContact);
         setNotes(updatedContact.notes ?? "");
         setEditedNotes(updatedContact.notes ?? "");
