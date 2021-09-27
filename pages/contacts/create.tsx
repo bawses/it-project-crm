@@ -1,4 +1,4 @@
-import { Paper, Container, Typography, makeStyles, TextField, Button, IconButton } from "@material-ui/core";
+import { Paper, Container, Typography, makeStyles, TextField } from "@material-ui/core";
 import { Business } from "@material-ui/icons";
 import Image from "next/image";
 import DEFAULT_IMAGE from "../../assets/blank-profile-picture-973460_640.png";
@@ -143,7 +143,11 @@ export default function CreateContact() {
   };
 
   const createNewContact = async () => {
-    /** TODO: input validation, don't create empty contacts */
+    /** TODO: make alert or pop up if missing required fields */
+    if (!!fieldValues.firstName === false && !!fieldValues.lastName === false) {
+      console.log("Error: must enter first or last name");
+      return;
+    }
     const contactToCreate: IManualContact_Create = {
       name: {
         firstName: fieldValues.firstName,

@@ -1,17 +1,16 @@
 import { Container, Typography, makeStyles } from "@material-ui/core";
 import Image from "next/image";
 import DEFAULT_IMAGE from "../../assets/blank-profile-picture-973460_640.png";
-import { useState, useEffect, useCallback, useRef } from "react";
+import { useState, useEffect, useCallback } from "react";
 import ProfileOptions from "../../components/buttons/ProfileOptions";
 import ContactDetails from "../../components/cards/ContactDetails";
 import ContactHeader from "../../components/cards/ContactHeader";
-import { updateUser } from "../../api_client/UserQueries";
 import Layout from "../../components/navLayout/Layout";
 import { useRouter } from "next/router";
 import PageLoadingBar from "../../components/PageLoadingBar";
-import { OnChangeValue } from "react-select";
 import { getSession } from "next-auth/client";
 import { IUser } from "../../lib/DataTypes";
+import { getUser } from "../../api_client/UserClient";
 
 const useStyles = makeStyles((theme) => ({
   containerStyle: {
@@ -57,11 +56,23 @@ const useStyles = makeStyles((theme) => ({
 
 export default function Profile() {
   const classes = useStyles();
-  const [fieldValues, setFieldValues] = useState<IUser>();
+  const [profileData, setProfileData] = useState<IUser>();
   const [isLoading, setIsLoading] = useState(true);
   const router = useRouter();
 
-  const fetchProfileDetails = useCallback(async () => {}, []);
+  const fetchProfileDetails = useCallback(async () => {
+    try {
+      setIsLoading(true);
+      const fetchedData = await getUser();
+      setProfileData(fetchedData);
+      console.log(fetchedData);
+      setIsLoading(false);
+    } catch (e) {
+      /** TODO: redirect to error page */
+      console.log(e);
+      setIsLoading(false);
+    }
+  }, []);
 
   useEffect(() => {
     fetchProfileDetails();
@@ -86,6 +97,7 @@ export default function Profile() {
       <Container className={classes.containerStyle}>
         <ProfileOptions
           onPressSettings={() => router.push("/profile/settings")}
+          onPressEdit={() => router.push("/profile/edit")}
         />
         <div className={classes.primaryDetailsStyle}>
           <Container className={classes.profilePicDiv}>
@@ -96,19 +108,19 @@ export default function Profile() {
             />
           </Container>
           <ContactHeader
-            firstName={fieldValues?.name.firstName}
-            lastName={fieldValues?.name.lastName}
-            title={fieldValues?.job}
+            firstName={profileData?.name.firstName}
+            lastName={profileData?.name.lastName}
+            title={profileData?.job}
             primaryOrg={
-              fieldValues?.organisations &&
-              fieldValues?.organisations.length > 0
-                ? fieldValues?.organisations[0]
+              profileData?.organisations &&
+              profileData?.organisations.length > 0
+                ? profileData?.organisations[0]
                 : ""
             }
             secondaryOrg={
-              fieldValues?.organisations &&
-              fieldValues?.organisations.length > 1
-                ? fieldValues?.organisations[1]
+              profileData?.organisations &&
+              profileData?.organisations.length > 1
+                ? profileData?.organisations[1]
                 : ""
             }
             showStar={false}
@@ -116,7 +128,7 @@ export default function Profile() {
         </div>
 
         <div className={classes.detailsAndNotes}>
-          <ContactDetails fieldValues={fieldValues} />
+          <ContactDetails fieldValues={profileData} />
         </div>
       </Container>
     </Layout>

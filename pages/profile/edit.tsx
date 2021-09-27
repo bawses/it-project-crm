@@ -5,12 +5,11 @@ import {
   makeStyles,
   TextField,
   Button,
-  IconButton,
 } from "@material-ui/core";
 import { Business } from "@material-ui/icons";
 import Image from "next/image";
 import DEFAULT_IMAGE from "../../assets/blank-profile-picture-973460_640.png";
-import React, { SyntheticEvent, useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { OnChangeValue } from "react-select";
 import EditContactOptions from "../../components/buttons/EditContactOptions";
 import ExtraField from "../../components/input/ExtraField";
@@ -18,13 +17,15 @@ import ResponsiveFieldPair from "../../components/input/ResponsiveFieldPair";
 import VerticalFieldPair from "../../components/input/VerticalFieldPair";
 import LocationSelector from "../../components/input/LocationSelector";
 import AddFieldSelector from "../../components/input/AddFieldSelector";
-import { IUser } from "../../lib/DataTypes";
 import Layout from "../../components/navLayout/Layout";
 import PageLoadingBar from "../../components/PageLoadingBar";
 import { useRouter } from "next/router";
 import { getSession } from "next-auth/client";
 import TextButton from "../../components/buttons/TextButton";
 import { COLORS } from "../../lib/Colors";
+import { IUser_Update } from "../../lib/DataTypes_Update";
+import { getUser, updateUser } from "../../api_client/UserClient";
+import { IUser } from "../../lib/DataTypes";
 
 const useStyles = makeStyles((theme) => ({
   containerStyle: {
@@ -228,44 +229,161 @@ export default function EditProfile() {
     );
   };
 
+  const extractFieldValues = (fetchedData: IUser) => {
+    return {
+      firstName: fetchedData.name.firstName ?? "",
+      lastName: fetchedData.name.lastName ?? "",
+      title: fetchedData.job ?? "",
+      primaryOrg:
+        fetchedData.organisations &&
+        fetchedData.organisations.length > 0 &&
+        fetchedData.organisations[0]
+          ? fetchedData.organisations[0]
+          : "",
+      secondaryOrg:
+        fetchedData.organisations &&
+        fetchedData.organisations.length > 1 &&
+        fetchedData.organisations[1]
+          ? fetchedData.organisations[1]
+          : "",
+      primaryEmail:
+        fetchedData.email &&
+        fetchedData.email.length > 0 &&
+        fetchedData.email[0]
+          ? fetchedData.email[0]
+          : "",
+      secondaryEmail:
+        fetchedData.email &&
+        fetchedData.email.length > 1 &&
+        fetchedData.email[1]
+          ? fetchedData.email[1]
+          : "",
+      primaryPhone:
+        fetchedData.phone &&
+        fetchedData.phone.length > 0 &&
+        fetchedData.phone[0]
+          ? fetchedData.phone[0]
+          : "",
+      secondaryPhone:
+        fetchedData.phone &&
+        fetchedData.phone.length > 1 &&
+        fetchedData.phone[1]
+          ? fetchedData.phone[1]
+          : "",
+      address: "",
+    };
+  };
+
+  const extractExtraFields = (fetchedData: IUser) => {
+    let extraLinks = [];
+    if (fetchedData.links?.facebook) {
+      extraLinks.push({
+        fieldType: "Facebook",
+        fieldValue: fetchedData.links?.facebook,
+      });
+    }
+    if (fetchedData.links?.instagram) {
+      extraLinks.push({
+        fieldType: "Instagram",
+        fieldValue: fetchedData.links?.instagram,
+      });
+    }
+    if (fetchedData.links?.linkedIn) {
+      extraLinks.push({
+        fieldType: "LinkedIn",
+        fieldValue: fetchedData.links?.linkedIn,
+      });
+    }
+    if (fetchedData.links?.twitter) {
+      extraLinks.push({
+        fieldType: "Twitter",
+        fieldValue: fetchedData.links?.twitter,
+      });
+    }
+    if (fetchedData.links?.website) {
+      extraLinks.push({
+        fieldType: "Website",
+        fieldValue: fetchedData.links?.website,
+      });
+    }
+    if (fetchedData.links?.other) {
+      const otherLinks = fetchedData.links?.other.map((link) => ({
+        fieldType: "Other",
+        fieldValue: link,
+      }));
+      extraLinks = [...extraLinks, ...otherLinks];
+    }
+    return extraLinks;
+  };
+
+  const loadProfileData = useCallback(async () => {
+    try {
+      setIsLoading(true);
+      const fetchedData = await getUser();
+      console.log(fetchedData);
+      setLocation(
+        fetchedData.location
+          ? { value: fetchedData.location, label: fetchedData.location }
+          : null
+      );
+      const initialFieldValues = extractFieldValues(fetchedData);
+      setFieldValues(initialFieldValues);
+      const extraLinks = extractExtraFields(fetchedData);
+      setExtraFields(extraLinks);
+      /** TODO: set initial profile picture */
+      setIsLoading(false);
+    } catch (e) {
+      /** TODO: redirect to error page */
+      console.log(e);
+      setIsLoading(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    loadProfileData();
+  }, [loadProfileData]);
+
   const updateProfileDetails = async () => {
-    /** TODO: input validation, don't create empty contacts */
-    // const detailsToUpdate: IUser = {
-    //   name: {
-    //     firstName: fieldValues.firstName,
-    //     lastName: fieldValues.lastName,
-    //   },
-    //   email: [fieldValues.primaryEmail, fieldValues.secondaryEmail],
-    //   phone: [fieldValues.primaryPhone, fieldValues.secondaryPhone],
-    //   job: fieldValues.title,
-    //   location: location?.value,
-    //   links: {
-    //     facebook: extraFields.find((field) => field.fieldType === "Facebook")
-    //       ?.fieldValue,
-    //     linkedIn: extraFields.find((field) => field.fieldType === "LinkedIn")
-    //       ?.fieldValue,
-    //     instagram: extraFields.find((field) => field.fieldType === "Instagram")
-    //       ?.fieldValue,
-    //     twitter: extraFields.find((field) => field.fieldType === "Twitter")
-    //       ?.fieldValue,
-    //     website: extraFields.find((field) => field.fieldType === "Website")
-    //       ?.fieldValue,
-    //     other: extraFields
-    //       .filter((field) => field.fieldType === "Other")
-    //       .map((other) => other.fieldValue),
-    //   },
-    //   organisations: [fieldValues.primaryOrg, fieldValues.secondaryOrg],
-    // };
-    // try {
-    //   setIsLoading(true);
-    //   const updatedUser = await createManualContact(contactToCreate);
-    //   console.log(newContact);
-    //   router.replace(`/contacts/${newContact?._id}`);
-    //   setIsLoading(false);
-    // } catch (e: any) {
-    //   console.log(e);
-    //   setIsLoading(false);
-    // }
+    /** TODO: make alert or pop up if missing required fields */
+    if (!!fieldValues.firstName === false || !!fieldValues.lastName === false) {
+      console.log("Error: must enter first and last name");
+      return;
+    }
+    const detailsToUpdate: IUser_Update = {
+      name: {
+        firstName: fieldValues.firstName,
+        lastName: fieldValues.lastName,
+      },
+      email: [fieldValues.primaryEmail, fieldValues.secondaryEmail],
+      phone: [fieldValues.primaryPhone, fieldValues.secondaryPhone],
+      job: fieldValues.title,
+      location: location ? location.value : "",
+      links: {
+        facebook: extraFields.find((field) => field.fieldType === "Facebook")
+          ?.fieldValue,
+        linkedIn: extraFields.find((field) => field.fieldType === "LinkedIn")
+          ?.fieldValue,
+        instagram: extraFields.find((field) => field.fieldType === "Instagram")
+          ?.fieldValue,
+        twitter: extraFields.find((field) => field.fieldType === "Twitter")
+          ?.fieldValue,
+        website: extraFields.find((field) => field.fieldType === "Website")
+          ?.fieldValue,
+        other: extraFields
+          .filter((field) => field.fieldType === "Other")
+          .map((other) => other.fieldValue),
+      },
+      organisations: [fieldValues.primaryOrg, fieldValues.secondaryOrg],
+    };
+    try {
+      setIsLoading(true);
+      const updatedUser = await updateUser(detailsToUpdate);
+      router.replace("/profile");
+      setIsLoading(false);
+    } catch (e: any) {
+      console.log(e);
+      setIsLoading(false);
+    }
   };
 
   const deleteField = (index: number, fieldType: string) => {
@@ -347,6 +465,7 @@ export default function EditProfile() {
                 rightOnChange={(event) =>
                   handleChange("lastName", event.target.value)
                 }
+                required={true}
               />
               <TextField
                 size="small"
@@ -354,7 +473,7 @@ export default function EditProfile() {
                 id="title"
                 label="Title"
                 fullWidth
-                value={fieldValues.title}
+                value={fieldValues.title || ""}
                 onChange={(event) => handleChange("title", event.target.value)}
                 className={classes.topSpacing}
               />
@@ -365,10 +484,10 @@ export default function EditProfile() {
               <ResponsiveFieldPair
                 leftId="primaryOrganisation"
                 leftLabel="Primary organisation"
-                leftValue={fieldValues.primaryOrg}
+                leftValue={fieldValues.primaryOrg || ""}
                 rightId="secondaryOrganisation"
                 rightLabel="Secondary organisation"
-                rightValue={fieldValues.secondaryOrg}
+                rightValue={fieldValues.secondaryOrg || ""}
                 leftOnChange={(event) =>
                   handleChange("primaryOrg", event.target.value)
                 }
@@ -387,10 +506,10 @@ export default function EditProfile() {
                 iconType="email"
                 topId="primaryEmail"
                 topLabel="Primary email"
-                topValue={fieldValues.primaryEmail}
+                topValue={fieldValues.primaryEmail || ""}
                 bottomId="secondaryEmail"
                 bottomLabel="Secondary email"
-                bottomValue={fieldValues.secondaryEmail}
+                bottomValue={fieldValues.secondaryEmail || ""}
                 topOnChange={(event: any) =>
                   handleChange("primaryEmail", event.target.value)
                 }
@@ -402,10 +521,10 @@ export default function EditProfile() {
                 iconType="phone"
                 topId="primaryPhone"
                 topLabel="Primary phone"
-                topValue={fieldValues.primaryPhone}
+                topValue={fieldValues.primaryPhone || ""}
                 bottomId="secondaryPhone"
                 bottomLabel="Secondary phone"
-                bottomValue={fieldValues.secondaryPhone}
+                bottomValue={fieldValues.secondaryPhone || ""}
                 topOnChange={(event: any) =>
                   handleChange("primaryPhone", event.target.value)
                 }
@@ -422,7 +541,7 @@ export default function EditProfile() {
                 id="workAddress"
                 label="Work address"
                 fullWidth
-                value={fieldValues.address}
+                value={fieldValues.address || ""}
                 onChange={(event) =>
                   handleChange("address", event.target.value)
                 }
@@ -440,6 +559,7 @@ export default function EditProfile() {
           <EditContactOptions
             onCancel={() => router.back()}
             onSubmit={handleSubmit}
+            submitLabel={"Save changes"}
           />
         </form>
       </Container>
