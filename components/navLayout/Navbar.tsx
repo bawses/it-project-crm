@@ -119,7 +119,7 @@ export default function Navbar({ pageType = "personal" }: NavbarProps) {
                 </Tooltip>
               </div>
 
-              <Tooltip title="Contact Directory">
+              <Tooltip title="Contacts">
                 <IconButton
                   className={classes.navButton}
                   color="inherit"
