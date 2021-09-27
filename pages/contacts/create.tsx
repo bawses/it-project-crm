@@ -10,13 +10,12 @@ import ResponsiveFieldPair from "../../components/input/ResponsiveFieldPair";
 import VerticalFieldPair from "../../components/input/VerticalFieldPair";
 import LocationSelector from "../../components/input/LocationSelector";
 import AddFieldSelector from "../../components/input/AddFieldSelector";
-import { createManualContact } from "../../api_client/ManualContactClient";
 import { IManualContact_Create } from "../../lib/DataTypes_Create";
 import Layout from "../../components/navLayout/Layout";
 import PageLoadingBar from "../../components/PageLoadingBar";
 import { useRouter } from "next/router";
 import { getSession } from "next-auth/client";
-import { Session } from "next-auth";
+import { createContact_Manual } from "../../api_client/ContactClient";
 
 const useStyles = makeStyles((theme) => ({
   containerStyle: {
@@ -175,9 +174,8 @@ export default function CreateContact() {
     };
     try {
       setIsLoading(true);
-      const newContact = await createManualContact(contactToCreate);
-      console.log(newContact);
-      router.replace(`/contacts/${newContact?._id}`);
+      const newContact = await createContact_Manual(contactToCreate);
+      router.replace(`/contacts/manual/${newContact._id}`);
       setIsLoading(false);
     } catch (e: any) {
       console.log(e);

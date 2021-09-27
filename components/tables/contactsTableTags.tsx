@@ -1,5 +1,7 @@
+import { useCallback, useEffect, useState } from "react";
 import Select, { OnChangeValue, StylesConfig } from "react-select";
 import makeAnimated from "react-select/animated";
+import { getAllTags } from "../../api_client/UserClient";
 import { COLORS } from "../../lib/Colors";
 
 export type SelectValue = { value: string; label: string };
@@ -10,20 +12,6 @@ interface ContactsTableTagsProps {
 }
 
 const animatedComponents = makeAnimated();
-
-const options = [
-  {
-    value: "Melbourne AI Conference 2019",
-    label: "Melbourne AI Conference 2019",
-  },
-  { value: "Finance", label: "Finance" },
-  { value: "Coworkers", label: "Coworkers" },
-  { value: "Friends", label: "Friends" },
-  { value: "Family", label: "Family" },
-  { value: "Google Conference 2056", label: "Google Conference 2056" },
-  { value: "Justice League", label: "Justice League" },
-  { value: "Superhero", label: "Superhero" },
-];
 
 const colourStyles: StylesConfig<any, true> = {
   menu: (provided) => ({ ...provided, zIndex: 9999 }),
@@ -41,13 +29,28 @@ export default function ContactsTableTags({
   instanceId,
   handleTagChange,
 }: ContactsTableTagsProps) {
+  const [tagOptions, setTagOptions] = useState<string[]>([]);
+
+  const fetchAllTags = useCallback(async () => {
+    try {
+      const allTags = await getAllTags();
+      setTagOptions(allTags);
+    } catch (e) {
+      console.log(e);
+    }
+  }, []);
+
+  useEffect(() => {
+    fetchAllTags();
+  }, [fetchAllTags]);
+
   return (
     <Select
       instanceId={instanceId}
       closeMenuOnSelect={false}
       components={animatedComponents}
       isMulti
-      options={options}
+      options={tagOptions.map((tag) => ({ value: tag, label: tag }))}
       styles={colourStyles}
       onChange={(value: OnChangeValue<SelectValue, true>, actionMeta) => {
         handleTagChange(value);
