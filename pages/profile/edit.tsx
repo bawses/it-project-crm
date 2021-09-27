@@ -349,6 +349,8 @@ export default function EditProfile() {
       console.log("Error: must enter first and last name");
       return;
     }
+    /** Remove any extra fields that are empty */
+    const finalExtraFields = extraFields.filter((field) => field.fieldValue !== "");
     const detailsToUpdate: IUser_Update = {
       name: {
         firstName: fieldValues.firstName,
@@ -359,17 +361,17 @@ export default function EditProfile() {
       job: fieldValues.title,
       location: location ? location.value : "",
       links: {
-        facebook: extraFields.find((field) => field.fieldType === "Facebook")
+        facebook: finalExtraFields.find((field) => field.fieldType === "Facebook")
           ?.fieldValue,
-        linkedIn: extraFields.find((field) => field.fieldType === "LinkedIn")
+        linkedIn: finalExtraFields.find((field) => field.fieldType === "LinkedIn")
           ?.fieldValue,
-        instagram: extraFields.find((field) => field.fieldType === "Instagram")
+        instagram: finalExtraFields.find((field) => field.fieldType === "Instagram")
           ?.fieldValue,
-        twitter: extraFields.find((field) => field.fieldType === "Twitter")
+        twitter: finalExtraFields.find((field) => field.fieldType === "Twitter")
           ?.fieldValue,
-        website: extraFields.find((field) => field.fieldType === "Website")
+        website: finalExtraFields.find((field) => field.fieldType === "Website")
           ?.fieldValue,
-        other: extraFields
+        other: finalExtraFields
           .filter((field) => field.fieldType === "Other")
           .map((other) => other.fieldValue),
       },
