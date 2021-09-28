@@ -14,7 +14,7 @@ import { getUser } from "../../api_client/UserClient";
 
 const useStyles = makeStyles((theme) => ({
   containerStyle: {
-    width: "100%",
+    width: "80%",
     marginTop: theme.spacing(5),
     marginBottom: theme.spacing(5),
     [theme.breakpoints.down("md")]: {
@@ -45,12 +45,6 @@ const useStyles = makeStyles((theme) => ({
   },
   profilePic: {
     borderRadius: "50%",
-  },
-  detailsAndNotes: {
-    width: "70%",
-    [theme.breakpoints.down("sm")]: {
-      width: "100%",
-    },
   },
 }));
 
@@ -127,9 +121,7 @@ export default function Profile() {
           />
         </div>
 
-        <div className={classes.detailsAndNotes}>
-          <ContactDetails fieldValues={profileData} />
-        </div>
+        <ContactDetails fieldValues={profileData} />
       </Container>
     </Layout>
   );

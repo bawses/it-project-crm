@@ -55,12 +55,12 @@ const useStyles = makeStyles((theme) => ({
     display: "flex",
     flexDirection: "column",
     width: "25%",
-    margin: theme.spacing(2),
+    margin: theme.spacing(1.5),
     [theme.breakpoints.down("sm")]: {
-      width: "30%",
+      width: "36%",
     },
     [theme.breakpoints.down("xs")]: {
-      width: "50%",
+      width: "64%",
     },
   },
   inputFields: {
@@ -101,7 +101,7 @@ const useStyles = makeStyles((theme) => ({
     backgroundColor: COLORS.primaryBlue,
     color: COLORS.white,
     fontWeight: "bold",
-    margin: "5px",
+    marginTop: "5px",
     textTransform: "none",
     fontSize: "1rem",
     "&:hover": {
@@ -169,7 +169,7 @@ export default function EditProfile() {
         component="label"
         className={classes.uploadImageBtn}
       >
-        Upload File
+        Upload image
         <input type="file" onChange={onUploadImage} hidden />
       </Button>
     );
