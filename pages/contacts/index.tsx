@@ -16,46 +16,46 @@ import { getContacts, updateContact } from '../../api_client/ContactClient';
 import { IContact } from '../../lib/UnifiedDataType';
 
 export const sortFunctions = {
-	[SortType.FirstName]: (a: IContact, b: IContact) =>
-		a.name.firstName > b.name.firstName ? 1 : -1,
-	[SortType.LastName]: (a: IContact, b: IContact) =>
-		a.name.lastName > b.name.lastName ? 1 : -1,
-	[SortType.Role]: (a: IContact, b: IContact) => {
-		if (!a.job) {
-			return 1;
-		}
-		if (!b.job) {
-			return -1;
-		}
-		if (a.job > b.job) {
-			return 1;
-		}
-		return -1;
-	},
+  [SortType.FirstName]: (a: IContact, b: IContact) =>
+    a.name.firstName > b.name.firstName ? 1 : -1,
+  [SortType.LastName]: (a: IContact, b: IContact) =>
+    a.name.lastName > b.name.lastName ? 1 : -1,
+  [SortType.Role]: (a: IContact, b: IContact) => {
+    if (!a.job) {
+      return 1;
+    }
+    if (!b.job) {
+      return -1;
+    }
+    if (a.job > b.job) {
+      return 1;
+    }
+    return -1;
+  },
 };
 
 // Swaps the given contact in the given contact list if it can find it, and then returns the list
 function swapContactInList(
-	contactList: IContact[],
-	contact: IContact
+  contactList: IContact[],
+  contact: IContact
 ) {
-	console.log("starting list", contactList);
-	if (contact._id === undefined) {
-		return contactList;
-	}
+  console.log("starting list", contactList);
+  if (contact._id === undefined) {
+    return contactList;
+  }
 
-	for (let i = 0; i < contactList.length; i++) {
-		if (contactList[i]._id) {
-			if (contactList[i]._id === contact._id) {
-				contactList[i] = contact;
-				console.log("Swapped element", contact);
-				break;
-			}
-		}
-	}
+  for (let i = 0; i < contactList.length; i++) {
+    if (contactList[i]._id) {
+      if (contactList[i]._id === contact._id) {
+        contactList[i] = contact;
+        console.log("Swapped element", contact);
+        break;
+      }
+    }
+  }
 
-	console.log("Final element");
-	return contactList;
+  console.log("Final element");
+  return contactList;
 }
 
 export default function Contacts() {
@@ -154,7 +154,7 @@ export default function Contacts() {
       // Optimistically set the state of the starred status to change the star color of the component
       setAllContacts(swapContactInList(newContactList, target))
 
-      const response = await updateContact(target, {starred: target.starred})
+      const response = await updateContact(target, { starred: target.starred })
       // Now reset the starred based on the actual database response
       setAllContacts(swapContactInList(newContactList, response))
       return true
@@ -198,7 +198,7 @@ export default function Contacts() {
           </Box>
           <Box boxShadow={3} borderRadius={8}>
             {/* List of contacts */}
-            <ContactsTable contacts={displayContacts} handleRowButtonClick={handleStarClick} />
+            <ContactsTable isAddVariant={false} contacts={displayContacts} handleRowButtonClick={handleStarClick} />
           </Box>
         </Box>
       </Box>

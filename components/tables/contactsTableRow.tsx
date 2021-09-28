@@ -1,4 +1,4 @@
-import { Avatar, Typography, TableRow, TableCell, IconButton, useMediaQuery, Color } from "@material-ui/core";
+import { Avatar, Typography, TableRow, TableCell, IconButton, useMediaQuery } from "@material-ui/core";
 import { useTheme } from "@material-ui/core/styles";
 import DEFAULT_IMAGE from "../../assets/blank-profile-picture-973460_640.png";
 import StarsIcon from '@material-ui/icons/Stars';
@@ -12,16 +12,10 @@ import { IContact } from "../../lib/UnifiedDataType";
 export interface ContactsTableRowProps {
   contact: IContact,
   starVariant?: { handleStar: (target: IContact) => Promise<boolean> },
-  addVariant?: { alreadyAdded: boolean, handleContactAdd: (target: IContact) => Promise<boolean> }
+  addVariant?: { handleContactAdd: (target: IContact) => Promise<boolean> }
 }
 
 const useStyles = makeStyles({
-  addBtn: {
-    textTransform: "none",
-    backgroundColor: COLORS.actionOrange,
-    color: COLORS.white,
-    fontWeight: "bold"
-  },
   row: {
     "&:hover": {
       cursor: 'pointer'
@@ -31,6 +25,10 @@ const useStyles = makeStyles({
 
 export default function ContactsTableRow({ contact, starVariant, addVariant }: ContactsTableRowProps) {
   const classes = useStyles()
+
+  // Adjust component based on screen size
+  const theme = useTheme()
+  const bigScreen = useMediaQuery(theme.breakpoints.up("md"))
 
   let buttonComponent: JSX.Element
   if (starVariant) {
@@ -50,15 +48,26 @@ export default function ContactsTableRow({ contact, starVariant, addVariant }: C
     )
   } else {
     // Determine text and status for add variant
+    let btnTitle = "Add"
+    let btnIsDisabled = false
+    if (contact.isManualContact) {
+      btnTitle = bigScreen ? "Manual Contact" : "Manual"
+      btnIsDisabled = true
+    } else if (contact.isAddedContact) {
+      btnTitle = "Added"
+      btnIsDisabled = true
+    }
+
     buttonComponent = (
       <TextButton
-        disabled={addVariant?.alreadyAdded}
-        className={classes.addBtn}
+        disabled={btnIsDisabled}
+        color={COLORS.actionOrange}
+        textColor={COLORS.white}
         onClick={(event) => {
           event.stopPropagation()
           addVariant?.handleContactAdd(contact)
         }}
-        title={addVariant?.alreadyAdded ? "Added" : "Add"}
+        title={btnTitle}
       />
     )
   }
@@ -66,10 +75,6 @@ export default function ContactsTableRow({ contact, starVariant, addVariant }: C
   const name = contact.name.firstName + " " + contact.name.lastName
   const nameComponent = <Typography component="p" style={{ fontWeight: 600 }}>{name}</Typography>
   const roleComponent = <Typography component="p">{contact.job}</Typography>
-
-  // Adjust component based on screen size
-  const theme = useTheme()
-  const bigScreen = useMediaQuery(theme.breakpoints.up("md"))
 
   return (
     <Link href={`contacts/${contact.isManualContact ? "manual/" : ""}${contact._id}`} passHref>
@@ -83,7 +88,7 @@ export default function ContactsTableRow({ contact, starVariant, addVariant }: C
           </>
           : <TableCell>{nameComponent} {roleComponent}</TableCell>
         }
-        <TableCell>{buttonComponent}</TableCell>
+        <TableCell width="20%" align="center">{buttonComponent}</TableCell>
       </TableRow>
     </Link>
   )

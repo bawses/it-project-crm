@@ -2,9 +2,7 @@ import { Box, Typography, useMediaQuery } from "@material-ui/core";
 import { useTheme } from "@material-ui/core/styles";
 import { useEffect, useMemo, useState } from "react";
 import Layout from "../../components/navLayout/Layout";
-import ContactsTable, {
-  IdToContactMap,
-} from "../../components/tables/contactsTable";
+import ContactsTable from "../../components/tables/contactsTable";
 import ContactsTableSort, {
   SortType,
 } from "../../components/tables/contactsTableSort";
@@ -14,7 +12,9 @@ import PageLoadingBar from "../../components/PageLoadingBar";
 import { useRouter } from "next/router";
 import { getSession } from "next-auth/client";
 import { IContact } from "../../lib/UnifiedDataType";
-import { getContacts } from "../../api_client/ContactClient";
+import { addContact_User, searchContactsByName } from "../../api_client/ContactClient";
+
+type IdToContactMap = Record<string, IContact>
 
 // Creates a map of contact ids to the respective contact
 function contactListToMap(contactList: IContact[]) {
@@ -28,54 +28,47 @@ function contactListToMap(contactList: IContact[]) {
   return contactMap;
 }
 
+// Returns an IdToContactMap of the search results for the given searchName if successful
 async function getSearchResults(
-  setSearchResults: (contacts: IContact[]) => void
+  searchName: string,
+  setSearchResults: (contacts: IdToContactMap) => void
 ) {
   try {
-    const data = await getContacts();
+    const data = await searchContactsByName(searchName)
     // Save all search results
-    setSearchResults(data);
+    setSearchResults(contactListToMap(data));
   } catch (error) {
     console.error("Error: Could not fetch search result data", error);
   }
 }
 
-async function getAddedContacts(
-  setAddedContacts: (contacts: IdToContactMap) => void
-) {
-  try {
-    const data = await getContacts();
-    // Save all added contacts as a map to their respective ids
-    setAddedContacts(contactListToMap(data));
-  } catch (error) {
-    console.error("Error: Could not fetch contact data", error);
-  }
-}
-
 export default function SearchPage() {
   const [sortValue, setSortValue] = useState<SortType>(SortType.None)
-  const [searchResults, setSearchResults] = useState<IContact[]>([])
-  const [addedContacts, setAddedContacts] = useState<IdToContactMap>({})
+  const [searchResults, setSearchResults] = useState<IdToContactMap>({})
   const [isLoading, setIsLoading] = useState(true);
   const router = useRouter()
 
+  // Get the search string
+  const searchParam = router.query
+
   // Get contacts data
   useEffect(() => {
-    setIsLoading(true)
-    // Placeholder for search results
-    getSearchResults(setSearchResults)
-
-    // Get contacts already added
-    getAddedContacts(setAddedContacts)
-    setIsLoading(false)
-  }, [])
+    (async () => {
+      // Do a global search for the given name and store the results
+      if (searchParam.name !== undefined) {
+        setIsLoading(true)
+        await getSearchResults(searchParam.name as string, setSearchResults)
+        setIsLoading(false)
+      }
+    })()
+  }, [searchParam])
 
   // Sort the contacts table based on changes to the sort value
   const displayData = useMemo(() => {
     if (sortValue !== SortType.None) {
-      return [...searchResults].sort(sortFunctions[sortValue])
+      return [...(Object.values(searchResults))].sort(sortFunctions[sortValue])
     }
-    return searchResults
+    return Object.values(searchResults)
   },
     [searchResults, sortValue]
   )
@@ -85,18 +78,22 @@ export default function SearchPage() {
   }
 
   async function handleContactAdd(target: IContact) {
-    if (target._id) {
-      //TODO: Send add request
-      // Database request code here
+    try {
+      // Add the new contact
+      setIsLoading(true)
+      const newContact = await addContact_User(target._id)
+      // Now modify current user id to contact map to reflect the change
+      const newMap = { ...searchResults }
+      newMap[newContact._id] = newContact
+      setSearchResults(newMap)
 
-      const newMap = { ...addedContacts }
-      newMap[target._id] = target
-      setAddedContacts(newMap)
-
+      // Success
+      setIsLoading(false)
       return true
+    } catch (error) {
+      console.error("Error: Failed to add contact", error)
+      return false
     }
-
-    return false
   }
 
   // Adjust components based on screen size
@@ -125,7 +122,7 @@ export default function SearchPage() {
           {
             bigScreen &&
             <Box fontSize={bigScreen ? 26 : 18} ml={bigScreen ? 0 : 1}>
-              Search results for: <strong>John</strong>
+              Search results for: <strong>{searchParam.name as string}</strong>
             </Box>
           }
           <Box display="flex" py={2}>
@@ -134,7 +131,7 @@ export default function SearchPage() {
                 !bigScreen &&
                 <>
                   <Typography component="p">Search results for:</Typography>
-                  <Typography component="p"><strong>John Appleseed</strong></Typography>
+                  <Typography component="p"><strong>{searchParam.name as string}</strong></Typography>
                 </>
               }
             </Box>
@@ -145,7 +142,7 @@ export default function SearchPage() {
           </Box>
           {/* Search results */}
           <Box boxShadow={3} borderRadius={8}>
-            <ContactsTable contacts={displayData} handleRowButtonClick={handleContactAdd} idToContactMap={addedContacts} />
+            <ContactsTable isAddVariant={true} contacts={displayData} handleRowButtonClick={handleContactAdd} />
           </Box>
         </Box>
         {bigScreen && <Box mt={18}><CreateContactButtonLarge /></Box>}

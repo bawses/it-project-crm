@@ -29,8 +29,8 @@ export default function TextButton({
       variant="contained"
       type={type}
       style={{
-        backgroundColor: color,
-        color: textColor,
+        backgroundColor: disabled ? COLORS.lightGrey : color,
+        color: disabled ? COLORS.black : textColor,
         fontWeight: "bold",
         margin: "5px",
         textTransform: "none",
