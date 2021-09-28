@@ -1,5 +1,5 @@
 /**
- * Search Result Table row 
+ * Search Result Table row
  */
 import {
   Avatar,
@@ -48,13 +48,17 @@ export default function SearchResultRow({ profile }: SearchResultRowProps) {
   const theme = useTheme();
   const bigScreen = useMediaQuery(theme.breakpoints.up("md"));
 
+  const handleClick = () => {
+    if (profile.isManualContact) {
+      router.push("/contacts/manual/" + profile._id);
+    } else {
+      router.push("/contacts/" + profile._id);
+    }
+  };
+
   return (
     <>
-      <TableRow
-        className={classes.row}
-        hover={true}
-        onClick={() => router.push("/contacts/" + profile._id)}
-      >
+      <TableRow className={classes.row} hover={true} onClick={handleClick}>
         <TableCell>
           <Avatar src={DEFAULT_IMAGE.src} />
         </TableCell>

@@ -24,6 +24,7 @@ export default function SearchResultsTable({
       rows.push(<SearchResultRow key={key} profile={profile} />);
     }
   } else {
+    const key = null;
     rows.push(<NoResultsRow />);
   }
 
