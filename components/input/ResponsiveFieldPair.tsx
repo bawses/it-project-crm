@@ -11,6 +11,7 @@ interface ResponsiveFieldPairProps {
   rightValue: string;
   leftOnChange: (event: any) => void;
   rightOnChange: (event: any) => void;
+  required?: boolean;
 }
 
 export default function ResponsiveFieldPair({
@@ -23,6 +24,7 @@ export default function ResponsiveFieldPair({
   rightValue,
   leftOnChange,
   rightOnChange,
+  required = false,
 }: ResponsiveFieldPairProps) {
   const classes = useStyles();
 
@@ -37,6 +39,7 @@ export default function ResponsiveFieldPair({
           fullWidth
           value={leftValue}
           onChange={leftOnChange}
+          required={required}
         />
       </div>
       <div className={classes.responsiveField}>
@@ -48,6 +51,7 @@ export default function ResponsiveFieldPair({
           fullWidth
           value={rightValue}
           onChange={rightOnChange}
+          required={required}
         />
       </div>
     </div>

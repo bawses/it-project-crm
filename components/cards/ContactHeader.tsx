@@ -10,6 +10,7 @@ interface ContactHeaderProps {
   title?: string;
   primaryOrg?: string;
   secondaryOrg?: string;
+  showStar?: boolean;
   starred?: boolean;
   onStar?: () => void;
 }
@@ -20,6 +21,7 @@ export default function ContactHeader({
   title = "",
   primaryOrg = "",
   secondaryOrg = "",
+  showStar = true,
   starred = false,
   onStar = () => {},
 }: ContactHeaderProps) {
@@ -31,10 +33,10 @@ export default function ContactHeader({
         <Typography variant="h5" component="h1">
           {firstName} {lastName}
         </Typography>
-        <IconButton onClick={onStar}>
+        {showStar && <IconButton onClick={onStar}>
           {!starred && <StarsIcon style={{ fontSize: 35, color: COLORS.inactiveGrey }} />}
           {starred && <StarIcon style={{ fontSize: 35, color: COLORS.starredYellow }} />}
-        </IconButton>
+        </IconButton>}
       </div>
       <Typography variant="h6" component="h2">
         {title}
