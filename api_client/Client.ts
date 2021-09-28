@@ -142,7 +142,8 @@ const doSearch = async <T_output>(dataType: DataType, searchObj: any) => {
       },
       body: body,
     });
-
+    // console.log(response);
+    
     // Throw error with status code in case Fetch API call failed
     if (!response.ok) throw new Error(`${response.status}`);
 

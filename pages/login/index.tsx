@@ -1,6 +1,7 @@
+// Login Page that redirects to Home/Contacts Page
+
 import { useRouter } from "next/router";
 import Link from "next/link";
-import Layout from "../../components/navLayout/Layout";
 import { getSession, signIn } from "next-auth/client";
 import React, { useEffect, useState, ChangeEvent, MouseEvent } from "react";
 import useMediaQuery from "@material-ui/core/useMediaQuery";
