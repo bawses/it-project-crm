@@ -9,6 +9,7 @@ interface ButtonProps {
   href?: string;
   disabled?: boolean,
   onClick?:
+  | (() => void)
   | ((event: React.SyntheticEvent) => void)
   | ((event: React.SyntheticEvent) => Promise<void>);
   className?: string | undefined;

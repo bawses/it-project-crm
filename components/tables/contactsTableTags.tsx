@@ -1,14 +1,14 @@
 import { useCallback, useEffect, useState } from "react";
-import Select, { OnChangeValue, StylesConfig } from "react-select"
-import makeAnimated from "react-select/animated"
+import Select, { OnChangeValue, StylesConfig } from "react-select";
+import makeAnimated from "react-select/animated";
 import { getAllTags } from "../../api_client/UserClient";
 import { COLORS } from "../../lib/Colors";
 
-export type SelectValue = { value: string, label: string }
+export type SelectValue = { value: string; label: string };
 
 interface ContactsTableTagsProps {
-  instanceId: string,
-  handleTagChange: (newTags: OnChangeValue<SelectValue, true>) => void
+  instanceId: string;
+  handleTagChange: (newTags: OnChangeValue<SelectValue, true>) => void;
 }
 
 const animatedComponents = makeAnimated();
@@ -17,15 +17,18 @@ const colourStyles: StylesConfig<any, true> = {
   menu: (provided) => ({ ...provided, zIndex: 9999 }),
   option: (provided, state) => ({
     ...provided,
-    color: state.data.color
+    color: state.data.color,
   }),
   multiValue: (provided) => ({
     ...provided,
-    backgroundColor: COLORS.primaryBlueLight
-  })
-}
+    backgroundColor: COLORS.primaryBlueLight,
+  }),
+};
 
-export default function ContactsTableTags({ instanceId, handleTagChange }: ContactsTableTagsProps) {
+export default function ContactsTableTags({
+  instanceId,
+  handleTagChange,
+}: ContactsTableTagsProps) {
   const [tagOptions, setTagOptions] = useState<string[]>([]);
 
   const fetchAllTags = useCallback(async () => {
@@ -39,8 +42,7 @@ export default function ContactsTableTags({ instanceId, handleTagChange }: Conta
 
   useEffect(() => {
     fetchAllTags();
-  }
-    , [fetchAllTags]);
+  }, [fetchAllTags]);
 
   return (
     <Select
@@ -52,7 +54,9 @@ export default function ContactsTableTags({ instanceId, handleTagChange }: Conta
       isMulti
       options={tagOptions.map((tag) => ({ value: tag, label: tag }))}
       styles={colourStyles}
-      onChange={(value: OnChangeValue<SelectValue, true>, actionMeta) => { handleTagChange(value) }}
+      onChange={(value: OnChangeValue<SelectValue, true>, actionMeta) => {
+        handleTagChange(value);
+      }}
     />
-  )
+  );
 }
