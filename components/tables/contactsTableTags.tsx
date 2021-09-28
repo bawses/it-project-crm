@@ -40,15 +40,17 @@ export default function ContactsTableTags({ instanceId, handleTagChange }: Conta
   useEffect(() => {
     fetchAllTags();
   }
-  ,[fetchAllTags]);
+    , [fetchAllTags]);
 
   return (
     <Select
       instanceId={instanceId}
       closeMenuOnSelect={false}
+      placeholder="Select tag(s)..."
+      noOptionsMessage={() => "No other tags remaining. Create more in the profile of any of your contacts"}
       components={animatedComponents}
       isMulti
-      options={tagOptions.map((tag) => ({value: tag, label: tag}))}
+      options={tagOptions.map((tag) => ({ value: tag, label: tag }))}
       styles={colourStyles}
       onChange={(value: OnChangeValue<SelectValue, true>, actionMeta) => { handleTagChange(value) }}
     />
