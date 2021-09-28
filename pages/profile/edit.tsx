@@ -1,8 +1,15 @@
-import { Paper, Container, Typography, makeStyles, TextField } from "@material-ui/core";
+import {
+  Paper,
+  Container,
+  Typography,
+  makeStyles,
+  TextField,
+  Button,
+} from "@material-ui/core";
 import { Business } from "@material-ui/icons";
 import Image from "next/image";
 import DEFAULT_IMAGE from "../../assets/blank-profile-picture-973460_640.png";
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { OnChangeValue } from "react-select";
 import EditContactOptions from "../../components/buttons/EditContactOptions";
 import ExtraField from "../../components/input/ExtraField";
@@ -10,12 +17,15 @@ import ResponsiveFieldPair from "../../components/input/ResponsiveFieldPair";
 import VerticalFieldPair from "../../components/input/VerticalFieldPair";
 import LocationSelector from "../../components/input/LocationSelector";
 import AddFieldSelector from "../../components/input/AddFieldSelector";
-import { IManualContact_Create } from "../../lib/DataTypes_Create";
 import Layout from "../../components/navLayout/Layout";
 import PageLoadingBar from "../../components/PageLoadingBar";
 import { useRouter } from "next/router";
 import { getSession } from "next-auth/client";
-import { createContact_Manual } from "../../api_client/ContactClient";
+import TextButton from "../../components/buttons/TextButton";
+import { COLORS } from "../../lib/Colors";
+import { IUser_Update } from "../../lib/DataTypes_Update";
+import { getUser, updateUser } from "../../api_client/UserClient";
+import { IUser } from "../../lib/DataTypes";
 
 const useStyles = makeStyles((theme) => ({
   containerStyle: {
@@ -42,13 +52,15 @@ const useStyles = makeStyles((theme) => ({
     },
   },
   profilePicDiv: {
+    display: "flex",
+    flexDirection: "column",
     width: "25%",
-    margin: theme.spacing(2),
+    margin: theme.spacing(1.5),
     [theme.breakpoints.down("sm")]: {
-      width: "30%",
+      width: "36%",
     },
     [theme.breakpoints.down("xs")]: {
-      width: "50%",
+      width: "64%",
     },
   },
   inputFields: {
@@ -85,6 +97,17 @@ const useStyles = makeStyles((theme) => ({
       padding: theme.spacing(3),
     },
   },
+  uploadImageBtn: {
+    backgroundColor: COLORS.primaryBlue,
+    color: COLORS.white,
+    fontWeight: "bold",
+    marginTop: "5px",
+    textTransform: "none",
+    fontSize: "1rem",
+    "&:hover": {
+      backgroundColor: COLORS.primaryBlue,
+    },
+  },
 }));
 
 type ContactDetailsType = {
@@ -105,7 +128,7 @@ export type ExtraFieldType = {
   fieldValue: string;
 };
 
-export default function CreateContact() {
+export default function EditProfile() {
   const classes = useStyles();
   const [location, setLocation] = useState<OnChangeValue<
     { value: string; label: string },
@@ -125,16 +148,80 @@ export default function CreateContact() {
   });
   const [extraFields, setExtraFields] = useState<ExtraFieldType[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+
+  const [imageFile, setImageFile] = useState("");
+
   const router = useRouter();
 
-  const fieldCreator = (index: number, fieldType: string, fieldValue: string) => {
+  // On file select (from the pop up)
+  const onUploadImage = (event: any) => {
+    setImageFile(URL.createObjectURL(event.target.files[0]));
+  };
+
+  const removeProfileImage = () => {
+    setImageFile("");
+  };
+
+  const imageUploadForm = () => {
+    return (
+      <Button
+        variant="contained"
+        component="label"
+        className={classes.uploadImageBtn}
+      >
+        Upload image
+        <input type="file" onChange={onUploadImage} hidden />
+      </Button>
+    );
+  };
+
+  const imageUploadContent = () => {
+    if (imageFile) {
+      return (
+        <>
+          <Image
+            className={classes.profilePic}
+            src={imageFile}
+            alt="Uploaded image"
+            width={300}
+            height={300}
+          />
+          <TextButton
+            title="Remove"
+            onClick={removeProfileImage}
+            color={COLORS.actionOrange}
+            textColor={COLORS.white}
+          />
+        </>
+      );
+    } else {
+      return (
+        <>
+          <Image
+            className={classes.profilePic}
+            src={DEFAULT_IMAGE}
+            alt="Profile picture"
+          />
+          {imageUploadForm()}
+        </>
+      );
+    }
+  };
+
+  const fieldCreator = (
+    index: number,
+    fieldType: string,
+    fieldValue: string
+  ) => {
     return (
       <ExtraField
         key={index.toString()}
         index={index}
         fieldType={fieldType}
         fieldValue={fieldValue}
-        handleChange={(event) => handleExtraField(fieldType, event.target.value, index)}
+        handleChange={(event) =>
+          handleExtraField(fieldType, event.target.value, index)
+        }
         onPressDelete={() => {
           deleteField(index, fieldType);
         }}
@@ -142,15 +229,129 @@ export default function CreateContact() {
     );
   };
 
-  const createNewContact = async () => {
+  const extractFieldValues = (fetchedData: IUser) => {
+    return {
+      firstName: fetchedData.name.firstName ?? "",
+      lastName: fetchedData.name.lastName ?? "",
+      title: fetchedData.job ?? "",
+      primaryOrg:
+        fetchedData.organisations &&
+        fetchedData.organisations.length > 0 &&
+        fetchedData.organisations[0]
+          ? fetchedData.organisations[0]
+          : "",
+      secondaryOrg:
+        fetchedData.organisations &&
+        fetchedData.organisations.length > 1 &&
+        fetchedData.organisations[1]
+          ? fetchedData.organisations[1]
+          : "",
+      primaryEmail:
+        fetchedData.email &&
+        fetchedData.email.length > 0 &&
+        fetchedData.email[0]
+          ? fetchedData.email[0]
+          : "",
+      secondaryEmail:
+        fetchedData.email &&
+        fetchedData.email.length > 1 &&
+        fetchedData.email[1]
+          ? fetchedData.email[1]
+          : "",
+      primaryPhone:
+        fetchedData.phone &&
+        fetchedData.phone.length > 0 &&
+        fetchedData.phone[0]
+          ? fetchedData.phone[0]
+          : "",
+      secondaryPhone:
+        fetchedData.phone &&
+        fetchedData.phone.length > 1 &&
+        fetchedData.phone[1]
+          ? fetchedData.phone[1]
+          : "",
+      address: "",
+    };
+  };
+
+  const extractExtraFields = (fetchedData: IUser) => {
+    let extraLinks = [];
+    if (fetchedData.links?.facebook) {
+      extraLinks.push({
+        fieldType: "Facebook",
+        fieldValue: fetchedData.links?.facebook,
+      });
+    }
+    if (fetchedData.links?.instagram) {
+      extraLinks.push({
+        fieldType: "Instagram",
+        fieldValue: fetchedData.links?.instagram,
+      });
+    }
+    if (fetchedData.links?.linkedIn) {
+      extraLinks.push({
+        fieldType: "LinkedIn",
+        fieldValue: fetchedData.links?.linkedIn,
+      });
+    }
+    if (fetchedData.links?.twitter) {
+      extraLinks.push({
+        fieldType: "Twitter",
+        fieldValue: fetchedData.links?.twitter,
+      });
+    }
+    if (fetchedData.links?.website) {
+      extraLinks.push({
+        fieldType: "Website",
+        fieldValue: fetchedData.links?.website,
+      });
+    }
+    if (fetchedData.links?.other) {
+      const otherLinks = fetchedData.links?.other.map((link) => ({
+        fieldType: "Other",
+        fieldValue: link,
+      }));
+      extraLinks = [...extraLinks, ...otherLinks];
+    }
+    return extraLinks;
+  };
+
+  const loadProfileData = useCallback(async () => {
+    try {
+      setIsLoading(true);
+      const fetchedData = await getUser();
+      console.log(fetchedData);
+      setLocation(
+        fetchedData.location
+          ? { value: fetchedData.location, label: fetchedData.location }
+          : null
+      );
+      const initialFieldValues = extractFieldValues(fetchedData);
+      setFieldValues(initialFieldValues);
+      const extraLinks = extractExtraFields(fetchedData);
+      setExtraFields(extraLinks);
+      /** TODO: set initial profile picture */
+      setIsLoading(false);
+    } catch (e) {
+      /** TODO: redirect to error page */
+      console.log(e);
+      setIsLoading(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    loadProfileData();
+  }, [loadProfileData]);
+
+  const updateProfileDetails = async () => {
     /** TODO: make alert or pop up if missing required fields */
-    if (!!fieldValues.firstName === false && !!fieldValues.lastName === false) {
-      console.log("Error: must enter first or last name");
+    if (!!fieldValues.firstName === false || !!fieldValues.lastName === false) {
+      console.log("Error: must enter first and last name");
       return;
     }
     /** Remove any extra fields that are empty */
     const finalExtraFields = extraFields.filter((field) => field.fieldValue !== "");
-    const contactToCreate: IManualContact_Create = {
+    const detailsToUpdate: IUser_Update = {
       name: {
         firstName: fieldValues.firstName,
         lastName: fieldValues.lastName,
@@ -158,7 +359,7 @@ export default function CreateContact() {
       email: [fieldValues.primaryEmail, fieldValues.secondaryEmail],
       phone: [fieldValues.primaryPhone, fieldValues.secondaryPhone],
       job: fieldValues.title,
-      location: location?.value,
+      location: location ? location.value : "",
       links: {
         facebook: finalExtraFields.find((field) => field.fieldType === "Facebook")
           ?.fieldValue,
@@ -175,13 +376,11 @@ export default function CreateContact() {
           .map((other) => other.fieldValue),
       },
       organisations: [fieldValues.primaryOrg, fieldValues.secondaryOrg],
-      notes: "",
-      tags: [],
     };
     try {
       setIsLoading(true);
-      const newContact = await createContact_Manual(contactToCreate);
-      router.replace(`/contacts/manual/${newContact._id}`);
+      const updatedUser = await updateUser(detailsToUpdate);
+      router.replace("/profile");
       setIsLoading(false);
     } catch (e: any) {
       console.log(e);
@@ -198,9 +397,15 @@ export default function CreateContact() {
     setFieldValues({ ...fieldValues, [fieldType]: fieldValue });
   };
 
-  const handleExtraField = (fieldType: string, fieldValue: string, index: number) => {
+  const handleExtraField = (
+    fieldType: string,
+    fieldValue: string,
+    index: number
+  ) => {
     const newExtraFields = extraFields.map((field, i) =>
-      field.fieldType === fieldType && i === index ? { fieldType: field.fieldType, fieldValue: fieldValue } : field
+      field.fieldType === fieldType && i === index
+        ? { fieldType: field.fieldType, fieldValue: fieldValue }
+        : field
     );
     setExtraFields(newExtraFields);
   };
@@ -210,13 +415,16 @@ export default function CreateContact() {
   ) => {
     if (value) {
       // New field selected, so add this text field to page
-      setExtraFields([...extraFields, { fieldType: value.label, fieldValue: "" }]);
+      setExtraFields([
+        ...extraFields,
+        { fieldType: value.label, fieldValue: "" },
+      ]);
     }
   };
 
   const handleSubmit = (event: React.SyntheticEvent) => {
     event.preventDefault();
-    createNewContact();
+    updateProfileDetails();
   };
 
   useEffect(() => {
@@ -237,16 +445,12 @@ export default function CreateContact() {
     <Layout>
       <Container maxWidth="md" className={classes.containerStyle}>
         <Typography variant="h5" component="h5" className={classes.pageTitle}>
-          Create a manual contact:
+          Edit profile:
         </Typography>
         <form noValidate autoComplete="off" onSubmit={handleSubmit}>
           <div className={classes.primaryDetailsStyle}>
             <Container className={classes.profilePicDiv}>
-              <Image
-                className={classes.profilePic}
-                src={DEFAULT_IMAGE}
-                alt="Profile picture"
-              />
+              {imageUploadContent()}
             </Container>
             <div className={classes.inputFields}>
               <ResponsiveFieldPair
@@ -263,6 +467,7 @@ export default function CreateContact() {
                 rightOnChange={(event) =>
                   handleChange("lastName", event.target.value)
                 }
+                required={true}
               />
               <TextField
                 size="small"
@@ -270,7 +475,7 @@ export default function CreateContact() {
                 id="title"
                 label="Title"
                 fullWidth
-                value={fieldValues.title}
+                value={fieldValues.title || ""}
                 onChange={(event) => handleChange("title", event.target.value)}
                 className={classes.topSpacing}
               />
@@ -281,10 +486,10 @@ export default function CreateContact() {
               <ResponsiveFieldPair
                 leftId="primaryOrganisation"
                 leftLabel="Primary organisation"
-                leftValue={fieldValues.primaryOrg}
+                leftValue={fieldValues.primaryOrg || ""}
                 rightId="secondaryOrganisation"
                 rightLabel="Secondary organisation"
-                rightValue={fieldValues.secondaryOrg}
+                rightValue={fieldValues.secondaryOrg || ""}
                 leftOnChange={(event) =>
                   handleChange("primaryOrg", event.target.value)
                 }
@@ -303,10 +508,10 @@ export default function CreateContact() {
                 iconType="email"
                 topId="primaryEmail"
                 topLabel="Primary email"
-                topValue={fieldValues.primaryEmail}
+                topValue={fieldValues.primaryEmail || ""}
                 bottomId="secondaryEmail"
                 bottomLabel="Secondary email"
-                bottomValue={fieldValues.secondaryEmail}
+                bottomValue={fieldValues.secondaryEmail || ""}
                 topOnChange={(event: any) =>
                   handleChange("primaryEmail", event.target.value)
                 }
@@ -318,10 +523,10 @@ export default function CreateContact() {
                 iconType="phone"
                 topId="primaryPhone"
                 topLabel="Primary phone"
-                topValue={fieldValues.primaryPhone}
+                topValue={fieldValues.primaryPhone || ""}
                 bottomId="secondaryPhone"
                 bottomLabel="Secondary phone"
-                bottomValue={fieldValues.secondaryPhone}
+                bottomValue={fieldValues.secondaryPhone || ""}
                 topOnChange={(event: any) =>
                   handleChange("primaryPhone", event.target.value)
                 }
@@ -338,7 +543,7 @@ export default function CreateContact() {
                 id="workAddress"
                 label="Work address"
                 fullWidth
-                value={fieldValues.address}
+                value={fieldValues.address || ""}
                 onChange={(event) =>
                   handleChange("address", event.target.value)
                 }
@@ -353,7 +558,11 @@ export default function CreateContact() {
             onChange={handleAddedField}
             addedFields={extraFields}
           />
-          <EditContactOptions onCancel={() => router.back()} onSubmit={handleSubmit} />
+          <EditContactOptions
+            onCancel={() => router.back()}
+            onSubmit={handleSubmit}
+            submitLabel={"Save changes"}
+          />
         </form>
       </Container>
     </Layout>
