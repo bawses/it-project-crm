@@ -1,27 +1,18 @@
 name: Run Unit Tests On Jest
 on:
   pull_request:
-    branches: [ main, dev ]
+    branches: [main, dev]
   push:
 
 jobs:
   test:
     runs-on: ubuntu-latest
 
-    strategy:
-      matrix:
-        node-version: [12.x, 14.x, 15.x]
-    
     steps:
       - uses: actions/checkout@v2
       - name: Using node.js
         uses: actions/setup-node@v1
         with:
-          node-version: ${{ matrix.node-version }}
-      
+          node-version: 12.x
+      - run: npm install jest
       - run: npm test
-        
-
-
-
-
