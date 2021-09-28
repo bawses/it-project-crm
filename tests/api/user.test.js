@@ -1,5 +1,5 @@
-import { hash as hashPassword, compare as verifyPassword } from "bcryptjs";
 import mongoose from "mongoose";
+import { hash as hashPassword, compare as verifyPassword } from "bcryptjs";
 import SignUpHandler from "../../pages/api/users/signup";
 import UserIdHandler from "../../pages/api/users/[id]"
 import UserSearchHandler from "../../pages/api/users/search";
