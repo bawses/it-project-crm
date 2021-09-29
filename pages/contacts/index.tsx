@@ -5,8 +5,6 @@ import ContactsTable from '../../components/tables/contactsTable';
 import ContactsTableCategory, { CategoryButton } from '../../components/tables/contactsTableCategory';
 import ContactsTableSort, { SortType } from '../../components/tables/contactsTableSort';
 import ContactsTableTags, { SelectValue } from '../../components/tables/contactsTableTags';
-import { IManualContact } from '../../lib/DataTypes';
-import { getManualContacts, updateManualContact } from '../../api_client/ManualContactClient';
 import Layout from "../../components/navLayout/Layout";
 import PageLoadingBar from "../../components/PageLoadingBar";
 import { useRouter } from 'next/router';
@@ -14,13 +12,15 @@ import { getSession } from 'next-auth/client';
 import { useTheme } from "@material-ui/core/styles";
 import { useMediaQuery } from "@material-ui/core";
 import SearchBar from '../../components/input/SearchBar';
+import { getContacts, updateContact } from '../../api_client/ContactClient';
+import { IContact } from '../../lib/UnifiedDataType';
 
 export const sortFunctions = {
-	[SortType.FirstName]: (a: IManualContact, b: IManualContact) =>
+	[SortType.FirstName]: (a: IContact, b: IContact) =>
 		a.name.firstName > b.name.firstName ? 1 : -1,
-	[SortType.LastName]: (a: IManualContact, b: IManualContact) =>
+	[SortType.LastName]: (a: IContact, b: IContact) =>
 		a.name.lastName > b.name.lastName ? 1 : -1,
-	[SortType.Role]: (a: IManualContact, b: IManualContact) => {
+	[SortType.Role]: (a: IContact, b: IContact) => {
 		if (!a.job) {
 			return 1;
 		}
@@ -36,8 +36,8 @@ export const sortFunctions = {
 
 // Swaps the given contact in the given contact list if it can find it, and then returns the list
 function swapContactInList(
-	contactList: IManualContact[],
-	contact: IManualContact
+	contactList: IContact[],
+	contact: IContact
 ) {
 	console.log("starting list", contactList);
 	if (contact._id === undefined) {
@@ -63,8 +63,8 @@ export default function Contacts() {
   const [categoryButton, setCategoryButton] = useState<CategoryButton>("all")
   const [tags, setTags] = useState<OnChangeValue<SelectValue, true>>([])
   const [searchValue, setSearchValue] = useState<string>("")
-  const [allContacts, setAllContacts] = useState<IManualContact[]>([])
-  const [displayContacts, setDisplayContacts] = useState<IManualContact[]>([])
+  const [allContacts, setAllContacts] = useState<IContact[]>([])
+  const [displayContacts, setDisplayContacts] = useState<IContact[]>([])
   const [isLoading, setIsLoading] = useState(true)
   const router = useRouter()
 
@@ -72,10 +72,12 @@ export default function Contacts() {
   const theme = useTheme()
   const bigScreen = useMediaQuery(theme.breakpoints.up("md"))
 
-  async function getData(setAllContacts: (contacts: IManualContact[]) => void, setDisplayContacts: (contacts: IManualContact[]) => void) {
+  async function getData(setAllContacts: (contacts: IContact[]) => void, setDisplayContacts: (contacts: IContact[]) => void) {
     try {
       setIsLoading(true)
-      const data = await getManualContacts()
+      const data = await getContacts()
+      console.log("all contacts")
+      console.log(data);
       // Save all contacts
       setAllContacts(data)
       // Make the display contacts initially just a copy of all contacts
@@ -136,7 +138,7 @@ export default function Contacts() {
     setTags(newTags)
   }
 
-  async function handleStarClick(target: IManualContact) {
+  async function handleStarClick(target: IContact) {
     if (!target._id) {
       return false
     }
@@ -152,7 +154,7 @@ export default function Contacts() {
       // Optimistically set the state of the starred status to change the star color of the component
       setAllContacts(swapContactInList(newContactList, target))
 
-      const response = await updateManualContact(target._id, target)
+      const response = await updateContact(target, {starred: target.starred})
       // Now reset the starred based on the actual database response
       setAllContacts(swapContactInList(newContactList, response))
       return true

@@ -1,9 +1,10 @@
+/**
+ * CataLog footer nav (mobile) 
+ */
 import React from "react";
-import { COLORS } from "../../lib/Colors";
 import { Box, IconButton, AppBar, Toolbar } from "@material-ui/core";
 import { createStyles, Theme, makeStyles } from "@material-ui/core/styles";
 
-// MaterialUI Icon
 import CollectionsBookmarkIcon from "@material-ui/icons/CollectionsBookmark";
 import AccountCircleIcon from "@material-ui/icons/AccountCircle";
 import PersonAddIcon from "@material-ui/icons/PersonAdd";

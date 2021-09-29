@@ -6,7 +6,6 @@ import connectToDatabase from "../../../backend/dbConnect";
 
 async function handler(req: Request, res: Response): Promise<any> {
   // SignUp method has to be of method POST
-  console.log(req.body);
   if (req.method !== "POST") {
     res.status(422).json({ error: "Request method is not POST" });
   }

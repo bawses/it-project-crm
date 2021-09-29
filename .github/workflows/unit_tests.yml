@@ -1,0 +1,23 @@
+name: Run Unit Tests On Jest
+on:
+  pull_request:
+    branches: [main, dev]
+  push:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Using node.js
+        uses: actions/setup-node@v1
+        with:
+          node-version: 12.x
+
+      - name: Install Jest
+        run: npm install jest jest-html-reporter
+
+      - name: Run Unit Tests (JEST)
+        run: npm test
+        env:
+          MONGODB_URI: ${{secrets.MONGODB_URI}}
