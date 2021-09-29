@@ -2,10 +2,16 @@ This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next
 
 ## Running Tests Locally
 
-Enter the following command while in the project's root directory:
+To run unit tests locally, go to package.json in the project's root directory and replace the 'test' command in scripts from:
 
 ```bash
-npm test --setupFilesAfterEnv='./tests/setupEnv.js'
+jest
+```
+
+to
+
+```bash
+jest --setupFilesAfterEnv='./tests/setupEnv.js'
 ```
 
 ## Getting Started
