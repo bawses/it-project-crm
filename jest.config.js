@@ -1,6 +1,6 @@
 module.exports={
   preset: "@shelf/jest-mongodb",
-  setupFiles: ["dotenv/config", "<rootDir>/tests/setupEnv.js"],
+  setupFiles: ["dotenv/config"],
   verbose: true,
   reporters: [
 	"default",
