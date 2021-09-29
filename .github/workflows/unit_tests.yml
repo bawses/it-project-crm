@@ -13,5 +13,12 @@ jobs:
         uses: actions/setup-node@v1
         with:
           node-version: 12.x
-      - run: npm install jest
-      - run: npm test
+      
+      - name: Install Jest
+        run: npm install jest
+        run: npm install jest-html-reporter
+      
+      - name: Run Unit Tests (JEST)
+        run: npm test
+        env:
+          MONGODB_URI: ${{secrets.MONGODB_URI}}

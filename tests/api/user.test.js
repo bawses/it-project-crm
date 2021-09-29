@@ -24,7 +24,7 @@ describe("Signing up a user with valid credentials, performing updating, search 
     done();
   })
 
-  test('It should return back a valid user object', async () => {
+  test('Create a valid user', async () => {
     const json = jest.fn();
     const status = jest.fn(() => {
       return {
@@ -60,7 +60,7 @@ describe("Signing up a user with valid credentials, performing updating, search 
     expect(json.mock.calls[0][0].data.name).toEqual({firstName: "Yeetus", lastName: "Skeetus"});
   });
 
-  test('It should update the created user object', async () => {
+  test('Update the created user object', async () => {
     const json = jest.fn();
     const status = jest.fn(() => {
       return {
@@ -93,7 +93,7 @@ describe("Signing up a user with valid credentials, performing updating, search 
     expect(json.mock.calls[0][0].data.fullName).toEqual("Yeeter Skeeter");
   });
 
-  test("Searching a user by name in a Search Object", async () => {
+  test("Searching a user by name using a search object", async () => {
     const json = jest.fn();
     const status = jest.fn(() => {
       return {
@@ -118,7 +118,7 @@ describe("Signing up a user with valid credentials, performing updating, search 
 
   });
 
-  test("It should delete the created user", async () => {
+  test("Delete the created user", async () => {
     const json = jest.fn();
     const status = jest.fn(() => {
       return {

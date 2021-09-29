@@ -45,7 +45,7 @@ describe("Create a mock user, then create a manual contact, update and search, a
     done();
   })
 
-  test("It should successfully create a user and manual contact", async () => {
+  test("Successfully create a user and manual contact", async () => {
     const createUserReq = {
       method: "POST",
       body: {
@@ -67,13 +67,14 @@ describe("Create a mock user, then create a manual contact, update and search, a
       method: "POST",
       body:{
         name: {
-          firstName: testManualContactDetails.firstName,
-          lastName: testManualContactDetails.lastName
+          firstName: testManualContactDetails.name.firstName,
+          lastName: testManualContactDetails.name.lastName
         },
         ownerId: ownerId,
         email: testManualContactDetails.email,
         archived: testManualContactDetails.archived,
         starred: testManualContactDetails.starred,
+        fullName: testManualContactDetails.name.firstName + " " + testManualContactDetails.name.lastName
       }
     }
 
@@ -83,11 +84,11 @@ describe("Create a mock user, then create a manual contact, update and search, a
 
     expect(json.mock.calls[1][0].data.email).toContain('tony.dang@gmail.com');
     expect(json.mock.calls[1][0].data.ownerId).toEqual(String(ownerId));
-    //expect(json.mock.calls[1][0].data.fullName).toEqual("Tony Dang");
+    expect(json.mock.calls[1][0].data.fullName).toEqual("Tony Dang");
 
   });
 
-  test("It should update the name of the created manual contact", async() => {
+  test("Update the name of the created manual contact", async() => {
     const updateReq = {
       method: "PUT",
       query: {id: contactId},
@@ -102,7 +103,7 @@ describe("Create a mock user, then create a manual contact, update and search, a
     expect(json.mock.calls[2][0].success).toBe(true);
   })
 
-  test("It should search the update manual contact", async() => {
+  test("Search the update manual contact", async() => {
     const searchReq = {
       method: "POST",
       body: {
@@ -117,7 +118,7 @@ describe("Create a mock user, then create a manual contact, update and search, a
 
   })
 
-  test("It should get the created user's manual contact", async () => {
+  test("Get the created user's manual contact", async () => {
     const getContactReq = {
       method: "POST",
       body: {ownerId: ownerId}
@@ -131,7 +132,7 @@ describe("Create a mock user, then create a manual contact, update and search, a
 
   });
 
-  test("It should successfully delete the manual contact and user", async() => {
+  test("Delete the manual contact and user", async() => {
     const deleteUserReq = {
       method: "DELETE",
       query: {id: ownerId}
