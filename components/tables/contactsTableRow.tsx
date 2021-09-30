@@ -20,6 +20,11 @@ const useStyles = makeStyles({
     "&:hover": {
       cursor: 'pointer'
     }
+  },
+
+  circularProgress: {
+    marginLeft: 0,
+    marginRight: 4
   }
 })
 
@@ -53,7 +58,7 @@ export default function ContactsTableRow({ contact, starVariant, addVariant }: C
       // Render a loading button
       buttonComponent = (
         <Button variant="contained" disabled={true}>
-          <CircularProgress size={20} />
+          <CircularProgress className={classes.circularProgress} size={20} />
           Loading
         </Button>
       )
