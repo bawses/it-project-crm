@@ -26,6 +26,7 @@ export interface IContact {
   archived?: boolean;
   isManualContact: boolean;
   isAddedContact: boolean;
+  imageUrl?: string;
 }
 
 export const convert_ManualContact_to_Contact = (manualContact: IManualContact): IContact => {
@@ -52,6 +53,7 @@ export const convert_User_to_Contact = (user: IUser): IContact => {
   return {
     _id: user._id,
     name: user.name,
+    imageUrl: user.imageUrl,
     fullName: user.fullName,
     email: user.email,
     phone: user.phone,

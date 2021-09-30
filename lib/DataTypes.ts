@@ -75,4 +75,5 @@ export interface IUser {
   about?: string;
   allTags?: string[];
   organisations?: OrganisationId[];
+  imageUrl?: string;
 }

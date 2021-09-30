@@ -86,6 +86,16 @@ export const updateUserById = async (id: string, updateObj: IUser_Update) => {
   if (updateObj.name) {
     updateObj_.fullName = updateObj.name.firstName + " " + updateObj.name.lastName;
   }
+
+  if (updateObj.imageFile){
+    // Insert in image upload operation here
+    const imageUrl = await uploadImage(updateObj.imageFile);
+    console.log("Image Url: " + imageUrl);
+    
+    delete updateObj_.imageFile;
+    updateObj_.imageUrl = imageUrl;
+  }
+
   return updateDbRecord<IUser>(DataType.User, id, updateObj_);
 };
 
@@ -122,3 +132,17 @@ export const searchUsersByName = async (name: string) => {
 export const getAllTags = async (): Promise<string[]> => {
   return (await getUser()).allTags || [];
 };
+
+const uploadImage = async (imageFile: File) : Promise<any> => {
+  const url = '/api/users/upload';
+  var data = new FormData()
+  data.append('profilePicture', imageFile);
+
+  const response = await fetch(url, {
+    method: "POST",
+    body: data
+  })
+
+  var { imageUrl } = await response.json();
+  return Promise.resolve(imageUrl);
+}
