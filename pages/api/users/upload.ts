@@ -7,12 +7,12 @@ const upload = multer({ dest: "/profile_images" });
 const handler = nc();
 
 handler.use(
-  upload.single("profilePicture"),
+  upload.single("profilePicture")
 ).post(async (req: any, res: any) => {
   console.log("--------")
   console.log(req.body);
   console.log(req.file);
-  console.log("--------")
+  console.log("--------");
 
   if (req.file){
     const image = await cloudinary.uploader.upload(req.file.path, {

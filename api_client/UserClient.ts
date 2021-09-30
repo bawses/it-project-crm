@@ -133,7 +133,7 @@ export const getAllTags = async (): Promise<string[]> => {
   return (await getUser()).allTags || [];
 };
 
-const uploadImage = async (imageFile: File) : Promise<any> => {
+const uploadImage = async (imageFile: File) : Promise<string> => {
   const url = '/api/users/upload';
   var data = new FormData()
   data.append('profilePicture', imageFile);
