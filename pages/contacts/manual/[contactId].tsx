@@ -1,7 +1,7 @@
 import { Container, Typography, makeStyles } from "@material-ui/core";
 import Image from "next/image";
 import DEFAULT_IMAGE from "../../../assets/blank-profile-picture-973460_640.png";
-import { useState, useEffect, useCallback, useRef } from "react";
+import { useState, useEffect, useCallback } from "react";
 import MyTags from "../../../components/cards/MyTags";
 import MyNotes from "../../../components/cards/MyNotes";
 import ContactDetails from "../../../components/cards/ContactDetails";
@@ -96,7 +96,6 @@ export default function ViewManualContact() {
   const [isStarred, setIsStarred] = useState(false);
   const [isArchived, setIsArchived] = useState(false);
 
-  const firstUpdate = useRef(true);
   const router = useRouter();
   const { contactId } = router.query;
 
@@ -119,8 +118,6 @@ export default function ViewManualContact() {
         /** TODO: redirect to error page */
         console.log(e);
         setIsLoading(false);
-      } finally {
-        firstUpdate.current = false;
       }
     }
   }, [contactId]);
@@ -140,7 +137,10 @@ export default function ViewManualContact() {
         const updateObject = {
           notes: editedNotes,
         };
-        const updatedContact = await updateContact(initialContactData, updateObject);
+        const updatedContact = await updateContact(
+          initialContactData,
+          updateObject
+        );
         console.log("After updating notes");
         console.log(updatedContact);
         setNotes(updatedContact.notes ?? "");
@@ -235,28 +235,16 @@ export default function ViewManualContact() {
     }
   }, [initialContactData, router]);
 
-  useEffect(() => {
-    if (!firstUpdate.current) {
-      console.log("update starred");
-      updateStarred();
-    }
-  }, [isStarred, updateStarred]);
-
-  useEffect(() => {
-    if (!firstUpdate.current) {
-      console.log("update archived");
-      updateArchived();
-    }
-  }, [isArchived, updateArchived]);
-
   const handleContactOption = (
     value: OnChangeValue<{ value: string; label: string }, false> | null
   ) => {
     if (value) {
       if (value.value === "archive") {
         setIsArchived(true);
+        updateArchived();
       } else if (value.value === "unarchive") {
         setIsArchived(false);
+        updateArchived();
       } else if (value.value === "delete") {
         deleteThisContact();
       }
@@ -284,7 +272,9 @@ export default function ViewManualContact() {
           isManual={true}
           isArchived={isArchived}
           onChange={handleContactOption}
-          onPressEdit={() => {}}
+          onPressEdit={() =>
+            router.push(`/contacts/manual/edit/${initialContactData?._id}`)
+          }
         />
         <div className={classes.primaryDetailsStyle}>
           <Container className={classes.profilePicDiv}>
@@ -311,7 +301,10 @@ export default function ViewManualContact() {
                 : ""
             }
             starred={isStarred}
-            onStar={() => setIsStarred(!isStarred)}
+            onStar={() => {
+              setIsStarred(!isStarred);
+              updateStarred();
+            }}
           />
         </div>
         <div className={classes.responsiveSections}>
