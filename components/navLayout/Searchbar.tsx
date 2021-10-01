@@ -18,6 +18,7 @@ import useMediaQuery from "@material-ui/core/useMediaQuery";
 // MaterialUI Icons
 import SearchIcon from "@material-ui/icons/Search";
 import { IContact } from "../../lib/UnifiedDataType";
+import router, { useRouter } from "next/router";
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -100,6 +101,8 @@ export default function Searchbar() {
   //  function to handle a click outside (to hide the search results)
   //  reference: https://github.com/Pomax/react-onclickoutside/issues/310
   function useOnClickOutside(ref: any, handler: any) {
+    const router = useRouter();
+
     useEffect(() => {
       const listener = (event: any) => {
         // Do nothing if clicking ref's element or descendent elements
@@ -140,6 +143,23 @@ export default function Searchbar() {
     }
   }
 
+  // async function handleEnter(event: any) {
+  //   router.push({
+  //     pathname: "/search",
+  //     query: { keyword: searchString },
+  //   });
+  // }
+
+  // when enter is pressed, redirect user to Search Results page with that string
+  const handleKeyDown = (event: any) => {
+    if (event.key === "Enter") {
+      router.push({
+        pathname: "/search",
+        query: { name: searchString },
+      });
+    }
+  };
+
   return (
     <div className={classes.root} ref={ref}>
       {/* search bar */}
@@ -154,6 +174,7 @@ export default function Searchbar() {
               input: classes.inputInput,
             }}
             onChange={(event) => handleNewSearchString(event)}
+            onKeyDown={handleKeyDown}
             inputProps={{ "aria-label": "search" }}
           />
         ) : (
@@ -163,6 +184,7 @@ export default function Searchbar() {
               input: classes.inputInput,
             }}
             onChange={(event) => handleNewSearchString(event)}
+            onKeyDown={handleKeyDown}
             inputProps={{ "aria-label": "search" }}
           />
         )}
