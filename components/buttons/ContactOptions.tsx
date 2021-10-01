@@ -32,6 +32,7 @@ interface ContactOptionsProps {
     value: OnChangeValue<{ value: string; label: string }, false>
   ) => void;
   onPressEdit?: () => void;
+  onAdd?: () => void;
 }
 
 const contactOptionsStyles = {
@@ -53,6 +54,7 @@ export default function ContactOptions({
   isAdded = true,
   onChange,
   onPressEdit = () => {},
+  onAdd = () => {},
 }: ContactOptionsProps) {
   const classes = useStyles();
 
@@ -80,10 +82,17 @@ export default function ContactOptions({
           isClearable={false}
         />
       )}
-      {!isAdded && <TextButton title="Add to my contacts" onClick={() => {}} />}
+      {!isAdded && (
+        <TextButton
+          title="Add to my contacts"
+          color={COLORS.actionOrange}
+          textColor={COLORS.white}
+          onClick={onAdd}
+        />
+      )}
       {isManual && (
         <Tooltip title="Edit">
-          <IconButton onClick={() => onPressEdit}>
+          <IconButton onClick={onPressEdit}>
             <Edit className={classes.editIcon} />
           </IconButton>
         </Tooltip>

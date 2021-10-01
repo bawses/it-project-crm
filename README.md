@@ -1,5 +1,19 @@
 This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
 
+## Running Tests Locally
+
+To run unit tests locally, go to package.json in the project's root directory and replace the 'test' command in scripts from:
+
+```bash
+jest
+```
+
+to
+
+```bash
+jest --setupFilesAfterEnv='./tests/setupEnv.js'
+```
+
 ## Getting Started
 
 First, run the development server:

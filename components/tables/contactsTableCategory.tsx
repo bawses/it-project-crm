@@ -17,7 +17,7 @@ const inactiveColors = { color: COLORS.inactiveGrey, textColor: COLORS.black }
 export default function ContactsTableCategory({ pressedButton, handleButtonPress }: ContactsTableCategoryProps) {
   // Adjust components based on screen size
   const theme = useTheme()
-  const bigScreen = useMediaQuery(theme.breakpoints.up("md"))
+  const bigScreen = useMediaQuery(theme.breakpoints.up("sm"))
 
   return (
     <Box flexGrow={1}>

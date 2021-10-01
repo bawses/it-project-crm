@@ -77,18 +77,20 @@ export default function SearchPage() {
     setSortValue(newSortVal)
   }
 
-  async function handleContactAdd(target: IContact) {
+  async function handleContactAdd(target: IContact, rowSetter: (isLoading: boolean) => void) {
     try {
+      // Set the button on the table row to be loading
+      rowSetter(true)
+
       // Add the new contact
-      setIsLoading(true)
       const newContact = await addContact_User(target._id)
       // Now modify current user id to contact map to reflect the change
       const newMap = { ...searchResults }
       newMap[newContact._id] = newContact
       setSearchResults(newMap)
 
-      // Success
-      setIsLoading(false)
+      // Success. Revert table button state
+      rowSetter(false)
       return true
     } catch (error) {
       console.error("Error: Failed to add contact", error)
