@@ -48,6 +48,8 @@ export default function ContactsTableTags({
     <Select
       instanceId={instanceId}
       closeMenuOnSelect={false}
+      placeholder="Select tag(s)..."
+      noOptionsMessage={() => "No other tags remaining. Create more in the profile of any of your contacts"}
       components={animatedComponents}
       isMulti
       options={tagOptions.map((tag) => ({ value: tag, label: tag }))}
