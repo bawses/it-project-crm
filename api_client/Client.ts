@@ -158,3 +158,16 @@ const doSearch = async <T_output>(dataType: DataType, searchObj: any) => {
   }
   return data as T_output;
 };
+
+export const doUploadImage = async (imageFile: File) : Promise<string> => {
+  var data = new FormData()
+  data.append('profilePicture', imageFile);
+
+  const response = await fetch('/api/upload', {
+    method: "POST",
+    body: data
+  })
+
+  var { imageUrl } = await response.json();
+  return Promise.resolve(imageUrl);
+}

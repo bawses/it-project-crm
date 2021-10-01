@@ -27,6 +27,9 @@ import { IUser_Update } from "../../lib/DataTypes_Update";
 import { getUser, updateUser } from "../../api_client/UserClient";
 import { IUser } from "../../lib/DataTypes";
 
+const DEFAULT_URL: string =
+	"https://res.cloudinary.com/it-project-crm/image/upload/v1633002681/zdt7litmbbxfdvg7gdvx.png";
+
 const useStyles = makeStyles((theme) => ({
 	containerStyle: {
 		width: "100%",
@@ -148,7 +151,7 @@ export default function EditProfile() {
 	});
 	const [extraFields, setExtraFields] = useState<ExtraFieldType[]>([]);
 	const [isLoading, setIsLoading] = useState(true);
-
+	const [profileImage, setProfileImage] = useState("");
 	const [imageFile, setImageFile] = useState();
 
 	const router = useRouter();
@@ -161,6 +164,7 @@ export default function EditProfile() {
 	};
 
 	const removeProfileImage = () => {
+		setProfileImage("");
 		setImageFile(undefined);
 	};
 
@@ -178,12 +182,17 @@ export default function EditProfile() {
 	};
 
 	const imageUploadContent = () => {
-		if (imageFile) {
+		let image;
+		if (profileImage || imageFile) {
+			image = profileImage;
+			if (imageFile) {
+				image = URL.createObjectURL(imageFile);
+			}
 			return (
 				<>
 					<Image
 						className={classes.profilePic}
-						src={URL.createObjectURL(imageFile)}
+						src={image}
 						alt="Uploaded image"
 						width={300}
 						height={300}
@@ -201,8 +210,10 @@ export default function EditProfile() {
 				<>
 					<Image
 						className={classes.profilePic}
-						src={DEFAULT_IMAGE}
+						src={DEFAULT_URL}
 						alt="Profile picture"
+						width={300}
+						height={300}
 					/>
 					{imageUploadForm()}
 				</>
@@ -322,7 +333,13 @@ export default function EditProfile() {
 		try {
 			setIsLoading(true);
 			const fetchedData = await getUser();
+
 			console.log(fetchedData);
+
+			if (fetchedData?.imageUrl) {
+				setProfileImage(fetchedData?.imageUrl);
+			}
+
 			setLocation(
 				fetchedData.location
 					? { value: fetchedData.location, label: fetchedData.location }
@@ -361,6 +378,7 @@ export default function EditProfile() {
 				lastName: fieldValues.lastName,
 			},
 			imageFile: imageFile,
+			imageUrl: profileImage,
 			email: [fieldValues.primaryEmail, fieldValues.secondaryEmail],
 			phone: [fieldValues.primaryPhone, fieldValues.secondaryPhone],
 			job: fieldValues.title,
