@@ -21,8 +21,7 @@ const useStyles = makeStyles((theme: Theme) =>
 
 export default function NoResultsRow() {
   const classes = useStyles();
-  const theme = useTheme();
-
+  
   return (
     <TableRow className={classes.row} hover={true}>
       <TableCell>

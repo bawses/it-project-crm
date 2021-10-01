@@ -143,13 +143,6 @@ export default function Searchbar() {
     }
   }
 
-  // async function handleEnter(event: any) {
-  //   router.push({
-  //     pathname: "/search",
-  //     query: { keyword: searchString },
-  //   });
-  // }
-
   // when enter is pressed, redirect user to Search Results page with that string
   const handleKeyDown = (event: any) => {
     if (event.key === "Enter") {
