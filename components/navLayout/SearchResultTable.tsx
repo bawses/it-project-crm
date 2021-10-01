@@ -19,13 +19,14 @@ export default function SearchResultsTable({
   //  Populating search results table
   const rows: JSX.Element[] = [];
   if (searchResults.length > 0) {
+    let counter = 0;
     for (const profile of searchResults) {
-      const key = profile._id || profile.name.firstName;
-      rows.push(<SearchResultRow key={key} profile={profile} />);
+      const key = profile._id;
+      rows.push(<SearchResultRow key={counter++} profile={profile} />);
     }
   } else {
     const key = null;
-    rows.push(<NoResultsRow />);
+    rows.push(<NoResultsRow key={key} />);
   }
 
   return (
