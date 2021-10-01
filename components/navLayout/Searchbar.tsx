@@ -6,13 +6,7 @@ import { COLORS } from "../../lib/Colors";
 import SearchResultTable from "./SearchResultTable";
 import { searchContactsByName } from "../../api_client/ContactClient";
 import { InputBase } from "@material-ui/core";
-import {
-  createStyles,
-  alpha,
-  Theme,
-  makeStyles,
-  useTheme,
-} from "@material-ui/core/styles";
+import { createStyles, alpha, Theme, makeStyles, useTheme } from "@material-ui/core/styles";
 import useMediaQuery from "@material-ui/core/useMediaQuery";
 
 // MaterialUI Icons
@@ -133,9 +127,7 @@ export default function Searchbar() {
 
     try {
       var fetchedPredictions = await searchContactsByName(searchString);
-      const filteredPredictions = fetchedPredictions.filter(
-        (contact) => !contact.archived
-      );
+      const filteredPredictions = fetchedPredictions.filter((contact) => !contact.archived);
       setPredictiveResults(filteredPredictions);
     } catch (e) {
       // TODO (NICE TO HAVE): Display error to user on webpage
@@ -181,32 +173,19 @@ export default function Searchbar() {
             inputProps={{ "aria-label": "search" }}
           />
         )}
-        {isOpen && searchString.length > 0
-          ?
-              isMobile ? (
-                <div
-                  className={classes.resultsTable}
-                  style={{ zIndex: MAX_ZINDEX }}
-                >
-                  <SearchResultTable
-                    searchResults={predictiveResults.slice(0, MOBILE_ROW_LIMIT)}
-                  />
-                </div>
-              ) : (
-                <div
-                  className={classes.resultsTable}
-                  style={{ zIndex: MAX_ZINDEX }}
-                >
-                  <SearchResultTable
-                    searchResults={predictiveResults.slice(
-                      0,
-                      DESKTOP_ROW_LIMIT
-                    )}
-                  />
-                </div>
-              )
-          
-          : <></>}
+        {isOpen && searchString.length > 0 ? (
+          isMobile ? (
+            <div className={classes.resultsTable} style={{ zIndex: MAX_ZINDEX }}>
+              <SearchResultTable searchResults={predictiveResults.slice(0, MOBILE_ROW_LIMIT)} />
+            </div>
+          ) : (
+            <div className={classes.resultsTable} style={{ zIndex: MAX_ZINDEX }}>
+              <SearchResultTable searchResults={predictiveResults.slice(0, DESKTOP_ROW_LIMIT)} />
+            </div>
+          )
+        ) : (
+          <></>
+        )}
       </div>
     </div>
   );
