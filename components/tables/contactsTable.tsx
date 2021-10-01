@@ -4,7 +4,7 @@ import { IContact } from '../../lib/UnifiedDataType';
 
 interface ContactsTableProps {
   contacts: IContact[],
-  handleRowButtonClick: (target: IContact) => Promise<boolean>
+  handleRowButtonClick: (target: IContact, rowSetter: (isLoading: boolean) => void) => Promise<boolean>
   isAddVariant: boolean
 }
 
