@@ -9,6 +9,7 @@ interface ButtonProps {
   href?: string;
   disabled?: boolean,
   onClick?:
+  | (() => void)
   | ((event: React.SyntheticEvent) => void)
   | ((event: React.SyntheticEvent) => Promise<void>);
   className?: string | undefined;
@@ -29,8 +30,8 @@ export default function TextButton({
       variant="contained"
       type={type}
       style={{
-        backgroundColor: color,
-        color: textColor,
+        backgroundColor: disabled ? COLORS.lightGrey : color,
+        color: disabled ? COLORS.black : textColor,
         fontWeight: "bold",
         margin: "5px",
         textTransform: "none",

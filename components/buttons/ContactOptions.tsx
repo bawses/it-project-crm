@@ -1,8 +1,9 @@
 import React from "react";
-import { makeStyles, IconButton } from "@material-ui/core";
+import { makeStyles, IconButton, Tooltip } from "@material-ui/core";
 import { Edit } from "@material-ui/icons";
 import { COLORS } from "../../lib/Colors";
 import Select, { OnChangeValue } from "react-select";
+import TextButton from "./TextButton";
 
 const options = [
   {
@@ -17,12 +18,21 @@ const options = [
     value: "delete",
     label: "Delete contact",
   },
+  {
+    value: "remove",
+    label: "Remove from contacts",
+  },
 ];
 
 interface ContactOptionsProps {
-  isArchived: boolean;
-  onChange: (value: OnChangeValue<{ value: string; label: string }, false>) => void;
+  isArchived?: boolean;
+  isManual: boolean;
+  isAdded?: boolean;
+  onChange: (
+    value: OnChangeValue<{ value: string; label: string }, false>
+  ) => void;
   onPressEdit?: () => void;
+  onAdd?: () => void;
 }
 
 const contactOptionsStyles = {
@@ -39,32 +49,54 @@ const contactOptionsStyles = {
 };
 
 export default function ContactOptions({
-  isArchived,
+  isArchived = false,
+  isManual,
+  isAdded = true,
   onChange,
   onPressEdit = () => {},
+  onAdd = () => {},
 }: ContactOptionsProps) {
   const classes = useStyles();
 
+  const setOptions = () => {
+    const finalOptions = isManual
+      ? options.filter((option) => option.value !== "remove")
+      : options.filter((option) => option.value === "remove");
+    return isArchived
+      ? finalOptions.filter((option) => option.value !== "archive")
+      : finalOptions.filter((option) => option.value !== "unarchive");
+  };
+
   return (
     <div className={classes.contactOptionsMenu}>
-      <Select
-        className={classes.contactOptionsBtn}
-        styles={contactOptionsStyles}
-        instanceId="contactOptions"
-        options={
-          isArchived
-            ? options.filter((option) => option.value !== "archive")
-            : options.filter((option) => option.value !== "unarchive")
-        }
-        value={null}
-        placeholder={"Added to my contacts"}
-        onChange={onChange}
-        isSearchable={false}
-        isClearable={false}
-      />
-      <IconButton onClick={() => onPressEdit}>
-        <Edit className={classes.editIcon} />
-      </IconButton>
+      {isAdded && (
+        <Select
+          className={classes.contactOptionsBtn}
+          styles={contactOptionsStyles}
+          instanceId="contactOptions"
+          options={setOptions()}
+          value={null}
+          placeholder={"Added to my contacts"}
+          onChange={onChange}
+          isSearchable={false}
+          isClearable={false}
+        />
+      )}
+      {!isAdded && (
+        <TextButton
+          title="Add to my contacts"
+          color={COLORS.actionOrange}
+          textColor={COLORS.white}
+          onClick={onAdd}
+        />
+      )}
+      {isManual && (
+        <Tooltip title="Edit">
+          <IconButton onClick={onPressEdit}>
+            <Edit className={classes.editIcon} />
+          </IconButton>
+        </Tooltip>
+      )}
     </div>
   );
 }

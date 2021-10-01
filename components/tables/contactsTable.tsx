@@ -1,32 +1,22 @@
-import { FormLabelBaseProps, Paper, Table, TableBody, TableContainer } from '@material-ui/core';
+import { Paper, Table, TableBody, TableContainer } from '@material-ui/core';
 import ContactsTableRow from './contactsTableRow';
-import { IManualContact } from '../../lib/DataTypes';
-
-export type IdToContactMap = Record<string, IManualContact>
+import { IContact } from '../../lib/UnifiedDataType';
 
 interface ContactsTableProps {
-  contacts: IManualContact[],
-  handleRowButtonClick: (target: IManualContact) => Promise<boolean>
-  idToContactMap?: IdToContactMap
+  contacts: IContact[],
+  handleRowButtonClick: (target: IContact, rowSetter: (isLoading: boolean) => void) => Promise<boolean>
+  isAddVariant: boolean
 }
 
-export default function ContactsTable({ contacts, handleRowButtonClick, idToContactMap }: ContactsTableProps) {
+export default function ContactsTable({ contacts, handleRowButtonClick, isAddVariant }: ContactsTableProps) {
   const rows: JSX.Element[] = []
   for (const contact of contacts) {
-    // For the search results variant, check if the each contact has been already added or not
-    let alreadyAdded = false
-    if (idToContactMap && contact._id) {
-      if (contact._id in idToContactMap) {
-        alreadyAdded = true
-      }
-    }
-
     const key = contact._id || contact.name.firstName
     rows.push(
       <ContactsTableRow
         key={key}
         contact={contact}
-        {...(idToContactMap ? { addVariant: { alreadyAdded: alreadyAdded, handleContactAdd: handleRowButtonClick } } : { starVariant: { handleStar: handleRowButtonClick } })}
+        {...(isAddVariant ? { addVariant: { handleContactAdd: handleRowButtonClick } } : { starVariant: { handleStar: handleRowButtonClick } })}
       />
     )
   }

@@ -1,27 +1,21 @@
-export enum DataType {
-  User = "user",
-  Organisation = "organisation",
-  ManualContact = "manual_contact",
-  AddedContact = "added_contact",
-}
-
 type ObjectId = string;
 type UserId = ObjectId;
 type OrganisationId = ObjectId;
 
 export interface IAddedContact {
-  _id?: ObjectId;
+  _id: ObjectId;
   fromUserId: UserId;
   toUserId: UserId;
   notes?: string;
   tags?: string[];
-  starred?: boolean;
+  starred: boolean;
 }
 
 export interface IManualContact {
-  _id?: ObjectId;
+  _id: ObjectId;
   ownerId: UserId;
   name: { firstName: string; lastName: string };
+  fullName: string;
   email?: string[];
   phone?: string[];
   job?: string;
@@ -37,13 +31,13 @@ export interface IManualContact {
   organisations?: string[];
   notes?: string;
   tags?: string[];
-  starred?: boolean;
-  archived?: boolean;
+  starred: boolean;
+  archived: boolean;
 }
 
 export interface IOrganisation {
-  _id?: OrganisationId;
-  passwordHash?: string;
+  _id: OrganisationId;
+  passwordHash: string;
   name: string;
   email: string[];
   phone?: string[];
@@ -62,9 +56,10 @@ export interface IOrganisation {
 }
 
 export interface IUser {
-  _id?: UserId;
-  passwordHash?: string;
+  _id: UserId;
+  passwordHash: string;
   name: { firstName: string; lastName: string };
+  fullName: string;
   email: string[];
   phone?: string[];
   job?: string;
@@ -80,25 +75,4 @@ export interface IUser {
   about?: string;
   allTags?: string[];
   organisations?: OrganisationId[];
-}
-
-// export interface ErrorInterface {
-//   status: number;
-//   message?: string;
-// }
-
-export type DataInterface = IUser | IOrganisation | IManualContact | IAddedContact;
-
-export type IContact = IUser | IManualContact;
-
-const defaultManualContact = { 
-  _id: "",
-  name: {}
-}
-
-export enum RequestType {
-  GET = "GET",
-  POST = "POST",
-  PUT = "PUT",
-  DELETE = "DELETE",
 }

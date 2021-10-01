@@ -1,4 +1,4 @@
-import { Paper, Container, Typography, makeStyles, TextField, Button, IconButton } from "@material-ui/core";
+import { Paper, Container, Typography, makeStyles, TextField } from "@material-ui/core";
 import { Business } from "@material-ui/icons";
 import Image from "next/image";
 import DEFAULT_IMAGE from "../../assets/blank-profile-picture-973460_640.png";
@@ -10,12 +10,12 @@ import ResponsiveFieldPair from "../../components/input/ResponsiveFieldPair";
 import VerticalFieldPair from "../../components/input/VerticalFieldPair";
 import LocationSelector from "../../components/input/LocationSelector";
 import AddFieldSelector from "../../components/input/AddFieldSelector";
-import { createManualContact } from "../../api_client/ManualContactQueries";
-import { IManualContact } from "../../lib/DataTypes";
+import { IManualContact_Create } from "../../lib/DataTypes_Create";
 import Layout from "../../components/navLayout/Layout";
 import PageLoadingBar from "../../components/PageLoadingBar";
 import { useRouter } from "next/router";
 import { getSession } from "next-auth/client";
+import { createContact_Manual } from "../../api_client/ContactClient";
 
 const useStyles = makeStyles((theme) => ({
   containerStyle: {
@@ -143,9 +143,14 @@ export default function CreateContact() {
   };
 
   const createNewContact = async () => {
-    /** TODO: input validation, don't create empty contacts */
-    const contactToCreate: IManualContact = {
-      ownerId: "123",
+    /** TODO: make alert or pop up if missing required fields */
+    if (!!fieldValues.firstName === false && !!fieldValues.lastName === false) {
+      console.log("Error: must enter first or last name");
+      return;
+    }
+    /** Remove any extra fields that are empty */
+    const finalExtraFields = extraFields.filter((field) => field.fieldValue !== "");
+    const contactToCreate: IManualContact_Create = {
       name: {
         firstName: fieldValues.firstName,
         lastName: fieldValues.lastName,
@@ -155,31 +160,28 @@ export default function CreateContact() {
       job: fieldValues.title,
       location: location?.value,
       links: {
-        facebook: extraFields.find((field) => field.fieldType === "Facebook")
+        facebook: finalExtraFields.find((field) => field.fieldType === "Facebook")
           ?.fieldValue,
-        linkedIn: extraFields.find((field) => field.fieldType === "LinkedIn")
+        linkedIn: finalExtraFields.find((field) => field.fieldType === "LinkedIn")
           ?.fieldValue,
-        instagram: extraFields.find((field) => field.fieldType === "Instagram")
+        instagram: finalExtraFields.find((field) => field.fieldType === "Instagram")
           ?.fieldValue,
-        twitter: extraFields.find((field) => field.fieldType === "Twitter")
+        twitter: finalExtraFields.find((field) => field.fieldType === "Twitter")
           ?.fieldValue,
-        website: extraFields.find((field) => field.fieldType === "Website")
+        website: finalExtraFields.find((field) => field.fieldType === "Website")
           ?.fieldValue,
-        other: extraFields
+        other: finalExtraFields
           .filter((field) => field.fieldType === "Other")
           .map((other) => other.fieldValue),
       },
       organisations: [fieldValues.primaryOrg, fieldValues.secondaryOrg],
       notes: "",
       tags: [],
-      starred: false,
-      archived: false,
     };
     try {
       setIsLoading(true);
-      const newContact = await createManualContact(contactToCreate);
-      console.log(newContact);
-      router.replace(`/contacts/${newContact?._id}`);
+      const newContact = await createContact_Manual(contactToCreate);
+      router.replace(`/contacts/manual/${newContact._id}`);
       setIsLoading(false);
     } catch (e: any) {
       console.log(e);

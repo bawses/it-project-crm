@@ -1,25 +1,28 @@
-import { Container, Typography, makeStyles } from "@material-ui/core";
+import { Container, Typography, makeStyles, Paper } from "@material-ui/core";
 import Image from "next/image";
 import DEFAULT_IMAGE from "../../assets/blank-profile-picture-973460_640.png";
-import { useState, useEffect, useCallback, useRef } from "react";
+import { useState, useEffect, useCallback } from "react";
 import MyTags from "../../components/cards/MyTags";
 import MyNotes from "../../components/cards/MyNotes";
 import ContactDetails from "../../components/cards/ContactDetails";
 import ContactOptions from "../../components/buttons/ContactOptions";
 import ContactHeader from "../../components/cards/ContactHeader";
-import {
-  deleteManualContact,
-  getManualContactById,
-  updateManualContact,
-} from "../../api_client/ManualContactQueries";
-import { IManualContact } from "../../lib/DataTypes";
-import { updateUser } from "../../api_client/UserQueries";
+import { IContact } from "../../lib/UnifiedDataType";
+import { getAllTags } from "../../api_client/UserClient";
 import Layout from "../../components/navLayout/Layout";
 import { useRouter } from "next/router";
 import PageLoadingBar from "../../components/PageLoadingBar";
 import { OnChangeValue } from "react-select";
-import { deleteAddedContact } from "../../api_client/AddedContactQueries";
 import { getSession } from "next-auth/client";
+import {
+  getContact,
+  deleteContact,
+  updateContact,
+  removeTagFromContact,
+  addTagToContact,
+  toggleStarContact,
+  addContact_User,
+} from "../../api_client/ContactClient";
 
 const useStyles = makeStyles((theme) => ({
   containerStyle: {
@@ -65,6 +68,14 @@ const useStyles = makeStyles((theme) => ({
       alignItems: "center",
     },
   },
+  hiddenDetails: {
+    borderRadius: 10,
+    padding: 35,
+    marginTop: theme.spacing(),
+    [theme.breakpoints.down("xs")]: {
+      padding: 30,
+    },
+  },
   detailsAndNotes: {
     width: "70%",
     [theme.breakpoints.down("sm")]: {
@@ -81,31 +92,18 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const DUMMY_TAG_OPTIONS = [
-  "Finance",
-  "Business",
-  "Melbourne AI Conference 2019",
-  "Management",
-  "Data Science",
-  "Unimelb",
-  "Anime Conference 2017",
-  "Sundance film festival 2016",
-  "A really really really really really really long tag",
-];
-
 export default function ViewContact() {
   const classes = useStyles();
-  const [fieldValues, setFieldValues] = useState<IManualContact>();
+  const [initialContactData, setInitialContactData] = useState<IContact>();
   const [isLoading, setIsLoading] = useState(true);
-  const [isEditingNotes, setIsEditingNotes] = useState(false);
   const [notes, setNotes] = useState("");
+  const [isEditingNotes, setIsEditingNotes] = useState(false);
   const [editedNotes, setEditedNotes] = useState("");
   const [tags, setTags] = useState<string[]>([]);
   const [tagOptions, setTagOptions] = useState<string[]>([]);
   const [isStarred, setIsStarred] = useState(false);
-  const [isArchived, setIsArchived] = useState(false);
+  const [isAdded, setIsAdded] = useState(false);
 
-  const firstUpdate = useRef(true);
   const router = useRouter();
   const { contactId } = router.query;
 
@@ -113,23 +111,21 @@ export default function ViewContact() {
     if (contactId && typeof contactId === "string") {
       try {
         setIsLoading(true);
-        const fetchedData = await getManualContactById(contactId);
-        setFieldValues(fetchedData);
+        const fetchedData = await getContact(contactId, false);
+        setInitialContactData(fetchedData);
+        console.log(fetchedData);
         setNotes(fetchedData.notes ?? "");
         setEditedNotes(fetchedData.notes ?? "");
         setTags(fetchedData.tags ?? []);
-        /** TODO: fetch tag options from user object */
-        const fetchedTagOptions = DUMMY_TAG_OPTIONS;
+        const fetchedTagOptions = await getAllTags();
         setTagOptions(fetchedTagOptions);
         setIsStarred(fetchedData.starred ?? false);
-        setIsArchived(fetchedData.archived ?? false);
+        setIsAdded(fetchedData.isAddedContact);
         setIsLoading(false);
       } catch (e) {
         /** TODO: redirect to error page */
         console.log(e);
         setIsLoading(false);
-      } finally {
-        firstUpdate.current = false;
       }
     }
   }, [contactId]);
@@ -144,34 +140,27 @@ export default function ViewContact() {
   };
 
   const updateContactNotes = useCallback(async () => {
-    if (fieldValues?._id) {
+    if (initialContactData) {
       try {
         const updateObject = {
-          ownerId: "123",
-          name: fieldValues.name,
-          notes: notes,
+          notes: editedNotes,
         };
-        const updatedContact = await updateManualContact(
-          fieldValues._id,
+        const updatedContact = await updateContact(
+          initialContactData,
           updateObject
         );
         console.log(updatedContact);
+        setNotes(updatedContact.notes ?? "");
+        setEditedNotes(updatedContact.notes ?? "");
       } catch (e) {
         console.log(e);
       }
     }
-  }, [notes, fieldValues]);
-
-  useEffect(() => {
-    if (!firstUpdate.current) {
-      console.log("update notes");
-      updateContactNotes();
-    }
-  }, [notes, updateContactNotes]);
+  }, [initialContactData, editedNotes]);
 
   const saveEditedNotes = () => {
     if (isEditingNotes) {
-      setNotes(editedNotes);
+      updateContactNotes();
       toggleEditingMode();
     }
   };
@@ -183,144 +172,86 @@ export default function ViewContact() {
     }
   };
 
-  const updateContactTags = useCallback(async () => {
-    if (fieldValues?._id) {
+  const deleteTag = async (toDelete: string) => {
+    if (initialContactData) {
       try {
-        const updateObject = {
-          ownerId: "123",
-          name: fieldValues.name,
-          tags: tags,
-        };
-        const updatedContact = await updateManualContact(
-          fieldValues._id,
-          updateObject
+        const updatedContact = await removeTagFromContact(
+          initialContactData,
+          toDelete
         );
+        setTags(updatedContact.tags ?? []);
+        console.log("After deleting tag");
         console.log(updatedContact);
+        const updatedTagOptions = await getAllTags();
+        setTagOptions(updatedTagOptions);
       } catch (e) {
         console.log(e);
       }
     }
-  }, [tags, fieldValues]);
-
-  useEffect(() => {
-    if (!firstUpdate.current) {
-      console.log("update tags");
-      updateContactTags();
-    }
-  }, [tags, updateContactTags]);
-
-  const deleteTag = (toDelete: string) => {
-    const newTags = tags.filter((value) => value !== toDelete);
-    setTags(newTags);
   };
 
-  /** TODO */
-  // const updateUserTags = useCallback(async () => {
-  //   try {
-  //     const currentUser = await getSession();
-  //     if (currentUser?.user) {
-  //       const updateObject = {
-  //         allTags: tagOptions,
-  //         name: currentUser?.user?.name,
-  //         email: currentUser?.user?.email ?? "",
-  //       };
-  //       const updatedUser = await updateUser("123", updateObject);
-  //       console.log(updatedUser);
-  //     }
-  //   } catch (e) {
-  //     console.log(e);
-  //   }
-  // }, [tagOptions]);
-
-  // useEffect(() => {
-  //   updateUserTags();
-  // }, [tagOptions, updateUserTags]);
-
-  /** TODO: update user tags */
-  const addTag = (toAdd: string) => {
-    setTags([...tags, toAdd]);
-    if (!tagOptions.includes(toAdd)) {
-      setTagOptions([...tagOptions, toAdd]);
+  const addTag = async (toAdd: string) => {
+    if (initialContactData) {
+      try {
+        const updatedContact = await addTagToContact(initialContactData, toAdd);
+        setTags(updatedContact.tags ?? []);
+        console.log("After adding tag");
+        console.log(updatedContact);
+        const updatedTagOptions = await getAllTags();
+        setTagOptions(updatedTagOptions);
+      } catch (e) {
+        console.log(e);
+      }
     }
   };
 
   const updateStarred = useCallback(async () => {
-    if (fieldValues?._id) {
+    if (initialContactData) {
       try {
-        const updateObject = {
-          ownerId: "123",
-          name: fieldValues.name,
-          starred: isStarred,
-        };
-        const updatedContact = await updateManualContact(
-          fieldValues._id,
-          updateObject
-        );
+        const updatedContact = await toggleStarContact(initialContactData);
         console.log(updatedContact);
       } catch (e) {
         console.log(e);
       }
     }
-  }, [isStarred, fieldValues]);
+  }, [initialContactData]);
 
-  const updateArchived = useCallback(async () => {
-    if (fieldValues?._id) {
-      try {
-        const updateObject = {
-          ownerId: "123",
-          name: fieldValues.name,
-          archived: isArchived,
-        };
-        const updatedContact = await updateManualContact(
-          fieldValues._id,
-          updateObject
-        );
-        console.log(updatedContact);
-      } catch (e) {
-        console.log(e);
-      }
-    }
-  }, [isArchived, fieldValues]);
-
-  const deleteContact = useCallback(async () => {
-    if (fieldValues?._id) {
+  const removeThisContact = useCallback(async () => {
+    if (initialContactData && isAdded) {
       try {
         setIsLoading(true);
-        const updatedContact = await deleteManualContact(fieldValues._id);
-        console.log(updatedContact);
+        await deleteContact(initialContactData);
+        setIsAdded(false);
+        // const updatedContact = await getContact(initialContactData._id, false);
+        // setInitialContactData(updatedContact);
         setIsLoading(false);
-        router.replace("/contacts");
       } catch (e) {
         console.log(e);
         setIsLoading(false);
       }
     }
-  }, [fieldValues, router]);
-
-  useEffect(() => {
-    if (!firstUpdate.current) {
-      console.log("update starred");
-      updateStarred();
-    }
-  }, [isStarred, updateStarred]);
-
-  useEffect(() => {
-    if (!firstUpdate.current) {
-      console.log("update archived");
-      updateArchived();
-    }
-  }, [isArchived, updateArchived]);
+  }, [initialContactData, isAdded]);
 
   const handleContactOption = (
     value: OnChangeValue<{ value: string; label: string }, false> | null
   ) => {
-    if (value) {
-      if (value.value === "archive") {
-        setIsArchived(true);
-      } else if (value.value === "unarchive") {
-        setIsArchived(false);
-      } else if (value.value === "delete") {
-        deleteContact();
+    if (value && value.value === "remove") {
+      removeThisContact();
+    }
+  };
+
+  const addContact = async () => {
+    if (initialContactData && !isAdded) {
+      try {
+        setIsLoading(true);
+        const addedContact = await addContact_User(initialContactData?._id);
+        console.log(addedContact);
+        setInitialContactData(addedContact);
+        setIsAdded(addedContact.isAddedContact);
+        setIsLoading(false);
+      } catch (e) {
+        console.log(e);
+        setIsLoading(false);
       }
     }
   };
@@ -343,9 +274,10 @@ export default function ViewContact() {
     <Layout>
       <Container className={classes.containerStyle}>
         <ContactOptions
-          isArchived={isArchived}
+          isAdded={isAdded}
+          isManual={false}
           onChange={handleContactOption}
-          onPressEdit={() => {}}
+          onAdd={addContact}
         />
         <div className={classes.primaryDetailsStyle}>
           <Container className={classes.profilePicDiv}>
@@ -356,49 +288,65 @@ export default function ViewContact() {
             />
           </Container>
           <ContactHeader
-            firstName={fieldValues?.name.firstName}
-            lastName={fieldValues?.name.lastName}
-            title={fieldValues?.job}
+            firstName={initialContactData?.name.firstName}
+            lastName={initialContactData?.name.lastName}
+            title={initialContactData?.job}
             primaryOrg={
-              fieldValues?.organisations &&
-              fieldValues?.organisations.length > 0
-                ? fieldValues?.organisations[0]
+              initialContactData?.organisations &&
+              initialContactData?.organisations.length > 0
+                ? initialContactData?.organisations[0]
                 : ""
             }
             secondaryOrg={
-              fieldValues?.organisations &&
-              fieldValues?.organisations.length > 1
-                ? fieldValues?.organisations[1]
+              initialContactData?.organisations &&
+              initialContactData?.organisations.length > 1
+                ? initialContactData?.organisations[1]
                 : ""
             }
             starred={isStarred}
-            onStar={() => setIsStarred(!isStarred)}
+            onStar={() => {
+              if (isAdded) {
+                setIsStarred(!isStarred);
+                updateStarred();
+              }
+            }}
+            showStar={isAdded}
           />
         </div>
-        <div className={classes.responsiveSections}>
-          <div className={classes.detailsAndNotes}>
-            <ContactDetails fieldValues={fieldValues} />
-            <MyNotes
-              isEditingNotes={isEditingNotes}
-              toggleEditingMode={toggleEditingMode}
-              onChangeEdited={(event: any) =>
-                setEditedNotes(event.target.value)
-              }
-              notes={notes}
-              editedNotes={editedNotes}
-              saveEditedNotes={saveEditedNotes}
-              cancelEditedNotes={cancelEditedNotes}
-            />
+        {!isAdded && (
+          <Paper elevation={3} className={classes.hiddenDetails}>
+            <Typography variant="h6" component="p">
+              Please add {initialContactData?.fullName} to view their contact
+              details.
+            </Typography>
+          </Paper>
+        )}
+        {isAdded && (
+          <div className={classes.responsiveSections}>
+            <div className={classes.detailsAndNotes}>
+              <ContactDetails fieldValues={initialContactData} />
+              <MyNotes
+                isEditingNotes={isEditingNotes}
+                toggleEditingMode={toggleEditingMode}
+                onChangeEdited={(event: any) =>
+                  setEditedNotes(event.target.value)
+                }
+                notes={notes}
+                editedNotes={editedNotes}
+                saveEditedNotes={saveEditedNotes}
+                cancelEditedNotes={cancelEditedNotes}
+              />
+            </div>
+            <div className={classes.myTags}>
+              <MyTags
+                tags={tags}
+                tagOptions={tagOptions}
+                deleteTag={deleteTag}
+                addTag={addTag}
+              />
+            </div>
           </div>
-          <div className={classes.myTags}>
-            <MyTags
-              tags={tags}
-              tagOptions={tagOptions}
-              deleteTag={deleteTag}
-              addTag={addTag}
-            />
-          </div>
-        </div>
+        )}
       </Container>
     </Layout>
   );
