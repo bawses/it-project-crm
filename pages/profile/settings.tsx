@@ -36,7 +36,7 @@ const useStyles = makeStyles((theme) => ({
     marginTop: theme.spacing(),
     marginBottom: theme.spacing(),
   },
-  updatePassword: {
+  passwordSection: {
     textAlign: "left",
     maxWidth: 500,
     margin: "0 auto",
@@ -49,7 +49,7 @@ const useStyles = makeStyles((theme) => ({
     display: "flex",
     flexDirection: "row",
     justifyContent: "flex-end",
-    marginTop: theme.spacing(),
+    marginTop: theme.spacing(2),
   },
 }));
 
@@ -106,7 +106,7 @@ export default function Settings() {
   return (
     <Layout>
       <Container maxWidth="md" className={classes.containerStyle}>
-        <Typography variant="h4" component="h2" className={classes.pageTitle}>
+        <Typography variant="h5" component="h2" className={classes.pageTitle}>
           My Settings
         </Typography>
         <Grid item xs={12} style={{ textAlign: "center" }}>
@@ -127,11 +127,13 @@ export default function Settings() {
               {profileData?.email[0]}
             </Typography>
           </div>
-          <div className={classes.updatePassword}>
-            <Typography variant="h5" component="h5">
+          <div className={classes.passwordSection}>
+            <Typography variant="h6" component="h5">
               Update password
             </Typography>
-            <form noValidate autoComplete="off" onSubmit={handleSubmit}>
+          </div>
+          <form noValidate autoComplete="off" onSubmit={handleSubmit}>
+            <div className={classes.passwordSection}>
               <TextField
                 size="small"
                 variant="filled"
@@ -165,16 +167,16 @@ export default function Settings() {
                 onChange={(event) => setConfirmPassword(event.target.value)}
                 className={classes.passwordInput}
               />
-              <div className={classes.submitNewPassword}>
-                <TextButton
-                  type="submit"
-                  color={COLORS.actionOrange}
-                  textColor={COLORS.white}
-                  title="Change password"
-                />
-              </div>
-            </form>
-          </div>
+            </div>
+            <div className={classes.submitNewPassword}>
+              <TextButton
+                type="submit"
+                color={COLORS.actionOrange}
+                textColor={COLORS.white}
+                title="Change password"
+              />
+            </div>
+          </form>
         </Grid>
         <br />
       </Container>

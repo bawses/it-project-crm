@@ -52,7 +52,10 @@ const useStyles = makeStyles((theme) => ({
     display: "flex",
     flexDirection: "row",
     justifyContent: "flex-end",
-    marginTop: theme.spacing(),
+    marginTop: theme.spacing(4),
+    [theme.breakpoints.down("xs")]: {
+      marginTop: theme.spacing(2),
+    },
   },
 }));
 
@@ -66,6 +69,7 @@ export default function Profile() {
   const router = useRouter();
 
   const handleSignOut = (e: React.SyntheticEvent) => {
+    setIsLoading(true);
     signOut();
   };
 
