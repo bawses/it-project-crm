@@ -27,7 +27,11 @@ const useStyles = makeStyles((theme) => ({
     },
   },
   pageTitle: {
-    marginBottom: theme.spacing(),
+    marginBottom: theme.spacing(2),
+    fontSize: "2rem",
+    [theme.breakpoints.down("sm")]: {
+      fontSize: "1.5rem",
+    },
   },
   accountDetails: {
     margin: theme.spacing(3),
