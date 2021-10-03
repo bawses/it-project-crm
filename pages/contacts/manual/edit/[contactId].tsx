@@ -527,7 +527,6 @@ export default function EditManualContact() {
           />
           <EditContactOptions
             onCancel={() => router.back()}
-            onSubmit={handleSubmit}
             submitLabel={"Save changes"}
           />
         </form>

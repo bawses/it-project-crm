@@ -1,5 +1,5 @@
 import React from "react";
-import { Paper, Typography, makeStyles } from "@material-ui/core";
+import { Paper, Typography, makeStyles, Divider } from "@material-ui/core";
 import {
   Mail,
   Phone,
@@ -54,19 +54,22 @@ export default function ContactDetails({ fieldValues }: ContactDetailsProps) {
     index: number
   ) => {
     return (
-      <div className={classes.iconRow} key={index.toString()}>
-        {fieldType === "Facebook" && <Facebook className={classes.icon} />}
-        {fieldType === "Instagram" && <Instagram className={classes.icon} />}
-        {fieldType === "LinkedIn" && <LinkedIn className={classes.icon} />}
-        {fieldType === "Twitter" && <Twitter className={classes.icon} />}
-        {fieldType === "Website" && <Language className={classes.icon} />}
-        {fieldType === "Other" && <Language className={classes.icon} />}
-        <Typography
-          id={fieldType + index.toString()}
-          className={classes.topSpacing}
-        >
-          {fieldValue}
-        </Typography>
+      <div key={index.toString()}>
+        {index !== 0 && <Divider />}
+        <div className={classes.iconRow}>
+          {fieldType === "Facebook" && <Facebook className={classes.icon} />}
+          {fieldType === "Instagram" && <Instagram className={classes.icon} />}
+          {fieldType === "LinkedIn" && <LinkedIn className={classes.icon} />}
+          {fieldType === "Twitter" && <Twitter className={classes.icon} />}
+          {fieldType === "Website" && <Language className={classes.icon} />}
+          {fieldType === "Other" && <Language className={classes.icon} />}
+          <Typography
+            id={fieldType + index.toString()}
+            className={classes.topSpacing}
+          >
+            {fieldValue}
+          </Typography>
+        </div>
       </div>
     );
   };
@@ -111,12 +114,14 @@ export default function ContactDetails({ fieldValues }: ContactDetailsProps) {
             </div>
           </div>
         </div>
+        <Divider />
         <div className={classes.iconRow}>
           <Business className={classes.icon} />
           <Typography className={classes.topSpacing}>
             {fieldValues?.location}
           </Typography>
         </div>
+        <Divider />
         {linksList(fieldValues).map((field, index) =>
           fieldCreator(field.fieldType, field.fieldValue, index)
         )}
@@ -163,5 +168,7 @@ const useStyles = makeStyles((theme) => ({
     display: "flex",
     flexDirection: "row",
     alignItems: "center",
+    marginTop: theme.spacing(),
+    marginBottom: theme.spacing(),
   },
 }));
