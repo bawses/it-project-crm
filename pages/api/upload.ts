@@ -17,6 +17,7 @@ handler.use(
 
   if (req.file){
     console.log("testing testing")
+    console.log(String(req.file.path));
     const image = await cloudinary.uploader.upload(req.file.path, {
       crop: "fill"
     });
