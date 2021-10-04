@@ -1,7 +1,7 @@
-import { Container, Typography, makeStyles } from "@material-ui/core";
+import { Container, Typography, makeStyles, Paper } from "@material-ui/core";
 import Image from "next/image";
 import DEFAULT_IMAGE from "../../assets/blank-profile-picture-973460_640.png";
-import { useState, useEffect, useCallback, useRef } from "react";
+import { useState, useEffect, useCallback } from "react";
 import MyTags from "../../components/cards/MyTags";
 import MyNotes from "../../components/cards/MyNotes";
 import ContactDetails from "../../components/cards/ContactDetails";
@@ -21,6 +21,7 @@ import {
 	removeTagFromContact,
 	addTagToContact,
 	toggleStarContact,
+	addContact_User,
 } from "../../api_client/ContactClient";
 
 const useStyles = makeStyles((theme) => ({
@@ -67,6 +68,14 @@ const useStyles = makeStyles((theme) => ({
 			alignItems: "center",
 		},
 	},
+	hiddenDetails: {
+		borderRadius: 10,
+		padding: 35,
+		marginTop: theme.spacing(),
+		[theme.breakpoints.down("xs")]: {
+			padding: 30,
+		},
+	},
 	detailsAndNotes: {
 		width: "70%",
 		[theme.breakpoints.down("sm")]: {
@@ -96,8 +105,8 @@ export default function ViewContact() {
 	const [tags, setTags] = useState<string[]>([]);
 	const [tagOptions, setTagOptions] = useState<string[]>([]);
 	const [isStarred, setIsStarred] = useState(false);
+	const [isAdded, setIsAdded] = useState(false);
 
-	const firstUpdate = useRef(true);
 	const router = useRouter();
 	const { contactId } = router.query;
 
@@ -107,11 +116,9 @@ export default function ViewContact() {
 				setIsLoading(true);
 				const fetchedData = await getContact(contactId, false);
 				setInitialContactData(fetchedData);
-
 				if (fetchedData?.imageUrl) {
 					setProfileImage(fetchedData?.imageUrl);
 				}
-
 				console.log(fetchedData);
 				setNotes(fetchedData.notes ?? "");
 				setEditedNotes(fetchedData.notes ?? "");
@@ -119,13 +126,12 @@ export default function ViewContact() {
 				const fetchedTagOptions = await getAllTags();
 				setTagOptions(fetchedTagOptions);
 				setIsStarred(fetchedData.starred ?? false);
+				setIsAdded(fetchedData.isAddedContact);
 				setIsLoading(false);
 			} catch (e) {
 				/** TODO: redirect to error page */
 				console.log(e);
 				setIsLoading(false);
-			} finally {
-				firstUpdate.current = false;
 			}
 		}
 	}, [contactId]);
@@ -231,18 +237,19 @@ export default function ViewContact() {
 		}
 	}, [initialContactData, router]);
 
-	useEffect(() => {
-		if (!firstUpdate.current) {
-			console.log("update starred");
-			updateStarred();
-		}
-	}, [isStarred, updateStarred]);
-
-	const handleContactOption = (
-		value: OnChangeValue<{ value: string; label: string }, false> | null
-	) => {
-		if (value && value.value === "remove") {
-			removeThisContact();
+	const addContact = async () => {
+		if (initialContactData && !isAdded) {
+			try {
+				setIsLoading(true);
+				const addedContact = await addContact_User(initialContactData?._id);
+				console.log(addedContact);
+				setInitialContactData(addedContact);
+				setIsAdded(addedContact.isAddedContact);
+				setIsLoading(false);
+			} catch (e) {
+				console.log(e);
+				setIsLoading(false);
+			}
 		}
 	};
 
@@ -256,17 +263,22 @@ export default function ViewContact() {
 		});
 	}, [router]);
 
-	if (isLoading) {
-		return <PageLoadingBar />;
-	}
+	const handleContactOption = (
+		value: OnChangeValue<{ value: string; label: string }, false> | null
+	) => {
+		if (value && value.value === "remove") {
+			removeThisContact();
+		}
+	};
 
 	return (
 		<Layout>
 			<Container className={classes.containerStyle}>
 				<ContactOptions
-					isAdded={initialContactData?.isAddedContact}
+					isAdded={isAdded}
 					isManual={false}
 					onChange={handleContactOption}
+					onAdd={addContact}
 				/>
 				<div className={classes.primaryDetailsStyle}>
 					<Container className={classes.profilePicDiv}>
@@ -295,10 +307,24 @@ export default function ViewContact() {
 								: ""
 						}
 						starred={isStarred}
-						onStar={() => setIsStarred(!isStarred)}
+						onStar={() => {
+							if (isAdded) {
+								setIsStarred(!isStarred);
+								updateStarred();
+							}
+						}}
+						showStar={isAdded}
 					/>
 				</div>
-				{initialContactData?.isAddedContact && (
+				{!isAdded && (
+					<Paper elevation={3} className={classes.hiddenDetails}>
+						<Typography variant="h6" component="p">
+							Please add {initialContactData?.fullName} to view their contact
+							details.
+						</Typography>
+					</Paper>
+				)}
+				{isAdded && (
 					<div className={classes.responsiveSections}>
 						<div className={classes.detailsAndNotes}>
 							<ContactDetails fieldValues={initialContactData} />
