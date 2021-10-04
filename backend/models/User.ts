@@ -25,6 +25,7 @@ const UserSchema = new mongoose.Schema<IUser>(
     about: String,
     allTags: [String],
     organisations: [OrganisationId],
+    imageUrl: String,
   },
   {
     timestamps: true,

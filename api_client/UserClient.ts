@@ -10,6 +10,7 @@ import {
   getDbRecordById,
   updateDbRecord,
   deleteDbRecord,
+  doUploadImage,
 } from "./Client";
 import { hash as hashPassword } from "bcryptjs";
 
@@ -86,6 +87,20 @@ export const updateUserById = async (id: string, updateObj: IUser_Update) => {
   if (updateObj.name) {
     updateObj_.fullName = updateObj.name.firstName + " " + updateObj.name.lastName;
   }
+
+  if (updateObj.imageFile){
+    // Insert in image upload operation here
+    const imageUrl = await updateImageForUser(updateObj.imageFile);
+    console.log("Image Url: " + imageUrl);
+    
+    updateObj_.imageUrl = imageUrl;
+  }
+  else if (!updateObj.imageUrl){
+    // Set image to default
+    updateObj_.imageUrl = "";
+  }
+
+  delete updateObj_.imageFile;
   return updateDbRecord<IUser>(DataType.User, id, updateObj_);
 };
 
@@ -122,3 +137,9 @@ export const searchUsersByName = async (name: string) => {
 export const getAllTags = async (): Promise<string[]> => {
   return (await getUser()).allTags || [];
 };
+
+const updateImageForUser = async (imageFile: File) => {
+  const imageUrl = await doUploadImage(imageFile);
+  
+  return imageUrl;
+}
