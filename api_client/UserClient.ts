@@ -140,6 +140,5 @@ export const getAllTags = async (): Promise<string[]> => {
 
 const updateImageForUser = async (imageFile: File) => {
   const imageUrl = await doUploadImage(imageFile);
-  
   return imageUrl;
 }

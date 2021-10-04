@@ -89,6 +89,6 @@ export const convert_AddedUser_to_Contact = (
     archived: false,
     isManualContact: false,
     isAddedContact: true,
-    imageUrl: user?.imageUrl,
+    imageUrl: user.imageUrl,
   };
 };

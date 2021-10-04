@@ -1,8 +1,9 @@
 import nc from "next-connect";
 import { v2 as cloudinary } from "cloudinary";
+import os from "os";
 
 import multer from "multer";
-const upload = multer({ dest: "/profile_images" });
+const upload = multer({ dest: os.tmpdir() });
 
 const handler = nc();
 
