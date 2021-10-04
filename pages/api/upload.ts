@@ -16,13 +16,16 @@ handler.use(
   console.log("--------");
 
   if (req.file){
-    console.log("testing testing")
-    console.log(String(req.file.path));
-    const image = await cloudinary.uploader.upload(req.file.path, {
+    const imgPath = String(req.file.path);
+    console.log(imgPath)
+    const image = await cloudinary.uploader.upload(imgPath, {
       crop: "fill"
     });
 
+    console.log("---------")
     console.log(image);
+    console.log("---------")
+
     return res.status(200).json({success: true, imageUrl: image.secure_url});
   }
   return res.status(400).json({success: false});
