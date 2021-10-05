@@ -22,7 +22,6 @@ export default function AuthButton({
     <Button
       onClick={onClick}
       fullWidth
-      
       variant="contained"
       className={className}
       style={{
@@ -32,8 +31,6 @@ export default function AuthButton({
         textTransform: "none",
         fontWeight: "bold",
         fontSize: "1rem",
-        backgroundColor: color,
-        color:  textColor,
       }}
     >
       {title}
