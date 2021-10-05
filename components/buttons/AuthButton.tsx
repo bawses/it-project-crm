@@ -1,5 +1,8 @@
+/*
+ * Login Page that redirects to Home/Contacts Page
+ */
 import Button from "@material-ui/core/Button";
-import { COLORS } from "../../lib/Colors";
+import { BsGoogle } from "react-icons/bs";
 
 interface ButtonProps {
   title: string;
@@ -7,18 +10,16 @@ interface ButtonProps {
     event: React.MouseEvent<HTMLButtonElement, globalThis.MouseEvent>
   ) => void;
   className?: string | undefined;
-  color?: string; 
-  textColor?: string;
+  authMethod?: string | undefined;
 }
 
 export default function AuthButton({
   title,
   onClick = () => {},
   className = undefined,
-  color = COLORS.primaryBlue,
-  textColor = COLORS.white,
+  authMethod = undefined,
 }: ButtonProps) {
-  return (
+  return authMethod == "google" ? (
     <Button
       onClick={onClick}
       fullWidth
@@ -26,8 +27,28 @@ export default function AuthButton({
       className={className}
       style={{
         position: "relative",
-        // top: "2px",
-        // bottom: "2px",
+        top: "2px",
+        bottom: "5px",
+        textTransform: "none",
+        fontWeight: "bold",
+        fontSize: "1rem",
+      }}
+    >
+      {/* Google Login Button styling */}
+      <BsGoogle />
+      &nbsp;&nbsp;
+      {title}
+    </Button>
+  ) : (
+    <Button
+      onClick={onClick}
+      fullWidth
+      variant="contained"
+      className={className}
+      style={{
+        position: "relative",
+        top: "2px",
+        bottom: "5px",
         textTransform: "none",
         fontWeight: "bold",
         fontSize: "1rem",
