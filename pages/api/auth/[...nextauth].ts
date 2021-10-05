@@ -12,6 +12,11 @@ export default NextAuth({
     jwt: true,
   },
   providers: [
+    Providers.Google({
+      clientId: process.env.GOOGLE_ID,
+      clientSecret: process.env.GOOGLE_SECRET,
+    })
+    ,
     Providers.Credentials({
       async authorize(credentials: Record<string, string>) {
         await connectToDatabase();
@@ -49,6 +54,6 @@ export default NextAuth({
         console.log("---------------------------------------------------") */
         session.user = userOrToken;
         return Promise.resolve(session)
-    }
+    },
   }
 });
