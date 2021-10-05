@@ -1,7 +1,6 @@
 /*
  * Login Page that redirects to Home/Contacts Page
  */
-
 import { useRouter } from "next/router";
 import Link from "next/link";
 import { getSession, signIn } from "next-auth/client";
@@ -30,7 +29,7 @@ const useStyles = makeStyles((theme: Theme) =>
       maxWidth: 600,
       paddingTop: theme.spacing(1),
       height: "50px",
-      marginTop: theme.spacing(),
+      marginTop: theme.spacing(1.5),
     },
 
     googleBtn: {
@@ -39,7 +38,7 @@ const useStyles = makeStyles((theme: Theme) =>
       maxWidth: 600,
       paddingTop: theme.spacing(1),
       height: "50px",
-      marginTop: theme.spacing(),
+      marginTop: theme.spacing(1.5),
     },
 
     logobox: {
@@ -178,7 +177,7 @@ export default function LoginPage() {
       <Grid
         container
         direction={isSmall ? "column" : "row"}
-        justify="center"
+        justifyContent="center"
         alignItems="center"
       >
         <Grid
@@ -254,7 +253,6 @@ export default function LoginPage() {
               className={classes.btn}
               title="Log In"
             />
-
             <AuthButton
               onClick={handleGoogleLogin}
               className={classes.googleBtn}
