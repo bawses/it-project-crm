@@ -62,6 +62,7 @@ export default function ContactsTableRow({
 
 	let buttonComponent: JSX.Element;
 	if (starVariant) {
+		// Star variant row
 		// Determine colour for star variant
 		let starColor = COLORS.inactiveGrey;
 		if (contact.starred) {
@@ -78,14 +79,17 @@ export default function ContactsTableRow({
 				<StarsIcon htmlColor={starColor} />
 			</IconButton>
 		);
-	} else {
+	} else if (addVariant) {
+		// Search variant row
 		if (loading) {
 			// Render a loading button
 			buttonComponent = (
-				<Button variant="contained" disabled={true}>
-					<CircularProgress className={classes.circularProgress} size={20} />
-					Loading
-				</Button>
+				<TableCell width="20%" align="center">
+					<Button variant="contained" disabled={true}>
+						<CircularProgress className={classes.circularProgress} size={20} />
+						Loading
+					</Button>
+				</TableCell>
 			);
 		} else {
 			// Determine text and status for add variant
@@ -100,18 +104,22 @@ export default function ContactsTableRow({
 			}
 
 			buttonComponent = (
-				<TextButton
-					disabled={btnIsDisabled}
-					color={COLORS.actionOrange}
-					textColor={COLORS.white}
-					onClick={(event) => {
-						event.stopPropagation();
-						addVariant?.handleContactAdd(contact, setLoading);
-					}}
-					title={btnTitle}
-				/>
+				<TableCell width="20%" align="center">
+					<TextButton
+						disabled={btnIsDisabled}
+						color={COLORS.actionOrange}
+						textColor={COLORS.white}
+						onClick={(event) => {
+							event.stopPropagation();
+							addVariant?.handleContactAdd(contact, setLoading);
+						}}
+						title={btnTitle}
+					/>
+				</TableCell>
 			);
 		}
+	} else {
+		buttonComponent = <></>
 	}
 
 	const name = contact.name.firstName + " " + contact.name.lastName;
@@ -125,9 +133,8 @@ export default function ContactsTableRow({
 
 	return (
 		<Link
-			href={`contacts/${contact.isManualContact ? "manual/" : ""}${
-				contact._id
-			}`}
+			href={`contacts/${contact.isManualContact ? "manual/" : ""}${contact._id
+				}`}
 			passHref
 		>
 			<TableRow className={classes.row} hover={true}>
@@ -144,9 +151,7 @@ export default function ContactsTableRow({
 						{nameComponent} {roleComponent}
 					</TableCell>
 				)}
-				<TableCell width="20%" align="center">
-					{buttonComponent}
-				</TableCell>
+				{buttonComponent}
 			</TableRow>
 		</Link>
 	);
