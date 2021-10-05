@@ -544,6 +544,7 @@ export default function EditProfile() {
 								bottomOnChange={(event: any) =>
 									handleChange("secondaryEmail", event.target.value)
 								}
+								topDisabled={true}
 							/>
 							<VerticalFieldPair
 								iconType="phone"
@@ -586,7 +587,6 @@ export default function EditProfile() {
 					/>
 					<EditContactOptions
 						onCancel={() => router.back()}
-						onSubmit={handleSubmit}
 						submitLabel={"Save changes"}
 					/>
 				</form>
