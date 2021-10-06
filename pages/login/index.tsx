@@ -125,11 +125,6 @@ export default function LoginPage() {
 		setPassword(e.target.value);
 	};
 
-	// Log in with Google Option 
-	const handleGoogleLogin = () => {
-		
-	}
-
 	const handleSubmit = async (
 		e: MouseEvent<HTMLButtonElement, globalThis.MouseEvent>
 	) => {
@@ -246,7 +241,7 @@ export default function LoginPage() {
 							title="Log In"
 						/>
 						<AuthButton
-							onClick={handleGoogleLogin}
+							onClick={() => signIn("google", { callbackUrl: "/profile" })}
 							className={classes.btn}
 							title="Sign In With Google"
 						/>
