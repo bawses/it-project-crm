@@ -6,7 +6,6 @@ import { JWT } from "next-auth/jwt";
 import { compare as verifyPassword, hash } from "bcryptjs";
 import connectToDatabase from "../../../backend/dbConnect";
 import User from "../../../backend/models/User";
-import mongoose from "mongoose";
 
 export default NextAuth({
   session: {
