@@ -3,12 +3,12 @@ import Box from '@material-ui/core/Box';
 import ContactsTableCategory, { CategoryButton } from "../../components/tables/contactsTableCategory";
 import ContactsTableSort, { SortType } from "../../components/tables/contactsTableSort";
 import SearchBar from "../../components/input/SearchBar";
-import ContactsTable, { ContactsTableVariant } from "../../components/tables/contactsTable";
+import ContactsTable from "../../components/tables/contactsTable";
 import { useEffect, useState } from "react";
 import { IContact } from "../../lib/UnifiedDataType";
 import { useTheme } from "@material-ui/core/styles";
 import { makeStyles, Typography, useMediaQuery } from "@material-ui/core";
-import { getContacts_Manual } from "../../api_client/ContactClient";
+import { addFieldToContact, deleteContact, getContact, getContacts_Manual } from "../../api_client/ContactClient";
 import { sortFunctions } from "../contacts";
 import { getSession } from 'next-auth/client';
 import { useRouter } from "next/router";
@@ -20,15 +20,20 @@ import MergeConfirmation from "../../components/merge/MergeConfirmation";
 async function getData(
   setAllContacts: (contacts: IContact[]) => void,
   setDisplayContacts: (contacts: IContact[]) => void,
-  setIsLoading: (loading: boolean) => void
+  setIsLoading: (loading: boolean) => void,
+  userId: string,
+  setCurrentUser: (user: IContact) => void
 ) {
   try {
     setIsLoading(true)
-    const data = await getContacts_Manual()
+    const manualContacts = await getContacts_Manual()
+    const user = await getContact(userId, false)
     // Set all contacts
-    setAllContacts(data)
+    setAllContacts(manualContacts)
     // Set all display contacts to just be the full manual contacts list initially
-    setDisplayContacts(data)
+    setDisplayContacts(manualContacts)
+    // Set the current user profile being merged
+    setCurrentUser(user)
     setIsLoading(false)
   } catch (error) {
     console.error("Error getting merge page data", error)
@@ -49,7 +54,9 @@ export default function MergePage() {
   const [searchValue, setSearchValue] = useState<string>("")
   const [allContacts, setAllContacts] = useState<IContact[]>([])
   const [displayContacts, setDisplayContacts] = useState<IContact[]>([])
-  const [popupOpen, setPopupOpen] = useState(true)
+  const [popupOpen, setPopupOpen] = useState(false)
+  const [selectedManualContact, setSelectedManualContact] = useState<IContact>()
+  const [selectedUser, setSelectedUser] = useState<IContact>()
   const [isLoading, setIsLoading] = useState(true)
 
   const router = useRouter()
@@ -70,10 +77,10 @@ export default function MergePage() {
     });
   }, [router]);
 
-  // Get all manual contact data
+  // Get all manual contact data, as well as information for the current selected user profile
   useEffect(() => {
-    getData(setAllContacts, setDisplayContacts, setIsLoading)
-  }, [])
+    getData(setAllContacts, setDisplayContacts, setIsLoading, router.query.userid as string, setSelectedUser)
+  }, [router])
 
   // Change the displayed list of contacts depending on various filter changes
   useEffect(() => {
@@ -115,6 +122,49 @@ export default function MergePage() {
     setCategoryButton(button)
   }
 
+  // Handles what happens when the Select button on a table row is pressed. Opens the merge popup
+  function handleSelectButtonPress(manualContact: IContact) {
+    setPopupOpen(true)
+    setSelectedManualContact(manualContact)
+  }
+
+  // Handles what happens when the merge confirmation button is pressed on the merge popup
+  function handleMergeButtonPress() {
+    // Migrate information over
+    let notes = ""
+    if (selectedUser && selectedManualContact) {
+      // Migrate notes over
+      if (selectedUser.notes) {
+        notes += selectedUser.notes + "\n" + selectedManualContact.notes
+      } else {
+        notes += selectedManualContact.notes
+      }
+
+      // Update the notes
+      addFieldToContact(selectedUser, { notes: notes })
+
+      // Migrate tags over
+      const tags: string[] = []
+      if (selectedManualContact.tags !== undefined) {
+        if (selectedUser.tags !== undefined) {
+          tags.push(...selectedUser.tags, ...selectedManualContact.tags)
+        } else {
+          tags.push(...selectedManualContact.tags)
+        }
+      }
+
+      // Update the user tags
+      addFieldToContact(selectedUser, { tags: tags })
+
+      // Now delete the manual contact
+      deleteContact(selectedManualContact)
+    }
+
+    setPopupOpen(false)
+  }
+
+  console.log(selectedUser)
+
   return (
     <Layout>
       <Box>
@@ -127,12 +177,12 @@ export default function MergePage() {
               <Typography variant="h4">
                 <strong>Select one of there contact entries </strong>
                 to merge with the CataLog profile of:
-                <strong className={classes.contactName}> {router.query.name as string}</strong>
+                <strong className={classes.contactName}> {selectedUser?.fullName}</strong>
               </Typography>
               :
               <Typography component="p">
                 <strong>Select</strong> the entry to merge with:
-                <strong className={classes.contactName}> {router.query.name as string}</strong>
+                <strong className={classes.contactName}> {selectedUser?.fullName}</strong>
               </Typography>
             }
           </Box>
@@ -147,8 +197,13 @@ export default function MergePage() {
           </Box>
           <Box boxShadow={3} borderRadius={8} mx={bigScreen ? 0 : 1}>
             {/* List of contacts */}
-            <ContactsTable variant={"Merge"} contacts={displayContacts} />
-            <MergeConfirmation open={popupOpen} setOpen={setPopupOpen} contactName={router.query.name as string} />
+            <ContactsTable contacts={displayContacts} handleSelectClick={handleSelectButtonPress} />
+            <MergeConfirmation
+              open={popupOpen}
+              setOpen={setPopupOpen}
+              manualContact={selectedManualContact}
+              handleMergeButtonPress={handleMergeButtonPress}
+            />
           </Box>
         </Box>
       </Box>

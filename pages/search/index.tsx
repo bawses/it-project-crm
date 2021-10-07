@@ -2,7 +2,7 @@ import { Box, Typography, useMediaQuery } from "@material-ui/core";
 import { useTheme } from "@material-ui/core/styles";
 import { useEffect, useMemo, useState } from "react";
 import Layout from "../../components/navLayout/Layout";
-import ContactsTable, { ContactsTableVariant } from "../../components/tables/contactsTable";
+import ContactsTable from "../../components/tables/contactsTable";
 import ContactsTableSort, {
   SortType,
 } from "../../components/tables/contactsTableSort";
@@ -144,7 +144,7 @@ export default function SearchPage() {
           </Box>
           {/* Search results */}
           <Box boxShadow={3} borderRadius={8}>
-            <ContactsTable variant={"Add"} contacts={displayData} handleRowButtonClick={handleContactAdd} />
+            <ContactsTable contacts={displayData} handleAddClick={handleContactAdd} />
           </Box>
         </Box>
         {bigScreen && <Box mt={18}><CreateContactButtonLarge /></Box>}

@@ -22,8 +22,7 @@ export interface ContactsTableRowProps {
 	contact: IContact;
 	starVariant?: {
 		handleStar: (
-			target: IContact,
-			rowSetter: (isLoading: boolean) => void
+			target: IContact
 		) => Promise<boolean>;
 	};
 	addVariant?: {
@@ -33,10 +32,7 @@ export interface ContactsTableRowProps {
 		) => Promise<boolean>;
 	};
 	mergeVariant?: {
-		handleContactMerge: (
-			target: IContact,
-			rowSetter: (isLoading: boolean) => void
-		) => void
+		handleSelectClick: (manualContact: IContact) => void
 	}
 }
 
@@ -80,7 +76,7 @@ export default function ContactsTableRow({
 			<IconButton
 				onClick={(event) => {
 					event.stopPropagation();
-					starVariant.handleStar(contact, setLoading);
+					starVariant.handleStar(contact);
 				}}
 			>
 				<StarsIcon htmlColor={starColor} />
@@ -129,7 +125,7 @@ export default function ContactsTableRow({
 				textColor={COLORS.white}
 				onClick={(event) => {
 					event.stopPropagation()
-					mergeVariant?.handleContactMerge(contact, setLoading)
+					mergeVariant?.handleSelectClick(contact)
 				}}
 				title="Select"
 			/>

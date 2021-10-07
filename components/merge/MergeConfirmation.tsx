@@ -6,11 +6,13 @@ import { useState } from "react";
 import { makeStyles } from "@material-ui/styles";
 import TextButton from "../buttons/TextButton";
 import { COLORS } from "../../lib/Colors";
+import { IContact } from "../../lib/UnifiedDataType";
 
 interface MergeConfirmationProps {
   open: boolean,
   setOpen: (open: boolean) => void,
-  contactName: string
+  manualContact?: IContact,
+  handleMergeButtonPress: () => void
 }
 
 const useStyles = makeStyles({
@@ -28,7 +30,12 @@ const useStyles = makeStyles({
   }
 })
 
-export default function MergeConfirmation({ open, setOpen, contactName }: MergeConfirmationProps) {
+export default function MergeConfirmation({
+  open,
+  setOpen,
+  manualContact,
+  handleMergeButtonPress
+}: MergeConfirmationProps) {
   const classes = useStyles()
 
   return (
@@ -56,7 +63,7 @@ export default function MergeConfirmation({ open, setOpen, contactName }: MergeC
         <Box display="flex" flexDirection="column" justifyContent="center">
           <Box display="flex" justifyContent="center">
             <Typography component="p">
-              <strong>Your manual contact entry of {contactName} will be deleted.</strong>
+              <strong>Your manual contact entry of {manualContact?.fullName} will be deleted.</strong>
             </Typography>
           </Box>
           <Box display="flex" justifyContent="center">
@@ -67,8 +74,13 @@ export default function MergeConfirmation({ open, setOpen, contactName }: MergeC
         </Box>
         {/* Action buttons */}
         <Box display="flex" justifyContent="flex-end" mr={4} mt={2}>
-          <TextButton title="Cancel" />
-          <TextButton title="Confirm and Merge" textColor={COLORS.white} color={COLORS.actionOrange} />
+          <TextButton title="Cancel" onClick={() => { setOpen(false) }} />
+          <TextButton
+            title="Confirm and Merge"
+            textColor={COLORS.white}
+            color={COLORS.actionOrange}
+            onClick={() => handleMergeButtonPress()}
+          />
         </Box>
       </Box>
     </Dialog>
