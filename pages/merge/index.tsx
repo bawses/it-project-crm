@@ -14,6 +14,7 @@ import { getSession } from 'next-auth/client';
 import { useRouter } from "next/router";
 import PageLoadingBar from "../../components/PageLoadingBar";
 import { COLORS } from "../../lib/Colors";
+import MergeConfirmation from "../../components/merge/MergeConfirmation";
 
 // Get all manual contact data for this user
 async function getData(
@@ -48,6 +49,7 @@ export default function MergePage() {
   const [searchValue, setSearchValue] = useState<string>("")
   const [allContacts, setAllContacts] = useState<IContact[]>([])
   const [displayContacts, setDisplayContacts] = useState<IContact[]>([])
+  const [popupOpen, setPopupOpen] = useState(true)
   const [isLoading, setIsLoading] = useState(true)
 
   const router = useRouter()
@@ -146,6 +148,7 @@ export default function MergePage() {
           <Box boxShadow={3} borderRadius={8} mx={bigScreen ? 0 : 1}>
             {/* List of contacts */}
             <ContactsTable variant={"Merge"} contacts={displayContacts} />
+            <MergeConfirmation open={popupOpen} setOpen={setPopupOpen} contactName={router.query.name as string} />
           </Box>
         </Box>
       </Box>
