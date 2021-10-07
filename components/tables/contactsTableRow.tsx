@@ -32,6 +32,12 @@ export interface ContactsTableRowProps {
 			rowSetter: (isLoading: boolean) => void
 		) => Promise<boolean>;
 	};
+	mergeVariant?: {
+		handleContactMerge: (
+			target: IContact,
+			rowSetter: (isLoading: boolean) => void
+		) => void
+	}
 }
 
 const useStyles = makeStyles({
@@ -51,6 +57,7 @@ export default function ContactsTableRow({
 	contact,
 	starVariant,
 	addVariant,
+	mergeVariant
 }: ContactsTableRowProps) {
 	const [loading, setLoading] = useState<boolean>(false);
 
@@ -84,12 +91,10 @@ export default function ContactsTableRow({
 		if (loading) {
 			// Render a loading button
 			buttonComponent = (
-				<TableCell width="20%" align="center">
-					<Button variant="contained" disabled={true}>
-						<CircularProgress className={classes.circularProgress} size={20} />
-						Loading
-					</Button>
-				</TableCell>
+				<Button variant="contained" disabled={true}>
+					<CircularProgress className={classes.circularProgress} size={20} />
+					Loading
+				</Button>
 			);
 		} else {
 			// Determine text and status for add variant
@@ -104,22 +109,31 @@ export default function ContactsTableRow({
 			}
 
 			buttonComponent = (
-				<TableCell width="20%" align="center">
-					<TextButton
-						disabled={btnIsDisabled}
-						color={COLORS.actionOrange}
-						textColor={COLORS.white}
-						onClick={(event) => {
-							event.stopPropagation();
-							addVariant?.handleContactAdd(contact, setLoading);
-						}}
-						title={btnTitle}
-					/>
-				</TableCell>
+				<TextButton
+					disabled={btnIsDisabled}
+					color={COLORS.actionOrange}
+					textColor={COLORS.white}
+					onClick={(event) => {
+						event.stopPropagation();
+						addVariant?.handleContactAdd(contact, setLoading);
+					}}
+					title={btnTitle}
+				/>
 			);
 		}
 	} else {
-		buttonComponent = <></>
+		// Merge variant
+		buttonComponent = (
+			<TextButton
+				color={COLORS.actionOrange}
+				textColor={COLORS.white}
+				onClick={(event) => {
+					event.stopPropagation()
+					mergeVariant?.handleContactMerge(contact, setLoading)
+				}}
+				title="Select"
+			/>
+		)
 	}
 
 	const name = contact.name.firstName + " " + contact.name.lastName;
@@ -151,7 +165,9 @@ export default function ContactsTableRow({
 						{nameComponent} {roleComponent}
 					</TableCell>
 				)}
-				{buttonComponent}
+				<TableCell width="20%" align="center">
+					{buttonComponent}
+				</TableCell>
 			</TableRow>
 		</Link>
 	);

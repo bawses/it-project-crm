@@ -1,7 +1,7 @@
 import Box from '@material-ui/core/Box';
 import { useEffect, useState } from 'react';
 import { OnChangeValue } from 'react-select';
-import ContactsTable from '../../components/tables/contactsTable';
+import ContactsTable, { ContactsTableVariant } from '../../components/tables/contactsTable';
 import ContactsTableCategory, { CategoryButton } from '../../components/tables/contactsTableCategory';
 import ContactsTableSort, { SortType } from '../../components/tables/contactsTableSort';
 import ContactsTableTags, { SelectValue } from '../../components/tables/contactsTableTags';
@@ -198,7 +198,7 @@ export default function Contacts() {
           </Box>
           <Box boxShadow={3} borderRadius={8}>
             {/* List of contacts */}
-            <ContactsTable isAddVariant={false} contacts={displayContacts} handleRowButtonClick={handleStarClick} />
+            <ContactsTable variant={"Star"} contacts={displayContacts} handleRowButtonClick={handleStarClick} />
           </Box>
         </Box>
       </Box>

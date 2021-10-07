@@ -3,16 +3,17 @@ import Box from '@material-ui/core/Box';
 import ContactsTableCategory, { CategoryButton } from "../../components/tables/contactsTableCategory";
 import ContactsTableSort, { SortType } from "../../components/tables/contactsTableSort";
 import SearchBar from "../../components/input/SearchBar";
-import ContactsTable from "../../components/tables/contactsTable";
+import ContactsTable, { ContactsTableVariant } from "../../components/tables/contactsTable";
 import { useEffect, useState } from "react";
 import { IContact } from "../../lib/UnifiedDataType";
 import { useTheme } from "@material-ui/core/styles";
-import { useMediaQuery } from "@material-ui/core";
+import { makeStyles, Typography, useMediaQuery } from "@material-ui/core";
 import { getContacts_Manual } from "../../api_client/ContactClient";
 import { sortFunctions } from "../contacts";
 import { getSession } from 'next-auth/client';
 import { useRouter } from "next/router";
 import PageLoadingBar from "../../components/PageLoadingBar";
+import { COLORS } from "../../lib/Colors";
 
 // Get all manual contact data for this user
 async function getData(
@@ -34,6 +35,12 @@ async function getData(
   }
 }
 
+const useStyles = makeStyles({
+  contactName: {
+    color: COLORS.primaryBlueDark
+  }
+});
+
 
 export default function MergePage() {
   const [sortValue, setSortValue] = useState<SortType>(SortType.None)
@@ -42,7 +49,9 @@ export default function MergePage() {
   const [allContacts, setAllContacts] = useState<IContact[]>([])
   const [displayContacts, setDisplayContacts] = useState<IContact[]>([])
   const [isLoading, setIsLoading] = useState(true)
+
   const router = useRouter()
+  const classes = useStyles()
 
   // Adjust components based on screen size
   const theme = useTheme()
@@ -109,21 +118,34 @@ export default function MergePage() {
       <Box>
         <Box display="flex" flexDirection="column" justifyContent="centre" mx={{ sm: 0, md: 8, lg: 20 }} mt={bigScreen ? 4 : 1} mb={6}>
           {/* Entire table, including filters and tags */}
-          <Box boxShadow={3}>
-            {/* Tags */}
+          <Box mx={bigScreen ? 0 : 1}>
+            {/* Instructions */}
+            {bigScreen
+              ?
+              <Typography variant="h4">
+                <strong>Select one of there contact entries </strong>
+                to merge with the CataLog profile of:
+                <strong className={classes.contactName}> {router.query.name as string}</strong>
+              </Typography>
+              :
+              <Typography component="p">
+                <strong>Select</strong> the entry to merge with:
+                <strong className={classes.contactName}> {router.query.name as string}</strong>
+              </Typography>
+            }
           </Box>
-          <Box display="flex" paddingTop={2} paddingBottom={1}>
+          <Box display="flex" paddingTop={2} paddingBottom={1} mx={bigScreen ? 0 : 1}>
             {/* Sort and filtering elements */}
             <ContactsTableCategory pressedButton={categoryButton} handleButtonPress={handleButtonPress} />
             <ContactsTableSort sortValue={sortValue} handleChange={handleNewSortVal} />
           </Box>
-          <Box>
+          <Box mx={bigScreen ? 0 : 1}>
             {/* Local search bar */}
             <SearchBar value={searchValue} handleChange={setSearchValue} />
           </Box>
-          <Box boxShadow={3} borderRadius={8}>
+          <Box boxShadow={3} borderRadius={8} mx={bigScreen ? 0 : 1}>
             {/* List of contacts */}
-            <ContactsTable isAddVariant={false} contacts={displayContacts} handleRowButtonClick={handleStarClick} />
+            <ContactsTable variant={"Merge"} contacts={displayContacts} />
           </Box>
         </Box>
       </Box>
