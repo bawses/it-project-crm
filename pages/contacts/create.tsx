@@ -1,4 +1,10 @@
-import { Paper, Container, Typography, makeStyles, TextField } from "@material-ui/core";
+import {
+  Paper,
+  Container,
+  Typography,
+  makeStyles,
+  TextField,
+} from "@material-ui/core";
 import { Business } from "@material-ui/icons";
 import Image from "next/image";
 import DEFAULT_IMAGE from "../../assets/blank-profile-picture-973460_640.png";
@@ -127,19 +133,46 @@ export default function CreateContact() {
   const [isLoading, setIsLoading] = useState(true);
   const router = useRouter();
 
-  const fieldCreator = (index: number, fieldType: string, fieldValue: string) => {
+  const fieldCreator = (
+    index: number,
+    fieldType: string,
+    fieldValue: string
+  ) => {
     return (
       <ExtraField
         key={index.toString()}
         index={index}
         fieldType={fieldType}
         fieldValue={fieldValue}
-        handleChange={(event) => handleExtraField(fieldType, event.target.value, index)}
+        handleChange={(event) =>
+          handleExtraField(fieldType, event.target.value, index)
+        }
         onPressDelete={() => {
           deleteField(index, fieldType);
         }}
       />
     );
+  };
+
+  const formatHyperlink = (link?: string) => {
+		if (link) {
+			const formattedLink = link.replace(/\s+/g, '');
+			if (formattedLink.startsWith('https://')) {
+				return formattedLink;
+			} else if (formattedLink.startsWith('http://')) {
+				return formattedLink.replace('http://', 'https://');
+			} else {
+				return 'https://' + formattedLink;
+			}
+		}
+	}
+
+  const formatPairedData = (data: string[]) => {
+    if (data.length === 2 && data[0] === "") {
+      data[0] = data[1];
+      data[1] = "";
+    }
+    return data;
   };
 
   const createNewContact = async () => {
@@ -149,30 +182,37 @@ export default function CreateContact() {
       return;
     }
     /** Remove any extra fields that are empty */
-    const finalExtraFields = extraFields.filter((field) => field.fieldValue !== "");
+    const finalExtraFields = extraFields.filter(
+      (field) => field.fieldValue !== ""
+    );
     const contactToCreate: IManualContact_Create = {
       name: {
         firstName: fieldValues.firstName,
         lastName: fieldValues.lastName,
       },
-      email: [fieldValues.primaryEmail, fieldValues.secondaryEmail],
-      phone: [fieldValues.primaryPhone, fieldValues.secondaryPhone],
+      email: formatPairedData([fieldValues.primaryEmail, fieldValues.secondaryEmail]),
+      phone: formatPairedData([fieldValues.primaryPhone, fieldValues.secondaryPhone]),
       job: fieldValues.title,
       location: location?.value,
       links: {
-        facebook: finalExtraFields.find((field) => field.fieldType === "Facebook")
-          ?.fieldValue,
-        linkedIn: finalExtraFields.find((field) => field.fieldType === "LinkedIn")
-          ?.fieldValue,
-        instagram: finalExtraFields.find((field) => field.fieldType === "Instagram")
-          ?.fieldValue,
-        twitter: finalExtraFields.find((field) => field.fieldType === "Twitter")
-          ?.fieldValue,
-        website: finalExtraFields.find((field) => field.fieldType === "Website")
-          ?.fieldValue,
+        facebook: formatHyperlink(finalExtraFields.find(
+          (field) => field.fieldType === "Facebook"
+        )?.fieldValue),
+        linkedIn: formatHyperlink(finalExtraFields.find(
+          (field) => field.fieldType === "LinkedIn"
+        )?.fieldValue),
+        instagram: formatHyperlink(finalExtraFields.find(
+          (field) => field.fieldType === "Instagram"
+        )?.fieldValue),
+        twitter: formatHyperlink(finalExtraFields.find(
+          (field) => field.fieldType === "Twitter"
+        )?.fieldValue),
+        website: formatHyperlink(finalExtraFields.find(
+          (field) => field.fieldType === "Website"
+        )?.fieldValue),
         other: finalExtraFields
           .filter((field) => field.fieldType === "Other")
-          .map((other) => other.fieldValue),
+          .map((other) => formatHyperlink(other.fieldValue) ?? ""),
       },
       organisations: [fieldValues.primaryOrg, fieldValues.secondaryOrg],
       notes: "",
@@ -198,9 +238,15 @@ export default function CreateContact() {
     setFieldValues({ ...fieldValues, [fieldType]: fieldValue });
   };
 
-  const handleExtraField = (fieldType: string, fieldValue: string, index: number) => {
+  const handleExtraField = (
+    fieldType: string,
+    fieldValue: string,
+    index: number
+  ) => {
     const newExtraFields = extraFields.map((field, i) =>
-      field.fieldType === fieldType && i === index ? { fieldType: field.fieldType, fieldValue: fieldValue } : field
+      field.fieldType === fieldType && i === index
+        ? { fieldType: field.fieldType, fieldValue: fieldValue }
+        : field
     );
     setExtraFields(newExtraFields);
   };
@@ -210,7 +256,10 @@ export default function CreateContact() {
   ) => {
     if (value) {
       // New field selected, so add this text field to page
-      setExtraFields([...extraFields, { fieldType: value.label, fieldValue: "" }]);
+      setExtraFields([
+        ...extraFields,
+        { fieldType: value.label, fieldValue: "" },
+      ]);
     }
   };
 
@@ -353,7 +402,10 @@ export default function CreateContact() {
             onChange={handleAddedField}
             addedFields={extraFields}
           />
-          <EditContactOptions onCancel={() => router.back()} onSubmit={handleSubmit} />
+          <EditContactOptions
+            onCancel={() => router.back()}
+            onSubmit={handleSubmit}
+          />
         </form>
       </Container>
     </Layout>

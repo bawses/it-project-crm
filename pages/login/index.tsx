@@ -164,7 +164,7 @@ export default function LoginPage() {
 			<Grid
 				container
 				direction={isSmall ? "column" : "row"}
-				justify="center"
+				justifyContent="center"
 				alignItems="center"
 			>
 				<Grid

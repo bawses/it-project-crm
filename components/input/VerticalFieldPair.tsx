@@ -12,6 +12,7 @@ interface VerticalFieldPairProps {
   bottomValue: string;
   topOnChange: (event: any) => void;
   bottomOnChange: (event: any) => void;
+  topDisabled?: boolean;
 }
 
 export default function VerticalFieldPair({
@@ -24,6 +25,7 @@ export default function VerticalFieldPair({
   bottomValue,
   topOnChange,
   bottomOnChange,
+  topDisabled = false,
 }: VerticalFieldPairProps) {
   const classes = useStyles();
 
@@ -46,6 +48,7 @@ export default function VerticalFieldPair({
           fullWidth
           value={topValue}
           onChange={topOnChange}
+          disabled={topDisabled}
         />
         <TextField
           size="small"

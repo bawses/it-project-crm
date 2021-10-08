@@ -1,5 +1,5 @@
 import React from "react";
-import { Paper, Typography, makeStyles } from "@material-ui/core";
+import { Paper, Typography, makeStyles, Divider } from "@material-ui/core";
 import {
   Mail,
   Phone,
@@ -54,19 +54,21 @@ export default function ContactDetails({ fieldValues }: ContactDetailsProps) {
     index: number
   ) => {
     return (
-      <div className={classes.iconRow} key={index.toString()}>
-        {fieldType === "Facebook" && <Facebook className={classes.icon} />}
-        {fieldType === "Instagram" && <Instagram className={classes.icon} />}
-        {fieldType === "LinkedIn" && <LinkedIn className={classes.icon} />}
-        {fieldType === "Twitter" && <Twitter className={classes.icon} />}
-        {fieldType === "Website" && <Language className={classes.icon} />}
-        {fieldType === "Other" && <Language className={classes.icon} />}
-        <Typography
-          id={fieldType + index.toString()}
-          className={classes.topSpacing}
-        >
-          {fieldValue}
-        </Typography>
+      <div key={index.toString()}>
+        {index !== 0 && <Divider />}
+        <div className={classes.iconRow}>
+          {fieldType === "Facebook" && <Facebook className={classes.icon} />}
+          {fieldType === "Instagram" && <Instagram className={classes.icon} />}
+          {fieldType === "LinkedIn" && <LinkedIn className={classes.icon} />}
+          {fieldType === "Twitter" && <Twitter className={classes.icon} />}
+          {fieldType === "Website" && <Language className={classes.icon} />}
+          {fieldType === "Other" && <Language className={classes.icon} />}
+          <a id={fieldType + index.toString()} href={fieldValue}>
+            <Typography className={`${classes.wrapText} ${classes.topSpacing}`}>
+              {fieldValue}
+            </Typography>
+          </a>
+        </div>
       </div>
     );
   };
@@ -78,45 +80,63 @@ export default function ContactDetails({ fieldValues }: ContactDetailsProps) {
         className={`${classes.otherDetails} ${classes.topSpacing}`}
       >
         <div className={classes.responsiveRow}>
-          <div className={`${classes.iconRow} ${classes.responsiveField}`}>
-            <Mail className={classes.icon} />
-            <div className={classes.inputFields}>
-              <Typography>
-                {fieldValues?.email && fieldValues.email.length > 0
-                  ? fieldValues.email[0]
-                  : ""}
-              </Typography>
+          {fieldValues?.email &&
+            fieldValues.email.length > 0 &&
+            fieldValues.email[0] && (
+              <div className={`${classes.iconRow} ${classes.responsiveField}`}>
+                <Mail className={classes.icon} />
+                <div className={classes.inputFields}>
+                  <a
+                    href={`mailto:${fieldValues.email[0]}?subject=Connecting to you from CataLog`}
+                  >
+                    <Typography className={classes.wrapText}>
+                      {fieldValues.email[0]}
+                    </Typography>
+                  </a>
+                  <a
+                    href={
+                      fieldValues.email.length > 1
+                        ? `mailto:${fieldValues.email[1]}?subject=Connecting to you from CataLog`
+                        : "#"
+                    }
+                  >
+                    <Typography
+                      className={`${classes.wrapText} ${classes.topSpacing}`}
+                    >
+                      {fieldValues.email.length > 1 ? fieldValues.email[1] : ""}
+                    </Typography>
+                  </a>
+                </div>
+              </div>
+            )}
+          {fieldValues?.phone &&
+            fieldValues.phone.length > 0 &&
+            fieldValues.phone[0] && (
+              <div
+                className={`${classes.iconRow} ${classes.responsiveField} ${classes.responsiveSpacing}`}
+              >
+                <Phone className={classes.icon} />
+                <div className={classes.inputFields}>
+                  <Typography>{fieldValues.phone[0]}</Typography>
+                  <Typography className={classes.topSpacing}>
+                    {fieldValues.phone.length > 1 ? fieldValues.phone[1] : ""}
+                  </Typography>
+                </div>
+              </div>
+            )}
+        </div>
+        {fieldValues?.location && (
+          <>
+            <Divider />
+            <div className={classes.iconRow}>
+              <Business className={classes.icon} />
               <Typography className={classes.topSpacing}>
-                {fieldValues?.email && fieldValues.email.length > 1
-                  ? fieldValues.email[1]
-                  : ""}
+                {fieldValues?.location}
               </Typography>
             </div>
-          </div>
-          <div
-            className={`${classes.iconRow} ${classes.responsiveField} ${classes.responsiveSpacing}`}
-          >
-            <Phone className={classes.icon} />
-            <div className={classes.inputFields}>
-              <Typography>
-                {fieldValues?.phone && fieldValues.phone.length > 0
-                  ? fieldValues.phone[0]
-                  : ""}
-              </Typography>
-              <Typography className={classes.topSpacing}>
-                {fieldValues?.phone && fieldValues.phone.length > 1
-                  ? fieldValues.phone[1]
-                  : ""}
-              </Typography>
-            </div>
-          </div>
-        </div>
-        <div className={classes.iconRow}>
-          <Business className={classes.icon} />
-          <Typography className={classes.topSpacing}>
-            {fieldValues?.location}
-          </Typography>
-        </div>
+          </>
+        )}
+        <Divider />
         {linksList(fieldValues).map((field, index) =>
           fieldCreator(field.fieldType, field.fieldValue, index)
         )}
@@ -163,5 +183,12 @@ const useStyles = makeStyles((theme) => ({
     display: "flex",
     flexDirection: "row",
     alignItems: "center",
+    marginTop: theme.spacing(),
+    marginBottom: theme.spacing(),
+  },
+  wrapText: {
+    overflowWrap: "break-word",
+    wordWrap: "break-word",
+    wordBreak: "break-word",
   },
 }));
