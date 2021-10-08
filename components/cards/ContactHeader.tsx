@@ -1,10 +1,13 @@
 import React from "react";
 import { Typography, makeStyles, IconButton } from "@material-ui/core";
 import StarsIcon from "@material-ui/icons/Stars";
-import StarIcon from '@material-ui/icons/Star';
+import StarIcon from "@material-ui/icons/Star";
 import { COLORS } from "../../lib/Colors";
 
+type profileType = "user" | "organisation";
+
 interface ContactHeaderProps {
+  type?: profileType;
   firstName?: string;
   lastName?: string;
   title?: string;
@@ -13,9 +16,11 @@ interface ContactHeaderProps {
   showStar?: boolean;
   starred?: boolean;
   onStar?: () => void;
+  about?: string;
 }
 
 export default function ContactHeader({
+  type = "user",
   firstName = "",
   lastName = "",
   title = "",
@@ -24,6 +29,7 @@ export default function ContactHeader({
   showStar = true,
   starred = false,
   onStar = () => {},
+  about = "",
 }: ContactHeaderProps) {
   const classes = useStyles();
 
@@ -33,24 +39,33 @@ export default function ContactHeader({
         <Typography variant="h5" component="h1">
           {firstName} {lastName}
         </Typography>
-        {showStar && <IconButton onClick={onStar}>
-          {!starred && <StarsIcon style={{ fontSize: 35, color: COLORS.inactiveGrey }} />}
-          {starred && <StarIcon style={{ fontSize: 35, color: COLORS.starredYellow }} />}
-        </IconButton>}
+        {showStar && (
+          <IconButton onClick={onStar}>
+            {!starred && (
+              <StarsIcon style={{ fontSize: 35, color: COLORS.inactiveGrey }} />
+            )}
+            {starred && (
+              <StarIcon style={{ fontSize: 35, color: COLORS.starredYellow }} />
+            )}
+          </IconButton>
+        )}
       </div>
       <Typography variant="h6" component="h2">
         {title}
       </Typography>
-      <div className={classes.responsiveRow}>
-        <div className={classes.organisationField}>
-          <Typography>{primaryOrg}</Typography>
-        </div>
-        {!!secondaryOrg && (
+      {type === "user" && (
+        <div className={classes.responsiveRow}>
           <div className={classes.organisationField}>
-            <Typography>{secondaryOrg}</Typography>
+            <Typography>{primaryOrg}</Typography>
           </div>
-        )}
-      </div>
+          {!!secondaryOrg && (
+            <div className={classes.organisationField}>
+              <Typography>{secondaryOrg}</Typography>
+            </div>
+          )}
+        </div>
+      )}
+      {type === "organisation" && <Typography>{about}</Typography>}
     </div>
   );
 }
@@ -67,7 +82,7 @@ const useStyles = makeStyles((theme) => ({
     flexDirection: "row",
     alignItems: "center",
     [theme.breakpoints.down("md")]: {
-      justifyContent: 'center',
+      justifyContent: "center",
     },
   },
   organisationField: {
