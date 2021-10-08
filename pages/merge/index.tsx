@@ -8,7 +8,7 @@ import { useEffect, useState } from "react";
 import { IContact } from "../../lib/UnifiedDataType";
 import { useTheme } from "@material-ui/core/styles";
 import { makeStyles, Typography, useMediaQuery } from "@material-ui/core";
-import { addFieldToContact, deleteContact, getContact, getContacts_Manual } from "../../api_client/ContactClient";
+import { addFieldToContact, deleteContact, getContact, getContacts_Manual, updateContact } from "../../api_client/ContactClient";
 import { sortFunctions } from "../contacts";
 import { getSession } from 'next-auth/client';
 import { useRouter } from "next/router";
@@ -66,12 +66,13 @@ export default function MergePage() {
   const theme = useTheme()
   const bigScreen = useMediaQuery(theme.breakpoints.up("md"))
 
+  // Get the user ID
+  const userId = router.query.userid as string
+
   // If the user is not logged in, redirect to the login page
   useEffect(() => {
     getSession().then((session) => {
-      if (session) {
-        setIsLoading(false);
-      } else {
+      if (!session) {
         router.replace("/login");
       }
     });
@@ -79,8 +80,10 @@ export default function MergePage() {
 
   // Get all manual contact data, as well as information for the current selected user profile
   useEffect(() => {
-    getData(setAllContacts, setDisplayContacts, setIsLoading, router.query.userid as string, setSelectedUser)
-  }, [router])
+    if (userId) {
+      getData(setAllContacts, setDisplayContacts, setIsLoading, userId, setSelectedUser)
+    }
+  }, [userId])
 
   // Change the displayed list of contacts depending on various filter changes
   useEffect(() => {
@@ -135,13 +138,15 @@ export default function MergePage() {
     if (selectedUser && selectedManualContact) {
       // Migrate notes over
       if (selectedUser.notes) {
-        notes += selectedUser.notes + "\n" + selectedManualContact.notes
-      } else {
+        notes += selectedUser.notes + "\n"
+      }
+
+      if (selectedManualContact.notes) {
         notes += selectedManualContact.notes
       }
 
       // Update the notes
-      addFieldToContact(selectedUser, { notes: notes })
+      updateContact(selectedUser, { notes: notes })
 
       // Migrate tags over
       const tags: string[] = []
@@ -162,8 +167,6 @@ export default function MergePage() {
 
     setPopupOpen(false)
   }
-
-  console.log(selectedUser)
 
   return (
     <Layout>
