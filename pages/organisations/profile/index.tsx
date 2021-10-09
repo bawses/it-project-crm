@@ -131,8 +131,8 @@ export default function OrgProfile() {
     <Layout>
       <Container className={classes.containerStyle}>
         <ProfileOptions
-          onPressSettings={() => router.push("profile/settings")}
-          onPressEdit={() => router.push("profile/edit")}
+          onPressSettings={() => router.push("/organisations/profile/settings")}
+          onPressEdit={() => router.push("/organisations/profile/edit")}
           isOrganisation={true}
         />
         <div className={classes.primaryDetailsStyle}>

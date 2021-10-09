@@ -410,7 +410,7 @@ export default function EditOrgProfile() {
             console.log("Updating org details");
             console.log(detailsToUpdate);
 			// const updatedUser = await updateUser(detailsToUpdate);
-			router.replace("organisations/profile");
+			router.replace("/organisations/profile");
 			setIsLoading(false);
 		} catch (e: any) {
 			console.log(e);
@@ -509,7 +509,7 @@ export default function EditOrgProfile() {
 								onChange={(value) => setLocation(value)}
 							/>
 							<TextField
-								size="small"
+								multiline={true}
 								variant="filled"
 								id="about"
 								label="About"

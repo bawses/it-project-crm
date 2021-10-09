@@ -11,6 +11,7 @@ import { OnChangeValue } from "react-select";
 import { getSession } from "next-auth/client";
 import { IOrganisation } from "../../lib/DataTypes";
 import { getOrganisationById } from "../../api_client/OrganisationClient";
+import { dummyOrganisation } from "./profile";
 
 const useStyles = makeStyles((theme) => ({
   containerStyle: {
@@ -95,7 +96,8 @@ export default function ViewOrgContact() {
     if (organisationId && typeof organisationId === "string") {
       try {
         setIsLoading(true);
-        const fetchedData = await getOrganisationById(organisationId);
+        // const fetchedData = await getOrganisationById(organisationId);
+        const fetchedData = dummyOrganisation;
         setInitialContactData(fetchedData);
         // if (fetchedData?.imageUrl) {
         // 	setProfileImage(fetchedData?.imageUrl);

@@ -1,5 +1,5 @@
 import React from "react";
-import { Typography, makeStyles, IconButton } from "@material-ui/core";
+import { Typography, makeStyles, IconButton, Paper } from "@material-ui/core";
 import StarsIcon from "@material-ui/icons/Stars";
 import StarIcon from "@material-ui/icons/Star";
 import { COLORS } from "../../lib/Colors";
@@ -65,7 +65,14 @@ export default function ContactHeader({
           )}
         </div>
       )}
-      {type === "organisation" && <Typography>{about}</Typography>}
+      {type === "organisation" && (
+        <Paper
+        elevation={3}
+        className={classes.aboutSection}
+      >
+          <Typography>{about}</Typography>
+        </Paper>
+      )}
     </div>
   );
 }
@@ -102,5 +109,13 @@ const useStyles = makeStyles((theme) => ({
     [theme.breakpoints.down("xs")]: {
       flexDirection: "column",
     },
+  },
+  aboutSection: {
+    borderRadius: 10,
+    padding: 22,
+    [theme.breakpoints.down("xs")]: {
+      padding: 15,
+    },
+    marginTop: theme.spacing(),
   },
 }));
