@@ -145,12 +145,12 @@ const updateImageForUser = async (imageFile: File) => {
 
 export const updatePasswordForUser = async (currentPassword: string, newPassword: string) => {
   const user = await getUser();
-  const oldPasswordHash = await hashPassword(currentPassword, 10);
-  if (oldPasswordHash !== user.passwordHash) {
+  const currentPasswordHash = await hashPassword(String(currentPassword), 10);
+  if (currentPasswordHash !== user.passwordHash) {
     throw new Error("Incorrect current password");
   }
   const id = await getSessionId();
   if (!id) throw new Error("No valid session");
-  const newPasswordHash = await hashPassword(newPassword, 10);
+  const newPasswordHash = await hashPassword(String(newPassword), 10);
   return updateDbRecord<IUser>(DataType.User, id, {passwordHash: newPasswordHash});
 }
