@@ -1,29 +1,13 @@
 import { Request, Response } from "express";
-import { indexHandler } from "../../../backend/ApiHandlers";
-import { DataType } from "../../../lib/EnumTypes";
-import User from "../../../backend/models/User";
-import connectToDatabase from "../../../backend/dbConnect";
+import { signUpHandler } from "../../../backend/middleware/ApiHandlers";
+import { DataType, RequestType } from "../../../lib/EnumTypes";
+import { IUser } from "../../../lib/DataTypes";
 
-async function handler(req: Request, res: Response): Promise<any> {
-  // SignUp method has to be of method POST
-  if (req.method !== "POST") {
-    res.status(422).json({ error: "Request method is not POST" });
-  }
-
+export default async function handler(req: Request, res: Response) {
   try {
-    await connectToDatabase();
-    if (!req.body.email) {
-      throw new Error("No email provided");
-    }
-    let user = await User.findOne({ email: req.body.email });
-    if (user) {
-      throw new Error("User with email already exists");
-    }
-    var response = await indexHandler(req, res, DataType.User);
-  } catch (err) {
-    return res.status(400).json({ success: false, error: err });
+    var dbResponse = await signUpHandler<IUser>(req.method as RequestType, DataType.User, req.body);
+  } catch (err: any) {
+    return res.status(400).json({ success: false, error: err.message });
   }
-  return response;
+  return res.status(200).json({ success: true, data: dbResponse });
 }
-
-export default handler;
