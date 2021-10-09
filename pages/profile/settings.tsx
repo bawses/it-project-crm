@@ -12,7 +12,7 @@ import {
   TextField,
 } from "@material-ui/core";
 import { COLORS } from "../../lib/Colors";
-import { getUser } from "../../api_client/UserClient";
+import { getUser, updatePasswordForUser } from "../../api_client/UserClient";
 import { IUser } from "../../lib/DataTypes";
 
 const useStyles = makeStyles((theme) => ({
@@ -84,13 +84,23 @@ export default function Settings() {
     fetchProfileDetails();
   }, [fetchProfileDetails]);
 
-  const handleSubmit = (event: React.SyntheticEvent) => {
+  const handleSubmit = async (event: React.SyntheticEvent) => {
     event.preventDefault();
     if (newPassword !== confirmPassword) {
       alert("Error! Passwords don't match");
       return;
     }
-    console.log("Changing password");
+    try {
+      setIsLoading(true);
+      const updatedUser = await updatePasswordForUser(currentPassword, newPassword);
+      console.log(updatedUser);
+      console.log("Password updated!")
+      router.replace('/profile');
+    } catch (e: any) {
+      console.log(e);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   useEffect(() => {

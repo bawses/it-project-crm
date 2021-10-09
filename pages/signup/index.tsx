@@ -183,7 +183,7 @@ export default function SignUpPage() {
 			<Grid
 				container
 				direction={isSmall ? "column" : "row"}
-				justify="center"
+				justifyContent="center"
 				alignItems="center"
 			>
 				<Grid
