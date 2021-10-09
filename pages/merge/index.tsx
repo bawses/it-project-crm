@@ -132,7 +132,7 @@ export default function MergePage() {
   }
 
   // Handles what happens when the merge confirmation button is pressed on the merge popup
-  function handleMergeButtonPress() {
+  async function handleMergeButtonPress() {
     // Migrate information over
     let notes = ""
     if (selectedUser && selectedManualContact) {
@@ -145,9 +145,6 @@ export default function MergePage() {
         notes += selectedManualContact.notes
       }
 
-      // Update the notes
-      updateContact(selectedUser, { notes: notes })
-
       // Migrate tags over
       const tags: string[] = []
       if (selectedManualContact.tags !== undefined) {
@@ -158,11 +155,23 @@ export default function MergePage() {
         }
       }
 
-      // Update the user tags
-      addFieldToContact(selectedUser, { tags: tags })
+      try {
+        setIsLoading(true)
+        await Promise.all([
+          // Update the notes
+          updateContact(selectedUser, { notes: notes }),
+          // Update the user tags
+          addFieldToContact(selectedUser, { tags: tags }),
+          // Now delete the manual contact
+          deleteContact(selectedManualContact)
+        ])
 
-      // Now delete the manual contact
-      deleteContact(selectedManualContact)
+        // Redirect to the new merged profile
+        router.push("/contacts/" + selectedUser._id)
+      } catch (error) {
+        console.error("Error merging profile", error)
+        setIsLoading(false)
+      }
     }
 
     setPopupOpen(false)
@@ -178,15 +187,19 @@ export default function MergePage() {
             {bigScreen
               ?
               <Typography variant="h4">
-                <strong>Select one of there contact entries </strong>
+                <strong>Select one of these contact entries </strong>
                 to merge with the CataLog profile of:
                 <strong className={classes.contactName}> {selectedUser?.fullName}</strong>
               </Typography>
               :
-              <Typography component="p">
-                <strong>Select</strong> the entry to merge with:
-                <strong className={classes.contactName}> {selectedUser?.fullName}</strong>
-              </Typography>
+              <>
+                <Typography component="p">
+                  <strong>Select</strong> the entry to merge with:
+                </Typography>
+                <Typography>
+                  <strong className={classes.contactName}> {selectedUser?.fullName}</strong>
+                </Typography>
+              </>
             }
           </Box>
           <Box display="flex" paddingTop={2} paddingBottom={1} mx={bigScreen ? 0 : 1}>

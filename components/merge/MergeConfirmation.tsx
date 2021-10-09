@@ -1,12 +1,12 @@
-import { Avatar, Box, Dialog, Typography } from "@material-ui/core";
+import { Avatar, Box, Dialog, Typography, useMediaQuery } from "@material-ui/core";
 import { ChevronRight } from "@material-ui/icons";
 import AccountBoxIcon from '@material-ui/icons/AccountBox';
 import DEFAULT_IMAGE from "../../assets/blank-profile-picture-973460_640.png";
-import { useState } from "react";
 import { makeStyles } from "@material-ui/styles";
 import TextButton from "../buttons/TextButton";
 import { COLORS } from "../../lib/Colors";
 import { IContact } from "../../lib/UnifiedDataType";
+import { useTheme } from "@material-ui/core/styles";
 
 interface MergeConfirmationProps {
   open: boolean,
@@ -15,20 +15,19 @@ interface MergeConfirmationProps {
   handleMergeButtonPress: () => void
 }
 
-const useStyles = makeStyles({
-  accountBox: {
-    width: 100,
-    height: 100
-  },
-  chevron: {
-    width: 100,
-    height: 100
-  },
-  profilePic: {
-    width: 90,
-    height: 90
-  }
-})
+function useStyles(bigScreen: boolean) {
+  return makeStyles({
+    accountBox: {
+      ...(bigScreen ? { width: 100, height: 100 } : { width: 50, height: 50 }),
+    },
+    chevron: {
+      ...(bigScreen ? { width: 100, height: 100 } : { width: 50, height: 50 }),
+    },
+    profilePic: {
+      ...(bigScreen ? { width: 90, height: 90 } : { width: 45, height: 45 }),
+    }
+  })
+}
 
 export default function MergeConfirmation({
   open,
@@ -36,19 +35,27 @@ export default function MergeConfirmation({
   manualContact,
   handleMergeButtonPress
 }: MergeConfirmationProps) {
-  const classes = useStyles()
+  // Adjust components based on screen size
+  const theme = useTheme()
+  const bigScreen = useMediaQuery(theme.breakpoints.up("md"))
+
+  const classes = useStyles(bigScreen)()
+
+  function handleClose() {
+    setOpen(false)
+  }
 
   return (
-    <Dialog open={open}>
+    <Dialog open={open} onClose={handleClose}>
       <Box display="flex" flexDirection="column" justifyContent="center" mx={4} my={4}>
         {/* Are you sure message */}
         <Box display="flex" justifyContent="center">
-          <Typography variant="h4">
+          <Typography {...(bigScreen ? { variant: "h4" } : { component: "p" })}>
             <strong>Are you sure you would like to merge your manual contact?</strong>
           </Typography>
         </Box>
         {/* Images */}
-        <Box display="flex" justifyContent="center" mx={20} my={4}>
+        <Box display="flex" justifyContent="center" mx="20%" my={4}>
           <Box display="flex" flexDirection="column" justifyContent="center" flexGrow={1}>
             <AccountBoxIcon className={classes.accountBox} />
           </Box>
@@ -76,7 +83,7 @@ export default function MergeConfirmation({
         <Box display="flex" justifyContent="flex-end" mr={4} mt={2}>
           <TextButton title="Cancel" onClick={() => { setOpen(false) }} />
           <TextButton
-            title="Confirm and Merge"
+            title={bigScreen ? "Confirm and Merge" : "Confirm"}
             textColor={COLORS.white}
             color={COLORS.actionOrange}
             onClick={() => handleMergeButtonPress()}
