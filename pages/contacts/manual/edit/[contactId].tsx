@@ -27,6 +27,9 @@ import {
   getContact,
   updateContact,
 } from "../../../../api_client/ContactClient";
+import { getOrganisations } from "../../../../api_client/OrganisationClient";
+import { IOrganisation } from "../../../../lib/DataTypes";
+import OrganisationSelector from "../../../../components/input/OrganisationSelector";
 
 const useStyles = makeStyles((theme) => ({
   containerStyle: {
@@ -132,7 +135,12 @@ export type ExtraFieldType = {
 export default function EditManualContact() {
   const classes = useStyles();
   const [initialContact, setInitialContact] = useState<IContact>();
+  const [organisations, setOrganisations] = useState<IOrganisation[]>();
   const [location, setLocation] = useState<OnChangeValue<
+    { value: string; label: string },
+    false
+  > | null>(null);
+  const [selectedOrg, setSelectedOrg] = useState<OnChangeValue<
     { value: string; label: string },
     false
   > | null>(null);
@@ -267,13 +275,17 @@ export default function EditManualContact() {
       try {
         setIsLoading(true);
         const fetchedData = await getContact(contactId, true);
+        const allOrgs = await getOrganisations();
         console.log(fetchedData);
+        console.log(allOrgs);
         setInitialContact(fetchedData);
+        setOrganisations(allOrgs);
         setLocation(
           fetchedData.location
             ? { value: fetchedData.location, label: fetchedData.location }
             : null
         );
+        // TODO: set currently selected organisation
         const initialFieldValues = extractFieldValues(fetchedData);
         setFieldValues(initialFieldValues);
         const extraLinks = extractExtraFields(fetchedData);
@@ -293,16 +305,16 @@ export default function EditManualContact() {
 
   const formatHyperlink = (link?: string) => {
     if (link) {
-      const formattedLink = link.replace(/\s+/g, '');
-      if (formattedLink.startsWith('https://')) {
+      const formattedLink = link.replace(/\s+/g, "");
+      if (formattedLink.startsWith("https://")) {
         return formattedLink;
-      } else if (formattedLink.startsWith('http://')) {
-        return formattedLink.replace('http://', 'https://');
+      } else if (formattedLink.startsWith("http://")) {
+        return formattedLink.replace("http://", "https://");
       } else {
-        return 'https://' + formattedLink;
+        return "https://" + formattedLink;
       }
     }
-  }
+  };
 
   const formatPairedData = (data: string[]) => {
     if (data.length === 2 && data[0] === "") {
@@ -331,26 +343,37 @@ export default function EditManualContact() {
           firstName: fieldValues.firstName,
           lastName: fieldValues.lastName,
         },
-        email: formatPairedData([fieldValues.primaryEmail, fieldValues.secondaryEmail]),
-        phone: formatPairedData([fieldValues.primaryPhone, fieldValues.secondaryPhone]),
+        email: formatPairedData([
+          fieldValues.primaryEmail,
+          fieldValues.secondaryEmail,
+        ]),
+        phone: formatPairedData([
+          fieldValues.primaryPhone,
+          fieldValues.secondaryPhone,
+        ]),
         job: fieldValues.title,
         location: location ? location.value : "",
         links: {
-          facebook: formatHyperlink(finalExtraFields.find(
-            (field) => field.fieldType === "Facebook"
-          )?.fieldValue),
-          linkedIn: formatHyperlink(finalExtraFields.find(
-            (field) => field.fieldType === "LinkedIn"
-          )?.fieldValue),
-          instagram: formatHyperlink(finalExtraFields.find(
-            (field) => field.fieldType === "Instagram"
-          )?.fieldValue),
-          twitter: formatHyperlink(finalExtraFields.find(
-            (field) => field.fieldType === "Twitter"
-          )?.fieldValue),
-          website: formatHyperlink(finalExtraFields.find(
-            (field) => field.fieldType === "Website"
-          )?.fieldValue),
+          facebook: formatHyperlink(
+            finalExtraFields.find((field) => field.fieldType === "Facebook")
+              ?.fieldValue
+          ),
+          linkedIn: formatHyperlink(
+            finalExtraFields.find((field) => field.fieldType === "LinkedIn")
+              ?.fieldValue
+          ),
+          instagram: formatHyperlink(
+            finalExtraFields.find((field) => field.fieldType === "Instagram")
+              ?.fieldValue
+          ),
+          twitter: formatHyperlink(
+            finalExtraFields.find((field) => field.fieldType === "Twitter")
+              ?.fieldValue
+          ),
+          website: formatHyperlink(
+            finalExtraFields.find((field) => field.fieldType === "Website")
+              ?.fieldValue
+          ),
           other: finalExtraFields
             .filter((field) => field.fieldType === "Other")
             .map((other) => formatHyperlink(other.fieldValue) ?? ""),
@@ -471,17 +494,18 @@ export default function EditManualContact() {
                 selectedLocation={location}
                 onChange={(value) => setLocation(value)}
               />
-              <ResponsiveFieldPair
-                leftId="primaryOrganisation"
-                leftLabel="Primary organisation"
-                leftValue={fieldValues.primaryOrg || ""}
-                rightId="secondaryOrganisation"
-                rightLabel="Secondary organisation"
-                rightValue={fieldValues.secondaryOrg || ""}
-                leftOnChange={(event) =>
-                  handleChange("primaryOrg", event.target.value)
-                }
-                rightOnChange={(event) =>
+              <OrganisationSelector
+                selectedOrganisation={selectedOrg}
+                onChange={(value) => setSelectedOrg(value)}
+                organisations={organisations}
+              />
+              <TextField
+                id="manualOrganisation"
+                label="Manual organisation"
+                variant="filled"
+                fullWidth
+                value={fieldValues.secondaryOrg || ""}
+                onChange={(event) =>
                   handleChange("secondaryOrg", event.target.value)
                 }
               />
