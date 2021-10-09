@@ -12,52 +12,52 @@ export const getSessionId = async () => {
 };
 
 /* Makes an API call to add a new entry into the database for the given dataType */
-export const createDbRecord = async <T_output>(
+export const createDbRecord = async <T>(
   dataType: DataType,
   dataObj: Object
-): Promise<T_output> => {
-  return await doFetch<T_output>(RequestType.POST, dataType, undefined, dataObj);
+): Promise<T> => {
+  return await doFetch<T>(RequestType.POST, dataType, undefined, dataObj);
 };
 
 /* Makes an API call to search through all existing entries in the database for the given dataType */
-export const searchDb = async <T_output>(
+export const searchDb = async <T>(
   dataType: DataType,
   searchObj: Object
-): Promise<T_output[]> => {
-  return await doSearch<T_output[]>(dataType, searchObj);
+): Promise<T[]> => {
+  return await doSearch<T[]>(dataType, searchObj);
 };
 
 /* Makes an API call to find an existing entry in the database for the given dataType */
-export const getDbRecordById = async <T_output>(
+export const getDbRecordById = async <T>(
   dataType: DataType,
   recordId: string
-): Promise<T_output> => {
-  return await doFetch<T_output>(RequestType.GET, dataType, recordId, undefined);
+): Promise<T> => {
+  return await doFetch<T>(RequestType.GET, dataType, recordId, undefined);
 };
 
 /* Makes an API call to edit an existing entry in the database for the given dataType */
-export const updateDbRecord = async <T_output>(
+export const updateDbRecord = async <T>(
   dataType: DataType,
   recordId: string,
   updateObj: Object
-): Promise<T_output> => {
-  const data = await doFetch<T_output>(RequestType.PUT, dataType, recordId, updateObj);
+): Promise<T> => {
+  const data = await doFetch<T>(RequestType.PUT, dataType, recordId, updateObj);
   // This is an update request, update the local data without revalidation
   mutate(`/api/${dataType}s/${recordId}`, data, false);
   return data;
 };
 
 /* Makes an API call to delete an existing entry in the database for the given dataType */
-export const deleteDbRecord = async <T_output>(dataType: DataType, recordId: string) => {
-  await doFetch<T_output>(RequestType.DELETE, dataType, recordId, undefined);
+export const deleteDbRecord = async <T>(dataType: DataType, recordId: string) => {
+  await doDelete(RequestType.DELETE, dataType, recordId);
 };
 
-const doFetch = async <T_output>(
+const doFetch = async <T>(
   fetchType: RequestType,
   dataType: DataType,
   recordId?: string,
   dataObj?: Object
-): Promise<T_output> => {
+): Promise<T> => {
   var url: string = "";
   var body = dataObj ? JSON.stringify(dataObj) : undefined;
 
@@ -75,10 +75,6 @@ const doFetch = async <T_output>(
         break;
       }
       case RequestType.PUT: {
-        url = `/api/${dataType}s/${recordId}`;
-        break;
-      }
-      case RequestType.DELETE: {
         url = `/api/${dataType}s/${recordId}`;
         break;
       }
@@ -109,10 +105,33 @@ const doFetch = async <T_output>(
     throw new Error(`Failed to do operation: ${fetchType} for ${dataType}`);
   }
   // DELETE method also generates data, but will not be the right type, thus the output should not be used
-  return data as T_output;
+  return data as T;
 };
 
-const doSearch = async <T_output>(dataType: DataType, searchObj: any) => {
+const doDelete = async (fetchType: RequestType, dataType: DataType, recordId: string) => {
+  try {
+    if (fetchType !== RequestType.DELETE) throw new Error("400");
+      
+    const url = `/api/${dataType}s/${recordId}`;
+    var response = await fetch(url, {
+      method: fetchType,
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json",
+      },
+    });
+
+    // Throw error with status code in case Fetch API call failed
+    if (!response.ok) throw new Error(`${response.status}`);
+  } catch (error) {
+    /* If an error occurs anywhere in the process of making an API call, log it */
+    console.error(error);
+    console.error(`Failed to do operation: delete for ${dataType}`);
+    throw new Error(`Failed to do operation: delete for ${dataType}`);
+  }
+}
+
+const doSearch = async <T>(dataType: DataType, searchObj: any) => {
   let authId: string | null = await getSessionId();
   if (!authId) {
     throw new Error("No Valid Session Id!");
@@ -156,7 +175,7 @@ const doSearch = async <T_output>(dataType: DataType, searchObj: any) => {
     console.error(`Failed to do operation: search for ${dataType}`);
     throw new Error(`Failed to do operation: search for ${dataType}`);
   }
-  return data as T_output;
+  return data as T;
 };
 
 export const doUploadImage = async (imageFile: File) : Promise<string> => {
