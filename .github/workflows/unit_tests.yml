@@ -2,7 +2,6 @@ name: Run Unit Tests On Jest
 on:
   pull_request:
     branches: [main, dev]
-  push:
 
 jobs:
   test:
