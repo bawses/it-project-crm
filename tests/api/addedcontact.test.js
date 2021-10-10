@@ -58,7 +58,7 @@ describe("Create two mock users, perform adding, searching added contact and del
     }
 
     await SignUpHandler(createUserReq, res);
-    authId = json.mock.calls[0][0].data._id;
+    authId = String(json.mock.calls[0][0].data._id);
 
     const createUserReq2 = {
       method: "POST",
@@ -74,8 +74,8 @@ describe("Create two mock users, perform adding, searching added contact and del
     }
 
     await SignUpHandler(createUserReq2, res);
-    authId2 = json.mock.calls[1][0].data._id;
-
+    authId2 = String(json.mock.calls[1][0].data._id);
+    
     expect(json.mock.calls[0][0].success).toBe(true);
     expect(json.mock.calls[1][0].success).toBe(true);
 
@@ -90,7 +90,7 @@ describe("Create two mock users, perform adding, searching added contact and del
     }
 
     await AddedIndexHandler(addReq, res);
-    addedId = json.mock.calls[2][0].data._id;
+    addedId = String(json.mock.calls[2][0].data._id);
     expect(json.mock.calls[2][0].success).toBe(true);
 
   })

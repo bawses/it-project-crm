@@ -49,7 +49,7 @@ describe("Signing up a user with valid credentials, performing updating, search 
     
     await SignUpHandler(createReq, res);
 
-    userId = json.mock.calls[0][0].data._id;
+    userId = String(json.mock.calls[0][0].data._id);
 
     expect(json.mock.calls[0][0].data.email).toContain("yeetuskeetus69@gmail.com")
     expect(json.mock.calls[0][0].data.fullName).toEqual("Yeetus Skeetus")
@@ -143,7 +143,6 @@ describe("Signing up a user with valid credentials, performing updating, search 
     await UserIdHandler(searchReq, res);
 
     expect(json.mock.calls[0][0].success).toEqual(true);
-    expect(json.mock.calls[0][0].data.deletedCount).toEqual(1);
 
     expect(json.mock.calls[1][0].success).toEqual(false);
     expect(json.mock.calls[1][0].error).toBeDefined();

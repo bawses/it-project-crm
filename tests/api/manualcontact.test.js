@@ -61,7 +61,7 @@ describe("Create a mock user, then create a manual contact, update and search, a
 
     await SignUpHandler(createUserReq, res)
     
-    ownerId = json.mock.calls[0][0].data._id;
+    ownerId = String(json.mock.calls[0][0].data._id);
 
     const createManualReq = {
       method: "POST",
@@ -80,7 +80,7 @@ describe("Create a mock user, then create a manual contact, update and search, a
 
     await ManualIndexHandler(createManualReq, res);
 
-    contactId = json.mock.calls[1][0].data._id
+    contactId = String(json.mock.calls[1][0].data._id);
 
     expect(json.mock.calls[1][0].data.email).toContain('tony.dang@gmail.com');
     expect(json.mock.calls[1][0].data.ownerId).toEqual(String(ownerId));
@@ -114,7 +114,7 @@ describe("Create a mock user, then create a manual contact, update and search, a
     await ManualSearchHandler(searchReq, res);
 
     expect(json.mock.calls[3][0].data[0].name).toEqual({firstName: "Toneth", lastName: "Dangus"});
-    expect(json.mock.calls[3][0].data[0]._id).toEqual(contactId);
+    expect(String(json.mock.calls[3][0].data[0]._id)).toEqual(contactId);
 
   })
 
@@ -128,7 +128,7 @@ describe("Create a mock user, then create a manual contact, update and search, a
 
     expect(json.mock.calls[4][0].success).toBe(true);
     expect(json.mock.calls[4][0].data).toHaveLength(1);
-    expect(json.mock.calls[4][0].data[0]._id).toEqual(contactId);
+    expect(String(json.mock.calls[4][0].data[0]._id)).toEqual(contactId);
 
   });
 
