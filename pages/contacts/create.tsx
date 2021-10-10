@@ -8,7 +8,7 @@ import {
 import { Business } from "@material-ui/icons";
 import Image from "next/image";
 import DEFAULT_IMAGE from "../../assets/blank-profile-picture-973460_640.png";
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { OnChangeValue } from "react-select";
 import EditContactOptions from "../../components/buttons/EditContactOptions";
 import ExtraField from "../../components/input/ExtraField";
@@ -22,6 +22,10 @@ import PageLoadingBar from "../../components/PageLoadingBar";
 import { useRouter } from "next/router";
 import { getSession } from "next-auth/client";
 import { createContact_Manual } from "../../api_client/ContactClient";
+import OrganisationInput from "../../components/input/OrganisationInput";
+import { IOrganisation } from "../../lib/DataTypes";
+import { orgSelectValue } from "../../components/input/OrganisationSelector";
+import { getOrganisations } from "../../api_client/OrganisationClient";
 
 const useStyles = makeStyles((theme) => ({
   containerStyle: {
@@ -113,8 +117,13 @@ export type ExtraFieldType = {
 
 export default function CreateContact() {
   const classes = useStyles();
+  const [organisations, setOrganisations] = useState<IOrganisation[]>([]);
   const [location, setLocation] = useState<OnChangeValue<
     { value: string; label: string },
+    false
+  > | null>(null);
+  const [selectedOrg, setSelectedOrg] = useState<OnChangeValue<
+    orgSelectValue,
     false
   > | null>(null);
   const [fieldValues, setFieldValues] = useState<ContactDetailsType>({
@@ -174,6 +183,24 @@ export default function CreateContact() {
     }
     return data;
   };
+
+  const fetchOrganisations = useCallback(async () => {
+		try {
+			setIsLoading(true);
+			const allOrgs = await getOrganisations();
+			setOrganisations(allOrgs);
+			console.log(allOrgs);
+			setIsLoading(false);
+		} catch (e) {
+			/** TODO: redirect to error page */
+			console.log(e);
+			setIsLoading(false);
+		}
+	}, []);
+
+	useEffect(() => {
+		fetchOrganisations();
+	}, [fetchOrganisations]);
 
   const createNewContact = async () => {
     /** TODO: make alert or pop up if missing required fields */
@@ -327,17 +354,12 @@ export default function CreateContact() {
                 selectedLocation={location}
                 onChange={(value) => setLocation(value)}
               />
-              <ResponsiveFieldPair
-                leftId="primaryOrganisation"
-                leftLabel="Primary organisation"
-                leftValue={fieldValues.primaryOrg}
-                rightId="secondaryOrganisation"
-                rightLabel="Secondary organisation"
-                rightValue={fieldValues.secondaryOrg}
-                leftOnChange={(event) =>
-                  handleChange("primaryOrg", event.target.value)
-                }
-                rightOnChange={(event) =>
+              <OrganisationInput
+                selectedOrg={selectedOrg}
+                selectOnChange={(value) => setSelectedOrg(value)}
+                organisations={organisations}
+                manualValue={fieldValues.secondaryOrg || ""}
+                manualOnChange={(event) =>
                   handleChange("secondaryOrg", event.target.value)
                 }
               />

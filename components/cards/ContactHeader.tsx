@@ -65,7 +65,7 @@ export default function ContactHeader({
           )}
         </div>
       )}
-      {type === "organisation" && (
+      {type === "organisation" && about && (
         <Paper
         elevation={3}
         className={classes.aboutSection}

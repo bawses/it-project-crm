@@ -8,7 +8,6 @@ import {
 } from "@material-ui/core";
 import { Business } from "@material-ui/icons";
 import Image from "next/image";
-import DEFAULT_IMAGE from "../../assets/blank-profile-picture-973460_640.png";
 import React, { useCallback, useEffect, useState } from "react";
 import { OnChangeValue } from "react-select";
 import EditContactOptions from "../../components/buttons/EditContactOptions";
@@ -25,7 +24,10 @@ import TextButton from "../../components/buttons/TextButton";
 import { COLORS } from "../../lib/Colors";
 import { IUser_Update } from "../../lib/DataTypes_Update";
 import { getUser, updateUser } from "../../api_client/UserClient";
-import { IUser } from "../../lib/DataTypes";
+import { IOrganisation, IUser } from "../../lib/DataTypes";
+import OrganisationInput from "../../components/input/OrganisationInput";
+import { orgSelectValue } from "../../components/input/OrganisationSelector";
+import { getOrganisations } from "../../api_client/OrganisationClient";
 
 const DEFAULT_URL: string =
 	"https://res.cloudinary.com/it-project-crm/image/upload/v1633002681/zdt7litmbbxfdvg7gdvx.png";
@@ -133,8 +135,13 @@ export type ExtraFieldType = {
 
 export default function EditProfile() {
 	const classes = useStyles();
+	const [organisations, setOrganisations] = useState<IOrganisation[]>([]);
 	const [location, setLocation] = useState<OnChangeValue<
 		{ value: string; label: string },
+		false
+	> | null>(null);
+	const [selectedOrg, setSelectedOrg] = useState<OnChangeValue<
+		orgSelectValue,
 		false
 	> | null>(null);
 	const [fieldValues, setFieldValues] = useState<ContactDetailsType>({
@@ -334,18 +341,19 @@ export default function EditProfile() {
 		try {
 			setIsLoading(true);
 			const fetchedData = await getUser();
-
+			const allOrgs = await getOrganisations();
 			console.log(fetchedData);
-
+			console.log(allOrgs);
 			if (fetchedData?.imageUrl) {
 				setProfileImage(fetchedData?.imageUrl);
 			}
-
+			setOrganisations(allOrgs);
 			setLocation(
 				fetchedData.location
 					? { value: fetchedData.location, label: fetchedData.location }
 					: null
 			);
+			// TODO: set currently selected organisation
 			const initialFieldValues = extractFieldValues(fetchedData);
 			setFieldValues(initialFieldValues);
 			const extraLinks = extractExtraFields(fetchedData);
@@ -365,16 +373,16 @@ export default function EditProfile() {
 
 	const formatHyperlink = (link?: string) => {
 		if (link) {
-			const formattedLink = link.replace(/\s+/g, '');
-			if (formattedLink.startsWith('https://')) {
+			const formattedLink = link.replace(/\s+/g, "");
+			if (formattedLink.startsWith("https://")) {
 				return formattedLink;
-			} else if (formattedLink.startsWith('http://')) {
-				return formattedLink.replace('http://', 'https://');
+			} else if (formattedLink.startsWith("http://")) {
+				return formattedLink.replace("http://", "https://");
 			} else {
-				return 'https://' + formattedLink;
+				return "https://" + formattedLink;
 			}
 		}
-	}
+	};
 
 	const formatPairedData = (data: string[]) => {
 		if (data.length === 2 && data[0] === "") {
@@ -401,26 +409,37 @@ export default function EditProfile() {
 			},
 			imageFile: imageFile,
 			imageUrl: profileImage,
-			email: formatPairedData([fieldValues.primaryEmail, fieldValues.secondaryEmail]),
-			phone: formatPairedData([fieldValues.primaryPhone, fieldValues.secondaryPhone]),
+			email: formatPairedData([
+				fieldValues.primaryEmail,
+				fieldValues.secondaryEmail,
+			]),
+			phone: formatPairedData([
+				fieldValues.primaryPhone,
+				fieldValues.secondaryPhone,
+			]),
 			job: fieldValues.title,
 			location: location ? location.value : "",
 			links: {
-				facebook: formatHyperlink(finalExtraFields.find(
-					(field) => field.fieldType === "Facebook"
-				)?.fieldValue),
-				linkedIn: formatHyperlink(finalExtraFields.find(
-					(field) => field.fieldType === "LinkedIn"
-				)?.fieldValue),
-				instagram: formatHyperlink(finalExtraFields.find(
-					(field) => field.fieldType === "Instagram"
-				)?.fieldValue),
-				twitter: formatHyperlink(finalExtraFields.find(
-					(field) => field.fieldType === "Twitter"
-				)?.fieldValue),
-				website: formatHyperlink(finalExtraFields.find(
-					(field) => field.fieldType === "Website"
-				)?.fieldValue),
+				facebook: formatHyperlink(
+					finalExtraFields.find((field) => field.fieldType === "Facebook")
+						?.fieldValue
+				),
+				linkedIn: formatHyperlink(
+					finalExtraFields.find((field) => field.fieldType === "LinkedIn")
+						?.fieldValue
+				),
+				instagram: formatHyperlink(
+					finalExtraFields.find((field) => field.fieldType === "Instagram")
+						?.fieldValue
+				),
+				twitter: formatHyperlink(
+					finalExtraFields.find((field) => field.fieldType === "Twitter")
+						?.fieldValue
+				),
+				website: formatHyperlink(
+					finalExtraFields.find((field) => field.fieldType === "Website")
+						?.fieldValue
+				),
 				other: finalExtraFields
 					.filter((field) => field.fieldType === "Other")
 					.map((other) => formatHyperlink(other.fieldValue) ?? ""),
@@ -533,17 +552,12 @@ export default function EditProfile() {
 								selectedLocation={location}
 								onChange={(value) => setLocation(value)}
 							/>
-							<ResponsiveFieldPair
-								leftId="primaryOrganisation"
-								leftLabel="Primary organisation"
-								leftValue={fieldValues.primaryOrg || ""}
-								rightId="secondaryOrganisation"
-								rightLabel="Secondary organisation"
-								rightValue={fieldValues.secondaryOrg || ""}
-								leftOnChange={(event) =>
-									handleChange("primaryOrg", event.target.value)
-								}
-								rightOnChange={(event) =>
+							<OrganisationInput
+								selectedOrg={selectedOrg}
+								selectOnChange={(value) => setSelectedOrg(value)}
+								organisations={organisations}
+								manualValue={fieldValues.secondaryOrg || ""}
+								manualOnChange={(event) =>
 									handleChange("secondaryOrg", event.target.value)
 								}
 							/>

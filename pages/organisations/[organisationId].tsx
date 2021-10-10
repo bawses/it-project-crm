@@ -11,7 +11,6 @@ import { OnChangeValue } from "react-select";
 import { getSession } from "next-auth/client";
 import { IOrganisation } from "../../lib/DataTypes";
 import { getOrganisationById } from "../../api_client/OrganisationClient";
-import { dummyOrganisation } from "./profile";
 
 const useStyles = makeStyles((theme) => ({
   containerStyle: {
@@ -96,8 +95,7 @@ export default function ViewOrgContact() {
     if (organisationId && typeof organisationId === "string") {
       try {
         setIsLoading(true);
-        // const fetchedData = await getOrganisationById(organisationId);
-        const fetchedData = dummyOrganisation;
+        const fetchedData = await getOrganisationById(organisationId);
         setInitialContactData(fetchedData);
         // if (fetchedData?.imageUrl) {
         // 	setProfileImage(fetchedData?.imageUrl);
@@ -113,7 +111,6 @@ export default function ViewOrgContact() {
   }, [organisationId]);
 
   useEffect(() => {
-    console.log("first fetch");
     fetchOrganisationDetails();
   }, [fetchOrganisationDetails]);
 
@@ -126,6 +123,10 @@ export default function ViewOrgContact() {
   // 		}
   // 	});
   // }, [router]);
+
+  if (isLoading) {
+    return <PageLoadingBar />;
+  }
 
   return (
     <Layout>

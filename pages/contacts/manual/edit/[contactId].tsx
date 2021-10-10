@@ -29,7 +29,8 @@ import {
 } from "../../../../api_client/ContactClient";
 import { getOrganisations } from "../../../../api_client/OrganisationClient";
 import { IOrganisation } from "../../../../lib/DataTypes";
-import OrganisationSelector from "../../../../components/input/OrganisationSelector";
+import { orgSelectValue } from "../../../../components/input/OrganisationSelector";
+import OrganisationInput from "../../../../components/input/OrganisationInput";
 
 const useStyles = makeStyles((theme) => ({
   containerStyle: {
@@ -135,13 +136,13 @@ export type ExtraFieldType = {
 export default function EditManualContact() {
   const classes = useStyles();
   const [initialContact, setInitialContact] = useState<IContact>();
-  const [organisations, setOrganisations] = useState<IOrganisation[]>();
+  const [organisations, setOrganisations] = useState<IOrganisation[]>([]);
   const [location, setLocation] = useState<OnChangeValue<
     { value: string; label: string },
     false
   > | null>(null);
   const [selectedOrg, setSelectedOrg] = useState<OnChangeValue<
-    { value: string; label: string },
+    orgSelectValue,
     false
   > | null>(null);
   const [fieldValues, setFieldValues] = useState<ContactDetailsType>({
@@ -494,18 +495,12 @@ export default function EditManualContact() {
                 selectedLocation={location}
                 onChange={(value) => setLocation(value)}
               />
-              <OrganisationSelector
-                selectedOrganisation={selectedOrg}
-                onChange={(value) => setSelectedOrg(value)}
+              <OrganisationInput
+                selectedOrg={selectedOrg}
+                selectOnChange={(value) => setSelectedOrg(value)}
                 organisations={organisations}
-              />
-              <TextField
-                id="manualOrganisation"
-                label="Manual organisation"
-                variant="filled"
-                fullWidth
-                value={fieldValues.secondaryOrg || ""}
-                onChange={(event) =>
+                manualValue={fieldValues.secondaryOrg || ""}
+                manualOnChange={(event) =>
                   handleChange("secondaryOrg", event.target.value)
                 }
               />
