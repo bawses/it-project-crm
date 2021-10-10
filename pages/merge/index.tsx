@@ -1,3 +1,5 @@
+// Page for mergin manual contacts with existing profiles
+
 import Layout from "../../components/navLayout/Layout";
 import Box from '@material-ui/core/Box';
 import ContactsTableCategory, { CategoryButton } from "../../components/tables/contactsTableCategory";
