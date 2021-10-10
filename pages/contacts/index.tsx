@@ -198,7 +198,7 @@ export default function Contacts() {
           </Box>
           <Box boxShadow={3} borderRadius={8}>
             {/* List of contacts */}
-            <ContactsTable isAddVariant={false} contacts={displayContacts} handleRowButtonClick={handleStarClick} />
+            <ContactsTable contacts={displayContacts} handleStarClick={handleStarClick} />
           </Box>
         </Box>
       </Box>

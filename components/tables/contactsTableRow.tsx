@@ -22,8 +22,7 @@ export interface ContactsTableRowProps {
 	contact: IContact;
 	starVariant?: {
 		handleStar: (
-			target: IContact,
-			rowSetter: (isLoading: boolean) => void
+			target: IContact
 		) => Promise<boolean>;
 	};
 	addVariant?: {
@@ -32,6 +31,9 @@ export interface ContactsTableRowProps {
 			rowSetter: (isLoading: boolean) => void
 		) => Promise<boolean>;
 	};
+	mergeVariant?: {
+		handleSelectClick: (manualContact: IContact) => void
+	}
 }
 
 const useStyles = makeStyles({
@@ -51,6 +53,7 @@ export default function ContactsTableRow({
 	contact,
 	starVariant,
 	addVariant,
+	mergeVariant
 }: ContactsTableRowProps) {
 	const [loading, setLoading] = useState<boolean>(false);
 
@@ -62,6 +65,7 @@ export default function ContactsTableRow({
 
 	let buttonComponent: JSX.Element;
 	if (starVariant) {
+		// Star variant row
 		// Determine colour for star variant
 		let starColor = COLORS.inactiveGrey;
 		if (contact.starred) {
@@ -72,13 +76,14 @@ export default function ContactsTableRow({
 			<IconButton
 				onClick={(event) => {
 					event.stopPropagation();
-					starVariant.handleStar(contact, setLoading);
+					starVariant.handleStar(contact);
 				}}
 			>
 				<StarsIcon htmlColor={starColor} />
 			</IconButton>
 		);
-	} else {
+	} else if (addVariant) {
+		// Search variant row
 		if (loading) {
 			// Render a loading button
 			buttonComponent = (
@@ -112,6 +117,19 @@ export default function ContactsTableRow({
 				/>
 			);
 		}
+	} else {
+		// Merge variant
+		buttonComponent = (
+			<TextButton
+				color={COLORS.actionOrange}
+				textColor={COLORS.white}
+				onClick={(event) => {
+					event.stopPropagation()
+					mergeVariant?.handleSelectClick(contact)
+				}}
+				title="Select"
+			/>
+		)
 	}
 
 	const name = contact.name.firstName + " " + contact.name.lastName;
@@ -125,9 +143,8 @@ export default function ContactsTableRow({
 
 	return (
 		<Link
-			href={`contacts/${contact.isManualContact ? "manual/" : ""}${
-				contact._id
-			}`}
+			href={`contacts/${contact.isManualContact ? "manual/" : ""}${contact._id
+				}`}
 			passHref
 		>
 			<TableRow className={classes.row} hover={true}>

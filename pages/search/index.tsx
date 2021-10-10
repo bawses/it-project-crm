@@ -144,7 +144,7 @@ export default function SearchPage() {
           </Box>
           {/* Search results */}
           <Box boxShadow={3} borderRadius={8}>
-            <ContactsTable isAddVariant={true} contacts={displayData} handleRowButtonClick={handleContactAdd} />
+            <ContactsTable contacts={displayData} handleAddClick={handleContactAdd} />
           </Box>
         </Box>
         {bigScreen && <Box mt={18}><CreateContactButtonLarge /></Box>}
