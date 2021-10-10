@@ -12,7 +12,7 @@ import {
   deleteDbRecord,
   doUploadImage,
 } from "./Client";
-import { hash as hashPassword } from "bcryptjs";
+import { compare, hash as hashPassword } from "bcryptjs";
 
 function validateSignUpObject(
   firstName: string,
@@ -141,4 +141,15 @@ export const getAllTags = async (): Promise<string[]> => {
 const updateImageForUser = async (imageFile: File) => {
   const imageUrl = await doUploadImage(imageFile);
   return imageUrl;
+}
+
+export const updatePasswordForUser = async (currentPassword: string, newPassword: string) => {
+  const user = await getUser();
+  if (await compare(currentPassword, user.passwordHash) !== true) {
+    throw new Error("Incorrect current password");
+  }
+  const id = await getSessionId();
+  if (!id) throw new Error("No valid session");
+  const newPasswordHash = await hashPassword(String(newPassword), 10);
+  return updateDbRecord<IUser>(DataType.User, id, {passwordHash: newPasswordHash});
 }

@@ -3,14 +3,16 @@ import Image from "next/image";
 import DEFAULT_IMAGE from "../../assets/blank-profile-picture-973460_640.png";
 import { useState, useEffect, useCallback } from "react";
 import ProfileOptions from "../../components/buttons/ProfileOptions";
+import TextButton from "../../components/buttons/TextButton";
 import ContactDetails from "../../components/cards/ContactDetails";
 import ContactHeader from "../../components/cards/ContactHeader";
 import Layout from "../../components/navLayout/Layout";
 import { useRouter } from "next/router";
 import PageLoadingBar from "../../components/PageLoadingBar";
-import { getSession } from "next-auth/client";
+import { getSession, signOut } from "next-auth/client";
 import { IUser } from "../../lib/DataTypes";
 import { getUser } from "../../api_client/UserClient";
+import { COLORS } from "../../lib/Colors";
 
 const useStyles = makeStyles((theme) => ({
 	containerStyle: {
@@ -46,6 +48,15 @@ const useStyles = makeStyles((theme) => ({
 	profilePic: {
 		borderRadius: "50%",
 	},
+	signOut: {
+		display: "flex",
+		flexDirection: "row",
+		justifyContent: "flex-end",
+		marginTop: theme.spacing(4),
+		[theme.breakpoints.down("xs")]: {
+			marginTop: theme.spacing(2),
+		},
+	},
 }));
 
 export default function Profile() {
@@ -57,7 +68,15 @@ export default function Profile() {
 	const [isLoading, setIsLoading] = useState(true);
 	const router = useRouter();
 
+	const handleSignOut = (e: React.SyntheticEvent) => {
+		setIsLoading(true);
+		signOut();
+	};
+
 	const fetchProfileDetails = useCallback(async () => {
+		console.log("getting the session:");
+		const session = await getSession();
+		console.log(session?.user);
 		try {
 			setIsLoading(true);
 			const fetchedData = await getUser();
@@ -132,6 +151,14 @@ export default function Profile() {
 				</div>
 
 				<ContactDetails fieldValues={profileData} />
+				<div className={classes.signOut}>
+					<TextButton
+						color={COLORS.actionOrange}
+						textColor={COLORS.white}
+						title="Sign Out"
+						onClick={handleSignOut}
+					/>
+				</div>
 			</Container>
 		</Layout>
 	);

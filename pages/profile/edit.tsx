@@ -330,6 +330,7 @@ export default function EditProfile() {
 	};
 
 	const loadProfileData = useCallback(async () => {
+
 		try {
 			setIsLoading(true);
 			const fetchedData = await getUser();
@@ -362,6 +363,27 @@ export default function EditProfile() {
 		loadProfileData();
 	}, [loadProfileData]);
 
+	const formatHyperlink = (link?: string) => {
+		if (link) {
+			const formattedLink = link.replace(/\s+/g, '');
+			if (formattedLink.startsWith('https://')) {
+				return formattedLink;
+			} else if (formattedLink.startsWith('http://')) {
+				return formattedLink.replace('http://', 'https://');
+			} else {
+				return 'https://' + formattedLink;
+			}
+		}
+	}
+
+	const formatPairedData = (data: string[]) => {
+		if (data.length === 2 && data[0] === "") {
+			data[0] = data[1];
+			data[1] = "";
+		}
+		return data;
+	};
+
 	const updateProfileDetails = async () => {
 		/** TODO: make alert or pop up if missing required fields */
 		if (!!fieldValues.firstName === false || !!fieldValues.lastName === false) {
@@ -379,27 +401,29 @@ export default function EditProfile() {
 			},
 			imageFile: imageFile,
 			imageUrl: profileImage,
-			email: [fieldValues.primaryEmail, fieldValues.secondaryEmail],
-			phone: [fieldValues.primaryPhone, fieldValues.secondaryPhone],
+			email: formatPairedData([fieldValues.primaryEmail, fieldValues.secondaryEmail]),
+			phone: formatPairedData([fieldValues.primaryPhone, fieldValues.secondaryPhone]),
 			job: fieldValues.title,
 			location: location ? location.value : "",
 			links: {
-				facebook: finalExtraFields.find(
+				facebook: formatHyperlink(finalExtraFields.find(
 					(field) => field.fieldType === "Facebook"
-				)?.fieldValue,
-				linkedIn: finalExtraFields.find(
+				)?.fieldValue),
+				linkedIn: formatHyperlink(finalExtraFields.find(
 					(field) => field.fieldType === "LinkedIn"
-				)?.fieldValue,
-				instagram: finalExtraFields.find(
+				)?.fieldValue),
+				instagram: formatHyperlink(finalExtraFields.find(
 					(field) => field.fieldType === "Instagram"
-				)?.fieldValue,
-				twitter: finalExtraFields.find((field) => field.fieldType === "Twitter")
-					?.fieldValue,
-				website: finalExtraFields.find((field) => field.fieldType === "Website")
-					?.fieldValue,
+				)?.fieldValue),
+				twitter: formatHyperlink(finalExtraFields.find(
+					(field) => field.fieldType === "Twitter"
+				)?.fieldValue),
+				website: formatHyperlink(finalExtraFields.find(
+					(field) => field.fieldType === "Website"
+				)?.fieldValue),
 				other: finalExtraFields
 					.filter((field) => field.fieldType === "Other")
-					.map((other) => other.fieldValue),
+					.map((other) => formatHyperlink(other.fieldValue) ?? ""),
 			},
 			organisations: [fieldValues.primaryOrg, fieldValues.secondaryOrg],
 		};
@@ -544,6 +568,7 @@ export default function EditProfile() {
 								bottomOnChange={(event: any) =>
 									handleChange("secondaryEmail", event.target.value)
 								}
+								topDisabled={true}
 							/>
 							<VerticalFieldPair
 								iconType="phone"
@@ -586,7 +611,6 @@ export default function EditProfile() {
 					/>
 					<EditContactOptions
 						onCancel={() => router.back()}
-						onSubmit={handleSubmit}
 						submitLabel={"Save changes"}
 					/>
 				</form>
