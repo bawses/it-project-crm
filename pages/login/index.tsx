@@ -1,5 +1,6 @@
-// Login Page that redirects to Home/Contacts Page
-
+/*
+ * Login Page that redirects to Home/Contacts Page
+ */
 import { useRouter } from "next/router";
 import Link from "next/link";
 import { getSession, signIn } from "next-auth/client";
@@ -28,7 +29,16 @@ const useStyles = makeStyles((theme: Theme) =>
 			maxWidth: 600,
 			paddingTop: theme.spacing(1),
 			height: "50px",
-			margin: "15px auto",
+			marginTop: theme.spacing(1.5),
+		},
+
+		googleBtn: {
+			color: COLORS.black,
+			backgroundColor: COLORS.white,
+			maxWidth: 600,
+			paddingTop: theme.spacing(1),
+			height: "50px",
+			marginTop: theme.spacing(1.5),
 		},
 
 		logobox: {
@@ -239,6 +249,12 @@ export default function LoginPage() {
 							onClick={handleSubmit}
 							className={classes.btn}
 							title="Log In"
+						/>
+						<AuthButton
+							onClick={() => signIn("google", { callbackUrl: "/profile" })}
+							className={classes.googleBtn}
+							authMethod="google"
+							title="Sign In With Google"
 						/>
 						<h4 style={{ margin: "0%", color: "red" }}>{showError}</h4>
 						<div className={classes.links}>

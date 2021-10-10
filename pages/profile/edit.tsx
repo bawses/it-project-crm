@@ -330,6 +330,7 @@ export default function EditProfile() {
 	};
 
 	const loadProfileData = useCallback(async () => {
+
 		try {
 			setIsLoading(true);
 			const fetchedData = await getUser();

@@ -74,6 +74,9 @@ export default function Profile() {
 	};
 
 	const fetchProfileDetails = useCallback(async () => {
+		console.log("getting the session:");
+		const session = await getSession();
+		console.log(session?.user);
 		try {
 			setIsLoading(true);
 			const fetchedData = await getUser();
