@@ -179,22 +179,18 @@ export const searchContacts_Manual = async (searchObj: Object): Promise<IContact
 };
 
 export const searchContacts_User = async (searchObj: Object): Promise<IContact[]> => {
-  // Get all the user IDs that this user has added
   let addedContacts = await getAddedContacts();
-  let addedUserIds = addedContacts.map((a) => a.toUserId);
   let searchResult = await searchUsers(searchObj);
-  let addedUsers = searchResult.filter((user) => addedUserIds.includes(user._id));
-  let otherUsers = searchResult.filter((user) => !addedUserIds.includes(user._id));
 
-  let otherUserContacts = otherUsers.map(convert_User_to_Contact);
-  let addedUserContacts = await Promise.all(
-    addedUsers.map(async (user) => {
-      let addedContact = await getAddedContact(user._id);
-      return convert_AddedUser_to_Contact(addedContact, user);
-    })
-  );
-  let allContacts = addedUserContacts.concat(otherUserContacts);
-  return allContacts.sort(compare);
+  let contacts = searchResult.map((user) => {
+    for (let addedContact of addedContacts) {
+      if (addedContact.toUserId == user._id) {
+        return convert_AddedUser_to_Contact(addedContact, user);
+      }
+    }
+    return convert_User_to_Contact(user);
+  });
+  return contacts.sort(compare);
 };
 
 export const searchContacts = async (searchObj: Object): Promise<IContact[]> => {
