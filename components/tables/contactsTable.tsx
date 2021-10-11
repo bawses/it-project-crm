@@ -4,11 +4,12 @@ import { IContact } from '../../lib/UnifiedDataType';
 
 interface ContactsTableProps {
   contacts: IContact[],
-  handleRowButtonClick: (target: IContact, rowSetter: (isLoading: boolean) => void) => Promise<boolean>
-  isAddVariant: boolean
+  handleStarClick?: (contact: IContact) => Promise<boolean>,
+  handleAddClick?: (contact: IContact, rowSetter: (isLoading: boolean) => void) => Promise<boolean>,
+  handleSelectClick?: (contact: IContact) => void
 }
 
-export default function ContactsTable({ contacts, handleRowButtonClick, isAddVariant }: ContactsTableProps) {
+export default function ContactsTable({ contacts, handleStarClick, handleAddClick, handleSelectClick }: ContactsTableProps) {
   const rows: JSX.Element[] = []
   for (const contact of contacts) {
     const key = contact._id || contact.name.firstName
@@ -16,7 +17,13 @@ export default function ContactsTable({ contacts, handleRowButtonClick, isAddVar
       <ContactsTableRow
         key={key}
         contact={contact}
-        {...(isAddVariant ? { addVariant: { handleContactAdd: handleRowButtonClick } } : { starVariant: { handleStar: handleRowButtonClick } })}
+        {...(
+          handleAddClick ? { addVariant: { handleContactAdd: handleAddClick } }
+            : handleStarClick ? { starVariant: { handleStar: handleStarClick } }
+              : handleSelectClick ? { mergeVariant: { handleSelectClick: handleSelectClick } }
+                : {}
+        )
+        }
       />
     )
   }
