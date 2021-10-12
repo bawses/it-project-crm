@@ -53,6 +53,8 @@ export interface IOrganisation_Update {
 
 export interface IUser_Update {
   name?: { firstName: string; lastName: string };
+  imageFile?: File;
+  imageUrl?: string;
   email?: string[];
   phone?: string[];
   job?: string;

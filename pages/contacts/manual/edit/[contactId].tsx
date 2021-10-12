@@ -291,6 +291,27 @@ export default function EditManualContact() {
     loadContactData();
   }, [loadContactData]);
 
+  const formatHyperlink = (link?: string) => {
+    if (link) {
+      const formattedLink = link.replace(/\s+/g, '');
+      if (formattedLink.startsWith('https://')) {
+        return formattedLink;
+      } else if (formattedLink.startsWith('http://')) {
+        return formattedLink.replace('http://', 'https://');
+      } else {
+        return 'https://' + formattedLink;
+      }
+    }
+  }
+
+  const formatPairedData = (data: string[]) => {
+    if (data.length === 2 && data[0] === "") {
+      data[0] = data[1];
+      data[1] = "";
+    }
+    return data;
+  };
+
   const updateManualContactDetails = async () => {
     if (initialContact) {
       /** TODO: make alert or pop up if missing required fields */
@@ -310,29 +331,29 @@ export default function EditManualContact() {
           firstName: fieldValues.firstName,
           lastName: fieldValues.lastName,
         },
-        email: [fieldValues.primaryEmail, fieldValues.secondaryEmail],
-        phone: [fieldValues.primaryPhone, fieldValues.secondaryPhone],
+        email: formatPairedData([fieldValues.primaryEmail, fieldValues.secondaryEmail]),
+        phone: formatPairedData([fieldValues.primaryPhone, fieldValues.secondaryPhone]),
         job: fieldValues.title,
         location: location ? location.value : "",
         links: {
-          facebook: finalExtraFields.find(
+          facebook: formatHyperlink(finalExtraFields.find(
             (field) => field.fieldType === "Facebook"
-          )?.fieldValue,
-          linkedIn: finalExtraFields.find(
+          )?.fieldValue),
+          linkedIn: formatHyperlink(finalExtraFields.find(
             (field) => field.fieldType === "LinkedIn"
-          )?.fieldValue,
-          instagram: finalExtraFields.find(
+          )?.fieldValue),
+          instagram: formatHyperlink(finalExtraFields.find(
             (field) => field.fieldType === "Instagram"
-          )?.fieldValue,
-          twitter: finalExtraFields.find(
+          )?.fieldValue),
+          twitter: formatHyperlink(finalExtraFields.find(
             (field) => field.fieldType === "Twitter"
-          )?.fieldValue,
-          website: finalExtraFields.find(
+          )?.fieldValue),
+          website: formatHyperlink(finalExtraFields.find(
             (field) => field.fieldType === "Website"
-          )?.fieldValue,
+          )?.fieldValue),
           other: finalExtraFields
             .filter((field) => field.fieldType === "Other")
-            .map((other) => other.fieldValue),
+            .map((other) => formatHyperlink(other.fieldValue) ?? ""),
         },
         organisations: [fieldValues.primaryOrg, fieldValues.secondaryOrg],
       };
@@ -527,7 +548,6 @@ export default function EditManualContact() {
           />
           <EditContactOptions
             onCancel={() => router.back()}
-            onSubmit={handleSubmit}
             submitLabel={"Save changes"}
           />
         </form>

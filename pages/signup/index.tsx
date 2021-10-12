@@ -1,10 +1,12 @@
-// Sign Up Page that currently redirects to Login Page but should redirect to Home Page
+/*
+ * Sign Up Page that currently redirects to Login Page but should redirect to Home Page
+ */
 
 import { useRouter } from "next/router";
 import Link from "next/link";
-import { getSession } from "next-auth/client";
 import React, { useEffect, useState, ChangeEvent, MouseEvent } from "react";
 import { userSignUp } from "../../api_client/UserClient";
+import { getSession, signIn } from "next-auth/client";
 
 // styling imports
 import useMediaQuery from "@material-ui/core/useMediaQuery";
@@ -30,6 +32,15 @@ const useStyles = makeStyles((theme: Theme) =>
 			maxWidth: 600,
 			height: "50px",
 			margin: "10px auto",
+		},
+
+		googleBtn: {
+			color: COLORS.black,
+			backgroundColor: COLORS.white,
+			maxWidth: 600,
+			paddingTop: theme.spacing(1),
+			height: "50px",
+			marginTop: theme.spacing(),
 		},
 
 		logobox: {
@@ -62,7 +73,6 @@ const useStyles = makeStyles((theme: Theme) =>
 
 		paper: {
 			minWidth: theme.breakpoints.values.xs,
-			maxHeight: 400,
 			maxWidth: 600,
 			padding: theme.spacing(4),
 			marginTop: theme.spacing(1),
@@ -94,7 +104,6 @@ const useStyles = makeStyles((theme: Theme) =>
 		links: {
 			paddingTop: "1rem",
 			marginTop: "10px auto",
-			paddingBottom: "1rem",
 		},
 	})
 );
@@ -183,7 +192,7 @@ export default function SignUpPage() {
 			<Grid
 				container
 				direction={isSmall ? "column" : "row"}
-				justify="center"
+				justifyContent="center"
 				alignItems="center"
 			>
 				<Grid
@@ -282,6 +291,12 @@ export default function SignUpPage() {
 							onClick={handleSubmit}
 							className={classes.btn}
 							title="Sign Up"
+						/>
+						<AuthButton
+							onClick={() => signIn("google", { callbackUrl: "/profile" })}
+							className={classes.googleBtn}
+							authMethod="google"
+							title="Sign In With Google"
 						/>
 						<h4 style={{ margin: "0%", color: "red" }}>{showError}</h4>
 						<div className={classes.links}>
