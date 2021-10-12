@@ -1,5 +1,4 @@
 import { IManualContact, IAddedContact, IUser } from "./DataTypes"
-
 type ObjectId = string;
 
 // Represents a Manual Contact / User / Added Contact + User (Added User) object
@@ -19,7 +18,8 @@ export interface IContact {
     website?: string;
     other?: string[];
   };
-  organisations?: string[];
+  organisation?: { _id: ObjectId; name: string, imageUrl?: string };
+  manualOrganisation?: string;
   notes?: string;
   tags?: string[];
   starred?: boolean;
@@ -39,7 +39,8 @@ export const convert_ManualContact_to_Contact = (manualContact: IManualContact):
     job: manualContact.job,
     location: manualContact.location,
     links: manualContact.links,
-    organisations: manualContact.organisations,
+    organisation: manualContact.organisation,
+    manualOrganisation: manualContact.manualOrganisation,
     notes: manualContact.notes,
     tags: manualContact.tags,
     starred: manualContact.starred,
@@ -49,7 +50,7 @@ export const convert_ManualContact_to_Contact = (manualContact: IManualContact):
   };
 };
 
-export const convert_User_to_Contact = (user: IUser): IContact => {
+export const convert_User_to_Contact = (user: IUser): IContact => {  
   return {
     _id: user._id,
     name: user.name,
@@ -60,7 +61,8 @@ export const convert_User_to_Contact = (user: IUser): IContact => {
     job: user.job,
     location: user.location,
     links: user.links,
-    organisations: user.organisations,
+    organisation: user.organisation,
+    manualOrganisation: user.manualOrganisation,
     isManualContact: false,
     isAddedContact: false,
   };
@@ -68,7 +70,7 @@ export const convert_User_to_Contact = (user: IUser): IContact => {
 
 export const convert_AddedUser_to_Contact = (
   addedContact: IAddedContact,
-  user: IUser
+  user: IUser,
 ): IContact => {
   if (addedContact.toUserId !== user._id) {
     throw new Error("Added contact object and user object have uncommon ID fields (addedContact.toUserId must match with user._id");
@@ -82,7 +84,8 @@ export const convert_AddedUser_to_Contact = (
     job: user.job,
     location: user.location,
     links: user.links,
-    organisations: user.organisations,
+    organisation: user.organisation,
+    manualOrganisation: user.manualOrganisation,
     notes: addedContact.notes,
     tags: addedContact.tags,
     starred: addedContact.starred,

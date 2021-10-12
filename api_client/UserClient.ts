@@ -13,6 +13,7 @@ import {
   doUploadImage,
 } from "./Client";
 import { compare, hash as hashPassword } from "bcryptjs";
+import { getOrganisationById } from "./OrganisationClient";
 
 function validateSignUpObject(
   firstName: string,
@@ -74,6 +75,14 @@ export const getUserById = async (id: string) => {
   return getDbRecordById<IUser>(DataType.User, id);
 };
 
+export const getAllUsers = async () => {
+  return searchUsers({});
+};
+
+export const getAllTags = async (): Promise<string[]> => {
+  return (await getUser()).allTags || [];
+};
+
 export const updateUser = async (updateObj: IUser_Update) => {
   const id = await getSessionId();
   if (!id) {
@@ -104,6 +113,33 @@ export const updateUserById = async (id: string, updateObj: IUser_Update) => {
   return updateDbRecord<IUser>(DataType.User, id, updateObj_);
 };
 
+const updateImageForUser = async (imageFile: File) => {
+  const imageUrl = await doUploadImage(imageFile);
+  return imageUrl;
+};
+
+export const updatePasswordForUser = async (currentPassword: string, newPassword: string) => {
+  const user = await getUser();
+  if ((await compare(currentPassword, user.passwordHash)) !== true) {
+    throw new Error("Incorrect current password");
+  }
+  const id = await getSessionId();
+  if (!id) throw new Error("No valid session");
+  const newPasswordHash = await hashPassword(String(newPassword), 10);
+  return updateDbRecord<IUser>(DataType.User, id, { passwordHash: newPasswordHash });
+};
+
+export const updateOrganisationForUser = async (orgId: string) => {
+  const org = await getOrganisationById(orgId);
+  if (!org) throw new Error("No organisation found");
+  return updateUser({ organisation: { _id: orgId, name: org.name, imageUrl: org.imageUrl } });
+};
+
+export const removeOrganisationForUser = async () => {
+  return updateUser({ organisation: undefined });
+}
+
+
 export const deleteUser = async () => {
   const id = await getSessionId();
   if (!id) {
@@ -120,10 +156,6 @@ export const searchUsers = async (searchObj: Object) => {
   return searchDb<IUser>(DataType.User, searchObj);
 };
 
-export const getAllUsers = async () => {
-  return searchUsers({});
-};
-
 export const searchUsersByName = async (name: string) => {
   let searchObj = {
     fullName: {
@@ -133,23 +165,3 @@ export const searchUsersByName = async (name: string) => {
   };
   return searchUsers(searchObj);
 };
-
-export const getAllTags = async (): Promise<string[]> => {
-  return (await getUser()).allTags || [];
-};
-
-const updateImageForUser = async (imageFile: File) => {
-  const imageUrl = await doUploadImage(imageFile);
-  return imageUrl;
-}
-
-export const updatePasswordForUser = async (currentPassword: string, newPassword: string) => {
-  const user = await getUser();
-  if (await compare(currentPassword, user.passwordHash) !== true) {
-    throw new Error("Incorrect current password");
-  }
-  const id = await getSessionId();
-  if (!id) throw new Error("No valid session");
-  const newPasswordHash = await hashPassword(String(newPassword), 10);
-  return updateDbRecord<IUser>(DataType.User, id, {passwordHash: newPasswordHash});
-}

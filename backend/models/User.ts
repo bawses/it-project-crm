@@ -24,7 +24,8 @@ const UserSchema = new mongoose.Schema<IUser>(
     },
     about: String,
     allTags: [String],
-    organisations: [OrganisationId],
+    organisation: { _id: OrganisationId, name: String, imageUrl: String },
+    manualOrganisation: String,
     imageUrl: String,
   },
   {

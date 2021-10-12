@@ -3,6 +3,8 @@ import {
   getAllUsers,
   getUserById,
   updateUserById,
+  updateOrganisationForUser,
+  removeOrganisationForUser,
   deleteUserById,
   searchUsersByName,
 } from "../../api_client/UserClient";
@@ -41,7 +43,14 @@ export default function TestUserApis() {
       console.log("Testing update");
       let testUpdate = await updateUserById(id, {
         email: ["_THIS IS UPDATED INFO. WOOO"],
+        manualOrganisation: "Testing Manual Org",
       });
+      console.log(testUpdate);
+
+      console.log("Testing update organisation fields");
+      testUpdate = await updateOrganisationForUser("614c31968a987c85e0003234");
+      console.log(testUpdate);
+      testUpdate = await removeOrganisationForUser();
       console.log(testUpdate);
       console.log("--------------------------");
 
