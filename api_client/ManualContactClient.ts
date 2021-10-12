@@ -45,13 +45,14 @@ export const updateManualContact = async (id: string, updateObj: IManualContact_
 export const updateOrganisationForManualContact = async (id: string, orgId: string) => {
   const org = await getOrganisationById(orgId);
   if (!org) throw new Error("No organisation found");
-  return updateManualContact(id, { organisation: { _id: orgId, name: org.name, imageUrl: org.imageUrl } });
+  return updateManualContact(id, {
+    organisation: { _id: orgId, name: org.name, imageUrl: org.imageUrl },
+  });
 };
 
-
 export const removeOrganisationForManualContact = async (id: string) => {
-  return updateManualContact(id, { organisation: undefined });
-}
+  return updateManualContact(id, { organisation: { _id: "delete", name: "" } });
+};
 
 export const deleteManualContact = async (id: string) => {
   deleteDbRecord<IManualContact>(DataType.ManualContact, id);

@@ -136,7 +136,7 @@ export const updateOrganisationForUser = async (orgId: string) => {
 };
 
 export const removeOrganisationForUser = async () => {
-  return updateUser({ organisation: undefined });
+  return updateUser({ organisation: { _id: "delete", name: "" } });
 }
 
 
