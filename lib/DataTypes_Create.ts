@@ -21,7 +21,7 @@ export interface IManualContact_Create {
     website?: string;
     other?: string[];
   };
-  organisations?: string[];
+  organisation?: string;
   notes?: string;
   tags?: string[];
 }

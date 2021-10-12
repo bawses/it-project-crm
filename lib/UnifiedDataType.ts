@@ -1,4 +1,4 @@
-import { IManualContact, IAddedContact, IUser } from "./DataTypes"
+import { IManualContact, IAddedContact, IUser } from "./DataTypes";
 type ObjectId = string;
 
 // Represents a Manual Contact / User / Added Contact + User (Added User) object
@@ -18,7 +18,7 @@ export interface IContact {
     website?: string;
     other?: string[];
   };
-  organisation?: { _id: ObjectId; name: string, imageUrl?: string };
+  organisation?: { _id: ObjectId; name: string; imageUrl?: string };
   manualOrganisation?: string;
   notes?: string;
   tags?: string[];
@@ -50,7 +50,7 @@ export const convert_ManualContact_to_Contact = (manualContact: IManualContact):
   };
 };
 
-export const convert_User_to_Contact = (user: IUser): IContact => {  
+export const convert_User_to_Contact = (user: IUser): IContact => {
   return {
     _id: user._id,
     name: user.name,
@@ -70,10 +70,12 @@ export const convert_User_to_Contact = (user: IUser): IContact => {
 
 export const convert_AddedUser_to_Contact = (
   addedContact: IAddedContact,
-  user: IUser,
+  user: IUser
 ): IContact => {
   if (addedContact.toUserId !== user._id) {
-    throw new Error("Added contact object and user object have uncommon ID fields (addedContact.toUserId must match with user._id");
+    throw new Error(
+      "Added contact object and user object have uncommon ID fields (addedContact.toUserId must match with user._id"
+    );
   }
   return {
     _id: user._id,
