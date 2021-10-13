@@ -134,17 +134,11 @@ export default function Profile() {
 						firstName={profileData?.name.firstName}
 						lastName={profileData?.name.lastName}
 						title={profileData?.job}
-						primaryOrg={
-							profileData?.organisations &&
-							profileData?.organisations.length > 0
-								? profileData?.organisations[0]
-								: ""
+						selectedOrg={
+							profileData?.organisation ?? null
 						}
-						secondaryOrg={
-							profileData?.organisations &&
-							profileData?.organisations.length > 1
-								? profileData?.organisations[1]
-								: ""
+						manualOrg={
+							profileData?.manualOrganisation
 						}
 						showStar={false}
 					/>

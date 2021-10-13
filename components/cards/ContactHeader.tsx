@@ -3,6 +3,8 @@ import { Typography, makeStyles, IconButton, Paper } from "@material-ui/core";
 import StarsIcon from "@material-ui/icons/Stars";
 import StarIcon from "@material-ui/icons/Star";
 import { COLORS } from "../../lib/Colors";
+import DEFAULT_IMAGE from "../../assets/building-1062.png";
+import Image from "next/image";
 
 type profileType = "user" | "organisation";
 
@@ -11,8 +13,12 @@ interface ContactHeaderProps {
   firstName?: string;
   lastName?: string;
   title?: string;
-  primaryOrg?: string;
-  secondaryOrg?: string;
+  selectedOrg?: {
+    _id: string;
+    name: string;
+    imageUrl?: string;
+  } | null;
+  manualOrg?: string;
   showStar?: boolean;
   starred?: boolean;
   onStar?: () => void;
@@ -24,8 +30,8 @@ export default function ContactHeader({
   firstName = "",
   lastName = "",
   title = "",
-  primaryOrg = "",
-  secondaryOrg = "",
+  selectedOrg = null,
+  manualOrg = "",
   showStar = true,
   starred = false,
   onStar = () => {},
@@ -55,21 +61,34 @@ export default function ContactHeader({
       </Typography>
       {type === "user" && (
         <div className={classes.responsiveRow}>
-          <div className={classes.organisationField}>
-            <Typography>{primaryOrg}</Typography>
-          </div>
-          {!!secondaryOrg && (
+          {selectedOrg && (
             <div className={classes.organisationField}>
-              <Typography>{secondaryOrg}</Typography>
+              <div className={classes.selectedOrg}>
+                <Image
+                  // className={classes.profilePic}
+                  src={
+                    typeof selectedOrg.imageUrl === "string" &&
+                    selectedOrg.imageUrl
+                      ? selectedOrg.imageUrl
+                      : DEFAULT_IMAGE
+                  }
+                  alt="Organisation image"
+                  width={20}
+                  height={20}
+                />
+                <Typography>{selectedOrg.name}</Typography>
+              </div>
+            </div>
+          )}
+          {!!manualOrg && (
+            <div className={classes.organisationField}>
+              <Typography>{manualOrg}</Typography>
             </div>
           )}
         </div>
       )}
       {type === "organisation" && about && (
-        <Paper
-        elevation={3}
-        className={classes.aboutSection}
-      >
+        <Paper elevation={3} className={classes.aboutSection}>
           <Typography>{about}</Typography>
         </Paper>
       )}
@@ -96,10 +115,17 @@ const useStyles = makeStyles((theme) => ({
     flexGrow: 1,
     marginTop: theme.spacing(2),
     marginBottom: theme.spacing(2),
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
     [theme.breakpoints.down("xs")]: {
       marginTop: theme.spacing(),
       marginBottom: 0,
     },
+  },
+  selectedOrg: {
+    display: "flex",
+    flexDirection: "row",
   },
   responsiveRow: {
     display: "flex",

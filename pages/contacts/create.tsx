@@ -101,8 +101,7 @@ type ContactDetailsType = {
   firstName: string;
   lastName: string;
   title: string;
-  primaryOrg: string;
-  secondaryOrg: string;
+  manualOrg: string;
   primaryEmail: string;
   secondaryEmail: string;
   primaryPhone: string;
@@ -130,8 +129,7 @@ export default function CreateContact() {
     firstName: "",
     lastName: "",
     title: "",
-    primaryOrg: "",
-    secondaryOrg: "",
+    manualOrg: "",
     primaryEmail: "",
     secondaryEmail: "",
     primaryPhone: "",
@@ -241,7 +239,8 @@ export default function CreateContact() {
           .filter((field) => field.fieldType === "Other")
           .map((other) => formatHyperlink(other.fieldValue) ?? ""),
       },
-      organisations: [fieldValues.primaryOrg, fieldValues.secondaryOrg],
+      organisation: selectedOrg ? selectedOrg.value : undefined,
+      manualOrganisation: fieldValues.manualOrg,
       notes: "",
       tags: [],
     };
@@ -358,9 +357,9 @@ export default function CreateContact() {
                 selectedOrg={selectedOrg}
                 selectOnChange={(value) => setSelectedOrg(value)}
                 organisations={organisations}
-                manualValue={fieldValues.secondaryOrg || ""}
+                manualValue={fieldValues.manualOrg || ""}
                 manualOnChange={(event) =>
-                  handleChange("secondaryOrg", event.target.value)
+                  handleChange("manualOrg", event.target.value)
                 }
               />
             </div>

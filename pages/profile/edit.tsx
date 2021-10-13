@@ -23,7 +23,7 @@ import { getSession } from "next-auth/client";
 import TextButton from "../../components/buttons/TextButton";
 import { COLORS } from "../../lib/Colors";
 import { IUser_Update } from "../../lib/DataTypes_Update";
-import { getUser, updateUser } from "../../api_client/UserClient";
+import { getUser, removeOrganisationForUser, updateOrganisationForUser, updateUser } from "../../api_client/UserClient";
 import { IOrganisation, IUser } from "../../lib/DataTypes";
 import OrganisationInput from "../../components/input/OrganisationInput";
 import { orgSelectValue } from "../../components/input/OrganisationSelector";
@@ -119,8 +119,7 @@ type ContactDetailsType = {
 	firstName: string;
 	lastName: string;
 	title: string;
-	primaryOrg: string;
-	secondaryOrg: string;
+	manualOrg: string;
 	primaryEmail: string;
 	secondaryEmail: string;
 	primaryPhone: string;
@@ -148,8 +147,7 @@ export default function EditProfile() {
 		firstName: "",
 		lastName: "",
 		title: "",
-		primaryOrg: "",
-		secondaryOrg: "",
+		manualOrg: "",
 		primaryEmail: "",
 		secondaryEmail: "",
 		primaryPhone: "",
@@ -254,18 +252,8 @@ export default function EditProfile() {
 			firstName: fetchedData.name.firstName ?? "",
 			lastName: fetchedData.name.lastName ?? "",
 			title: fetchedData.job ?? "",
-			primaryOrg:
-				fetchedData.organisations &&
-				fetchedData.organisations.length > 0 &&
-				fetchedData.organisations[0]
-					? fetchedData.organisations[0]
-					: "",
-			secondaryOrg:
-				fetchedData.organisations &&
-				fetchedData.organisations.length > 1 &&
-				fetchedData.organisations[1]
-					? fetchedData.organisations[1]
-					: "",
+			manualOrg:
+				fetchedData.manualOrganisation ?? "",
 			primaryEmail:
 				fetchedData.email &&
 				fetchedData.email.length > 0 &&
@@ -353,12 +341,18 @@ export default function EditProfile() {
 					? { value: fetchedData.location, label: fetchedData.location }
 					: null
 			);
-			// TODO: set currently selected organisation
+			setSelectedOrg(
+				fetchedData.organisation
+				  ? {
+					  value: fetchedData.organisation,
+					  label: fetchedData.organisation.name,
+					}
+				  : null
+			  );
 			const initialFieldValues = extractFieldValues(fetchedData);
 			setFieldValues(initialFieldValues);
 			const extraLinks = extractExtraFields(fetchedData);
 			setExtraFields(extraLinks);
-			/** TODO: set initial profile picture */
 			setIsLoading(false);
 		} catch (e) {
 			/** TODO: redirect to error page */
@@ -444,11 +438,20 @@ export default function EditProfile() {
 					.filter((field) => field.fieldType === "Other")
 					.map((other) => formatHyperlink(other.fieldValue) ?? ""),
 			},
-			organisations: [fieldValues.primaryOrg, fieldValues.secondaryOrg],
+			manualOrganisation: fieldValues.manualOrg,
 		};
 		try {
 			setIsLoading(true);
 			const updatedUser = await updateUser(detailsToUpdate);
+			// Update selected organisation
+			let updatedOrgContact;
+			if (selectedOrg) {
+			  updatedOrgContact = await updateOrganisationForUser(selectedOrg.value._id);
+			} else {
+				console.log("Remove selected org");
+				updatedOrgContact = await removeOrganisationForUser();
+			}
+			console.log(updatedOrgContact);
 			router.replace("/profile");
 			setIsLoading(false);
 		} catch (e: any) {
@@ -556,9 +559,9 @@ export default function EditProfile() {
 								selectedOrg={selectedOrg}
 								selectOnChange={(value) => setSelectedOrg(value)}
 								organisations={organisations}
-								manualValue={fieldValues.secondaryOrg || ""}
+								manualValue={fieldValues.manualOrg || ""}
 								manualOnChange={(event) =>
-									handleChange("secondaryOrg", event.target.value)
+									handleChange("manualOrg", event.target.value)
 								}
 							/>
 						</div>

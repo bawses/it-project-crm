@@ -25,7 +25,9 @@ import { IManualContact_Update } from "../../../../lib/DataTypes_Update";
 import { IContact } from "../../../../lib/UnifiedDataType";
 import {
   getContact,
+  removeOrganisationForContact,
   updateContact,
+  updateOrganisationForContact,
 } from "../../../../api_client/ContactClient";
 import { getOrganisations } from "../../../../api_client/OrganisationClient";
 import { IOrganisation } from "../../../../lib/DataTypes";
@@ -119,8 +121,7 @@ type ContactDetailsType = {
   firstName: string;
   lastName: string;
   title: string;
-  primaryOrg: string;
-  secondaryOrg: string;
+  manualOrg: string;
   primaryEmail: string;
   secondaryEmail: string;
   primaryPhone: string;
@@ -149,8 +150,7 @@ export default function EditManualContact() {
     firstName: "",
     lastName: "",
     title: "",
-    primaryOrg: "",
-    secondaryOrg: "",
+    manualOrg: "",
     primaryEmail: "",
     secondaryEmail: "",
     primaryPhone: "",
@@ -189,18 +189,7 @@ export default function EditManualContact() {
       firstName: fetchedData.name.firstName ?? "",
       lastName: fetchedData.name.lastName ?? "",
       title: fetchedData.job ?? "",
-      primaryOrg:
-        fetchedData.organisations &&
-        fetchedData.organisations.length > 0 &&
-        fetchedData.organisations[0]
-          ? fetchedData.organisations[0]
-          : "",
-      secondaryOrg:
-        fetchedData.organisations &&
-        fetchedData.organisations.length > 1 &&
-        fetchedData.organisations[1]
-          ? fetchedData.organisations[1]
-          : "",
+      manualOrg: fetchedData.manualOrganisation ?? "",
       primaryEmail:
         fetchedData.email &&
         fetchedData.email.length > 0 &&
@@ -286,7 +275,14 @@ export default function EditManualContact() {
             ? { value: fetchedData.location, label: fetchedData.location }
             : null
         );
-        // TODO: set currently selected organisation
+        setSelectedOrg(
+          fetchedData.organisation
+            ? {
+                value: fetchedData.organisation,
+                label: fetchedData.organisation.name,
+              }
+            : null
+        );
         const initialFieldValues = extractFieldValues(fetchedData);
         setFieldValues(initialFieldValues);
         const extraLinks = extractExtraFields(fetchedData);
@@ -379,7 +375,7 @@ export default function EditManualContact() {
             .filter((field) => field.fieldType === "Other")
             .map((other) => formatHyperlink(other.fieldValue) ?? ""),
         },
-        organisations: [fieldValues.primaryOrg, fieldValues.secondaryOrg],
+        manualOrganisation: fieldValues.manualOrg,
       };
       try {
         setIsLoading(true);
@@ -387,6 +383,15 @@ export default function EditManualContact() {
           initialContact,
           detailsToUpdate
         );
+        // Update selected organisation
+        let updatedOrgContact;
+        if (selectedOrg) {
+          updatedOrgContact = await updateOrganisationForContact(initialContact,selectedOrg.value._id)
+        } else {
+          console.log("Remove selected org");
+          updatedOrgContact = await removeOrganisationForContact(initialContact);
+        }
+        console.log(updatedOrgContact);
         router.replace(`/contacts/manual/${updatedContact._id}`);
         setIsLoading(false);
       } catch (e: any) {
@@ -499,9 +504,9 @@ export default function EditManualContact() {
                 selectedOrg={selectedOrg}
                 selectOnChange={(value) => setSelectedOrg(value)}
                 organisations={organisations}
-                manualValue={fieldValues.secondaryOrg || ""}
+                manualValue={fieldValues.manualOrg || ""}
                 manualOnChange={(event) =>
-                  handleChange("secondaryOrg", event.target.value)
+                  handleChange("manualOrg", event.target.value)
                 }
               />
             </div>

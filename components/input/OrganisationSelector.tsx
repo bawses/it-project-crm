@@ -6,7 +6,7 @@ import DEFAULT_IMAGE from "../../assets/building-1062.png";
 import Image from "next/image";
 
 type orgType = {
-  id: string;
+  _id: string;
   name: string;
   imageUrl?: string;
 };
@@ -55,10 +55,10 @@ export default function OrganisationSelector({
         options={organisations
           .filter(
             (org) =>
-              !selectedOrganisation || org._id !== selectedOrganisation.value.id
+              !selectedOrganisation || org._id !== selectedOrganisation.value._id
           )
           .map((org) => ({
-            value: { id: org._id, name: org.name, imageUrl: "" },
+            value: { _id: org._id, name: org.name, imageUrl: "" },
             label: org.name,
           }))}
         value={selectedOrganisation}
