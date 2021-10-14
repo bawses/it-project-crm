@@ -332,7 +332,7 @@ export default function EditProfile() {
 			const allOrgs = await getOrganisations();
 			console.log(fetchedData);
 			console.log(allOrgs);
-			if (fetchedData?.imageUrl) {
+			if (typeof fetchedData?.imageUrl === 'string' && fetchedData?.imageUrl) {
 				setProfileImage(fetchedData?.imageUrl);
 			}
 			setOrganisations(allOrgs);
