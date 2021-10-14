@@ -164,7 +164,6 @@ export default function EditProfile() {
 	// On file select (from the pop up)
 	const onUploadImage = (event: any) => {
 		console.log(event.target.files[0]);
-		//console.log(URL.createObjectURL(event.target.files[0]));
 		setImageFile(event.target.files[0]);
 	};
 
