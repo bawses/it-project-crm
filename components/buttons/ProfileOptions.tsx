@@ -6,18 +6,20 @@ import SettingsIcon from "@material-ui/icons/Settings";
 interface ProfileOptionsProps {
   onPressEdit?: () => void;
   onPressSettings?: () => void;
+  isOrganisation?: boolean;
 }
 
 export default function ProfileOptions({
   onPressEdit = () => {},
   onPressSettings = () => {},
+  isOrganisation = false,
 }: ProfileOptionsProps) {
   const classes = useStyles();
 
   return (
     <div className={classes.profileOptionsMenu}>
       <Typography variant="h3" component="h3" className={classes.pageTitle}>
-        My Profile
+        My {isOrganisation ? "Organisation" : ""} Profile
       </Typography>
       <div>
       <Tooltip title="Edit">

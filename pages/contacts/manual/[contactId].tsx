@@ -288,17 +288,11 @@ export default function ViewManualContact() {
             firstName={initialContactData?.name.firstName}
             lastName={initialContactData?.name.lastName}
             title={initialContactData?.job}
-            primaryOrg={
-              initialContactData?.organisations &&
-              initialContactData?.organisations.length > 0
-                ? initialContactData?.organisations[0]
-                : ""
+            selectedOrg={
+              initialContactData?.organisation ?? null
             }
-            secondaryOrg={
-              initialContactData?.organisations &&
-              initialContactData?.organisations.length > 1
-                ? initialContactData?.organisations[1]
-                : ""
+            manualOrg={
+              initialContactData?.manualOrganisation
             }
             starred={isStarred}
             onStar={() => {

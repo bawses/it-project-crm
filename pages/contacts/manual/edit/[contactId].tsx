@@ -25,8 +25,14 @@ import { IManualContact_Update } from "../../../../lib/DataTypes_Update";
 import { IContact } from "../../../../lib/UnifiedDataType";
 import {
   getContact,
+  removeOrganisationForContact,
   updateContact,
+  updateOrganisationForContact,
 } from "../../../../api_client/ContactClient";
+import { getOrganisations } from "../../../../api_client/OrganisationClient";
+import { IOrganisation } from "../../../../lib/DataTypes";
+import { orgSelectValue } from "../../../../components/input/OrganisationSelector";
+import OrganisationInput from "../../../../components/input/OrganisationInput";
 
 const useStyles = makeStyles((theme) => ({
   containerStyle: {
@@ -115,8 +121,7 @@ type ContactDetailsType = {
   firstName: string;
   lastName: string;
   title: string;
-  primaryOrg: string;
-  secondaryOrg: string;
+  manualOrg: string;
   primaryEmail: string;
   secondaryEmail: string;
   primaryPhone: string;
@@ -132,16 +137,20 @@ export type ExtraFieldType = {
 export default function EditManualContact() {
   const classes = useStyles();
   const [initialContact, setInitialContact] = useState<IContact>();
+  const [organisations, setOrganisations] = useState<IOrganisation[]>([]);
   const [location, setLocation] = useState<OnChangeValue<
     { value: string; label: string },
+    false
+  > | null>(null);
+  const [selectedOrg, setSelectedOrg] = useState<OnChangeValue<
+    orgSelectValue,
     false
   > | null>(null);
   const [fieldValues, setFieldValues] = useState<ContactDetailsType>({
     firstName: "",
     lastName: "",
     title: "",
-    primaryOrg: "",
-    secondaryOrg: "",
+    manualOrg: "",
     primaryEmail: "",
     secondaryEmail: "",
     primaryPhone: "",
@@ -180,18 +189,7 @@ export default function EditManualContact() {
       firstName: fetchedData.name.firstName ?? "",
       lastName: fetchedData.name.lastName ?? "",
       title: fetchedData.job ?? "",
-      primaryOrg:
-        fetchedData.organisations &&
-        fetchedData.organisations.length > 0 &&
-        fetchedData.organisations[0]
-          ? fetchedData.organisations[0]
-          : "",
-      secondaryOrg:
-        fetchedData.organisations &&
-        fetchedData.organisations.length > 1 &&
-        fetchedData.organisations[1]
-          ? fetchedData.organisations[1]
-          : "",
+      manualOrg: fetchedData.manualOrganisation ?? "",
       primaryEmail:
         fetchedData.email &&
         fetchedData.email.length > 0 &&
@@ -267,11 +265,22 @@ export default function EditManualContact() {
       try {
         setIsLoading(true);
         const fetchedData = await getContact(contactId, true);
+        const allOrgs = await getOrganisations();
         console.log(fetchedData);
+        console.log(allOrgs);
         setInitialContact(fetchedData);
+        setOrganisations(allOrgs);
         setLocation(
           fetchedData.location
             ? { value: fetchedData.location, label: fetchedData.location }
+            : null
+        );
+        setSelectedOrg(
+          fetchedData.organisation
+            ? {
+                value: fetchedData.organisation,
+                label: fetchedData.organisation.name,
+              }
             : null
         );
         const initialFieldValues = extractFieldValues(fetchedData);
@@ -293,16 +302,16 @@ export default function EditManualContact() {
 
   const formatHyperlink = (link?: string) => {
     if (link) {
-      const formattedLink = link.replace(/\s+/g, '');
-      if (formattedLink.startsWith('https://')) {
+      const formattedLink = link.replace(/\s+/g, "");
+      if (formattedLink.startsWith("https://")) {
         return formattedLink;
-      } else if (formattedLink.startsWith('http://')) {
-        return formattedLink.replace('http://', 'https://');
+      } else if (formattedLink.startsWith("http://")) {
+        return formattedLink.replace("http://", "https://");
       } else {
-        return 'https://' + formattedLink;
+        return "https://" + formattedLink;
       }
     }
-  }
+  };
 
   const formatPairedData = (data: string[]) => {
     if (data.length === 2 && data[0] === "") {
@@ -331,31 +340,42 @@ export default function EditManualContact() {
           firstName: fieldValues.firstName,
           lastName: fieldValues.lastName,
         },
-        email: formatPairedData([fieldValues.primaryEmail, fieldValues.secondaryEmail]),
-        phone: formatPairedData([fieldValues.primaryPhone, fieldValues.secondaryPhone]),
+        email: formatPairedData([
+          fieldValues.primaryEmail,
+          fieldValues.secondaryEmail,
+        ]),
+        phone: formatPairedData([
+          fieldValues.primaryPhone,
+          fieldValues.secondaryPhone,
+        ]),
         job: fieldValues.title,
         location: location ? location.value : "",
         links: {
-          facebook: formatHyperlink(finalExtraFields.find(
-            (field) => field.fieldType === "Facebook"
-          )?.fieldValue),
-          linkedIn: formatHyperlink(finalExtraFields.find(
-            (field) => field.fieldType === "LinkedIn"
-          )?.fieldValue),
-          instagram: formatHyperlink(finalExtraFields.find(
-            (field) => field.fieldType === "Instagram"
-          )?.fieldValue),
-          twitter: formatHyperlink(finalExtraFields.find(
-            (field) => field.fieldType === "Twitter"
-          )?.fieldValue),
-          website: formatHyperlink(finalExtraFields.find(
-            (field) => field.fieldType === "Website"
-          )?.fieldValue),
+          facebook: formatHyperlink(
+            finalExtraFields.find((field) => field.fieldType === "Facebook")
+              ?.fieldValue
+          ),
+          linkedIn: formatHyperlink(
+            finalExtraFields.find((field) => field.fieldType === "LinkedIn")
+              ?.fieldValue
+          ),
+          instagram: formatHyperlink(
+            finalExtraFields.find((field) => field.fieldType === "Instagram")
+              ?.fieldValue
+          ),
+          twitter: formatHyperlink(
+            finalExtraFields.find((field) => field.fieldType === "Twitter")
+              ?.fieldValue
+          ),
+          website: formatHyperlink(
+            finalExtraFields.find((field) => field.fieldType === "Website")
+              ?.fieldValue
+          ),
           other: finalExtraFields
             .filter((field) => field.fieldType === "Other")
             .map((other) => formatHyperlink(other.fieldValue) ?? ""),
         },
-        organisations: [fieldValues.primaryOrg, fieldValues.secondaryOrg],
+        manualOrganisation: fieldValues.manualOrg,
       };
       try {
         setIsLoading(true);
@@ -363,6 +383,15 @@ export default function EditManualContact() {
           initialContact,
           detailsToUpdate
         );
+        // Update selected organisation
+        let updatedOrgContact;
+        if (selectedOrg) {
+          updatedOrgContact = await updateOrganisationForContact(initialContact,selectedOrg.value._id)
+        } else {
+          console.log("Remove selected org");
+          updatedOrgContact = await removeOrganisationForContact(initialContact);
+        }
+        console.log(updatedOrgContact);
         router.replace(`/contacts/manual/${updatedContact._id}`);
         setIsLoading(false);
       } catch (e: any) {
@@ -471,18 +500,13 @@ export default function EditManualContact() {
                 selectedLocation={location}
                 onChange={(value) => setLocation(value)}
               />
-              <ResponsiveFieldPair
-                leftId="primaryOrganisation"
-                leftLabel="Primary organisation"
-                leftValue={fieldValues.primaryOrg || ""}
-                rightId="secondaryOrganisation"
-                rightLabel="Secondary organisation"
-                rightValue={fieldValues.secondaryOrg || ""}
-                leftOnChange={(event) =>
-                  handleChange("primaryOrg", event.target.value)
-                }
-                rightOnChange={(event) =>
-                  handleChange("secondaryOrg", event.target.value)
+              <OrganisationInput
+                selectedOrg={selectedOrg}
+                selectOnChange={(value) => setSelectedOrg(value)}
+                organisations={organisations}
+                manualValue={fieldValues.manualOrg || ""}
+                manualOnChange={(event) =>
+                  handleChange("manualOrg", event.target.value)
                 }
               />
             </div>
