@@ -103,10 +103,7 @@ export const updateUserById = async (id: string, updateObj: IUser_Update) => {
     console.log("Image Url: " + imageUrl);
     
     updateObj_.imageUrl = imageUrl;
-  }
-  else if (!updateObj.imageUrl){
-    // Set image to default
-    updateObj_.imageUrl = "";
+    console.log(updateObj);
   }
 
   delete updateObj_.imageFile;

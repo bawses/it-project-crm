@@ -8,26 +8,23 @@ import {
 } from "@material-ui/core";
 import { Business } from "@material-ui/icons";
 import Image from "next/image";
+import DEFAULT_IMAGE from "../../../assets/building-1062.png";
 import React, { useCallback, useEffect, useState } from "react";
 import { OnChangeValue } from "react-select";
-import EditContactOptions from "../../components/buttons/EditContactOptions";
-import ExtraField from "../../components/input/ExtraField";
-import ResponsiveFieldPair from "../../components/input/ResponsiveFieldPair";
-import VerticalFieldPair from "../../components/input/VerticalFieldPair";
-import LocationSelector from "../../components/input/LocationSelector";
-import AddFieldSelector from "../../components/input/AddFieldSelector";
-import Layout from "../../components/navLayout/Layout";
-import PageLoadingBar from "../../components/PageLoadingBar";
+import EditContactOptions from "../../../components/buttons/EditContactOptions";
+import ExtraField from "../../../components/input/ExtraField";
+import VerticalFieldPair from "../../../components/input/VerticalFieldPair";
+import LocationSelector from "../../../components/input/LocationSelector";
+import AddFieldSelector from "../../../components/input/AddFieldSelector";
+import Layout from "../../../components/navLayout/Layout";
+import PageLoadingBar from "../../../components/PageLoadingBar";
 import { useRouter } from "next/router";
 import { getSession } from "next-auth/client";
-import TextButton from "../../components/buttons/TextButton";
-import { COLORS } from "../../lib/Colors";
-import { IUser_Update } from "../../lib/DataTypes_Update";
-import { getUser, removeOrganisationForUser, updateOrganisationForUser, updateUser } from "../../api_client/UserClient";
-import { IOrganisation, IUser } from "../../lib/DataTypes";
-import OrganisationInput from "../../components/input/OrganisationInput";
-import { orgSelectValue } from "../../components/input/OrganisationSelector";
-import { getOrganisations } from "../../api_client/OrganisationClient";
+import TextButton from "../../../components/buttons/TextButton";
+import { COLORS } from "../../../lib/Colors";
+import { IOrganisation } from "../../../lib/DataTypes";
+import { dummyOrganisation } from ".";
+import { IOrganisation_Update } from "../../../lib/DataTypes_Update";
 
 const DEFAULT_URL: string =
 	"https://res.cloudinary.com/it-project-crm/image/upload/v1633002681/zdt7litmbbxfdvg7gdvx.png";
@@ -115,16 +112,15 @@ const useStyles = makeStyles((theme) => ({
 	},
 }));
 
-type ContactDetailsType = {
-	firstName: string;
-	lastName: string;
-	title: string;
-	manualOrg: string;
+type OrgDetailsType = {
+	name: string;
+	industry: string;
 	primaryEmail: string;
 	secondaryEmail: string;
 	primaryPhone: string;
 	secondaryPhone: string;
 	address: string;
+    about: string;
 };
 
 export type ExtraFieldType = {
@@ -132,27 +128,21 @@ export type ExtraFieldType = {
 	fieldValue: string;
 };
 
-export default function EditProfile() {
+export default function EditOrgProfile() {
 	const classes = useStyles();
-	const [organisations, setOrganisations] = useState<IOrganisation[]>([]);
 	const [location, setLocation] = useState<OnChangeValue<
 		{ value: string; label: string },
 		false
 	> | null>(null);
-	const [selectedOrg, setSelectedOrg] = useState<OnChangeValue<
-		orgSelectValue,
-		false
-	> | null>(null);
-	const [fieldValues, setFieldValues] = useState<ContactDetailsType>({
-		firstName: "",
-		lastName: "",
-		title: "",
-		manualOrg: "",
+	const [fieldValues, setFieldValues] = useState<OrgDetailsType>({
+		name: "",
+		industry: "",
 		primaryEmail: "",
 		secondaryEmail: "",
 		primaryPhone: "",
 		secondaryPhone: "",
 		address: "",
+        about: "",
 	});
 	const [extraFields, setExtraFields] = useState<ExtraFieldType[]>([]);
 	const [isLoading, setIsLoading] = useState(true);
@@ -215,7 +205,7 @@ export default function EditProfile() {
 				<>
 					<Image
 						className={classes.profilePic}
-						src={DEFAULT_URL}
+						src={DEFAULT_IMAGE}
 						alt="Profile picture"
 						width={300}
 						height={300}
@@ -247,13 +237,10 @@ export default function EditProfile() {
 		);
 	};
 
-	const extractFieldValues = (fetchedData: IUser) => {
+	const extractFieldValues = (fetchedData: IOrganisation) => {
 		return {
-			firstName: fetchedData.name.firstName ?? "",
-			lastName: fetchedData.name.lastName ?? "",
-			title: fetchedData.job ?? "",
-			manualOrg:
-				fetchedData.manualOrganisation ?? "",
+			name: fetchedData.name ?? "",
+			industry: fetchedData.industry ?? "",
 			primaryEmail:
 				fetchedData.email &&
 				fetchedData.email.length > 0 &&
@@ -279,10 +266,11 @@ export default function EditProfile() {
 					? fetchedData.phone[1]
 					: "",
 			address: "",
+            about: fetchedData.about ?? "",
 		};
 	};
 
-	const extractExtraFields = (fetchedData: IUser) => {
+	const extractExtraFields = (fetchedData: IOrganisation) => {
 		let extraLinks = [];
 		if (fetchedData.links?.facebook) {
 			extraLinks.push({
@@ -325,34 +313,27 @@ export default function EditProfile() {
 	};
 
 	const loadProfileData = useCallback(async () => {
-
 		try {
 			setIsLoading(true);
-			const fetchedData = await getUser();
-			const allOrgs = await getOrganisations();
+			const fetchedData = dummyOrganisation;
+
 			console.log(fetchedData);
-			console.log(allOrgs);
-			if (typeof fetchedData?.imageUrl === 'string' && fetchedData?.imageUrl) {
-				setProfileImage(fetchedData?.imageUrl);
-			}
-			setOrganisations(allOrgs);
+
+            // TODO: add profile pic to organisation data type
+			// if (fetchedData?.imageUrl) {
+			// 	setProfileImage(fetchedData?.imageUrl);
+			// }
+
 			setLocation(
 				fetchedData.location
 					? { value: fetchedData.location, label: fetchedData.location }
 					: null
 			);
-			setSelectedOrg(
-				fetchedData.organisation
-				  ? {
-					  value: fetchedData.organisation,
-					  label: fetchedData.organisation.name,
-					}
-				  : null
-			  );
 			const initialFieldValues = extractFieldValues(fetchedData);
 			setFieldValues(initialFieldValues);
 			const extraLinks = extractExtraFields(fetchedData);
 			setExtraFields(extraLinks);
+			/** TODO: set initial profile picture */
 			setIsLoading(false);
 		} catch (e) {
 			/** TODO: redirect to error page */
@@ -367,16 +348,16 @@ export default function EditProfile() {
 
 	const formatHyperlink = (link?: string) => {
 		if (link) {
-			const formattedLink = link.replace(/\s+/g, "");
-			if (formattedLink.startsWith("https://")) {
+			const formattedLink = link.replace(/\s+/g, '');
+			if (formattedLink.startsWith('https://')) {
 				return formattedLink;
-			} else if (formattedLink.startsWith("http://")) {
-				return formattedLink.replace("http://", "https://");
+			} else if (formattedLink.startsWith('http://')) {
+				return formattedLink.replace('http://', 'https://');
 			} else {
-				return "https://" + formattedLink;
+				return 'https://' + formattedLink;
 			}
 		}
-	};
+	}
 
 	const formatPairedData = (data: string[]) => {
 		if (data.length === 2 && data[0] === "") {
@@ -388,71 +369,48 @@ export default function EditProfile() {
 
 	const updateProfileDetails = async () => {
 		/** TODO: make alert or pop up if missing required fields */
-		if (!!fieldValues.firstName === false || !!fieldValues.lastName === false) {
-			console.log("Error: must enter first and last name");
+		if (!!fieldValues.name === false) {
+			console.log("Error: must enter organisation name");
 			return;
 		}
 		/** Remove any extra fields that are empty */
 		const finalExtraFields = extraFields.filter(
 			(field) => field.fieldValue !== ""
 		);
-		const detailsToUpdate: IUser_Update = {
-			name: {
-				firstName: fieldValues.firstName,
-				lastName: fieldValues.lastName,
-			},
-			imageFile: imageFile,
-			imageUrl: profileImage,
-			email: formatPairedData([
-				fieldValues.primaryEmail,
-				fieldValues.secondaryEmail,
-			]),
-			phone: formatPairedData([
-				fieldValues.primaryPhone,
-				fieldValues.secondaryPhone,
-			]),
-			job: fieldValues.title,
+		const detailsToUpdate: IOrganisation_Update = {
+			name: fieldValues.name,
+			email: formatPairedData([fieldValues.primaryEmail, fieldValues.secondaryEmail]),
+			phone: formatPairedData([fieldValues.primaryPhone, fieldValues.secondaryPhone]),
+			industry: fieldValues.industry,
 			location: location ? location.value : "",
 			links: {
-				facebook: formatHyperlink(
-					finalExtraFields.find((field) => field.fieldType === "Facebook")
-						?.fieldValue
-				),
-				linkedIn: formatHyperlink(
-					finalExtraFields.find((field) => field.fieldType === "LinkedIn")
-						?.fieldValue
-				),
-				instagram: formatHyperlink(
-					finalExtraFields.find((field) => field.fieldType === "Instagram")
-						?.fieldValue
-				),
-				twitter: formatHyperlink(
-					finalExtraFields.find((field) => field.fieldType === "Twitter")
-						?.fieldValue
-				),
-				website: formatHyperlink(
-					finalExtraFields.find((field) => field.fieldType === "Website")
-						?.fieldValue
-				),
+				facebook: formatHyperlink(finalExtraFields.find(
+					(field) => field.fieldType === "Facebook"
+				)?.fieldValue),
+				linkedIn: formatHyperlink(finalExtraFields.find(
+					(field) => field.fieldType === "LinkedIn"
+				)?.fieldValue),
+				instagram: formatHyperlink(finalExtraFields.find(
+					(field) => field.fieldType === "Instagram"
+				)?.fieldValue),
+				twitter: formatHyperlink(finalExtraFields.find(
+					(field) => field.fieldType === "Twitter"
+				)?.fieldValue),
+				website: formatHyperlink(finalExtraFields.find(
+					(field) => field.fieldType === "Website"
+				)?.fieldValue),
 				other: finalExtraFields
 					.filter((field) => field.fieldType === "Other")
 					.map((other) => formatHyperlink(other.fieldValue) ?? ""),
 			},
-			manualOrganisation: fieldValues.manualOrg,
+			about: fieldValues.about,
 		};
 		try {
 			setIsLoading(true);
-			const updatedUser = await updateUser(detailsToUpdate);
-			// Update selected organisation
-			let updatedOrgContact;
-			if (selectedOrg) {
-			  updatedOrgContact = await updateOrganisationForUser(selectedOrg.value._id);
-			} else {
-				console.log("Remove selected org");
-				updatedOrgContact = await removeOrganisationForUser();
-			}
-			console.log(updatedOrgContact);
-			router.replace("/profile");
+            console.log("Updating org details");
+            console.log(detailsToUpdate);
+			// const updatedUser = await updateUser(detailsToUpdate);
+			router.replace("/organisations/profile");
 			setIsLoading(false);
 		} catch (e: any) {
 			console.log(e);
@@ -499,15 +457,15 @@ export default function EditProfile() {
 		updateProfileDetails();
 	};
 
-	useEffect(() => {
-		getSession().then((session) => {
-			if (session) {
-				setIsLoading(false);
-			} else {
-				router.replace("/login");
-			}
-		});
-	}, [router]);
+	// useEffect(() => {
+	// 	getSession().then((session) => {
+	// 		if (session) {
+	// 			setIsLoading(false);
+	// 		} else {
+	// 			router.replace("/login");
+	// 		}
+	// 	});
+	// }, [router]);
 
 	if (isLoading) {
 		return <PageLoadingBar />;
@@ -517,7 +475,7 @@ export default function EditProfile() {
 		<Layout>
 			<Container maxWidth="md" className={classes.containerStyle}>
 				<Typography variant="h5" component="h5" className={classes.pageTitle}>
-					Edit profile:
+					Edit organisation profile:
 				</Typography>
 				<form noValidate autoComplete="off" onSubmit={handleSubmit}>
 					<div className={classes.primaryDetailsStyle}>
@@ -525,44 +483,40 @@ export default function EditProfile() {
 							{imageUploadContent()}
 						</Container>
 						<div className={classes.inputFields}>
-							<ResponsiveFieldPair
-								small={true}
-								leftId="firstName"
-								leftLabel="First name"
-								leftValue={fieldValues.firstName}
-								rightId="lastName"
-								rightLabel="Last name"
-								rightValue={fieldValues.lastName}
-								leftOnChange={(event) =>
-									handleChange("firstName", event.target.value)
-								}
-								rightOnChange={(event) =>
-									handleChange("lastName", event.target.value)
-								}
-								required={true}
-							/>
-							<TextField
+                            <TextField
 								size="small"
 								variant="filled"
-								id="title"
-								label="Title"
+								id="name"
+								label="Name"
 								fullWidth
-								value={fieldValues.title || ""}
-								onChange={(event) => handleChange("title", event.target.value)}
+								value={fieldValues.name || ""}
+								onChange={(event) => handleChange("name", event.target.value)}
+								className={classes.topSpacing}
+                                required={true}
+							/>
+                            <TextField
+								size="small"
+								variant="filled"
+								id="industry"
+								label="Industry"
+								fullWidth
+								value={fieldValues.industry || ""}
+								onChange={(event) => handleChange("industry", event.target.value)}
 								className={classes.topSpacing}
 							/>
 							<LocationSelector
 								selectedLocation={location}
 								onChange={(value) => setLocation(value)}
 							/>
-							<OrganisationInput
-								selectedOrg={selectedOrg}
-								selectOnChange={(value) => setSelectedOrg(value)}
-								organisations={organisations}
-								manualValue={fieldValues.manualOrg || ""}
-								manualOnChange={(event) =>
-									handleChange("manualOrg", event.target.value)
-								}
+							<TextField
+								multiline={true}
+								variant="filled"
+								id="about"
+								label="About"
+								fullWidth
+								value={fieldValues.about || ""}
+								onChange={(event) => handleChange("about", event.target.value)}
+								className={classes.topSpacing}
 							/>
 						</div>
 					</div>
