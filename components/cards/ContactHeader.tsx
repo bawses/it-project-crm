@@ -1,10 +1,17 @@
 import React from "react";
-import { Typography, makeStyles, IconButton, Paper } from "@material-ui/core";
+import {
+  Typography,
+  makeStyles,
+  IconButton,
+  Paper,
+  Container,
+} from "@material-ui/core";
 import StarsIcon from "@material-ui/icons/Stars";
 import StarIcon from "@material-ui/icons/Star";
 import { COLORS } from "../../lib/Colors";
 import DEFAULT_IMAGE from "../../assets/building-1062.png";
 import Image from "next/image";
+import Link from "next/link";
 
 type profileType = "user" | "organisation";
 
@@ -63,26 +70,32 @@ export default function ContactHeader({
         <div className={classes.responsiveRow}>
           {selectedOrg && (
             <div className={classes.organisationField}>
-              <div className={classes.selectedOrg}>
-                <Image
-                  // className={classes.profilePic}
-                  src={
-                    typeof selectedOrg.imageUrl === "string" &&
-                    selectedOrg.imageUrl
-                      ? selectedOrg.imageUrl
-                      : DEFAULT_IMAGE
-                  }
-                  alt="Organisation image"
-                  width={20}
-                  height={20}
-                />
+              <Link href={`/organisations/${selectedOrg._id}`} passHref>
+              <Paper elevation={3} className={classes.selectedOrg}>
+                <div className={classes.companyImageDiv}>
+                  <Image
+                    className={classes.companyImage}
+                    src={
+                      typeof selectedOrg.imageUrl === "string" &&
+                      selectedOrg.imageUrl
+                        ? selectedOrg.imageUrl
+                        : DEFAULT_IMAGE
+                    }
+                    alt="Organisation image"
+                    width={25}
+                    height={25}
+                  />
+                </div>
                 <Typography>{selectedOrg.name}</Typography>
-              </div>
+              </Paper>
+              </Link>
             </div>
           )}
           {!!manualOrg && (
             <div className={classes.organisationField}>
-              <Typography>{manualOrg}</Typography>
+              <Paper elevation={3} className={classes.selectedOrg}>
+                <Typography>{manualOrg}</Typography>
+              </Paper>
             </div>
           )}
         </div>
@@ -111,13 +124,25 @@ const useStyles = makeStyles((theme) => ({
       justifyContent: "center",
     },
   },
+  companyImageDiv: {
+    margin: 2,
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  companyImage: {
+    borderRadius: "50%",
+  },
   organisationField: {
-    flexGrow: 1,
     marginTop: theme.spacing(2),
     marginBottom: theme.spacing(2),
+    marginRight: theme.spacing(),
     display: "flex",
-    alignItems: "center",
     justifyContent: "center",
+    [theme.breakpoints.down("md")]: {
+      flexGrow: 1,
+      marginLeft: theme.spacing(),
+    },
     [theme.breakpoints.down("xs")]: {
       marginTop: theme.spacing(),
       marginBottom: 0,
@@ -126,12 +151,20 @@ const useStyles = makeStyles((theme) => ({
   selectedOrg: {
     display: "flex",
     flexDirection: "row",
+    alignItems: "center",
+    borderRadius: 10,
+    padding: 15,
+    [theme.breakpoints.down("xs")]: {
+      padding: 10,
+    },
   },
   responsiveRow: {
     display: "flex",
     flexDirection: "row",
     width: "100%",
-    justifyContent: "space-between",
+    [theme.breakpoints.down("md")]: {
+      justifyContent: "space-between",
+    },
     [theme.breakpoints.down("xs")]: {
       flexDirection: "column",
     },
