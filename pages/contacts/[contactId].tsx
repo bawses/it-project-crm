@@ -266,8 +266,12 @@ export default function ViewContact() {
 	const handleContactOption = (
 		value: OnChangeValue<{ value: string; label: string }, false> | null
 	) => {
-		if (value && value.value === "remove") {
-			removeThisContact();
+		if (value) {
+			if (value.value === "remove") {
+				removeThisContact();
+			} else if (value.value === "merge") {
+				router.push(`/merge?userid=${contactId}`);
+			}
 		}
 	};
 
