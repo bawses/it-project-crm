@@ -1,5 +1,6 @@
 
 type UserId = string;
+type ObjectId = string;
 
 export interface IUser_Create {
   passwordHash: string;
@@ -21,7 +22,8 @@ export interface IManualContact_Create {
     website?: string;
     other?: string[];
   };
-  organisations?: string[];
+  organisation?: { _id: ObjectId; name: string, imageUrl?: string };
+  manualOrganisation?: string;
   notes?: string;
   tags?: string[];
 }

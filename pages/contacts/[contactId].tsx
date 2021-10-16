@@ -266,8 +266,12 @@ export default function ViewContact() {
 	const handleContactOption = (
 		value: OnChangeValue<{ value: string; label: string }, false> | null
 	) => {
-		if (value && value.value === "remove") {
-			removeThisContact();
+		if (value) {
+			if (value.value === "remove") {
+				removeThisContact();
+			} else if (value.value === "merge") {
+				router.push(`/merge?userid=${contactId}`);
+			}
 		}
 	};
 
@@ -294,17 +298,11 @@ export default function ViewContact() {
 						firstName={initialContactData?.name.firstName}
 						lastName={initialContactData?.name.lastName}
 						title={initialContactData?.job}
-						primaryOrg={
-							initialContactData?.organisations &&
-							initialContactData?.organisations.length > 0
-								? initialContactData?.organisations[0]
-								: ""
+						selectedOrg={
+							initialContactData?.organisation ?? null
 						}
-						secondaryOrg={
-							initialContactData?.organisations &&
-							initialContactData?.organisations.length > 1
-								? initialContactData?.organisations[1]
-								: ""
+						manualOrg={
+							initialContactData?.manualOrganisation
 						}
 						starred={isStarred}
 						onStar={() => {

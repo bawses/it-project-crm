@@ -11,16 +11,16 @@ import {
   Language,
 } from "@material-ui/icons";
 import { IContact } from "../../lib/UnifiedDataType";
-import { IUser } from "../../lib/DataTypes";
+import { IOrganisation, IUser } from "../../lib/DataTypes";
 
 interface ContactDetailsProps {
-  fieldValues?: IContact | IUser;
+  fieldValues?: IContact | IUser | IOrganisation;
 }
 
 export default function ContactDetails({ fieldValues }: ContactDetailsProps) {
   const classes = useStyles();
 
-  const linksList = (fieldValues?: IContact | IUser) => {
+  const linksList = (fieldValues?: IContact | IUser | IOrganisation) => {
     const links = fieldValues?.links;
     let list = [];
     if (links?.facebook) {

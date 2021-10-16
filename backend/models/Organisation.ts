@@ -22,6 +22,7 @@ const OrganisationSchema = new mongoose.Schema<IOrganisation>(
     industry: String,
     about: String,
     contacts: [String],
+    imageUrl: String,
   },
   {
     timestamps: true,

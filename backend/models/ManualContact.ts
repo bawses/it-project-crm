@@ -3,13 +3,15 @@ import { IManualContact } from "../../lib/DataTypes";
 
 /*TODO: add min/max length for Strings and error message for required fields */
 
-const UserId = String;
+const ObjectId = String;
+const UserId = ObjectId;
+const OrganisationId = ObjectId;
 
 /* ManualContact will correspond to the "manualcontacts" collection in the MongoDB database. */
 const ManualContactSchema = new mongoose.Schema<IManualContact>(
   {
-    ownerId: { type: String, required: true },
-    fullName: {type: String},
+    ownerId: { type: UserId, required: true },
+    fullName: { type: String },
     name: { type: { firstName: String, lastName: String }, required: true },
     email: [String],
     phone: [String],
@@ -23,7 +25,8 @@ const ManualContactSchema = new mongoose.Schema<IManualContact>(
       website: String,
       other: [String],
     },
-    organisations: [String],
+    organisation: { _id: OrganisationId, name: String, imageUrl: String },
+    manualOrganisation: String,
     notes: String,
     tags: [String],
     starred: Boolean,

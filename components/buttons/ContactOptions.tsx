@@ -7,6 +7,10 @@ import TextButton from "./TextButton";
 
 const options = [
   {
+    value: 'merge',
+    label: "Merge with existing contact",
+  },
+  {
     value: "archive",
     label: "Archive contact",
   },
@@ -60,8 +64,8 @@ export default function ContactOptions({
 
   const setOptions = () => {
     const finalOptions = isManual
-      ? options.filter((option) => option.value !== "remove")
-      : options.filter((option) => option.value === "remove");
+      ? options.filter((option) => option.value !== "remove" && option.value !== "merge")
+      : options.filter((option) => option.value === "remove" || option.value === "merge");
     return isArchived
       ? finalOptions.filter((option) => option.value !== "archive")
       : finalOptions.filter((option) => option.value !== "unarchive");

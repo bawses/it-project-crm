@@ -1,8 +1,10 @@
 import {
   createManualContact,
   getManualContacts,
-  getManualContactById,
+  getManualContact,
   updateManualContact,
+  updateOrganisationForManualContact,
+  removeOrganisationForManualContact,
   deleteManualContact,
   searchManualContactsByName,
 } from "../../api_client/ManualContactClient";
@@ -28,7 +30,7 @@ export default function TestManualContactApis() {
 
       console.log("Testing get");
       const id = testSignUp._id;
-      let testGet = await getManualContactById(id);
+      let testGet = await getManualContact(id);
       console.log(testGet);
 
       console.log("Testing search");
@@ -38,8 +40,15 @@ export default function TestManualContactApis() {
       console.log("Testing update");
       let updateObj = {
         name: { firstName: "SOME RANDOM UPDATE", lastName: "Dang" },
+        manualOrganisation: "Test Manual Org"
       };
       let testUpdate = await updateManualContact(id, updateObj);
+      console.log(testUpdate);
+
+      console.log("Testing update organisation fields");
+      testUpdate = await updateOrganisationForManualContact(id, "614c31968a987c85e0003234");
+      console.log(testUpdate);
+      testUpdate = await removeOrganisationForManualContact(id);
       console.log(testUpdate);
 
       console.log("Testing delete");

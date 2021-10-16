@@ -28,7 +28,8 @@ export interface IManualContact {
     website?: string;
     other?: string[];
   };
-  organisations?: string[];
+  organisation?: { _id: OrganisationId; name: string; imageUrl?: string };
+  manualOrganisation?: string;
   notes?: string;
   tags?: string[];
   starred: boolean;
@@ -53,6 +54,7 @@ export interface IOrganisation {
   industry?: string;
   about?: string;
   contacts?: UserId[];
+  imageUrl?: string;
 }
 
 export interface IUser {
@@ -74,6 +76,7 @@ export interface IUser {
   };
   about?: string;
   allTags?: string[];
-  organisations?: OrganisationId[];
+  organisation?: { _id: OrganisationId; name: string; imageUrl?: string };
+  manualOrganisation?: string;
   imageUrl?: string;
 }
