@@ -35,7 +35,7 @@ export default function OrganisationSelector({
         <Image
           className={classes.image}
           src={
-            typeof value.imageUrl === "string" && value.imageUrl !== ""
+            (typeof value.imageUrl === "string") && value.imageUrl
               ? value.imageUrl
               : DEFAULT_IMAGE
           }
@@ -58,7 +58,7 @@ export default function OrganisationSelector({
               !selectedOrganisation || org._id !== selectedOrganisation.value._id
           )
           .map((org) => ({
-            value: { _id: org._id, name: org.name, imageUrl: "" },
+            value: { _id: org._id, name: org.name, imageUrl: org.imageUrl },
             label: org.name,
           }))}
         value={selectedOrganisation}
