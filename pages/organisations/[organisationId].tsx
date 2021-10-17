@@ -84,7 +84,7 @@ export default function ViewOrgContact() {
   const classes = useStyles();
   const [initialContactData, setInitialContactData] = useState<IOrganisation>();
   const [profileImage, setProfileImage] = useState(
-  	DEFAULT_IMAGE
+  	""
   );
   const [isLoading, setIsLoading] = useState(true);
 
@@ -97,9 +97,9 @@ export default function ViewOrgContact() {
         setIsLoading(true);
         const fetchedData = await getOrganisationById(organisationId);
         setInitialContactData(fetchedData);
-        // if (fetchedData?.imageUrl) {
-        // 	setProfileImage(fetchedData?.imageUrl);
-        // }
+        if (fetchedData?.imageUrl) {
+        	setProfileImage(fetchedData?.imageUrl);
+        }
         console.log(fetchedData);
         setIsLoading(false);
       } catch (e) {
@@ -135,7 +135,7 @@ export default function ViewOrgContact() {
           <Container className={classes.profilePicDiv}>
             <Image
               className={classes.profilePic}
-              src={profileImage}
+              src={profileImage ?? DEFAULT_IMAGE}
               alt="Profile picture"
               width={400}
               height={400}
