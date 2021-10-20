@@ -11,6 +11,7 @@ import {
   deleteDbRecord,
   getSessionId,
 } from "./Client";
+import { getOrganisationById } from "./OrganisationClient";
 
 export const createManualContact = async (createObj: IManualContact_Create) => {
   const authId = await getSessionId();
@@ -25,8 +26,12 @@ export const createManualContact = async (createObj: IManualContact_Create) => {
   return createDbRecord<IManualContact>(DataType.ManualContact, createObj_);
 };
 
-export const getManualContactById = async (id: string) => {
+export const getManualContact = async (id: string) => {
   return getDbRecordById<IManualContact>(DataType.ManualContact, id);
+};
+
+export const getManualContacts = async () => {
+  return searchManualContacts({});
 };
 
 export const updateManualContact = async (id: string, updateObj: IManualContact_Update) => {
@@ -35,6 +40,18 @@ export const updateManualContact = async (id: string, updateObj: IManualContact_
     updateObj_.fullName = updateObj.name.firstName + " " + updateObj.name.lastName;
   }
   return updateDbRecord<IManualContact>(DataType.ManualContact, id, updateObj_);
+};
+
+export const updateOrganisationForManualContact = async (id: string, orgId: string) => {
+  const org = await getOrganisationById(orgId);
+  if (!org) throw new Error("No organisation found");
+  return updateManualContact(id, {
+    organisation: { _id: orgId, name: org.name, imageUrl: org.imageUrl },
+  });
+};
+
+export const removeOrganisationForManualContact = async (id: string) => {
+  return updateManualContact(id, { organisation: { _id: "delete", name: "" } });
 };
 
 export const deleteManualContact = async (id: string) => {
@@ -46,11 +63,7 @@ export const searchManualContacts = async (searchObj: Object) => {
   return searchDb<IManualContact>(DataType.ManualContact, searchObj_);
 };
 
-export const getManualContacts = async () => {
-  return searchManualContacts({});
-};
-
 export const searchManualContactsByName = async (name: string) => {
   let searchObj = { fullName: { $regex: name, $options: "i" } };
-  return await searchManualContacts(searchObj);
+  return searchManualContacts(searchObj);
 };

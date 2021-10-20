@@ -25,10 +25,19 @@ export async function idHandler(
       }
       /* Edit a model by its ID */
       case RequestType.PUT: {
+        if (dataType === DataType.User || dataType === DataType.ManualContact) {
+          // remove field if necessary
+          if (req.body.organisation) {
+            if (req.body.organisation._id === "delete") {
+              req.body.organisation = undefined;
+            }
+          }
+        }
         dbResponse = await dbCollection.findByIdAndUpdate(id, req.body, {
           new: true,
           runValidators: true,
         });
+
         break;
       }
       /* Delete a model by its ID */

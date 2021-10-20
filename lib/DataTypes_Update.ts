@@ -24,7 +24,8 @@ export interface IManualContact_Update {
     website?: string;
     other?: string[];
   };
-  organisations?: string[];
+  organisation?: { _id: OrganisationId; name: string; imageUrl?: string };
+  manualOrganisation?: string;
   notes?: string;
   tags?: string[];
   starred?: boolean;
@@ -35,6 +36,8 @@ export interface IManualContact_Update {
 
 export interface IOrganisation_Update {
   name?: string;
+  imageFile?: File;
+  imageUrl?: string;
   email?: string[];
   phone?: string[];
   location?: string;
@@ -69,7 +72,8 @@ export interface IUser_Update {
   };
   about?: string;
   allTags?: string[];
-  organisations?: OrganisationId[];
+  organisation?: { _id: OrganisationId; name: string; imageUrl?: string };
+  manualOrganisation?: string;
   $addToSet?: any;
   $pull?: any;
 }
