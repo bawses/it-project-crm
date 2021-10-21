@@ -193,7 +193,11 @@ export default function MergePage() {
   if (displayContacts.length > 0) {
     displayContactsComponent = (
       <Box boxShadow={3} borderRadius={8}>
-        <ContactsTable contacts={displayContacts} handleSelectClick={handleSelectButtonPress} />
+        <ContactsTable
+          setLoadingState={setIsLoading}
+          contacts={displayContacts}
+          handleSelectClick={handleSelectButtonPress}
+        />
         <MergeConfirmation
           open={popupOpen}
           setOpen={setPopupOpen}

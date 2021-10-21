@@ -186,7 +186,11 @@ export default function Contacts() {
   if (displayContacts.length > 0) {
     displayContactsComponent = (
       <Box boxShadow={3} borderRadius={8}>
-        <ContactsTable contacts={displayContacts} handleStarClick={handleStarClick} />
+        <ContactsTable
+          setLoadingState={setIsLoading}
+          contacts={displayContacts}
+          handleStarClick={handleStarClick}
+        />
       </Box>
     )
   }

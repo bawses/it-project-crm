@@ -5,8 +5,6 @@ import {
 	TableCell,
 	IconButton,
 	useMediaQuery,
-	Button,
-	CircularProgress,
 } from "@material-ui/core";
 import { useTheme } from "@material-ui/core/styles";
 import DEFAULT_IMAGE from "../../assets/blank-profile-picture-973460_640.png";
@@ -20,6 +18,7 @@ import { IContact } from "../../lib/UnifiedDataType";
 import LoadingButton from "../buttons/LoadingButton";
 
 export interface ContactsTableRowProps {
+	setLoadingState: (loading: boolean) => void;
 	contact: IContact;
 	starVariant?: {
 		handleStar: (
@@ -51,6 +50,7 @@ const useStyles = makeStyles({
 });
 
 export default function ContactsTableRow({
+	setLoadingState,
 	contact,
 	starVariant,
 	addVariant,
@@ -130,6 +130,10 @@ export default function ContactsTableRow({
 		)
 	}
 
+	function handleCellClick() {
+		setLoadingState(true)
+	}
+
 	const name = contact.name.firstName + " " + contact.name.lastName;
 	const image = contact.imageUrl || DEFAULT_IMAGE.src;
 	const nameComponent = (
@@ -146,20 +150,20 @@ export default function ContactsTableRow({
 			passHref
 		>
 			<TableRow className={classes.row} hover={true}>
-				<TableCell>
+				<TableCell onClick={handleCellClick}>
 					<Avatar src={image} />
 				</TableCell>
 				{bigScreen ? (
 					<>
-						<TableCell>{nameComponent}</TableCell>
-						<TableCell>{roleComponent}</TableCell>
+						<TableCell onClick={handleCellClick}>{nameComponent}</TableCell>
+						<TableCell onClick={handleCellClick}>{roleComponent}</TableCell>
 					</>
 				) : (
-					<TableCell>
+					<TableCell onClick={handleCellClick}>
 						{nameComponent} {roleComponent}
 					</TableCell>
 				)}
-				<TableCell width="20%" align="center">
+				<TableCell width="20%" align="center" onClick={handleCellClick}>
 					{buttonComponent}
 				</TableCell>
 			</TableRow>

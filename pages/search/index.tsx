@@ -129,7 +129,11 @@ export default function SearchPage() {
   if (Object.keys(searchResults).length > 0) {
     displayResultsComponent = (
       <Box boxShadow={3} borderRadius={8}>
-        <ContactsTable contacts={displayData} handleAddClick={handleContactAdd} />
+        <ContactsTable
+          setLoadingState={setIsLoading}
+          contacts={displayData}
+          handleAddClick={handleContactAdd}
+        />
       </Box>
     )
   }
@@ -163,7 +167,7 @@ export default function SearchPage() {
           {/* Search results to display */}
           {displayResultsComponent}
         </Box>
-        {bigScreen && <Box mt={18}><CreateContactButtonLarge /></Box>}
+        {bigScreen && <Box mt={18}><CreateContactButtonLarge setLoadingState={setIsLoading} /></Box>}
       </Box>
     </Layout>
   )

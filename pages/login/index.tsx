@@ -153,6 +153,7 @@ export default function LoginPage() {
 		if (result?.error) {
 			console.log(result.error);
 			setError("Invalid User Credentials Entered");
+			setSignInPressed(false);
 		} else {
 			router.replace("/contacts");
 		}
@@ -296,8 +297,12 @@ export default function LoginPage() {
 								Don&apos;t have an account yet?
 							</Typography>
 							<Typography component="p">
-								<Link href="/signup">Sign Up as an Individual</Link> |{" "}
-								<Link href="/signup">Sign Up as an Organisation</Link>
+								<Link href="/signup">
+									<a onClick={() => setIsLoading(true)}>Sign Up as an Individual</a>
+								</Link> |{" "}
+								<Link href="/signup">
+									<a onClick={() => setIsLoading(true)}>Sign Up as an Organisation</a>
+								</Link>
 							</Typography>
 						</div>
 					</Paper>

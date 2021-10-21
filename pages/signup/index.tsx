@@ -339,12 +339,16 @@ export default function SignUpPage() {
 							<div>
 								<Typography component="p">
 									Already have an account? &nbsp;&nbsp;
-									<Link href="/login">Log In</Link>
+									<Link href="/login">
+										<a onClick={() => setIsLoading(true)}>Log In</a>
+									</Link>
 								</Typography>
 							</div>
 							<div>
 								<Typography component="p">
-									<Link href="/login">Sign Up as an Organisation</Link>
+									<Link href="/login">
+										<a onClick={() => setIsLoading(true)}>Sign Up as an Organisation</a>
+									</Link>
 								</Typography>
 							</div>
 						</div>
