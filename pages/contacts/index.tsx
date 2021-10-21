@@ -181,8 +181,8 @@ export default function Contacts() {
   let displayContactsComponent: JSX.Element = (
     <Box boxShadow={3} borderRadius={8} display="flex" justifyContent="center" py="6%">
       {
-        bigScreen ? <Typography variant="h4">No contacts to show...</Typography>
-          : <Typography component="p"><strong>No contacts to show...</strong></Typography>
+        bigScreen ? <Typography variant="h4">No contacts to display...</Typography>
+          : <Typography component="p"><strong>No contacts to display...</strong></Typography>
       }
     </Box>
   )
