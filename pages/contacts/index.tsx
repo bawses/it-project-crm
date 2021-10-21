@@ -39,7 +39,6 @@ function swapContactInList(
   contactList: IContact[],
   contact: IContact
 ) {
-  console.log("starting list", contactList);
   if (contact._id === undefined) {
     return contactList;
   }
@@ -48,13 +47,11 @@ function swapContactInList(
     if (contactList[i]._id) {
       if (contactList[i]._id === contact._id) {
         contactList[i] = contact;
-        console.log("Swapped element", contact);
         break;
       }
     }
   }
 
-  console.log("Final element");
   return contactList;
 }
 
@@ -76,8 +73,6 @@ export default function Contacts() {
     try {
       setIsLoading(true)
       const data = await getContacts()
-      console.log("all contacts")
-      console.log(data);
       // Save all contacts
       setAllContacts(data)
       // Make the display contacts initially just a copy of all contacts
