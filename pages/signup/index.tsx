@@ -11,11 +11,12 @@ import { getSession, signIn } from "next-auth/client";
 // styling imports
 import useMediaQuery from "@material-ui/core/useMediaQuery";
 import { useTheme } from "@material-ui/core/styles";
-import { Typography, TextField, Grid, Paper, Button } from "@material-ui/core";
+import { Typography, TextField, Grid, Paper } from "@material-ui/core";
 import { makeStyles, createStyles, Theme } from "@material-ui/core/styles";
 import { COLORS } from "../../lib/Colors";
 import PageLoadingBar from "../../components/PageLoadingBar";
 import AuthButton from "../../components/buttons/AuthButton";
+import LoadingButton from "../../components/buttons/LoadingButton";
 
 const useStyles = makeStyles((theme: Theme) =>
 	createStyles({
@@ -123,6 +124,7 @@ export default function SignUpPage() {
 
 	const [showError, setError] = useState("");
 	const [isLoading, setIsLoading] = useState(true);
+	const [signUpPressed, setSignUpPressed] = useState(false);
 	const router = useRouter();
 	const [userState, setUserState] = useState(initialState);
 
@@ -130,9 +132,11 @@ export default function SignUpPage() {
 		setUserState({ ...userState, [e.target.name]: e.target.value });
 	};
 
-	const handleSubmit = async (
+	const handleRegularSignUpClick = async (
 		e: MouseEvent<HTMLButtonElement, globalThis.MouseEvent>
 	) => {
+		setSignUpPressed(true);
+
 		// make sure password is the same as confirm password
 		if (userState.password !== userState.confirmPassword) {
 			setError("Passwords are not identical. Try again.");
@@ -143,6 +147,7 @@ export default function SignUpPage() {
 				password: "",
 				confirmPassword: "",
 			});
+			setSignUpPressed(false);
 			return;
 		}
 
@@ -153,6 +158,7 @@ export default function SignUpPage() {
 		for (var i = 0; i < fields.length; i++) {
 			if (fields[i].trim() === "") {
 				alert("Please make sure you have filled in all fields.");
+				setSignUpPressed(false);
 				return;
 			}
 		}
@@ -171,6 +177,12 @@ export default function SignUpPage() {
 			console.error(error);
 		}
 	};
+
+	const handleGoogleSignIn = () => {
+		setSignUpPressed(true);
+
+		signIn("google", { callbackUrl: "/profile" })
+	}
 
 	useEffect(() => {
 		getSession().then((session) => {
@@ -287,17 +299,41 @@ export default function SignUpPage() {
 								placeholder="Confirm Password"
 							/>
 						</Grid>
-						<AuthButton
-							onClick={handleSubmit}
-							className={classes.btn}
-							title="Sign Up"
-						/>
-						<AuthButton
-							onClick={() => signIn("google", { callbackUrl: "/profile" })}
-							className={classes.googleBtn}
-							authMethod="google"
-							title="Sign In With Google"
-						/>
+						{
+							signUpPressed ?
+								<LoadingButton
+									maxWidth={600}
+									paddingTop={theme.spacing(1)}
+									height={50}
+									marginTop={theme.spacing(1.5)}
+									fullWidth={true}
+									indicatorMarginRight={10}
+								/>
+								:
+								<AuthButton
+									onClick={handleRegularSignUpClick}
+									className={classes.btn}
+									title="Sign Up"
+								/>
+						}
+						{
+							signUpPressed ?
+								<LoadingButton
+									maxWidth={600}
+									paddingTop={theme.spacing(1)}
+									height={50}
+									marginTop={theme.spacing(1.5)}
+									fullWidth={true}
+									indicatorMarginRight={10}
+								/>
+								:
+								<AuthButton
+									onClick={() => handleGoogleSignIn()}
+									className={classes.googleBtn}
+									authMethod="google"
+									title="Sign In With Google"
+								/>
+						}
 						<h4 style={{ margin: "0%", color: "red" }}>{showError}</h4>
 						<div className={classes.links}>
 							<div>

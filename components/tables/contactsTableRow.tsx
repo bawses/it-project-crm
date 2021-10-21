@@ -17,6 +17,7 @@ import React, { useState } from "react";
 import TextButton from "../buttons/TextButton";
 import Link from "next/link";
 import { IContact } from "../../lib/UnifiedDataType";
+import LoadingButton from "../buttons/LoadingButton";
 
 export interface ContactsTableRowProps {
 	contact: IContact;
@@ -87,10 +88,7 @@ export default function ContactsTableRow({
 		if (loading) {
 			// Render a loading button
 			buttonComponent = (
-				<Button variant="contained" disabled={true}>
-					<CircularProgress className={classes.circularProgress} size={20} />
-					Loading
-				</Button>
+				<LoadingButton />
 			);
 		} else {
 			// Determine text and status for add variant
