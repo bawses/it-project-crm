@@ -2,10 +2,12 @@ import NextAuth, { Account, Profile, TokenSet } from "next-auth";
 import Providers from "next-auth/providers";
 import { Session, User as authUser} from "next-auth";
 import { JWT } from "next-auth/jwt";
-
+import { Database } from "../../../backend/models/DbMapping";
 import { compare as verifyPassword, hash } from "bcryptjs";
 import connectToDatabase from "../../../backend/dbConnect";
 import User from "../../../backend/models/User";
+import { DataType } from "../../../lib/EnumTypes";
+import Organisation from "../../../backend/models/Organisation";
 
 export default NextAuth({
   session: {
@@ -19,22 +21,25 @@ export default NextAuth({
     ,
     Providers.Credentials({
       async authorize(credentials: Record<string, string>) {
+
         await connectToDatabase();
-        const user = await User.findOne({
-          email: credentials.email,
-        });
+
+        var dataType: DataType;
+        switch(credentials.userType){
+          case "Organisation":
+            dataType = DataType.Organisation;
+            break;
+          
+          case "User":
+            dataType = DataType.User;
+            break;
+
+          default:
+            dataType = DataType.User;
+        }
+        const entity = verifyEntity(credentials, dataType);
         
-        // Should probably remove this in the future for security sake
-        if (!user) {
-          throw new Error("No user found!");
-        }
-
-        const isValid = await verifyPassword(credentials.password, user.passwordHash);
-
-        if (!isValid) {
-          throw new Error("Could not log you in!");
-        }
-        return user;
+        return entity;
       },
     }),
   ],
@@ -42,16 +47,13 @@ export default NextAuth({
     signIn: async (user:any, account:any, profile:any) : Promise<any> => {
         console.log("Signing In...");
         await connectToDatabase();
-        if (account.provider === "google"){
-          console.log(user.email);
-          const findUser = await User.findOne({email:user.email})
-          console.log("Yeetus");
-          console.log(findUser);
 
+        if (account.provider === "google"){
+          const findUser = await User.findOne({email:user.email})
+          //const findOrg = await Organisation.findOne({email:user.email})
+          
           if (!findUser){
-            console.log("here");
             const nameArr = user.name.split(" "); 
-            console.log(nameArr);
             const createUser = await User.create({
               name: {firstName: nameArr[0], lastName: nameArr[1]},
               fullName: user.name,
@@ -59,8 +61,6 @@ export default NextAuth({
               passwordHash: await hash(user.email, 10),
               imageUrl: user.image,
             }) 
-            console.log("Created new user account");
-            console.log(createUser);
             return Promise.resolve(createUser);
           }else{
             console.log("found user!");
@@ -79,19 +79,42 @@ export default NextAuth({
         return Promise.resolve(token)   // ...here
     },
     session: async (session: Session, userOrToken: authUser) : Promise<Session> => {
-        //  "session" is current session object
-        //  below we set "user" param of "session" to value received from "jwt" callback
-/*         console.log("---------------------------------------------------")
-        console.log(userOrToken);
-        console.log("---------------------------------------------------") */
+
         await connectToDatabase();
-        const findUser = await User.findOne({email: userOrToken.email})
+        const findUser = await User.findOne({email: userOrToken.email});
+        const findOrg = await Organisation.findOne({email: userOrToken.email});
+
         if (findUser){
           userOrToken.sub = findUser._id;
         }
-        console.log(userOrToken);
+        else{
+          userOrToken.sub = findOrg._id;
+        }
+        
         session.user = userOrToken;
         return Promise.resolve(session);
     },
   }
 });
+
+async function verifyEntity(credentials: Record<string,string>, dataType: DataType){
+
+    const dbCollection = Database[dataType];
+
+    const user = await dbCollection.findOne({
+      email: credentials.email,
+    });
+    
+    // Should probably remove this in the future for security sake
+    if (!user) {
+      throw new Error("No user found!");
+    }
+
+    const isValid = await verifyPassword(credentials.password, user.passwordHash);
+
+    if (!isValid) {
+      throw new Error("Could not log you in!");
+    }
+
+    return user;
+}

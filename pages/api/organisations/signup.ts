@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
 import { indexHandler } from "../../../backend/ApiHandlers";
 import { DataType } from "../../../lib/EnumTypes";
-import User from "../../../backend/models/User";
+import Organisation from "../../../backend/models/Organisation";
 import connectToDatabase from "../../../backend/dbConnect";
 
 async function handler(req: Request, res: Response): Promise<any> {
@@ -12,18 +12,14 @@ async function handler(req: Request, res: Response): Promise<any> {
 
   try {
     await connectToDatabase();
-    console.log(req.body);
     if (!req.body.email) {
       throw new Error("No email provided");
     }
-    let user = await User.findOne({ email: req.body.email });
-    console.log(user);
-    if (user) {
-      throw new Error("User with email already exists");
+    let organisation = await Organisation.findOne({ email: req.body.email });
+    if (organisation) {
+      throw new Error("Organisation with email already exists");
     }
-    
-    var response = await indexHandler(req, res, DataType.User);
-    console.log(response);
+    var response = await indexHandler(req, res, DataType.Organisation);
   } catch (err) {
     return res.status(400).json({ success: false, error: err });
   }

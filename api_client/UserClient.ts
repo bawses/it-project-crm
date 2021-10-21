@@ -15,7 +15,7 @@ import {
 import { compare, hash as hashPassword } from "bcryptjs";
 import { getOrganisationById } from "./OrganisationClient";
 
-function validateSignUpObject(
+export function validateSignUpObject(
   firstName: string,
   lastName: string,
   email: string,
@@ -53,6 +53,7 @@ export const userSignUp = async (
     email: [email],
     passwordHash: await hashPassword(String(password), 10),
   };
+
   return createUser(createObj);
 };
 
