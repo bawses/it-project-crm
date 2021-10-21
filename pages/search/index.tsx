@@ -102,11 +102,10 @@ export default function SearchPage() {
   const theme = useTheme()
   const bigScreen = useMediaQuery(theme.breakpoints.up("md"))
 
+  // If the user is not logged in, redirect to the login page
   useEffect(() => {
     getSession().then((session) => {
-      if (session) {
-        setIsLoading(false);
-      } else {
+      if (!session) {
         router.replace("/login");
       }
     });
