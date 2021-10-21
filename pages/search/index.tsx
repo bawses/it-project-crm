@@ -115,9 +115,28 @@ export default function SearchPage() {
     return <PageLoadingBar />;
   }
 
+  // If no search results are found, display a message
+  let displayResultsComponent: JSX.Element = (
+    <Box boxShadow={3} borderRadius={8} display="flex" justifyContent="center" py="6%">
+      {
+        bigScreen ? <Typography variant="h4">No results found...</Typography>
+          : <Typography component="p"><strong>No results found...</strong></Typography>
+      }
+    </Box>
+  )
+
+  // Otherwise display the results
+  if (Object.keys(searchResults).length > 0) {
+    displayResultsComponent = (
+      <Box boxShadow={3} borderRadius={8}>
+        <ContactsTable contacts={displayData} handleAddClick={handleContactAdd} />
+      </Box>
+    )
+  }
+
   return (
     <Layout>
-      <Box display="flex" flexDirection="row" justifyContent="centre" mx={{ sm: 0, md: 8, lg: 20 }} mt={{ sm: 1, md: 5 }} mb={6}>
+      <Box display="flex" flexDirection="row" justifyContent="centre" mx={{ xs: 1, sm: 2, md: 8, lg: 20 }} mt={{ sm: 1, md: 5 }} mb={6}>
         {/* Entire table, including sort and search results */}
         <Box display="flex" flexDirection="column" mr={bigScreen ? 2 : 0} width="100%">
           {
@@ -141,10 +160,8 @@ export default function SearchPage() {
               <ContactsTableSort sortValue={sortValue} handleChange={handleNewSortVal} />
             </Box>
           </Box>
-          {/* Search results */}
-          <Box boxShadow={3} borderRadius={8}>
-            <ContactsTable contacts={displayData} handleAddClick={handleContactAdd} />
-          </Box>
+          {/* Search results to display */}
+          {displayResultsComponent}
         </Box>
         {bigScreen && <Box mt={18}><CreateContactButtonLarge /></Box>}
       </Box>
