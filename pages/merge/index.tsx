@@ -179,12 +179,37 @@ export default function MergePage() {
     setPopupOpen(false)
   }
 
+  // If there are no manual contacts to show, display a message
+  let displayContactsComponent: JSX.Element = (
+    <Box boxShadow={3} borderRadius={8} display="flex" justifyContent="center" py="6%">
+      {
+        bigScreen ? <Typography variant="h4">No manual contacts found...</Typography>
+          : <Typography component="p"><strong>No manual contacts found...</strong></Typography>
+      }
+    </Box>
+  )
+
+  // Otherwise show the list of manual contacts
+  if (displayContacts.length > 0) {
+    displayContactsComponent = (
+      <Box boxShadow={3} borderRadius={8}>
+        <ContactsTable contacts={displayContacts} handleSelectClick={handleSelectButtonPress} />
+        <MergeConfirmation
+          open={popupOpen}
+          setOpen={setPopupOpen}
+          manualContact={selectedManualContact}
+          handleMergeButtonPress={handleMergeButtonPress}
+        />
+      </Box>
+    )
+  }
+
   return (
     <Layout>
       <Box>
-        <Box display="flex" flexDirection="column" justifyContent="centre" mx={{ sm: 0, md: 8, lg: 20 }} mt={bigScreen ? 4 : 1} mb={6}>
+        <Box display="flex" flexDirection="column" justifyContent="centre" mx={{ xs: 1, sm: 2, md: 8, lg: 20 }} mt={bigScreen ? 4 : 1} mb={6}>
           {/* Entire table, including filters and tags */}
-          <Box mx={bigScreen ? 0 : 1}>
+          <Box>
             {/* Instructions */}
             {bigScreen
               ?
@@ -204,25 +229,17 @@ export default function MergePage() {
               </>
             }
           </Box>
-          <Box display="flex" paddingTop={2} paddingBottom={1} mx={bigScreen ? 0 : 1}>
+          <Box display="flex" paddingTop={2} paddingBottom={1}>
             {/* Sort and filtering elements */}
             <ContactsTableCategory pressedButton={categoryButton} handleButtonPress={handleButtonPress} />
             <ContactsTableSort sortValue={sortValue} handleChange={handleNewSortVal} />
           </Box>
-          <Box mx={bigScreen ? 0 : 1}>
+          <Box>
             {/* Local search bar */}
             <SearchBar value={searchValue} handleChange={setSearchValue} />
           </Box>
-          <Box boxShadow={3} borderRadius={8} mx={bigScreen ? 0 : 1}>
-            {/* List of contacts */}
-            <ContactsTable contacts={displayContacts} handleSelectClick={handleSelectButtonPress} />
-            <MergeConfirmation
-              open={popupOpen}
-              setOpen={setPopupOpen}
-              manualContact={selectedManualContact}
-              handleMergeButtonPress={handleMergeButtonPress}
-            />
-          </Box>
+          {/* List of contacts */}
+          {displayContactsComponent}
         </Box>
       </Box>
     </Layout>
