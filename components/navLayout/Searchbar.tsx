@@ -126,9 +126,12 @@ export default function Searchbar() {
     }
 
     try {
-      var fetchedPredictions = await searchContactsByName(searchString);
-      const filteredPredictions = fetchedPredictions.filter((contact) => !contact.archived);
-      setPredictiveResults(filteredPredictions);
+      // var fetchedPredictions = await searchContactsByName(searchString);
+      searchContactsByName(searchString).then((results) => {
+        var fetchedPredictions = results;
+        const filteredPredictions = fetchedPredictions.filter((contact) => !contact.archived);
+        setPredictiveResults(filteredPredictions);
+      });
     } catch (e) {
       // TODO (NICE TO HAVE): Display error to user on webpage
       console.log(e);
