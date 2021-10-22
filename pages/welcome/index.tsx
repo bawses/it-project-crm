@@ -20,9 +20,9 @@ export default function Welcome() {
 
   return (
 <div>
-    <WelcomeSection />
-    <ProfessionalsSection />
-    <OrganisationsSection />
+    <WelcomeSection onPressCTA={() => router.push('/login')}/>
+    <ProfessionalsSection onPressCTA={() => router.push('/signup')}/>
+    <OrganisationsSection onPressCTA={() => router.push('/signup')}/>
 </div>
   );
 }

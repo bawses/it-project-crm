@@ -5,7 +5,11 @@ import { useTheme } from "@material-ui/core/styles";
 import { COLORS } from "../../lib/Colors";
 import TextButton from "../../components/buttons/TextButton";
 
-export default function ProfessionalsSection() {
+interface SectionProps {
+  onPressCTA?: () => void;
+}
+
+export default function ProfessionalsSection({ onPressCTA = () => {} }: SectionProps) {
   const classes = useStyles();
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("xs"));
@@ -43,6 +47,7 @@ export default function ProfessionalsSection() {
           textColor={COLORS.white}
           className={classes.btn}
           fontSize={isMobile ? '1rem' : '1.5rem'}
+          onClick={onPressCTA}
         />
       </div>
     </div>

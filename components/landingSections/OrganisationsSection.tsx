@@ -5,7 +5,11 @@ import { useTheme } from "@material-ui/core/styles";
 import { COLORS } from "../../lib/Colors";
 import TextButton from "../../components/buttons/TextButton";
 
-export default function OrganisationsSection() {
+interface SectionProps {
+  onPressCTA?: () => void;
+}
+
+export default function OrganisationsSection({ onPressCTA = () => {} }: SectionProps) {
   const classes = useStyles();
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("xs"));
@@ -30,7 +34,7 @@ export default function OrganisationsSection() {
         <div className={classes.description}>
           <Typography variant={isMobile ? undefined : "h5"}>
             Create a free organisational profile on CataLog and tap into a
-            virbant professional community.{" "}
+            vibrant professional community.{" "}
           </Typography>
         </div>
       </div>
@@ -41,6 +45,7 @@ export default function OrganisationsSection() {
           textColor={COLORS.white}
           className={classes.btn}
           fontSize={isMobile ? '1rem' : '1.5rem'}
+          onClick={onPressCTA}
         />
       </div>
     </div>

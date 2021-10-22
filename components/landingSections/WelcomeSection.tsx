@@ -7,7 +7,11 @@ import BACKGROUND_IMAGE from "../../assets/landing_background.png";
 import TextButton from "../../components/buttons/TextButton";
 import Image from "next/image";
 
-export default function WelcomeSection() {
+interface SectionProps {
+  onPressCTA?: () => void;
+}
+
+export default function WelcomeSection({ onPressCTA = () => {} }: SectionProps) {
   const classes = useStyles();
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("xs"));
@@ -45,6 +49,7 @@ export default function WelcomeSection() {
               title="Login"
               color={COLORS.actionOrange}
               textColor={COLORS.white}
+              onClick={onPressCTA}
             />
           </div>
         )}
@@ -56,6 +61,7 @@ export default function WelcomeSection() {
             color={COLORS.actionOrange}
             textColor={COLORS.white}
             fontSize='1.5rem'
+            onClick={onPressCTA}
           />
         </div>
       )}
