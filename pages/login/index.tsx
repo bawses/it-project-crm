@@ -144,6 +144,7 @@ export default function LoginPage() {
 			redirect: false,
 			email: email,
 			password: password,
+			userType: "User",
 		});
 
 		if (result?.error) {
