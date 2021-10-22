@@ -14,6 +14,7 @@ import { Typography, useMediaQuery } from "@material-ui/core";
 import SearchBar from '../../components/input/SearchBar';
 import { getContacts, updateContact } from '../../api_client/ContactClient';
 import { IContact } from '../../lib/UnifiedDataType';
+import ErrorMessage, { AlertSeverity } from '../../components/errors/ErrorMessage';
 
 export const sortFunctions = {
   [SortType.FirstName]: (a: IContact, b: IContact) =>
@@ -63,6 +64,10 @@ export default function Contacts() {
   const [allContacts, setAllContacts] = useState<IContact[]>([])
   const [displayContacts, setDisplayContacts] = useState<IContact[]>([])
   const [isLoading, setIsLoading] = useState(true)
+  const [displayError, setDisplayError] = useState(false)
+  const [errorMessage, setErrorMessage] = useState<string>()
+  const [errorTitle, setErrorTitle] = useState<string>()
+  const [errorSeverity, setErrorSeverity] = useState<AlertSeverity>()
   const router = useRouter()
 
   // Adjust components based on screen size
@@ -80,6 +85,13 @@ export default function Contacts() {
       setIsLoading(false)
     } catch (error) {
       console.error(error)
+
+      // Display error message
+      setErrorMessage(undefined)
+      setErrorTitle(undefined)
+      setErrorSeverity(undefined)
+      setDisplayError(true)
+
       setIsLoading(false)
     }
   }
@@ -155,6 +167,13 @@ export default function Contacts() {
       return true
     } catch (error) {
       console.error("Error updating user starred status", error)
+
+      // Display the error message
+      setErrorMessage("Failed to update starred status - Please refresh the page and try again")
+      setErrorTitle("Warning")
+      setErrorSeverity("warning")
+      setDisplayError(true)
+
       return false
     }
   }
@@ -217,6 +236,12 @@ export default function Contacts() {
           {displayContactsComponent}
         </Box>
       </Box>
+      <ErrorMessage
+        open={displayError}
+        alertMessage={errorMessage}
+        alertTitle={errorTitle}
+        severity={errorSeverity}
+      />
     </Layout>
   );
 }

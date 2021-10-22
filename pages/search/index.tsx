@@ -13,6 +13,7 @@ import { useRouter } from "next/router";
 import { getSession } from "next-auth/client";
 import { IContact } from "../../lib/UnifiedDataType";
 import { addContact_User, searchContactsByName } from "../../api_client/ContactClient";
+import ErrorMessage, { AlertSeverity } from "../../components/errors/ErrorMessage";
 
 type IdToContactMap = Record<string, IContact>
 
@@ -31,7 +32,11 @@ function contactListToMap(contactList: IContact[]) {
 // Returns an IdToContactMap of the search results for the given searchName if successful
 async function getSearchResults(
   searchName: string,
-  setSearchResults: (contacts: IdToContactMap) => void
+  setSearchResults: (contacts: IdToContactMap) => void,
+  setDisplayError: (displayError: boolean) => void,
+  setErrorMessage: (message: string | undefined) => void,
+  setErrorTitle: (title: string | undefined) => void,
+  setErrorSeverity: (severity: AlertSeverity | undefined) => void
 ) {
   try {
     const data = await searchContactsByName(searchName)
@@ -39,6 +44,10 @@ async function getSearchResults(
     setSearchResults(contactListToMap(data));
   } catch (error) {
     console.error("Error: Could not fetch search result data", error);
+    setErrorMessage(undefined)
+    setErrorTitle(undefined)
+    setErrorSeverity(undefined)
+    setDisplayError(true)
   }
 }
 
@@ -46,6 +55,10 @@ export default function SearchPage() {
   const [sortValue, setSortValue] = useState<SortType>(SortType.None)
   const [searchResults, setSearchResults] = useState<IdToContactMap>({})
   const [isLoading, setIsLoading] = useState(true);
+  const [displayError, setDisplayError] = useState(false)
+  const [errorMessage, setErrorMessage] = useState<string>()
+  const [errorTitle, setErrorTitle] = useState<string>()
+  const [errorSeverity, setErrorSeverity] = useState<AlertSeverity>()
   const router = useRouter()
 
   // Get the search string
@@ -57,7 +70,14 @@ export default function SearchPage() {
       // Do a global search for the given name and store the results
       if (searchParam.name !== undefined) {
         setIsLoading(true)
-        await getSearchResults(searchParam.name as string, setSearchResults)
+        await getSearchResults(
+          searchParam.name as string,
+          setSearchResults,
+          setDisplayError,
+          setErrorMessage,
+          setErrorTitle,
+          setErrorSeverity
+        )
         setIsLoading(false)
       }
     })()
@@ -94,6 +114,10 @@ export default function SearchPage() {
       return true
     } catch (error) {
       console.error("Error: Failed to add contact", error)
+      setErrorMessage("Failed to add contact - Please refresh the page and try again")
+      setErrorTitle("Warning")
+      setErrorSeverity("warning")
+      setDisplayError(true)
       return false
     }
   }
@@ -169,6 +193,12 @@ export default function SearchPage() {
         </Box>
         {bigScreen && <Box mt={18}><CreateContactButtonLarge setLoadingState={setIsLoading} /></Box>}
       </Box>
+      <ErrorMessage
+        open={displayError}
+        alertMessage={errorMessage}
+        alertTitle={errorTitle}
+        severity={errorSeverity}
+      />
     </Layout>
   )
 }

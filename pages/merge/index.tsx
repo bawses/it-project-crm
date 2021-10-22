@@ -17,6 +17,7 @@ import { useRouter } from "next/router";
 import PageLoadingBar from "../../components/PageLoadingBar";
 import { COLORS } from "../../lib/Colors";
 import MergeConfirmation from "../../components/merge/MergeConfirmation";
+import ErrorMessage, { AlertSeverity } from '../../components/errors/ErrorMessage';
 
 // Get all manual contact data for this user
 async function getData(
@@ -24,7 +25,11 @@ async function getData(
   setDisplayContacts: (contacts: IContact[]) => void,
   setIsLoading: (loading: boolean) => void,
   userId: string,
-  setCurrentUser: (user: IContact) => void
+  setCurrentUser: (user: IContact) => void,
+  setDisplayError: (displayError: boolean) => void,
+  setErrorMessage: (message: string | undefined) => void,
+  setErrorTitle: (title: string | undefined) => void,
+  setErrorSeverity: (severity: AlertSeverity | undefined) => void
 ) {
   try {
     setIsLoading(true)
@@ -39,6 +44,10 @@ async function getData(
     setIsLoading(false)
   } catch (error) {
     console.error("Error getting merge page data", error)
+    setErrorMessage(undefined)
+    setErrorTitle(undefined)
+    setErrorSeverity(undefined)
+    setDisplayError(true)
     setIsLoading(false)
   }
 }
@@ -60,6 +69,10 @@ export default function MergePage() {
   const [selectedManualContact, setSelectedManualContact] = useState<IContact>()
   const [selectedUser, setSelectedUser] = useState<IContact>()
   const [isLoading, setIsLoading] = useState(true)
+  const [displayError, setDisplayError] = useState(false)
+  const [errorMessage, setErrorMessage] = useState<string>()
+  const [errorTitle, setErrorTitle] = useState<string>()
+  const [errorSeverity, setErrorSeverity] = useState<AlertSeverity>()
 
   const router = useRouter()
   const classes = useStyles()
@@ -83,7 +96,17 @@ export default function MergePage() {
   // Get all manual contact data, as well as information for the current selected user profile
   useEffect(() => {
     if (userId) {
-      getData(setAllContacts, setDisplayContacts, setIsLoading, userId, setSelectedUser)
+      getData(
+        setAllContacts,
+        setDisplayContacts,
+        setIsLoading,
+        userId,
+        setSelectedUser,
+        setDisplayError,
+        setErrorMessage,
+        setErrorTitle,
+        setErrorSeverity
+      )
     }
   }, [userId])
 
@@ -172,6 +195,10 @@ export default function MergePage() {
         router.push("/contacts/" + selectedUser._id)
       } catch (error) {
         console.error("Error merging profile", error)
+        setErrorMessage("Could not merge profile - Please refresh the page and try again")
+        setErrorTitle("Warning")
+        setErrorSeverity("warning")
+        setDisplayError(true)
         setIsLoading(false)
       }
     }
@@ -246,6 +273,12 @@ export default function MergePage() {
           {displayContactsComponent}
         </Box>
       </Box>
+      <ErrorMessage
+        open={displayError}
+        alertMessage={errorMessage}
+        alertTitle={errorTitle}
+        severity={errorSeverity}
+      />
     </Layout>
   )
 }
