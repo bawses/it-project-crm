@@ -20,13 +20,17 @@ export default function ProfessionalsSection() {
           CataLog for professionals
         </Typography>
         <div className={classes.subtitle}>
-          <Typography variant={isMobile ? "h6" : "h4"}>
+          <Typography
+            variant={isMobile ? "h6" : "h4"}
+            style={{ color: "#D0BD8D", fontWeight: "bold" }}
+          >
             Your network at your fingertips.
           </Typography>
         </div>
         <div className={classes.description}>
           <Typography variant={isMobile ? undefined : "h5"}>
             No matter where you are, stay connected with whoever you want.
+            <br />
             CataLog keep the details of your contacts organised and handy, and
             helps your network stay in touch with you too.{" "}
           </Typography>
@@ -38,6 +42,7 @@ export default function ProfessionalsSection() {
           color={COLORS.primaryBlue}
           textColor={COLORS.white}
           className={classes.btn}
+          fontSize={isMobile ? '1rem' : '1.5rem'}
         />
       </div>
     </div>
@@ -47,20 +52,23 @@ export default function ProfessionalsSection() {
 const useStyles = makeStyles((theme) => ({
   section: {
     backgroundColor: COLORS.white,
-    height: 450,
+    paddingTop: theme.spacing(4),
+    paddingBottom: theme.spacing(4),
+    [theme.breakpoints.down("sm")]: {
+      paddingTop: theme.spacing(3),
+      paddingBottom: theme.spacing(3),
+    },
     [theme.breakpoints.down("xs")]: {
-      height: 400,
+      paddingTop: theme.spacing(2),
+      paddingBottom: theme.spacing(2),
     },
   },
   content: {
-    marginTop: theme.spacing(16),
     margin: theme.spacing(7),
     [theme.breakpoints.down("sm")]: {
-      marginTop: theme.spacing(7),
       margin: theme.spacing(5),
     },
     [theme.breakpoints.down("xs")]: {
-      marginTop: theme.spacing(6),
       margin: theme.spacing(3),
     },
   },
@@ -74,12 +82,13 @@ const useStyles = makeStyles((theme) => ({
     },
   },
   getStartedBtn: {
-    margin: theme.spacing(6),
+    paddingBottom: theme.spacing(9),
+    paddingRight: theme.spacing(6),
     [theme.breakpoints.down("sm")]: {
-      margin: theme.spacing(4),
+      paddingRight: theme.spacing(4),
     },
     [theme.breakpoints.down("xs")]: {
-      margin: theme.spacing(2),
+      paddingRight: theme.spacing(2),
     },
   },
   btn: {

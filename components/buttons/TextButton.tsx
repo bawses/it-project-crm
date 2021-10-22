@@ -13,6 +13,7 @@ interface ButtonProps {
   | ((event: React.SyntheticEvent) => void)
   | ((event: React.SyntheticEvent) => Promise<void>);
   className?: string | undefined;
+  fontSize?: string;
 }
 
 export default function TextButton({
@@ -24,6 +25,7 @@ export default function TextButton({
   disabled,
   onClick = () => { },
   className = undefined,
+  fontSize = '1rem',
 }: ButtonProps) {
   return (
     <Button
@@ -35,7 +37,7 @@ export default function TextButton({
         fontWeight: "bold",
         margin: "5px",
         textTransform: "none",
-        fontSize: "1rem",
+        fontSize: fontSize,
       }}
       href={href}
       disabled={disabled}

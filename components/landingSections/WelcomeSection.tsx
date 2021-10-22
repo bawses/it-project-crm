@@ -55,6 +55,7 @@ export default function WelcomeSection() {
             title="Login"
             color={COLORS.actionOrange}
             textColor={COLORS.white}
+            fontSize='1.5rem'
           />
         </div>
       )}
