@@ -2,18 +2,14 @@ import React from "react";
 import { makeStyles } from "@material-ui/core";
 import Select, { OnChangeValue } from "react-select";
 import { SelectValue } from "../tables/contactsTableTags";
+import { AusCities } from "../../backend/AusCities";
 
 interface LocationSelectorProps {
   selectedLocation: OnChangeValue<SelectValue, false> | null;
   onChange: (value: OnChangeValue<SelectValue, false>) => void;
 }
 
-const options = [
-  "Melbourne, AU",
-  "Sydney, AU",
-  "Tokyo, JP",
-  "New York City, USA",
-];
+const options = AusCities.map((city) => `${city.city}, AU`).sort();
 
 export default function LocationSelector({
   selectedLocation,
