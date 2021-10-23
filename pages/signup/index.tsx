@@ -125,6 +125,7 @@ export default function SignUpPage() {
 	const [showError, setError] = useState("");
 	const [isLoading, setIsLoading] = useState(true);
 	const [signUpPressed, setSignUpPressed] = useState(false);
+	const [signUpGooglePressed, setSignUpGooglePressed] = useState(false);
 	const router = useRouter();
 	const [userState, setUserState] = useState(initialState);
 
@@ -179,10 +180,10 @@ export default function SignUpPage() {
 	};
 
 	const handleGoogleSignIn = () => {
-		setSignUpPressed(true);
+		setSignUpGooglePressed(true);
 
-		signIn("google", { callbackUrl: "/profile" })
-	}
+		signIn("google", { callbackUrl: "/profile" });
+	};
 
 	useEffect(() => {
 		getSession().then((session) => {
@@ -299,41 +300,39 @@ export default function SignUpPage() {
 								placeholder="Confirm Password"
 							/>
 						</Grid>
-						{
-							signUpPressed ?
-								<LoadingButton
-									maxWidth={600}
-									paddingTop={theme.spacing(1)}
-									height={50}
-									marginTop={theme.spacing(1.5)}
-									fullWidth={true}
-									indicatorMarginRight={10}
-								/>
-								:
-								<AuthButton
-									onClick={handleRegularSignUpClick}
-									className={classes.btn}
-									title="Sign Up"
-								/>
-						}
-						{
-							signUpPressed ?
-								<LoadingButton
-									maxWidth={600}
-									paddingTop={theme.spacing(1)}
-									height={50}
-									marginTop={theme.spacing(1.5)}
-									fullWidth={true}
-									indicatorMarginRight={10}
-								/>
-								:
-								<AuthButton
-									onClick={() => handleGoogleSignIn()}
-									className={classes.googleBtn}
-									authMethod="google"
-									title="Sign In With Google"
-								/>
-						}
+						{signUpPressed ? (
+							<LoadingButton
+								maxWidth={600}
+								paddingTop={theme.spacing(1)}
+								height={50}
+								marginTop={theme.spacing(1.5)}
+								fullWidth={true}
+								indicatorMarginRight={10}
+							/>
+						) : (
+							<AuthButton
+								onClick={handleRegularSignUpClick}
+								className={classes.btn}
+								title="Sign Up"
+							/>
+						)}
+						{signUpGooglePressed ? (
+							<LoadingButton
+								maxWidth={600}
+								paddingTop={theme.spacing(1)}
+								height={50}
+								marginTop={theme.spacing(1.5)}
+								fullWidth={true}
+								indicatorMarginRight={10}
+							/>
+						) : (
+							<AuthButton
+								onClick={() => handleGoogleSignIn()}
+								className={classes.googleBtn}
+								authMethod="google"
+								title="Sign In With Google"
+							/>
+						)}
 						<h4 style={{ margin: "0%", color: "red" }}>{showError}</h4>
 						<div className={classes.links}>
 							<div>
@@ -347,7 +346,9 @@ export default function SignUpPage() {
 							<div>
 								<Typography component="p">
 									<Link href="/login">
-										<a onClick={() => setIsLoading(true)}>Sign Up as an Organisation</a>
+										<a onClick={() => setIsLoading(true)}>
+											Sign Up as an Organisation
+										</a>
 									</Link>
 								</Typography>
 							</div>
