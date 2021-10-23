@@ -17,6 +17,7 @@ import { useRouter } from "next/router";
 import PageLoadingBar from "../../components/PageLoadingBar";
 import { COLORS } from "../../lib/Colors";
 import MergeConfirmation from "../../components/merge/MergeConfirmation";
+import ErrorMessage, { AlertSeverity } from '../../components/errors/ErrorMessage';
 
 // Get all manual contact data for this user
 async function getData(
@@ -24,7 +25,11 @@ async function getData(
   setDisplayContacts: (contacts: IContact[]) => void,
   setIsLoading: (loading: boolean) => void,
   userId: string,
-  setCurrentUser: (user: IContact) => void
+  setCurrentUser: (user: IContact) => void,
+  setDisplayError: (displayError: boolean) => void,
+  setErrorMessage: (message: string | undefined) => void,
+  setErrorTitle: (title: string | undefined) => void,
+  setErrorSeverity: (severity: AlertSeverity | undefined) => void
 ) {
   try {
     setIsLoading(true)
@@ -39,6 +44,10 @@ async function getData(
     setIsLoading(false)
   } catch (error) {
     console.error("Error getting merge page data", error)
+    setErrorMessage(undefined)
+    setErrorTitle(undefined)
+    setErrorSeverity(undefined)
+    setDisplayError(true)
     setIsLoading(false)
   }
 }
@@ -60,6 +69,10 @@ export default function MergePage() {
   const [selectedManualContact, setSelectedManualContact] = useState<IContact>()
   const [selectedUser, setSelectedUser] = useState<IContact>()
   const [isLoading, setIsLoading] = useState(true)
+  const [displayError, setDisplayError] = useState(false)
+  const [errorMessage, setErrorMessage] = useState<string>()
+  const [errorTitle, setErrorTitle] = useState<string>()
+  const [errorSeverity, setErrorSeverity] = useState<AlertSeverity>()
 
   const router = useRouter()
   const classes = useStyles()
@@ -83,7 +96,17 @@ export default function MergePage() {
   // Get all manual contact data, as well as information for the current selected user profile
   useEffect(() => {
     if (userId) {
-      getData(setAllContacts, setDisplayContacts, setIsLoading, userId, setSelectedUser)
+      getData(
+        setAllContacts,
+        setDisplayContacts,
+        setIsLoading,
+        userId,
+        setSelectedUser,
+        setDisplayError,
+        setErrorMessage,
+        setErrorTitle,
+        setErrorSeverity
+      )
     }
   }, [userId])
 
@@ -172,6 +195,10 @@ export default function MergePage() {
         router.push("/contacts/" + selectedUser._id)
       } catch (error) {
         console.error("Error merging profile", error)
+        setErrorMessage("Could not merge profile - Please refresh the page and try again")
+        setErrorTitle("Warning")
+        setErrorSeverity("warning")
+        setDisplayError(true)
         setIsLoading(false)
       }
     }
@@ -179,12 +206,41 @@ export default function MergePage() {
     setPopupOpen(false)
   }
 
+  // If there are no manual contacts to show, display a message
+  let displayContactsComponent: JSX.Element = (
+    <Box boxShadow={3} borderRadius={8} display="flex" justifyContent="center" py="6%">
+      {
+        bigScreen ? <Typography variant="h4">No manual contacts found...</Typography>
+          : <Typography component="p"><strong>No manual contacts found...</strong></Typography>
+      }
+    </Box>
+  )
+
+  // Otherwise show the list of manual contacts
+  if (displayContacts.length > 0) {
+    displayContactsComponent = (
+      <Box boxShadow={3} borderRadius={8}>
+        <ContactsTable
+          setLoadingState={setIsLoading}
+          contacts={displayContacts}
+          handleSelectClick={handleSelectButtonPress}
+        />
+        <MergeConfirmation
+          open={popupOpen}
+          setOpen={setPopupOpen}
+          manualContact={selectedManualContact}
+          handleMergeButtonPress={handleMergeButtonPress}
+        />
+      </Box>
+    )
+  }
+
   return (
     <Layout>
       <Box>
-        <Box display="flex" flexDirection="column" justifyContent="centre" mx={{ sm: 0, md: 8, lg: 20 }} mt={bigScreen ? 4 : 1} mb={6}>
+        <Box display="flex" flexDirection="column" justifyContent="centre" mx={{ xs: 1, sm: 2, md: 8, lg: 20 }} mt={bigScreen ? 4 : 1} mb={6}>
           {/* Entire table, including filters and tags */}
-          <Box mx={bigScreen ? 0 : 1}>
+          <Box>
             {/* Instructions */}
             {bigScreen
               ?
@@ -204,27 +260,25 @@ export default function MergePage() {
               </>
             }
           </Box>
-          <Box display="flex" paddingTop={2} paddingBottom={1} mx={bigScreen ? 0 : 1}>
+          <Box display="flex" paddingTop={2} paddingBottom={1}>
             {/* Sort and filtering elements */}
             <ContactsTableCategory pressedButton={categoryButton} handleButtonPress={handleButtonPress} />
             <ContactsTableSort sortValue={sortValue} handleChange={handleNewSortVal} />
           </Box>
-          <Box mx={bigScreen ? 0 : 1}>
+          <Box>
             {/* Local search bar */}
             <SearchBar value={searchValue} handleChange={setSearchValue} />
           </Box>
-          <Box boxShadow={3} borderRadius={8} mx={bigScreen ? 0 : 1}>
-            {/* List of contacts */}
-            <ContactsTable contacts={displayContacts} handleSelectClick={handleSelectButtonPress} />
-            <MergeConfirmation
-              open={popupOpen}
-              setOpen={setPopupOpen}
-              manualContact={selectedManualContact}
-              handleMergeButtonPress={handleMergeButtonPress}
-            />
-          </Box>
+          {/* List of contacts */}
+          {displayContactsComponent}
         </Box>
       </Box>
+      <ErrorMessage
+        open={displayError}
+        alertMessage={errorMessage}
+        alertTitle={errorTitle}
+        severity={errorSeverity}
+      />
     </Layout>
   )
 }

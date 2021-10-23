@@ -10,10 +10,11 @@ import PageLoadingBar from "../../components/PageLoadingBar";
 import { useRouter } from 'next/router';
 import { getSession } from 'next-auth/client';
 import { useTheme } from "@material-ui/core/styles";
-import { useMediaQuery } from "@material-ui/core";
+import { Typography, useMediaQuery } from "@material-ui/core";
 import SearchBar from '../../components/input/SearchBar';
 import { getContacts, updateContact } from '../../api_client/ContactClient';
 import { IContact } from '../../lib/UnifiedDataType';
+import ErrorMessage, { AlertSeverity } from '../../components/errors/ErrorMessage';
 
 export const sortFunctions = {
   [SortType.FirstName]: (a: IContact, b: IContact) =>
@@ -39,7 +40,6 @@ function swapContactInList(
   contactList: IContact[],
   contact: IContact
 ) {
-  console.log("starting list", contactList);
   if (contact._id === undefined) {
     return contactList;
   }
@@ -48,13 +48,11 @@ function swapContactInList(
     if (contactList[i]._id) {
       if (contactList[i]._id === contact._id) {
         contactList[i] = contact;
-        console.log("Swapped element", contact);
         break;
       }
     }
   }
 
-  console.log("Final element");
   return contactList;
 }
 
@@ -66,6 +64,10 @@ export default function Contacts() {
   const [allContacts, setAllContacts] = useState<IContact[]>([])
   const [displayContacts, setDisplayContacts] = useState<IContact[]>([])
   const [isLoading, setIsLoading] = useState(true)
+  const [displayError, setDisplayError] = useState(false)
+  const [errorMessage, setErrorMessage] = useState<string>()
+  const [errorTitle, setErrorTitle] = useState<string>()
+  const [errorSeverity, setErrorSeverity] = useState<AlertSeverity>()
   const router = useRouter()
 
   // Adjust components based on screen size
@@ -76,8 +78,6 @@ export default function Contacts() {
     try {
       setIsLoading(true)
       const data = await getContacts()
-      console.log("all contacts")
-      console.log(data);
       // Save all contacts
       setAllContacts(data)
       // Make the display contacts initially just a copy of all contacts
@@ -85,6 +85,13 @@ export default function Contacts() {
       setIsLoading(false)
     } catch (error) {
       console.error(error)
+
+      // Display error message
+      setErrorMessage(undefined)
+      setErrorTitle(undefined)
+      setErrorSeverity(undefined)
+      setDisplayError(true)
+
       setIsLoading(false)
     }
   }
@@ -160,15 +167,21 @@ export default function Contacts() {
       return true
     } catch (error) {
       console.error("Error updating user starred status", error)
+
+      // Display the error message
+      setErrorMessage("Failed to update starred status - Please refresh the page and try again")
+      setErrorTitle("Warning")
+      setErrorSeverity("warning")
+      setDisplayError(true)
+
       return false
     }
   }
 
+  // If the user is not logged in, redirect to the login page
   useEffect(() => {
     getSession().then((session) => {
-      if (session) {
-        setIsLoading(false);
-      } else {
+      if (!session) {
         router.replace("/login");
       }
     });
@@ -178,10 +191,33 @@ export default function Contacts() {
     return <PageLoadingBar />;
   }
 
+  // If there are no contacts to show, display a message
+  let displayContactsComponent: JSX.Element = (
+    <Box boxShadow={3} borderRadius={8} display="flex" justifyContent="center" py="6%">
+      {
+        bigScreen ? <Typography variant="h4">No contacts to display...</Typography>
+          : <Typography component="p"><strong>No contacts to display...</strong></Typography>
+      }
+    </Box>
+  )
+
+  // Otherwise show the list of contacts
+  if (displayContacts.length > 0) {
+    displayContactsComponent = (
+      <Box boxShadow={3} borderRadius={8}>
+        <ContactsTable
+          setLoadingState={setIsLoading}
+          contacts={displayContacts}
+          handleStarClick={handleStarClick}
+        />
+      </Box>
+    )
+  }
+
   return (
     <Layout>
       <Box>
-        <Box display="flex" flexDirection="column" justifyContent="centre" mx={{ sm: 0, md: 8, lg: 20 }} mt={bigScreen ? 4 : 1} mb={6}>
+        <Box display="flex" flexDirection="column" justifyContent="centre" mx={{ xs: 1, sm: 2, md: 8, lg: 20 }} mt={bigScreen ? 4 : 1} mb={6}>
           {/* Entire table, including filters and tags */}
           <Box boxShadow={3}>
             {/* Tags */}
@@ -196,12 +232,16 @@ export default function Contacts() {
             {/* Local search bar */}
             <SearchBar value={searchValue} handleChange={setSearchValue} />
           </Box>
-          <Box boxShadow={3} borderRadius={8}>
-            {/* List of contacts */}
-            <ContactsTable contacts={displayContacts} handleStarClick={handleStarClick} />
-          </Box>
+          {/* List of contacts */}
+          {displayContactsComponent}
         </Box>
       </Box>
+      <ErrorMessage
+        open={displayError}
+        alertMessage={errorMessage}
+        alertTitle={errorTitle}
+        severity={errorSeverity}
+      />
     </Layout>
   );
 }

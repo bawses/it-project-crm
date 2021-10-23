@@ -4,6 +4,10 @@ import PersonAddIcon from '@material-ui/icons/PersonAdd';
 import { COLORS } from "../../lib/Colors";
 import Link from "next/link";
 
+interface CreateContactButtonLargeProps {
+  setLoadingState: (loading: boolean) => void
+}
+
 const useStyles = makeStyles((theme: Theme) => ({
   btn: {
     textTransform: "none",
@@ -13,12 +17,12 @@ const useStyles = makeStyles((theme: Theme) => ({
   }
 }))
 
-export default function CreateContactButtonLarge() {
+export default function CreateContactButtonLarge({ setLoadingState }: CreateContactButtonLargeProps) {
   const classes = useStyles()
 
   return (
     <Link href="/contacts/create" passHref>
-      <Button variant="contained" className={classes.btn}>
+      <Button variant="contained" className={classes.btn} onClick={() => setLoadingState(true)}>
         <Box display="flex" flexDirection="column" justifyContent="centre">
           <Box fontSize={16} fontWeight="bold">Can&apos;t find the person you were looking for? Add a manual contact here.</Box>
           <Box display="flex" flexDirection="row-reverse"><PersonAddIcon /></Box>
