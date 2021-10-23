@@ -6,7 +6,6 @@ import {
 	TextField,
 	Button,
 } from "@material-ui/core";
-import { Business } from "@material-ui/icons";
 import Image from "next/image";
 import React, { useCallback, useEffect, useState } from "react";
 import { OnChangeValue } from "react-select";
@@ -124,7 +123,6 @@ type ContactDetailsType = {
 	secondaryEmail: string;
 	primaryPhone: string;
 	secondaryPhone: string;
-	address: string;
 };
 
 export type ExtraFieldType = {
@@ -152,7 +150,6 @@ export default function EditProfile() {
 		secondaryEmail: "",
 		primaryPhone: "",
 		secondaryPhone: "",
-		address: "",
 	});
 	const [extraFields, setExtraFields] = useState<ExtraFieldType[]>([]);
 	const [isLoading, setIsLoading] = useState(true);
@@ -277,7 +274,6 @@ export default function EditProfile() {
 				fetchedData.phone[1]
 					? fetchedData.phone[1]
 					: "",
-			address: "",
 		};
 	};
 
@@ -600,21 +596,6 @@ export default function EditProfile() {
 								bottomOnChange={(event: any) =>
 									handleChange("secondaryPhone", event.target.value)
 								}
-							/>
-						</div>
-						<div className={classes.iconRow}>
-							<Business className={classes.icon} />
-							<TextField
-								size="small"
-								variant="filled"
-								id="workAddress"
-								label="Work address"
-								fullWidth
-								value={fieldValues.address || ""}
-								onChange={(event) =>
-									handleChange("address", event.target.value)
-								}
-								className={classes.topSpacing}
 							/>
 						</div>
 						{extraFields.map((field, index) =>

@@ -5,7 +5,6 @@ import {
   makeStyles,
   TextField,
 } from "@material-ui/core";
-import { Business } from "@material-ui/icons";
 import Image from "next/image";
 import DEFAULT_IMAGE from "../../assets/blank-profile-picture-973460_640.png";
 import React, { useCallback, useEffect, useState } from "react";
@@ -106,7 +105,6 @@ type ContactDetailsType = {
   secondaryEmail: string;
   primaryPhone: string;
   secondaryPhone: string;
-  address: string;
 };
 
 export type ExtraFieldType = {
@@ -134,7 +132,6 @@ export default function CreateContact() {
     secondaryEmail: "",
     primaryPhone: "",
     secondaryPhone: "",
-    address: "",
   });
   const [extraFields, setExtraFields] = useState<ExtraFieldType[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -398,21 +395,6 @@ export default function CreateContact() {
                 bottomOnChange={(event: any) =>
                   handleChange("secondaryPhone", event.target.value)
                 }
-              />
-            </div>
-            <div className={classes.iconRow}>
-              <Business className={classes.icon} />
-              <TextField
-                size="small"
-                variant="filled"
-                id="workAddress"
-                label="Work address"
-                fullWidth
-                value={fieldValues.address}
-                onChange={(event) =>
-                  handleChange("address", event.target.value)
-                }
-                className={classes.topSpacing}
               />
             </div>
             {extraFields.map((field, index) =>
