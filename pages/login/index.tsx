@@ -8,11 +8,12 @@ import React, { useEffect, useState, ChangeEvent, MouseEvent } from "react";
 import useMediaQuery from "@material-ui/core/useMediaQuery";
 import { useTheme } from "@material-ui/core/styles";
 
-import { Typography, TextField, Grid, Paper, Button } from "@material-ui/core";
+import { Typography, TextField, Grid, Paper } from "@material-ui/core";
 import { makeStyles, createStyles, Theme } from "@material-ui/core/styles";
 import { COLORS } from "../../lib/Colors";
 import PageLoadingBar from "../../components/PageLoadingBar";
 import AuthButton from "../../components/buttons/AuthButton";
+import LoadingButton from "../../components/buttons/LoadingButton";
 
 const useStyles = makeStyles((theme: Theme) =>
 	createStyles({
@@ -122,6 +123,8 @@ export default function LoginPage() {
 
 	const [showError, setError] = useState("");
 	const [isLoading, setIsLoading] = useState(true);
+	const [signInPressed, setSignInPressed] = useState(false);
+	const [signInGooglePressed, setSignInGooglePressed] = useState(false);
 	const router = useRouter();
 
 	const [email, setEmail] = useState("");
@@ -135,10 +138,12 @@ export default function LoginPage() {
 		setPassword(e.target.value);
 	};
 
-	const handleSubmit = async (
+	const handleRegularSignInClick = async (
 		e: MouseEvent<HTMLButtonElement, globalThis.MouseEvent>
 	) => {
 		e.preventDefault();
+
+		setSignInPressed(true);
 
 		const result = await signIn("credentials", {
 			redirect: false,
@@ -150,9 +155,16 @@ export default function LoginPage() {
 		if (result?.error) {
 			console.log(result.error);
 			setError("Invalid User Credentials Entered");
+			setSignInPressed(false);
 		} else {
 			router.replace("/contacts");
 		}
+	};
+
+	const handleGoogleSignIn = () => {
+		setSignInGooglePressed(true);
+
+		signIn("google", { callbackUrl: "/profile" });
 	};
 
 	useEffect(() => {
@@ -246,25 +258,56 @@ export default function LoginPage() {
 								placeholder="Enter your password here"
 							/>
 						</Grid>
-						<AuthButton
-							onClick={handleSubmit}
-							className={classes.btn}
-							title="Log In"
-						/>
-						<AuthButton
-							onClick={() => signIn("google", { callbackUrl: "/profile" })}
-							className={classes.googleBtn}
-							authMethod="google"
-							title="Sign In With Google"
-						/>
+						{signInPressed ? (
+							<LoadingButton
+								maxWidth={600}
+								paddingTop={theme.spacing(1)}
+								height={50}
+								marginTop={theme.spacing(1.5)}
+								fullWidth={true}
+								indicatorMarginRight={10}
+							/>
+						) : (
+							<AuthButton
+								onClick={handleRegularSignInClick}
+								className={classes.btn}
+								title="Log In"
+							/>
+						)}
+						{signInGooglePressed ? (
+							<LoadingButton
+								maxWidth={600}
+								paddingTop={theme.spacing(1)}
+								height={50}
+								marginTop={theme.spacing(1.5)}
+								fullWidth={true}
+								indicatorMarginRight={10}
+							/>
+						) : (
+							<AuthButton
+								onClick={() => handleGoogleSignIn()}
+								className={classes.googleBtn}
+								authMethod="google"
+								title="Sign In With Google"
+							/>
+						)}
 						<h4 style={{ margin: "0%", color: "red" }}>{showError}</h4>
 						<div className={classes.links}>
 							<Typography component="p">
 								Don&apos;t have an account yet?
 							</Typography>
 							<Typography component="p">
-								<Link href="/signup">Sign Up as an Individual</Link> |{" "}
-								<Link href="/signup">Sign Up as an Organisation</Link>
+								<Link href="/signup">
+									<a onClick={() => setIsLoading(true)}>
+										Sign Up as an Individual
+									</a>
+								</Link>{" "}
+								|{" "}
+								<Link href="/signup">
+									<a onClick={() => setIsLoading(true)}>
+										Sign Up as an Organisation
+									</a>
+								</Link>
 							</Typography>
 						</div>
 					</Paper>
