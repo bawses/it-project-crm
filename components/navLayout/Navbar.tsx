@@ -130,7 +130,7 @@ export default function Navbar({ pageType = "personal" }: NavbarProps) {
                 </IconButton>
               </Tooltip>
 
-              <Tooltip title="My Profile">
+              <Tooltip title="Profile &amp; Settings">
                 <IconButton
                   className={classes.navButton}
                   color="inherit"
