@@ -8,13 +8,17 @@ import TextButton from "../../components/buttons/TextButton";
 import Image from "next/image";
 
 interface SectionProps {
+  CTAtitle?: string;
   onPressCTA?: () => void;
 }
 
-export default function WelcomeSection({ onPressCTA = () => {} }: SectionProps) {
+export default function WelcomeSection({
+  CTAtitle = "Login",
+  onPressCTA = () => {},
+}: SectionProps) {
   const classes = useStyles();
   const theme = useTheme();
-  const isSmall = useMediaQuery('(max-width:1121px)');
+  const isSmall = useMediaQuery("(max-width:1121px)");
   const isMobile = useMediaQuery(theme.breakpoints.down("xs"));
 
   return (
@@ -23,7 +27,7 @@ export default function WelcomeSection({ onPressCTA = () => {} }: SectionProps) 
         src={BACKGROUND_IMAGE}
         alt="Background image"
         className={classes.backgroundImage}
-        layout={isSmall ? 'fixed' : "responsive"}
+        layout={isSmall ? "fixed" : "responsive"}
       />
       <div className={classes.content}>
         <Typography
@@ -47,7 +51,7 @@ export default function WelcomeSection({ onPressCTA = () => {} }: SectionProps) 
         {isMobile && (
           <div className={classes.mobileLoginBtn}>
             <TextButton
-              title="Login"
+              title={CTAtitle}
               color={COLORS.actionOrange}
               textColor={COLORS.white}
               onClick={onPressCTA}
@@ -58,10 +62,10 @@ export default function WelcomeSection({ onPressCTA = () => {} }: SectionProps) 
       {!isMobile && (
         <div className={classes.loginBtn}>
           <TextButton
-            title="Login"
+            title={CTAtitle}
             color={COLORS.actionOrange}
             textColor={COLORS.white}
-            fontSize='1.5rem'
+            fontSize="1.5rem"
             onClick={onPressCTA}
           />
         </div>
