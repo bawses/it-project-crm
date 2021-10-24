@@ -14,6 +14,7 @@ interface SectionProps {
 export default function WelcomeSection({ onPressCTA = () => {} }: SectionProps) {
   const classes = useStyles();
   const theme = useTheme();
+  const isSmall = useMediaQuery('(max-width:1121px)');
   const isMobile = useMediaQuery(theme.breakpoints.down("xs"));
 
   return (
@@ -22,7 +23,7 @@ export default function WelcomeSection({ onPressCTA = () => {} }: SectionProps) 
         src={BACKGROUND_IMAGE}
         alt="Background image"
         className={classes.backgroundImage}
-        layout="fixed"
+        layout={isSmall ? 'fixed' : "responsive"}
       />
       <div className={classes.content}>
         <Typography
@@ -93,14 +94,11 @@ const useStyles = makeStyles((theme) => ({
   backgroundImage: {
     zIndex: -1,
     height: 600,
-    width: 1124,
     [theme.breakpoints.down("sm")]: {
       height: 500,
-      width: 936,
     },
     [theme.breakpoints.down("xs")]: {
       height: 400,
-      width: 749,
     },
   },
   content: {
