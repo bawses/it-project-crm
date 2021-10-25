@@ -9,7 +9,7 @@ interface LocationSelectorProps {
   onChange: (value: OnChangeValue<SelectValue, false>) => void;
 }
 
-const options = AusCities.map((city) => `${city.city}, AU`).sort();
+const options = AusCities.map((city) => `${city.city}, ${city.admin_name}, AU`).sort();
 
 export default function LocationSelector({
   selectedLocation,
