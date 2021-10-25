@@ -343,7 +343,7 @@ export default function SignUpPage() {
               </div>
               <div>
                 <Typography component="p">
-                  <Link href="/login">
+                  <Link href="/organisationsignup">
                     <a onClick={() => setIsLoading(true)}>
                       Sign Up as an Organisation
                     </a>

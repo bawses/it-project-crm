@@ -303,7 +303,7 @@ export default function LoginPage() {
                   </a>
                 </Link>{" "}
                 |{" "}
-                <Link href="/signup">
+                <Link href="/organisationsignup">
                   <a onClick={() => setIsLoading(true)}>
                     Sign Up as an Organisation
                   </a>

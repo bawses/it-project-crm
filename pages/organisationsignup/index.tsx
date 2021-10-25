@@ -94,6 +94,14 @@ const useStyles = makeStyles((theme: Theme) =>
       },
     },
 
+    formSubheading: {
+      color: COLORS.primaryBlueDark,
+      paddingBottom: 10,
+      [theme.breakpoints.down("sm")]: {
+        marginLeft: "2%",
+      },
+    },
+
     textbox: {
       margin: "6px auto",
       [theme.breakpoints.down("sm")]: {
@@ -231,13 +239,17 @@ export default function OrganisationSignUpPage() {
               component="h5"
               className={classes.formTitle}
             >
-              Create an organisation account
+              Create an <br />
+              organisation account
             </Typography>
           ) : (
             <Typography variant="h4" component="h4">
               Create an organisation account
             </Typography>
           )}
+          <Typography className={classes.formSubheading}>
+            Register for a CataLog organisation profile
+          </Typography>
           <Paper className={classes.paper}>
             {/* <Grid container spacing={2}></Grid> */}
             <Grid item xs>
@@ -261,7 +273,7 @@ export default function OrganisationSignUpPage() {
                 className={classes.textbox}
                 name="email"
                 type="email"
-                placeholder="Admin Email"
+                placeholder="Organisation Email"
               />
             </Grid>
             <Grid item xs>
