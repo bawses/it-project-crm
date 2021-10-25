@@ -168,6 +168,7 @@ export default function Profile() {
         		alertMessage={errorMessage}
         		alertTitle={errorTitle}
         		severity={errorSeverity}
+				handleClose={() => setDisplayError(false)}
       		/>
 		</Layout>
 	);

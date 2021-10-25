@@ -164,6 +164,7 @@ export default function ViewOrgContact() {
         alertMessage={errorMessage}
         alertTitle={errorTitle}
         severity={errorSeverity}
+        handleClose={() => setDisplayError(false)}
       />
     </Layout>
   );

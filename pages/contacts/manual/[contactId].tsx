@@ -369,6 +369,7 @@ export default function ViewManualContact() {
         alertMessage={errorMessage}
         alertTitle={errorTitle}
         severity={errorSeverity}
+        handleClose={() => setDisplayError(false)}
       />
     </Layout>
   );

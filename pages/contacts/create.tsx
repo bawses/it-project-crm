@@ -454,6 +454,7 @@ export default function CreateContact() {
         alertMessage={errorMessage}
         alertTitle={errorTitle}
         severity={errorSeverity}
+        handleClose={() => setDisplayError(false)}
       />
     </Layout>
   );

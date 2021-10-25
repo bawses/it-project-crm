@@ -585,6 +585,7 @@ export default function EditManualContact() {
         alertMessage={errorMessage}
         alertTitle={errorTitle}
         severity={errorSeverity}
+        handleClose={() => setDisplayError(false)}
       />
     </Layout>
   );

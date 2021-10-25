@@ -95,6 +95,14 @@ export default function Settings() {
 
   const handleSubmit = async (event: React.SyntheticEvent) => {
     event.preventDefault();
+    if (!currentPassword || !newPassword || !confirmPassword) {
+      // Display error message
+      setErrorMessage("Please enter your current and new passwords")
+      setErrorTitle(undefined)
+      setErrorSeverity(undefined)
+      setDisplayError(true)
+      return;
+    }
     if (newPassword !== confirmPassword) {
       // Display error message
       setErrorMessage("New passwords don't match - Please try again")
@@ -217,6 +225,7 @@ export default function Settings() {
         alertMessage={errorMessage}
         alertTitle={errorTitle}
         severity={errorSeverity}
+        handleClose={() => setDisplayError(false)}
       />
     </Layout>
   );

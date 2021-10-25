@@ -8,16 +8,18 @@ interface ErrorMessageProps {
   alertMessage?: string,
   severity?: AlertSeverity,
   alertTitle?: string
+  handleClose?: () => void,
 }
 
 export default function ErrorMessage({
   open,
   alertMessage = "An error has occurred - Please refresh the page and try again",
   severity = "error",
-  alertTitle = "Error"
+  alertTitle = "Error",
+  handleClose = () => {},
 }: ErrorMessageProps) {
   return (
-    <Snackbar open={open}>
+    <Snackbar open={open} autoHideDuration={6000} onClose={handleClose}>
       <Alert variant="filled" severity={severity}>
         <AlertTitle>{alertTitle}</AlertTitle>
         {alertMessage}
