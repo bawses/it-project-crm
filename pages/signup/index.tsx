@@ -1,7 +1,6 @@
 /*
  * Sign Up Page that currently redirects to Login Page but should redirect to Home Page
  */
-
 import { useRouter } from "next/router";
 import Link from "next/link";
 import React, { useEffect, useState, ChangeEvent, MouseEvent } from "react";
