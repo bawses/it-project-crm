@@ -231,16 +231,15 @@ export default function OrganisationSignUpPage() {
               component="h5"
               className={classes.formTitle}
             >
-              Register your organisation
+              Create an organisation account
             </Typography>
           ) : (
             <Typography variant="h4" component="h4">
-              Register your
-              <br /> organisation
+              Create an organisation account
             </Typography>
           )}
           <Paper className={classes.paper}>
-            <Grid container spacing={2}></Grid>
+            {/* <Grid container spacing={2}></Grid> */}
             <Grid item xs>
               <TextField
                 onChange={handleInput}
@@ -337,7 +336,7 @@ export default function OrganisationSignUpPage() {
               </div>
               <div>
                 <Typography component="p">
-                  <Link href="/login">
+                  <Link href="/signup">
                     <a onClick={() => setIsLoading(true)}>
                       Sign Up for a personal account
                     </a>
