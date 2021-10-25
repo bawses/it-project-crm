@@ -25,8 +25,14 @@ export default function Welcome() {
         onPressCTA={() => router.push(isLoggedIn ? "/contacts" : "/login")}
         CTAtitle={isLoggedIn ? "Go to your contacts" : "Login"}
       />
-      <ProfessionalsSection onPressCTA={() => router.push("/signup")} />
-      <OrganisationsSection onPressCTA={() => router.push("/signup")} />
+      <ProfessionalsSection
+        isLoggedIn={isLoggedIn}
+        onPressCTA={() => router.push("/signup")}
+      />
+      <OrganisationsSection
+        isLoggedIn={isLoggedIn}
+        onPressCTA={() => router.push("/signup")}
+      />
     </div>
   );
 }

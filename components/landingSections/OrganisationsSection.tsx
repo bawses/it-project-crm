@@ -6,10 +6,14 @@ import { COLORS } from "../../lib/Colors";
 import TextButton from "../../components/buttons/TextButton";
 
 interface SectionProps {
+  isLoggedIn?: boolean;
   onPressCTA?: () => void;
 }
 
-export default function OrganisationsSection({ onPressCTA = () => {} }: SectionProps) {
+export default function OrganisationsSection({
+  isLoggedIn = false,
+  onPressCTA = () => {},
+}: SectionProps) {
   const classes = useStyles();
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("xs"));
@@ -38,16 +42,18 @@ export default function OrganisationsSection({ onPressCTA = () => {} }: SectionP
           </Typography>
         </div>
       </div>
-      <div className={classes.getStartedBtn}>
-        <TextButton
-          title="Register your Organisation"
-          color={COLORS.primaryBlue}
-          textColor={COLORS.white}
-          className={classes.btn}
-          fontSize={isMobile ? '1rem' : '1.5rem'}
-          onClick={onPressCTA}
-        />
-      </div>
+      {!isLoggedIn && (
+        <div className={classes.getStartedBtn}>
+          <TextButton
+            title="Register your Organisation"
+            color={COLORS.primaryBlue}
+            textColor={COLORS.white}
+            className={classes.btn}
+            fontSize={isMobile ? "1rem" : "1.5rem"}
+            onClick={onPressCTA}
+          />
+        </div>
+      )}
     </div>
   );
 }
