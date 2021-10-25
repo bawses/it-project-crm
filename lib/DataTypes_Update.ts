@@ -49,7 +49,7 @@ export interface IOrganisation_Update {
     website?: string;
     other?: string[];
   };
-  recoveryEmail: string;
+  recoveryEmail?: string;
   industry?: string;
   about?: string;
   contacts?: UserId[];
@@ -71,7 +71,7 @@ export interface IUser_Update {
     website?: string;
     other?: string[];
   };
-  recoveryEmail: string;
+  recoveryEmail?: string;
   about?: string;
   allTags?: string[];
   organisation?: { _id: OrganisationId; name: string; imageUrl?: string };
