@@ -14,6 +14,7 @@ import {
 import { COLORS } from "../../lib/Colors";
 import { getUser, updatePasswordForUser } from "../../api_client/UserClient";
 import { IUser } from "../../lib/DataTypes";
+import ErrorMessage, { AlertSeverity } from '../../components/errors/ErrorMessage';
 
 const useStyles = makeStyles((theme) => ({
   containerStyle: {
@@ -62,6 +63,10 @@ export default function Settings() {
   const [profileData, setProfileData] = useState<IUser>();
   const classes = useStyles();
   const router = useRouter();
+  const [displayError, setDisplayError] = useState(false)
+  const [errorMessage, setErrorMessage] = useState<string>()
+  const [errorTitle, setErrorTitle] = useState<string>()
+  const [errorSeverity, setErrorSeverity] = useState<AlertSeverity>()
   const [currentPassword, setCurrentPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
@@ -74,8 +79,12 @@ export default function Settings() {
       console.log(fetchedData);
       setIsLoading(false);
     } catch (e) {
-      /** TODO: redirect to error page */
       console.log(e);
+      // Display error message
+      setErrorMessage('Failed to load account details - Please try again')
+      setErrorTitle(undefined)
+      setErrorSeverity(undefined)
+      setDisplayError(true)
       setIsLoading(false);
     }
   }, []);
@@ -98,6 +107,11 @@ export default function Settings() {
       router.replace('/profile');
     } catch (e: any) {
       console.log(e);
+      // Display error message
+      setErrorMessage('Failed to update password - Please try again')
+      setErrorTitle(undefined)
+      setErrorSeverity(undefined)
+      setDisplayError(true)
     } finally {
       setIsLoading(false);
     }
@@ -194,6 +208,12 @@ export default function Settings() {
         </Grid>
         <br />
       </Container>
+      <ErrorMessage
+        open={displayError}
+        alertMessage={errorMessage}
+        alertTitle={errorTitle}
+        severity={errorSeverity}
+      />
     </Layout>
   );
 }

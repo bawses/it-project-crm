@@ -25,6 +25,7 @@ import { COLORS } from "../../../lib/Colors";
 import { IOrganisation } from "../../../lib/DataTypes";
 import { dummyOrganisation } from ".";
 import { IOrganisation_Update } from "../../../lib/DataTypes_Update";
+import ErrorMessage, { AlertSeverity } from "../../../components/errors/ErrorMessage";
 
 const DEFAULT_URL: string =
 	"https://res.cloudinary.com/it-project-crm/image/upload/v1633002681/zdt7litmbbxfdvg7gdvx.png";
@@ -148,7 +149,10 @@ export default function EditOrgProfile() {
 	const [isLoading, setIsLoading] = useState(true);
 	const [profileImage, setProfileImage] = useState("");
 	const [imageFile, setImageFile] = useState();
-
+	const [displayError, setDisplayError] = useState(false)
+	const [errorMessage, setErrorMessage] = useState<string>()
+	const [errorTitle, setErrorTitle] = useState<string>()
+	const [errorSeverity, setErrorSeverity] = useState<AlertSeverity>()
 	const router = useRouter();
 
 	// On file select (from the pop up)
@@ -319,10 +323,9 @@ export default function EditOrgProfile() {
 
 			console.log(fetchedData);
 
-            // TODO: add profile pic to organisation data type
-			// if (fetchedData?.imageUrl) {
-			// 	setProfileImage(fetchedData?.imageUrl);
-			// }
+			if (fetchedData?.imageUrl) {
+				setProfileImage(fetchedData?.imageUrl);
+			}
 
 			setLocation(
 				fetchedData.location
@@ -336,8 +339,12 @@ export default function EditOrgProfile() {
 			/** TODO: set initial profile picture */
 			setIsLoading(false);
 		} catch (e) {
-			/** TODO: redirect to error page */
 			console.log(e);
+			// Display error message
+			setErrorMessage("Failed to load organisation profile details - Please try again")
+			setErrorTitle(undefined)
+			setErrorSeverity(undefined)
+			setDisplayError(true)
 			setIsLoading(false);
 		}
 	}, []);
@@ -414,6 +421,11 @@ export default function EditOrgProfile() {
 			setIsLoading(false);
 		} catch (e: any) {
 			console.log(e);
+			// Display error message
+			setErrorMessage("Failed to update organisation profile - Please try again")
+			setErrorTitle(undefined)
+			setErrorSeverity(undefined)
+			setDisplayError(true)
 			setIsLoading(false);
 		}
 	};
@@ -586,6 +598,12 @@ export default function EditOrgProfile() {
 					/>
 				</form>
 			</Container>
+			<ErrorMessage
+        		open={displayError}
+       			alertMessage={errorMessage}
+        		alertTitle={errorTitle}
+        		severity={errorSeverity}
+      		/>
 		</Layout>
 	);
 }
