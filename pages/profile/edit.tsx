@@ -395,6 +395,11 @@ export default function EditProfile() {
 		/** TODO: make alert or pop up if missing required fields */
 		if (!!fieldValues.firstName === false || !!fieldValues.lastName === false) {
 			console.log("Error: must enter first and last name");
+			// Display error message
+			setErrorMessage('Please enter a first and last name.')
+			setErrorTitle(undefined)
+			setErrorSeverity(undefined)
+			setDisplayError(true)
 			return;
 		}
 		/** Remove any extra fields that are empty */

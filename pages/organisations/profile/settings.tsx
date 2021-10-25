@@ -112,7 +112,11 @@ export default function OrgSettings() {
   const handleSubmit = async (event: React.SyntheticEvent) => {
     event.preventDefault();
     if (newPassword !== confirmPassword) {
-      alert("Error! Passwords don't match");
+      // Display error message
+      setErrorMessage("New passwords don't match - Please try again")
+      setErrorTitle(undefined)
+      setErrorSeverity(undefined)
+      setDisplayError(true)
       return;
     }
     try {
