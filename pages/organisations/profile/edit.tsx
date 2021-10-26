@@ -476,22 +476,24 @@ export default function EditOrgProfile() {
 		updateProfileDetails();
 	};
 
-	// useEffect(() => {
-	// 	getSession().then((session) => {
-	// 		if (session) {
-	// 			setIsLoading(false);
-	// 		} else {
-	// 			router.replace("/login");
-	// 		}
-	// 	});
-	// }, [router]);
+	useEffect(() => {
+		getSession().then((session) => {
+			if (session && session.user.type == "organisation") {
+				setIsLoading(false);
+			} else if (session) {
+				router.replace("/profile");
+			} else {
+				router.replace("/login");
+			}
+		});
+	}, [router]);
 
 	if (isLoading) {
 		return <PageLoadingBar />;
 	}
 
 	return (
-		<Layout>
+		<Layout pageType="organisation">
 			<Container maxWidth="md" className={classes.containerStyle}>
 				<Typography variant="h5" component="h5" className={classes.pageTitle}>
 					Edit organisation profile:

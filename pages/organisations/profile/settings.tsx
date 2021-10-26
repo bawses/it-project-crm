@@ -13,6 +13,7 @@ import {
 } from "@material-ui/core";
 import { COLORS } from "../../../lib/Colors";
 import { IOrganisation } from "../../../lib/DataTypes";
+import { getOrganisationById } from "../../../api_client/OrganisationClient";
 
 const useStyles = makeStyles((theme) => ({
   containerStyle: {
@@ -56,23 +57,6 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const dummyOrganisation: IOrganisation = {
-    _id: "123",
-    passwordHash: "passwordhash",
-    name: "Sample Organisation",
-    email: ["bigcompany@example.com"],
-    phone: ["12345"],
-    location: "Melbourne, AU",
-    links: {
-      facebook: "facebook.com",
-      instagram: "instagram.com",
-    },
-    industry: "Software development",
-    about:
-      "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.",
-    contacts: [],
-  };
-
 export default function OrgSettings() {
   const [isLoading, setIsLoading] = useState(true);
   const [profileData, setProfileData] = useState<IOrganisation>();
@@ -85,10 +69,15 @@ export default function OrgSettings() {
   const fetchProfileDetails = useCallback(async () => {
     try {
       setIsLoading(true);
-      const fetchedData = dummyOrganisation;
-      setProfileData(fetchedData);
-      console.log(fetchedData);
-      setIsLoading(false);
+      let session = await getSession();
+			console.log(session?.user);
+			if (session) {
+				const fetchedData = await getOrganisationById(session?.user.sub);
+				setProfileData(fetchedData);
+				setIsLoading(false);
+			} else {
+				throw new Error("Can't get valid session!");
+			}
     } catch (e) {
       /** TODO: redirect to error page */
       console.log(e);
@@ -109,22 +98,24 @@ export default function OrgSettings() {
     console.log("Changing password");
   };
 
-//   useEffect(() => {
-//     getSession().then((session) => {
-//       if (session) {
-//         setIsLoading(false);
-//       } else {
-//         router.replace("/login");
-//       }
-//     });
-//   }, [router]);
+  useEffect(() => {
+    getSession().then((session) => {
+      if (session && session.user.type == "organisation") {
+				setIsLoading(false);
+			} else if (session) {
+				router.replace("/profile");
+			} else {
+				router.replace("/login");
+			}
+    });
+  }, [router]);
 
   if (isLoading) {
     return <PageLoadingBar />;
   }
 
   return (
-    <Layout>
+    <Layout pageType="organisation">
       <Container maxWidth="md" className={classes.containerStyle}>
         <Typography variant="h5" component="h2" className={classes.pageTitle}>
           My Organisation Settings

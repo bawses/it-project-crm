@@ -12,7 +12,7 @@ import PageLoadingBar from "../../../components/PageLoadingBar";
 import { COLORS } from "../../../lib/Colors";
 import { IOrganisation } from "../../../lib/DataTypes";
 import { getOrganisationById } from "../../../api_client/OrganisationClient";
-import { getSession } from "next-auth/client";
+import { getSession, signOut } from "next-auth/client";
 
 const useStyles = makeStyles((theme) => ({
 	containerStyle: {
@@ -59,34 +59,16 @@ const useStyles = makeStyles((theme) => ({
 	},
 }));
 
-export const dummyOrganisation: IOrganisation = {
-	_id: "123",
-	passwordHash: "passwordhash",
-	name: "Sample Organisation",
-	email: ["bigcompany@example.com"],
-	phone: ["12345"],
-	location: "Melbourne, AU",
-	links: {
-		facebook: "facebook.com",
-		instagram: "instagram.com",
-	},
-	industry: "Software development",
-	about:
-		"Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.",
-	contacts: [],
-};
-
 export default function OrgProfile() {
 	const classes = useStyles();
 	const [profileData, setProfileData] = useState<IOrganisation>();
-	const [profileImage, setProfileImage] = useState(DEFAULT_IMAGE);
+	const [profileImage, setProfileImage] = useState("");
 	const [isLoading, setIsLoading] = useState(true);
 	const router = useRouter();
 
 	const handleSignOut = (e: React.SyntheticEvent) => {
-		// setIsLoading(true);
-		// signOut();
-		console.log("Sign out of this organisation account");
+		setIsLoading(true);
+		signOut();
 	};
   
 	const fetchProfileDetails = useCallback(async () => {
@@ -97,15 +79,14 @@ export default function OrgProfile() {
 			if (session) {
 				const fetchedData = await getOrganisationById(session?.user.sub);
 				setProfileData(fetchedData);
-				setIsLoading(false);
+				
+				if (fetchedData?.imageUrl) {
+					setProfileImage(fetchedData?.imageUrl);
+				  }
+				  setIsLoading(false);
 			} else {
 				throw new Error("Can't get valid session!");
 			}
-
-			// TODO: add profile pic field to organisation data type
-			//   if (fetchedData?.imageUrl) {
-			//     setProfileImage(fetchedData?.imageUrl);
-			//   }
 		} catch (e) {
 			/** TODO: redirect to error page */
 			console.log(e);
@@ -117,22 +98,24 @@ export default function OrgProfile() {
 		fetchProfileDetails();
 	}, [fetchProfileDetails]);
 
-	//   useEffect(() => {
-	//     getSession().then((session) => {
-	//       if (session) {
-	//         setIsLoading(false);
-	//       } else {
-	//         router.replace("/login");
-	//       }
-	//     });
-	//   }, [router]);
+	  useEffect(() => {
+	    getSession().then((session) => {
+			if (session && session.user.type == "organisation") {
+				setIsLoading(false);
+			} else if (session) {
+				router.replace("/profile");
+			} else {
+				router.replace("/login");
+			}
+	    });
+	  }, [router]);
 
 	if (isLoading) {
 		return <PageLoadingBar />;
 	}
 
 	return (
-		<Layout>
+		<Layout pageType="organisation">
 			<Container className={classes.containerStyle}>
 				<ProfileOptions
 					onPressSettings={() => router.push("/organisations/profile/settings")}
@@ -143,7 +126,7 @@ export default function OrgProfile() {
 					<Container className={classes.profilePicDiv}>
 						<Image
 							className={classes.profilePic}
-							src={profileImage}
+							src={profileImage === "" ? DEFAULT_IMAGE : profileImage}
 							alt="Profile picture"
 							width={400}
 							height={400}

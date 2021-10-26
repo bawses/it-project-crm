@@ -105,8 +105,10 @@ export default function Settings() {
 
   useEffect(() => {
     getSession().then((session) => {
-      if (session) {
+      if (session && session.user.type == "personal") {
         setIsLoading(false);
+      } else if (session) {
+        router.replace("/organisations/profile");
       } else {
         router.replace("/login");
       }

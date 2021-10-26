@@ -386,10 +386,15 @@ export default function EditManualContact() {
         // Update selected organisation
         let updatedOrgContact;
         if (selectedOrg) {
-          updatedOrgContact = await updateOrganisationForContact(initialContact,selectedOrg.value._id)
+          updatedOrgContact = await updateOrganisationForContact(
+            initialContact,
+            selectedOrg.value._id
+          );
         } else {
           console.log("Remove selected org");
-          updatedOrgContact = await removeOrganisationForContact(initialContact);
+          updatedOrgContact = await removeOrganisationForContact(
+            initialContact
+          );
         }
         console.log(updatedOrgContact);
         router.replace(`/contacts/manual/${updatedContact._id}`);
@@ -442,8 +447,10 @@ export default function EditManualContact() {
 
   useEffect(() => {
     getSession().then((session) => {
-      if (session) {
+      if (session && session.user.type == "personal") {
         setIsLoading(false);
+      } else if (session) {
+        router.replace("/organisations/profile");
       } else {
         router.replace("/login");
       }

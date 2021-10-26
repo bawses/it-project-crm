@@ -162,17 +162,17 @@ export default function CreateContact() {
   };
 
   const formatHyperlink = (link?: string) => {
-		if (link) {
-			const formattedLink = link.replace(/\s+/g, '');
-			if (formattedLink.startsWith('https://')) {
-				return formattedLink;
-			} else if (formattedLink.startsWith('http://')) {
-				return formattedLink.replace('http://', 'https://');
-			} else {
-				return 'https://' + formattedLink;
-			}
-		}
-	}
+    if (link) {
+      const formattedLink = link.replace(/\s+/g, "");
+      if (formattedLink.startsWith("https://")) {
+        return formattedLink;
+      } else if (formattedLink.startsWith("http://")) {
+        return formattedLink.replace("http://", "https://");
+      } else {
+        return "https://" + formattedLink;
+      }
+    }
+  };
 
   const formatPairedData = (data: string[]) => {
     if (data.length === 2 && data[0] === "") {
@@ -183,22 +183,22 @@ export default function CreateContact() {
   };
 
   const fetchOrganisations = useCallback(async () => {
-		try {
-			setIsLoading(true);
-			const allOrgs = await getOrganisations();
-			setOrganisations(allOrgs);
-			console.log(allOrgs);
-			setIsLoading(false);
-		} catch (e) {
-			/** TODO: redirect to error page */
-			console.log(e);
-			setIsLoading(false);
-		}
-	}, []);
+    try {
+      setIsLoading(true);
+      const allOrgs = await getOrganisations();
+      setOrganisations(allOrgs);
+      console.log(allOrgs);
+      setIsLoading(false);
+    } catch (e) {
+      /** TODO: redirect to error page */
+      console.log(e);
+      setIsLoading(false);
+    }
+  }, []);
 
-	useEffect(() => {
-		fetchOrganisations();
-	}, [fetchOrganisations]);
+  useEffect(() => {
+    fetchOrganisations();
+  }, [fetchOrganisations]);
 
   const createNewContact = async () => {
     /** TODO: make alert or pop up if missing required fields */
@@ -215,26 +215,37 @@ export default function CreateContact() {
         firstName: fieldValues.firstName,
         lastName: fieldValues.lastName,
       },
-      email: formatPairedData([fieldValues.primaryEmail, fieldValues.secondaryEmail]),
-      phone: formatPairedData([fieldValues.primaryPhone, fieldValues.secondaryPhone]),
+      email: formatPairedData([
+        fieldValues.primaryEmail,
+        fieldValues.secondaryEmail,
+      ]),
+      phone: formatPairedData([
+        fieldValues.primaryPhone,
+        fieldValues.secondaryPhone,
+      ]),
       job: fieldValues.title,
       location: location?.value,
       links: {
-        facebook: formatHyperlink(finalExtraFields.find(
-          (field) => field.fieldType === "Facebook"
-        )?.fieldValue),
-        linkedIn: formatHyperlink(finalExtraFields.find(
-          (field) => field.fieldType === "LinkedIn"
-        )?.fieldValue),
-        instagram: formatHyperlink(finalExtraFields.find(
-          (field) => field.fieldType === "Instagram"
-        )?.fieldValue),
-        twitter: formatHyperlink(finalExtraFields.find(
-          (field) => field.fieldType === "Twitter"
-        )?.fieldValue),
-        website: formatHyperlink(finalExtraFields.find(
-          (field) => field.fieldType === "Website"
-        )?.fieldValue),
+        facebook: formatHyperlink(
+          finalExtraFields.find((field) => field.fieldType === "Facebook")
+            ?.fieldValue
+        ),
+        linkedIn: formatHyperlink(
+          finalExtraFields.find((field) => field.fieldType === "LinkedIn")
+            ?.fieldValue
+        ),
+        instagram: formatHyperlink(
+          finalExtraFields.find((field) => field.fieldType === "Instagram")
+            ?.fieldValue
+        ),
+        twitter: formatHyperlink(
+          finalExtraFields.find((field) => field.fieldType === "Twitter")
+            ?.fieldValue
+        ),
+        website: formatHyperlink(
+          finalExtraFields.find((field) => field.fieldType === "Website")
+            ?.fieldValue
+        ),
         other: finalExtraFields
           .filter((field) => field.fieldType === "Other")
           .map((other) => formatHyperlink(other.fieldValue) ?? ""),
@@ -296,8 +307,10 @@ export default function CreateContact() {
 
   useEffect(() => {
     getSession().then((session) => {
-      if (session) {
+      if (session && session.user.type == "personal") {
         setIsLoading(false);
+      } else if (session) {
+        router.replace("/organisations/profile");
       } else {
         router.replace("/login");
       }

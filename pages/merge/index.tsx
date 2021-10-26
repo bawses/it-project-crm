@@ -87,7 +87,11 @@ export default function MergePage() {
   // If the user is not logged in, redirect to the login page
   useEffect(() => {
     getSession().then((session) => {
-      if (!session) {
+      if (session && session.user.type == "personal") {
+        setIsLoading(false);
+      } else if (session) {
+        router.replace("/organisations/profile");
+      } else {
         router.replace("/login");
       }
     });

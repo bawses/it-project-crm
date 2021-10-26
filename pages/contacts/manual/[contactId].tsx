@@ -253,8 +253,10 @@ export default function ViewManualContact() {
 
   useEffect(() => {
     getSession().then((session) => {
-      if (session) {
+      if (session && session.user.type == "personal") {
         setIsLoading(false);
+      } else if (session) {
+        router.replace("/organisations/profile");
       } else {
         router.replace("/login");
       }
@@ -288,12 +290,8 @@ export default function ViewManualContact() {
             firstName={initialContactData?.name.firstName}
             lastName={initialContactData?.name.lastName}
             title={initialContactData?.job}
-            selectedOrg={
-              initialContactData?.organisation ?? null
-            }
-            manualOrg={
-              initialContactData?.manualOrganisation
-            }
+            selectedOrg={initialContactData?.organisation ?? null}
+            manualOrg={initialContactData?.manualOrganisation}
             starred={isStarred}
             onStar={() => {
               setIsStarred(!isStarred);

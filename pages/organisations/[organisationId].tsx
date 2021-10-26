@@ -114,15 +114,17 @@ export default function ViewOrgContact() {
     fetchOrganisationDetails();
   }, [fetchOrganisationDetails]);
 
-  // useEffect(() => {
-  // 	getSession().then((session) => {
-  // 		if (session) {
-  // 			setIsLoading(false);
-  // 		} else {
-  // 			router.replace("/login");
-  // 		}
-  // 	});
-  // }, [router]);
+  useEffect(() => {
+  	getSession().then((session) => {
+  		if (session && session.user.type == "personal") {
+				setIsLoading(false);
+			  } else if (session) {
+				router.replace("/organisations/profile");
+			  } else {
+				router.replace("/login");
+			  }
+  	});
+  }, [router]);
 
   if (isLoading) {
     return <PageLoadingBar />;

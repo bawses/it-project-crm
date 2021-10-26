@@ -106,7 +106,6 @@ export default function ViewContact() {
 	const [tagOptions, setTagOptions] = useState<string[]>([]);
 	const [isStarred, setIsStarred] = useState(false);
 	const [isAdded, setIsAdded] = useState(false);
-
 	const router = useRouter();
 	const { contactId } = router.query;
 
@@ -255,11 +254,13 @@ export default function ViewContact() {
 
 	useEffect(() => {
 		getSession().then((session) => {
-			if (session) {
+			if (session && session.user.type == "personal") {
 				setIsLoading(false);
-			} else {
+			  } else if (session) {
+				router.replace("/organisations/profile");
+			  } else {
 				router.replace("/login");
-			}
+			  }
 		});
 	}, [router]);
 

@@ -106,36 +106,46 @@ export default function Navbar({ pageType = "personal" }: NavbarProps) {
           ) : (
             // show icons in Navbar if not Mobile
             <React.Fragment>
-              <div className={classes.searchAdd}>
-                <Tooltip title="Add Manual Contact">
+              {pageType === "personal" && (
+                <div className={classes.searchAdd}>
+                  <Tooltip title="Add Manual Contact">
+                    <IconButton
+                      className={classes.navButton}
+                      color="inherit"
+                      aria-label="myProfile"
+                      onClick={() => router.push("/contacts/create")}
+                    >
+                      <PersonAddIcon fontSize="large" />
+                    </IconButton>
+                  </Tooltip>
+                </div>
+              )}
+
+              {pageType === "personal" && (
+                <Tooltip title="Contacts">
                   <IconButton
                     className={classes.navButton}
                     color="inherit"
-                    aria-label="myProfile"
-                    onClick={() => router.push("/contacts/create")}
+                    aria-label="myContacts"
+                    onClick={() => router.push("/contacts")}
                   >
-                    <PersonAddIcon fontSize="large" />
+                    <CollectionsBookmarkIcon fontSize="large" />
                   </IconButton>
                 </Tooltip>
-              </div>
-
-              <Tooltip title="Contacts">
-                <IconButton
-                  className={classes.navButton}
-                  color="inherit"
-                  aria-label="myContacts"
-                  onClick={() => router.push("/contacts")}
-                >
-                  <CollectionsBookmarkIcon fontSize="large" />
-                </IconButton>
-              </Tooltip>
+              )}
 
               <Tooltip title="Profile &amp; Settings">
                 <IconButton
                   className={classes.navButton}
                   color="inherit"
                   aria-label="myProfile"
-                  onClick={() => router.push("/profile")}
+                  onClick={() =>
+                    router.push(
+                      pageType === "personal"
+                        ? "/profile"
+                        : "/organisations/profile"
+                    )
+                  }
                 >
                   <AccountCircleIcon fontSize="large" />
                 </IconButton>
