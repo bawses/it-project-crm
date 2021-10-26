@@ -103,13 +103,14 @@ export default function OrgProfile() {
 			setErrorSeverity(undefined);
 			setDisplayError(true);
 			setIsLoading(false);
+		} finally {
+			setIsLoading(false);
 		}
 	}, []);
 
 	useEffect(() => {
 		getSession().then((session) => {
 			if (session && session.user.type == DataType.Organisation) {
-				setIsLoading(false);
 				fetchProfileDetails();
 			} else if (session) {
 				router.replace("/profile");
