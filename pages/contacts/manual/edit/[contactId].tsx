@@ -32,7 +32,9 @@ import { getOrganisations } from "../../../../api_client/OrganisationClient";
 import { IOrganisation } from "../../../../lib/DataTypes";
 import { orgSelectValue } from "../../../../components/input/OrganisationSelector";
 import OrganisationInput from "../../../../components/input/OrganisationInput";
-import ErrorMessage, { AlertSeverity } from "../../../../components/errors/ErrorMessage";
+import ErrorMessage, {
+  AlertSeverity,
+} from "../../../../components/errors/ErrorMessage";
 
 const useStyles = makeStyles((theme) => ({
   containerStyle: {
@@ -330,12 +332,15 @@ export default function EditManualContact() {
 
   const updateManualContactDetails = async () => {
     if (initialContact) {
-      /** TODO: make alert or pop up if missing required fields */
       if (
         !!fieldValues.firstName === false &&
         !!fieldValues.lastName === false
       ) {
-        console.log("Error: must enter first or last name");
+        // Display error message
+        setErrorMessage("Please enter a first or last name.");
+        setErrorTitle(undefined);
+        setErrorSeverity(undefined);
+        setDisplayError(true);
         return;
       }
       /** Remove any extra fields that are empty */
