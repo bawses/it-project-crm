@@ -93,7 +93,7 @@ export default function ViewManualContact() {
   const [initialContactData, setInitialContactData] = useState<IContact>();
   const [isLoading, setIsLoading] = useState(true);
   const [btnLoading, setBtnLoading] = useState(false);
-	const [tagLoading, setTagLoading] = useState(false);
+  const [tagLoading, setTagLoading] = useState(false);
   const [notes, setNotes] = useState("");
   const [isEditingNotes, setIsEditingNotes] = useState(false);
   const [editedNotes, setEditedNotes] = useState("");
@@ -254,6 +254,11 @@ export default function ViewManualContact() {
       try {
         const updatedContact = await toggleArchiveContact(initialContactData);
         console.log(updatedContact);
+        // Display error message
+        setErrorMessage("Successfully updated archive for this contact!");
+        setErrorTitle("Success");
+        setErrorSeverity("success");
+        setDisplayError(true);
       } catch (e) {
         console.log(e);
         // Display error message
@@ -312,7 +317,7 @@ export default function ViewManualContact() {
         router.replace("/login");
       }
     });
-  }, [router,fetchContactDetails]);
+  }, [router, fetchContactDetails]);
 
   if (isLoading) {
     return <PageLoadingBar />;

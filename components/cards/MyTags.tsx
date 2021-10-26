@@ -7,6 +7,8 @@ import {
   makeStyles,
   IconButton,
   CircularProgress,
+  useMediaQuery,
+  useTheme,
 } from "@material-ui/core";
 import { Cancel } from "@material-ui/icons";
 import { COLORS } from "../../lib/Colors";
@@ -27,6 +29,8 @@ export default function MyTags({
   isLoading = false,
 }: MyTagsProps) {
   const classes = useStyles();
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down("xs"));
   const formatTagOptions = (options: string[]) => {
     const formattedOptions = options
       .filter((option) => !tags.includes(option))
@@ -77,7 +81,7 @@ export default function MyTags({
           isSearchable={true}
           placeholder={"Add a tag..."}
           isClearable={true}
-          menuPlacement="auto"
+          menuPlacement={isMobile ? "top" : "auto"}
         />
       </Paper>
     </div>
