@@ -7,12 +7,12 @@
     <img src="assets/CataLog_logo.png" alt="Logo" width="200" height="80">
   </a>
 
-<h3 align="center">project_title</h3>
+<h3 align="center">Your Professional CRM - CataLog</h3>
 
   <p align="center">
-    project_description
+    {Insert in project description}
     <br />
-    <a href="https://github.com/bawses/it-project-crm"><strong>Explore the docs »</strong></a>
+    <a href="https://bawses-it-project.atlassian.net/wiki/spaces/BAWSES/overview?homepageId=262290"><strong>Explore the docs »</strong></a>
     <br />
     <br />
     <a href="https://it-project-crm.vercel.app/welcome">View Demo</a>
@@ -68,16 +68,6 @@ Here's a blank template to get started: To avoid retyping too much info. Do a se
 * [MongoDB](https://reactjs.org/)
 * [Vercel](https://reactjs.org/)
 
-## Getting Started
-
-First, run the development server:
-
-```bash
-npm run dev
-# or
-yarn dev
-```
-
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
 You can start editing the page by modifying `pages/index.js`. The page auto-updates as you edit the file.
@@ -97,15 +87,25 @@ This is an example of how to list things you need to use the software and how to
 
 ### Installation
 
-1. Get a free API Key at [https://example.com](https://example.com)
-2. Clone the repo
+Get a free API Key at [https://example.com](https://example.com)
+
+1. Clone the repo
    ```sh
    git clone https://github.com/github_username/repo_name.git
    ```
-3. Install NPM packages
+   
+2. Install NPM packages
    ```sh
    npm install
    ```
+3. Then, run the development server:
+
+  ```bash
+  npm run dev
+  # or
+  yarn dev
+  ```
+  
 4. Enter your API in `config.js`
    ```js
    const API_KEY = 'ENTER YOUR API';
@@ -113,7 +113,7 @@ This is an example of how to list things you need to use the software and how to
 
 <p align="right">(<a href="#top">back to top</a>)</p>
 
-### Running Tests Locally
+## Running Unit Tests Locally
 
 To run unit tests locally, go to package.json in the project's root directory and replace the 'test' command in scripts from:
 
@@ -126,6 +126,8 @@ to
 ```bash
 jest --setupFilesAfterEnv='./tests/setupEnv.js'
 ```
+
+Upon completion, you will also see the creation of a file **test-report.html** in which you may load up in a live local server for inspection.
 
 <!-- USAGE EXAMPLES -->
 ## Usage
