@@ -54,11 +54,7 @@
 
 <!-- ABOUT THE PROJECT -->
 ## About The Project
-
-Here's a blank template to get started: To avoid retyping too much info. Do a search and replace with your text editor for the following: `github_username`, `repo_name`, `twitter_handle`, `linkedin_username`, `email`, `email_client`, `project_title`, `project_description`
-
-<p align="right">(<a href="#top">back to top</a>)</p>
-
+{Insert Detail About Project}
 
 ### Built With
 
@@ -67,15 +63,6 @@ Here's a blank template to get started: To avoid retyping too much info. Do a se
 * [Material UI](https://reactjs.org/)
 * [MongoDB](https://reactjs.org/)
 * [Vercel](https://reactjs.org/)
-
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
-
-You can start editing the page by modifying `pages/index.js`. The page auto-updates as you edit the file.
-
-[API routes](https://nextjs.org/docs/api-routes/introduction) can be accessed on [http://localhost:3000/api/hello](http://localhost:3000/api/hello). This endpoint can be edited in `pages/api/hello.js`.
-
-The `pages/api` directory is mapped to `/api/*`. Files in this directory are treated as [API routes](https://nextjs.org/docs/api-routes/introduction) instead of React pages.
-
 
 ### Prerequisites
 
@@ -110,6 +97,12 @@ Get a free API Key at [https://example.com](https://example.com)
    ```js
    const API_KEY = 'ENTER YOUR API';
    ```
+   
+Open [http://localhost:3000](http://localhost:3000) with your browser to view and experiment with the webpage locally.
+
+[API routes](https://nextjs.org/docs/api-routes/introduction) can be accessed on [http://localhost:3000/api/...](http://localhost:3000/api/). This endpoint can be edited in `pages/api/*.ts`.
+
+The `pages/api` directory is mapped to `/api/*`. Files in this directory are treated as [API routes](https://nextjs.org/docs/api-routes/introduction) instead of React pages.
 
 <p align="right">(<a href="#top">back to top</a>)</p>
 
