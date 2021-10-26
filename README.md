@@ -4,7 +4,7 @@
 <br />
 <div align="center">
   <a href="https://github.com/bawses/it-project-crm">
-    <img src="assets/CataLog_logo.png" alt="Logo" width="200" height="80">
+    <img src="assets/CataLog_logo.png" alt="Logo" width="220" height="80">
   </a>
 
 <h3 align="center">Your Professional CRM - CataLog</h3>
