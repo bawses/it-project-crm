@@ -18,6 +18,7 @@ export interface IContact {
     website?: string;
     other?: string[];
   };
+  recoveryEmail?: string;
   organisation?: { _id: ObjectId; name: string; imageUrl?: string };
   manualOrganisation?: string;
   notes?: string;
@@ -61,6 +62,7 @@ export const convert_User_to_Contact = (user: IUser): IContact => {
     job: user.job,
     location: user.location,
     links: user.links,
+    recoveryEmail: user.recoveryEmail,
     organisation: user.organisation,
     manualOrganisation: user.manualOrganisation,
     isManualContact: false,
@@ -88,6 +90,7 @@ export const convert_AddedUser_to_Contact = (
     links: user.links,
     organisation: user.organisation,
     manualOrganisation: user.manualOrganisation,
+    recoveryEmail: user.recoveryEmail,
     notes: addedContact.notes,
     tags: addedContact.tags,
     starred: addedContact.starred,
