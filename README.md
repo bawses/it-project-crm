@@ -86,11 +86,11 @@ Get a free API Key at [https://example.com](https://example.com)
    ```
 3. Then, run the development server:
 
-  ```bash
-  npm run dev
-  # or
-  yarn dev
-  ```
+   ```bash
+   npm run dev
+   # or
+   yarn dev
+   ```
   
 4. Enter your API in `config.js`
    ```js
