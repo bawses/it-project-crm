@@ -10,6 +10,8 @@ import {
   Typography,
   Grid,
   TextField,
+  useTheme,
+  useMediaQuery,
 } from "@material-ui/core";
 import { COLORS } from "../../lib/Colors";
 import {
@@ -78,6 +80,9 @@ export default function Settings() {
   const [currentPassword, setCurrentPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
+
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down("xs"));
 
   const fetchProfileDetails = useCallback(async () => {
     try {
@@ -175,7 +180,7 @@ export default function Settings() {
         router.replace("/login");
       }
     });
-  }, [router,fetchProfileDetails]);
+  }, [router, fetchProfileDetails]);
 
   if (isLoading) {
     return <PageLoadingBar />;
@@ -194,13 +199,16 @@ export default function Settings() {
             </Typography>
           </div>
           <div className={classes.accountDetails}>
-            <Typography variant="h4" component="h4">
+            <Typography variant={isMobile ? "h5" : "h4"} component="h4">
               {profileData?.fullName}
             </Typography>
             <Typography
               variant="h6"
               component="h6"
-              style={{ color: COLORS.textGrey }}
+              style={{
+                color: COLORS.textGrey,
+                fontSize: isMobile ? "1rem" : undefined,
+              }}
             >
               {profileData?.email[0]}
             </Typography>
