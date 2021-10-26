@@ -59,18 +59,17 @@
 ### Built With
 
 * [Next.js](https://nextjs.org/)
-* [React.js](https://reactjs.org/)
-* [Material UI](https://reactjs.org/)
-* [MongoDB](https://reactjs.org/)
-* [Vercel](https://reactjs.org/)
+* [React.js](https://nextjs.org/)
+* [Material UI](https://mui.com/getting-started/usage/)
+* [MongoDB](https://www.mongodb.com/)
+* [Vercel](https://vercel.com/docs/concepts)
 
 ### Prerequisites
 
-This is an example of how to list things you need to use the software and how to install them.
-* npm
-  ```sh
-  npm install npm@latest -g
-  ```
+To successfully clone and run the website locally, you either must have or should have the following already installed:
+
+* [NodeJS](https://nodejs.org/en/) Version >=12
+* [Visual Studio Code](https://code.visualstudio.com/)
 
 ### Installation
 
