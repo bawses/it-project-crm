@@ -103,8 +103,8 @@ export default function Settings() {
       });
       console.log(updatedUser);
       console.log("Recovery Email updated!");
-      alert("Recovery Email updated! ");
       router.replace("/profile");
+      alert("Recovery Email updated! ");
     } catch (e: any) {
       console.log(e);
     } finally {
@@ -259,7 +259,7 @@ export default function Settings() {
                 type="submit"
                 color={COLORS.actionOrange}
                 textColor={COLORS.white}
-                title="Change password"
+                title="Change Password"
               />
             </div>
           </form>
