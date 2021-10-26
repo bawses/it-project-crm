@@ -42,6 +42,9 @@ export default function ContactsTableTags({
 
   useEffect(() => {
     fetchAllTags();
+    return () => {
+      setTagOptions([]);
+    };
   }, [fetchAllTags]);
 
   return (

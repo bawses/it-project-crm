@@ -312,6 +312,10 @@ export default function ViewContact() {
 		}
 	};
 
+	if (isLoading) {
+		return <PageLoadingBar />;
+	}
+
 	return (
 		<Layout>
 			<Container className={classes.containerStyle}>
