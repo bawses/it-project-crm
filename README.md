@@ -10,7 +10,7 @@
 <h3 align="center">Your Professional CRM - CataLog</h3>
 
   <p align="center">
-    {Insert in project description}
+    CataLog is a Personal CRM that helps you to stay in touch with your network. You can easily save and retrieve the contact details of your network by either adding their profile or through creating a manual contact.  
     <br />
     <a href="https://bawses-it-project.atlassian.net/wiki/spaces/BAWSES/overview?homepageId=262290"><strong>Explore the docs »</strong></a>
     <br />
