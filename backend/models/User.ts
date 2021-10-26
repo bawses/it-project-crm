@@ -22,6 +22,7 @@ const UserSchema = new mongoose.Schema<IUser>(
       website: String,
       other: [String],
     },
+    recoveryEmail: String,
     about: String,
     allTags: [String],
     organisation: { _id: OrganisationId, name: String, imageUrl: String },
