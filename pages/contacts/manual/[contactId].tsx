@@ -92,6 +92,8 @@ export default function ViewManualContact() {
   const classes = useStyles();
   const [initialContactData, setInitialContactData] = useState<IContact>();
   const [isLoading, setIsLoading] = useState(true);
+  const [btnLoading, setBtnLoading] = useState(false);
+	const [tagLoading, setTagLoading] = useState(false);
   const [notes, setNotes] = useState("");
   const [isEditingNotes, setIsEditingNotes] = useState(false);
   const [editedNotes, setEditedNotes] = useState("");
@@ -142,6 +144,7 @@ export default function ViewManualContact() {
   const updateContactNotes = useCallback(async () => {
     if (initialContactData) {
       try {
+        setBtnLoading(true);
         const updateObject = {
           notes: editedNotes,
         };
@@ -160,14 +163,17 @@ export default function ViewManualContact() {
         setErrorTitle(undefined);
         setErrorSeverity(undefined);
         setDisplayError(true);
+      } finally {
+        setBtnLoading(false);
       }
     }
   }, [initialContactData, editedNotes]);
 
   const saveEditedNotes = () => {
     if (isEditingNotes) {
-      updateContactNotes();
-      toggleEditingMode();
+      updateContactNotes().then(() => {
+        toggleEditingMode();
+      });
     }
   };
 
@@ -181,6 +187,7 @@ export default function ViewManualContact() {
   const deleteTag = async (toDelete: string) => {
     if (initialContactData) {
       try {
+        setTagLoading(true);
         const updatedContact = await removeTagFromContact(
           initialContactData,
           toDelete
@@ -197,6 +204,8 @@ export default function ViewManualContact() {
         setErrorTitle(undefined);
         setErrorSeverity(undefined);
         setDisplayError(true);
+      } finally {
+        setTagLoading(false);
       }
     }
   };
@@ -204,6 +213,7 @@ export default function ViewManualContact() {
   const addTag = async (toAdd: string) => {
     if (initialContactData) {
       try {
+        setTagLoading(true);
         const updatedContact = await addTagToContact(initialContactData, toAdd);
         setTags(updatedContact.tags ?? []);
         console.log("After adding tag");
@@ -217,6 +227,8 @@ export default function ViewManualContact() {
         setErrorTitle(undefined);
         setErrorSeverity(undefined);
         setDisplayError(true);
+      } finally {
+        setTagLoading(false);
       }
     }
   };
@@ -351,6 +363,7 @@ export default function ViewManualContact() {
               editedNotes={editedNotes}
               saveEditedNotes={saveEditedNotes}
               cancelEditedNotes={cancelEditedNotes}
+              isLoading={btnLoading}
             />
           </div>
           <div className={classes.myTags}>
@@ -359,6 +372,7 @@ export default function ViewManualContact() {
               tagOptions={tagOptions}
               deleteTag={deleteTag}
               addTag={addTag}
+              isLoading={tagLoading}
             />
           </div>
         </div>

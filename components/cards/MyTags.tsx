@@ -6,6 +6,7 @@ import {
   Typography,
   makeStyles,
   IconButton,
+  CircularProgress,
 } from "@material-ui/core";
 import { Cancel } from "@material-ui/icons";
 import { COLORS } from "../../lib/Colors";
@@ -15,6 +16,7 @@ interface MyTagsProps {
   tagOptions?: string[];
   deleteTag?: (value: string) => void;
   addTag?: (value: string) => void;
+  isLoading?: boolean;
 }
 
 export default function MyTags({
@@ -22,6 +24,7 @@ export default function MyTags({
   tagOptions = [],
   deleteTag = (value: string) => {},
   addTag = (value: string) => {},
+  isLoading = false,
 }: MyTagsProps) {
   const classes = useStyles();
   const formatTagOptions = (options: string[]) => {
@@ -58,8 +61,9 @@ export default function MyTags({
         <Typography variant="h6" component="h3" className={classes.tagsTitle}>
           My tags
         </Typography>
-        <div className={classes.tagsList}>
-          {tags.map((value, index) => tagCreator(value, index))}
+        <div className={isLoading ? classes.loadingContainer : classes.tagsList}>
+          {!isLoading && tags.map((value, index) => tagCreator(value, index))}
+          {isLoading && <CircularProgress size={20} />}
         </div>
         <CreatableSelect
           instanceId="addTags"
@@ -94,6 +98,13 @@ const useStyles = makeStyles((theme) => ({
     maxHeight: 300,
     overflowY: "auto",
     overflowX: "hidden",
+  },
+  loadingContainer: {
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
+    minHeight: 60,
+    maxHeight: 300,
   },
   tagStyle: {
     padding: 5,

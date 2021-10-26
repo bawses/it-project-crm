@@ -20,6 +20,7 @@ interface MyNotesProps {
   editedNotes?: string;
   saveEditedNotes?: () => void;
   cancelEditedNotes?: () => void;
+  isLoading?: boolean;
 }
 
 export default function MyNotes({
@@ -30,6 +31,7 @@ export default function MyNotes({
   editedNotes = "",
   saveEditedNotes = () => {},
   cancelEditedNotes = () => {},
+  isLoading = false,
 }: MyNotesProps) {
   const classes = useStyles();
 
@@ -71,6 +73,7 @@ export default function MyNotes({
               onSubmit={saveEditedNotes}
               toSubmitForm={false}
               submitLabel="Save"
+              isLoading={isLoading}
             />
           </div>
         )}
