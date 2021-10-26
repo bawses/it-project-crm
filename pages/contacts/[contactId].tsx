@@ -24,6 +24,7 @@ import {
 	addContact_User,
 } from "../../api_client/ContactClient";
 import ErrorMessage, { AlertSeverity } from '../../components/errors/ErrorMessage';
+import { DataType } from "../../lib/EnumTypes";
 
 const useStyles = makeStyles((theme) => ({
 	containerStyle: {
@@ -143,11 +144,6 @@ export default function ViewContact() {
 			}
 		}
 	}, [contactId]);
-
-	useEffect(() => {
-		console.log("first fetch");
-		fetchContactDetails();
-	}, [fetchContactDetails]);
 
 	const toggleEditingMode = () => {
 		setIsEditingNotes(!isEditingNotes);
@@ -293,15 +289,16 @@ export default function ViewContact() {
 
 	useEffect(() => {
 		getSession().then((session) => {
-			if (session && session.user.type == "personal") {
+			if (session && session.user.type == DataType.User) {
 				setIsLoading(false);
+				fetchContactDetails();
 			  } else if (session) {
 				router.replace("/organisations/profile");
 			  } else {
 				router.replace("/login");
 			  }
 		});
-	}, [router]);
+	}, [router, fetchContactDetails]);
 
 	const handleContactOption = (
 		value: OnChangeValue<{ value: string; label: string }, false> | null

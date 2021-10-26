@@ -15,6 +15,7 @@ import { COLORS } from "../../../lib/Colors";
 import { IOrganisation } from "../../../lib/DataTypes";
 import { getOrganisationById } from "../../../api_client/OrganisationClient";
 import ErrorMessage, { AlertSeverity } from '../../../components/errors/ErrorMessage';
+import { DataType } from "../../../lib/EnumTypes";
 
 const useStyles = makeStyles((theme) => ({
   containerStyle: {
@@ -94,10 +95,6 @@ export default function OrgSettings() {
     }
   }, []);
 
-  useEffect(() => {
-    fetchProfileDetails();
-  }, [fetchProfileDetails]);
-
   const handleSubmit = async (event: React.SyntheticEvent) => {
     event.preventDefault();
 
@@ -137,15 +134,16 @@ export default function OrgSettings() {
 
   useEffect(() => {
     getSession().then((session) => {
-      if (session && session.user.type == "organisation") {
+      if (session && session.user.type == DataType.Organisation) {
 				setIsLoading(false);
+        fetchProfileDetails();
 			} else if (session) {
 				router.replace("/profile");
 			} else {
 				router.replace("/login");
 			}
     });
-  }, [router]);
+  }, [router, fetchProfileDetails]);
 
   if (isLoading) {
     return <PageLoadingBar />;

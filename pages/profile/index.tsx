@@ -14,6 +14,7 @@ import { IUser } from "../../lib/DataTypes";
 import { getUser } from "../../api_client/UserClient";
 import { COLORS } from "../../lib/Colors";
 import ErrorMessage, { AlertSeverity } from '../../components/errors/ErrorMessage';
+import { DataType } from "../../lib/EnumTypes";
 
 const useStyles = makeStyles((theme) => ({
 	containerStyle: {
@@ -105,20 +106,17 @@ export default function Profile() {
 	}, []);
 
 	useEffect(() => {
-		fetchProfileDetails();
-	}, [fetchProfileDetails]);
-
-	useEffect(() => {
 		getSession().then((session) => {
-			if (session && session.user.type == "personal") {
+			if (session && session.user.type == DataType.User) {
 				setIsLoading(false);
+				fetchProfileDetails();
 			  } else if (session) {
 				router.replace("/organisations/profile");
 			  } else {
 				router.replace("/login");
 			  }
 		});
-	}, [router]);
+	}, [router,fetchProfileDetails]);
 
 	if (isLoading) {
 		return <PageLoadingBar />;

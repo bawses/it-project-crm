@@ -21,6 +21,7 @@ import { IUser } from "../../lib/DataTypes";
 import ErrorMessage, {
   AlertSeverity,
 } from "../../components/errors/ErrorMessage";
+import { DataType } from "../../lib/EnumTypes";
 
 const useStyles = makeStyles((theme) => ({
   containerStyle: {
@@ -96,10 +97,6 @@ export default function Settings() {
     }
   }, []);
 
-  useEffect(() => {
-    fetchProfileDetails();
-  }, [fetchProfileDetails]);
-
   // handles submit action for recovery email update
   const handleEmailUpdate = async (event: React.SyntheticEvent) => {
     event.preventDefault();
@@ -169,15 +166,16 @@ export default function Settings() {
 
   useEffect(() => {
     getSession().then((session) => {
-      if (session && session.user.type == "personal") {
+      if (session && session.user.type == DataType.User) {
         setIsLoading(false);
+        fetchProfileDetails();
       } else if (session) {
         router.replace("/organisations/profile");
       } else {
         router.replace("/login");
       }
     });
-  }, [router]);
+  }, [router,fetchProfileDetails]);
 
   if (isLoading) {
     return <PageLoadingBar />;

@@ -21,7 +21,7 @@ export default function ProfileOptions({
       <Typography variant="h3" component="h3" className={classes.pageTitle}>
         My {isOrganisation ? "Organisation" : ""} Profile
       </Typography>
-      <div>
+      <div style={{display: 'flex', flexDirection: 'row'}}>
       <Tooltip title="Edit">
         <IconButton onClick={onPressEdit}>
           <Edit className={classes.icon} />

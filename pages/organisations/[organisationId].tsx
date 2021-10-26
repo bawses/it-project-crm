@@ -12,6 +12,7 @@ import { getSession } from "next-auth/client";
 import { IOrganisation } from "../../lib/DataTypes";
 import { getOrganisationById } from "../../api_client/OrganisationClient";
 import ErrorMessage, { AlertSeverity } from '../../components/errors/ErrorMessage';
+import { DataType } from "../../lib/EnumTypes";
 
 const useStyles = makeStyles((theme) => ({
   containerStyle: {
@@ -119,20 +120,17 @@ export default function ViewOrgContact() {
   }, [organisationId]);
 
   useEffect(() => {
-    fetchOrganisationDetails();
-  }, [fetchOrganisationDetails]);
-
-  useEffect(() => {
   	getSession().then((session) => {
-  		if (session && session.user.type == "personal") {
+  		if (session && session.user.type == DataType.User) {
 				setIsLoading(false);
+        fetchOrganisationDetails();
 			  } else if (session) {
 				router.replace("/organisations/profile");
 			  } else {
 				router.replace("/login");
 			  }
   	});
-  }, [router]);
+  }, [router,fetchOrganisationDetails]);
 
   if (isLoading) {
     return <PageLoadingBar />;

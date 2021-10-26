@@ -16,6 +16,7 @@ import { getSession, signOut } from "next-auth/client";
 import ErrorMessage, {
 	AlertSeverity,
 } from "../../../components/errors/ErrorMessage";
+import { DataType } from "../../../lib/EnumTypes";
 
 const useStyles = makeStyles((theme) => ({
 	containerStyle: {
@@ -106,20 +107,17 @@ export default function OrgProfile() {
 	}, []);
 
 	useEffect(() => {
-		fetchProfileDetails();
-	}, [fetchProfileDetails]);
-
-	useEffect(() => {
 		getSession().then((session) => {
-			if (session && session.user.type == "organisation") {
+			if (session && session.user.type == DataType.Organisation) {
 				setIsLoading(false);
+				fetchProfileDetails();
 			} else if (session) {
 				router.replace("/profile");
 			} else {
 				router.replace("/login");
 			}
 		});
-	}, [router]);
+	}, [router,fetchProfileDetails]);
 
 	if (isLoading) {
 		return <PageLoadingBar />;

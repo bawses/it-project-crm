@@ -26,6 +26,7 @@ import { IOrganisation } from "../../../lib/DataTypes";
 import { IOrganisation_Update } from "../../../lib/DataTypes_Update";
 import { updateOrganisation, getOrganisationById } from "../../../api_client/OrganisationClient";
 import ErrorMessage, { AlertSeverity } from "../../../components/errors/ErrorMessage";
+import { DataType } from "../../../lib/EnumTypes";
 
 const DEFAULT_URL: string =
 	"https://res.cloudinary.com/it-project-crm/image/upload/v1633002681/zdt7litmbbxfdvg7gdvx.png";
@@ -354,10 +355,6 @@ export default function EditOrgProfile() {
 		}
 	}, []);
 
-	useEffect(() => {
-		loadProfileData();
-	}, [loadProfileData]);
-
 	const formatHyperlink = (link?: string) => {
 		if (link) {
 			const formattedLink = link.replace(/\s+/g, "");
@@ -496,15 +493,16 @@ export default function EditOrgProfile() {
 
 	useEffect(() => {
 		getSession().then((session) => {
-			if (session && session.user.type == "organisation") {
+			if (session && session.user.type == DataType.Organisation) {
 				setIsLoading(false);
+				loadProfileData();
 			} else if (session) {
 				router.replace("/profile");
 			} else {
 				router.replace("/login");
 			}
 		});
-	}, [router]);
+	}, [router,loadProfileData]);
 
 	if (isLoading) {
 		return <PageLoadingBar />;

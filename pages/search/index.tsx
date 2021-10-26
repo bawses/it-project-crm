@@ -14,6 +14,7 @@ import { getSession } from "next-auth/client";
 import { IContact } from "../../lib/UnifiedDataType";
 import { addContact_User, searchContactsByName } from "../../api_client/ContactClient";
 import ErrorMessage, { AlertSeverity } from "../../components/errors/ErrorMessage";
+import { DataType } from "../../lib/EnumTypes";
 
 type IdToContactMap = Record<string, IContact>
 
@@ -129,7 +130,7 @@ export default function SearchPage() {
   // If the user is not logged in, redirect to the login page
   useEffect(() => {
     getSession().then((session) => {
-      if (session && session.user.type == "personal") {
+      if (session && session.user.type == DataType.User) {
         setIsLoading(false);
       } else if (session) {
         router.replace("/organisations/profile");
