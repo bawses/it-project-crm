@@ -25,6 +25,7 @@ import { COLORS } from "../../../lib/Colors";
 import { IOrganisation } from "../../../lib/DataTypes";
 import { IOrganisation_Update } from "../../../lib/DataTypes_Update";
 import { updateOrganisation, getOrganisationById } from "../../../api_client/OrganisationClient";
+import ErrorMessage, { AlertSeverity } from "../../../components/errors/ErrorMessage";
 
 const DEFAULT_URL: string =
 	"https://res.cloudinary.com/it-project-crm/image/upload/v1633002681/zdt7litmbbxfdvg7gdvx.png";
@@ -148,7 +149,10 @@ export default function EditOrgProfile() {
 	const [isLoading, setIsLoading] = useState(true);
 	const [profileImage, setProfileImage] = useState("");
 	const [imageFile, setImageFile] = useState();
-
+	const [displayError, setDisplayError] = useState(false)
+	const [errorMessage, setErrorMessage] = useState<string>()
+	const [errorTitle, setErrorTitle] = useState<string>()
+	const [errorSeverity, setErrorSeverity] = useState<AlertSeverity>()
 	const router = useRouter();
 
 	// On file select (from the pop up)
@@ -320,23 +324,32 @@ export default function EditOrgProfile() {
 			if (session) {
 				const fetchedData = await getOrganisationById(session.user.sub);
 
+				console.log(fetchedData);
+
+				if (fetchedData?.imageUrl) {
+					setProfileImage(fetchedData?.imageUrl);
+				}
+
 				setLocation(
-					fetchedData.location
-						? { value: fetchedData.location, label: fetchedData.location }
-						: null
+				fetchedData.location
+					? { value: fetchedData.location, label: fetchedData.location }
+					: null
 				);
 				const initialFieldValues = extractFieldValues(fetchedData);
 				setFieldValues(initialFieldValues);
 				const extraLinks = extractExtraFields(fetchedData);
 				setExtraFields(extraLinks);
-				/** TODO: set initial profile picture */
 				setIsLoading(false);
 			} else {
 				throw new Error("Can't get valid session!");
 			}
 		} catch (e) {
-			/** TODO: redirect to error page */
 			console.log(e);
+			// Display error message
+			setErrorMessage("Failed to load organisation profile details - Please try again")
+			setErrorTitle(undefined)
+			setErrorSeverity(undefined)
+			setDisplayError(true)
 			setIsLoading(false);
 		}
 	}, []);
@@ -433,6 +446,11 @@ export default function EditOrgProfile() {
 			}
 		} catch (e: any) {
 			console.log(e);
+			// Display error message
+			setErrorMessage("Failed to update organisation profile - Please try again")
+			setErrorTitle(undefined)
+			setErrorSeverity(undefined)
+			setDisplayError(true)
 			setIsLoading(false);
 		}
 	};
@@ -609,6 +627,13 @@ export default function EditOrgProfile() {
 					/>
 				</form>
 			</Container>
+			<ErrorMessage
+        		open={displayError}
+       			alertMessage={errorMessage}
+        		alertTitle={errorTitle}
+        		severity={errorSeverity}
+				handleClose={() => setDisplayError(false)}
+      		/>
 		</Layout>
 	);
 }

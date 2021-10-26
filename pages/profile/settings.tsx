@@ -12,8 +12,15 @@ import {
   TextField,
 } from "@material-ui/core";
 import { COLORS } from "../../lib/Colors";
-import { getUser, updatePasswordForUser } from "../../api_client/UserClient";
+import {
+  getUser,
+  updatePasswordForUser,
+  updateUser,
+} from "../../api_client/UserClient";
 import { IUser } from "../../lib/DataTypes";
+import ErrorMessage, {
+  AlertSeverity,
+} from "../../components/errors/ErrorMessage";
 
 const useStyles = makeStyles((theme) => ({
   containerStyle: {
@@ -62,6 +69,11 @@ export default function Settings() {
   const [profileData, setProfileData] = useState<IUser>();
   const classes = useStyles();
   const router = useRouter();
+  const [displayError, setDisplayError] = useState(false);
+  const [errorMessage, setErrorMessage] = useState<string>();
+  const [errorTitle, setErrorTitle] = useState<string>();
+  const [errorSeverity, setErrorSeverity] = useState<AlertSeverity>();
+  const [recoveryEmail, setRecoveryEmail] = useState("");
   const [currentPassword, setCurrentPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
@@ -74,8 +86,12 @@ export default function Settings() {
       console.log(fetchedData);
       setIsLoading(false);
     } catch (e) {
-      /** TODO: redirect to error page */
       console.log(e);
+      // Display error message
+      setErrorMessage("Failed to load account details - Please try again");
+      setErrorTitle(undefined);
+      setErrorSeverity(undefined);
+      setDisplayError(true);
       setIsLoading(false);
     }
   }, []);
@@ -84,20 +100,68 @@ export default function Settings() {
     fetchProfileDetails();
   }, [fetchProfileDetails]);
 
-  const handleSubmit = async (event: React.SyntheticEvent) => {
+  // handles submit action for recovery email update
+  const handleEmailUpdate = async (event: React.SyntheticEvent) => {
     event.preventDefault();
-    if (newPassword !== confirmPassword) {
-      alert("Error! Passwords don't match");
+    if (recoveryEmail == profileData?.email[0]) {
+      alert("Error! Please use a different email for your recovery email. ");
       return;
     }
     try {
       setIsLoading(true);
-      const updatedUser = await updatePasswordForUser(currentPassword, newPassword);
+      const updatedUser = await updateUser({
+        recoveryEmail,
+      });
       console.log(updatedUser);
-      console.log("Password updated!")
-      router.replace('/profile');
+      console.log("Recovery Email updated!");
+      router.replace("/profile");
     } catch (e: any) {
       console.log(e);
+      // Display error message
+      setErrorMessage("Failed to update recovery email - Please try again");
+      setErrorTitle(undefined);
+      setErrorSeverity(undefined);
+      setDisplayError(true);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  // handles submit action for password update
+  const handleSubmit = async (event: React.SyntheticEvent) => {
+    event.preventDefault();
+    if (!currentPassword || !newPassword || !confirmPassword) {
+      // Display error message
+      setErrorMessage("Please enter your current and new passwords");
+      setErrorTitle(undefined);
+      setErrorSeverity(undefined);
+      setDisplayError(true);
+      return;
+    }
+    if (newPassword !== confirmPassword) {
+      // Display error message
+      setErrorMessage("New passwords don't match - Please try again");
+      setErrorTitle(undefined);
+      setErrorSeverity(undefined);
+      setDisplayError(true);
+      return;
+    }
+    try {
+      setIsLoading(true);
+      const updatedUser = await updatePasswordForUser(
+        currentPassword,
+        newPassword
+      );
+      console.log(updatedUser);
+      console.log("Password updated!");
+      router.replace("/profile");
+    } catch (e: any) {
+      console.log(e);
+      // Display error message
+      setErrorMessage("Failed to update password - Please try again");
+      setErrorTitle(undefined);
+      setErrorSeverity(undefined);
+      setDisplayError(true);
     } finally {
       setIsLoading(false);
     }
@@ -143,6 +207,46 @@ export default function Settings() {
               {profileData?.email[0]}
             </Typography>
           </div>
+          {/* Recovery Email */}
+          <div className={classes.passwordSection}>
+            <Typography variant="h6" component="h5">
+              Update/Add recovery email
+            </Typography>
+            <Typography
+              variant="h6"
+              component="h6"
+              style={{ color: COLORS.textGrey }}
+            >
+              Current recovery email:{" "}
+              {profileData?.recoveryEmail
+                ? profileData?.recoveryEmail
+                : "None, add one now"}
+            </Typography>
+          </div>
+          <form autoComplete="off" onSubmit={handleEmailUpdate}>
+            <div className={classes.passwordSection}>
+              <TextField
+                size="small"
+                variant="filled"
+                id="recoveryEmail"
+                label={"Enter a recovery email"}
+                fullWidth
+                value={recoveryEmail}
+                onChange={(event) => setRecoveryEmail(event.target.value)}
+                className={classes.passwordInput}
+              />
+            </div>
+            <div className={classes.submitNewPassword}>
+              <TextButton
+                type="submit"
+                color={COLORS.actionOrange}
+                textColor={COLORS.white}
+                title="Update Recovery Email"
+              />
+            </div>
+          </form>
+
+          {/* Update Password */}
           <div className={classes.passwordSection}>
             <Typography variant="h6" component="h5">
               Update password
@@ -189,13 +293,20 @@ export default function Settings() {
                 type="submit"
                 color={COLORS.actionOrange}
                 textColor={COLORS.white}
-                title="Change password"
+                title="Change Password"
               />
             </div>
           </form>
         </Grid>
         <br />
       </Container>
+      <ErrorMessage
+        open={displayError}
+        alertMessage={errorMessage}
+        alertTitle={errorTitle}
+        severity={errorSeverity}
+        handleClose={() => setDisplayError(false)}
+      />
     </Layout>
   );
 }

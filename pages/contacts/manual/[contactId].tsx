@@ -1,7 +1,7 @@
 import { Container, Typography, makeStyles } from "@material-ui/core";
 import Image from "next/image";
 import DEFAULT_IMAGE from "../../../assets/blank-profile-picture-973460_640.png";
-import { useState, useEffect, useCallback } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import MyTags from "../../../components/cards/MyTags";
 import MyNotes from "../../../components/cards/MyNotes";
 import ContactDetails from "../../../components/cards/ContactDetails";
@@ -23,6 +23,9 @@ import {
   toggleStarContact,
   toggleArchiveContact,
 } from "../../../api_client/ContactClient";
+import ErrorMessage, {
+  AlertSeverity,
+} from "../../../components/errors/ErrorMessage";
 
 const useStyles = makeStyles((theme) => ({
   containerStyle: {
@@ -95,7 +98,10 @@ export default function ViewManualContact() {
   const [tagOptions, setTagOptions] = useState<string[]>([]);
   const [isStarred, setIsStarred] = useState(false);
   const [isArchived, setIsArchived] = useState(false);
-
+  const [displayError, setDisplayError] = useState(false);
+  const [errorMessage, setErrorMessage] = useState<string>();
+  const [errorTitle, setErrorTitle] = useState<string>();
+  const [errorSeverity, setErrorSeverity] = useState<AlertSeverity>();
   const router = useRouter();
   const { contactId } = router.query;
 
@@ -115,8 +121,14 @@ export default function ViewManualContact() {
         setIsArchived(fetchedData.archived ?? false);
         setIsLoading(false);
       } catch (e) {
-        /** TODO: redirect to error page */
         console.log(e);
+        // Display error message
+        setErrorMessage(
+          "Failed to load manual contact - Please refresh the page and try again."
+        );
+        setErrorTitle(undefined);
+        setErrorSeverity(undefined);
+        setDisplayError(true);
         setIsLoading(false);
       }
     }
@@ -147,6 +159,11 @@ export default function ViewManualContact() {
         setEditedNotes(updatedContact.notes ?? "");
       } catch (e) {
         console.log(e);
+        // Display error message
+        setErrorMessage("Failed to update notes - Please try again");
+        setErrorTitle(undefined);
+        setErrorSeverity(undefined);
+        setDisplayError(true);
       }
     }
   }, [initialContactData, editedNotes]);
@@ -179,6 +196,11 @@ export default function ViewManualContact() {
         setTagOptions(updatedTagOptions);
       } catch (e) {
         console.log(e);
+        // Display error message
+        setErrorMessage("Failed to delete tag - Please try again");
+        setErrorTitle(undefined);
+        setErrorSeverity(undefined);
+        setDisplayError(true);
       }
     }
   };
@@ -194,6 +216,11 @@ export default function ViewManualContact() {
         setTagOptions(updatedTagOptions);
       } catch (e) {
         console.log(e);
+        // Display error message
+        setErrorMessage("Failed to add new tag - Please try again");
+        setErrorTitle(undefined);
+        setErrorSeverity(undefined);
+        setDisplayError(true);
       }
     }
   };
@@ -205,6 +232,11 @@ export default function ViewManualContact() {
         console.log(updatedContact);
       } catch (e) {
         console.log(e);
+        // Display error message
+        setErrorMessage("Failed to star this contact - Please try again");
+        setErrorTitle(undefined);
+        setErrorSeverity(undefined);
+        setDisplayError(true);
       }
     }
   }, [initialContactData]);
@@ -216,6 +248,11 @@ export default function ViewManualContact() {
         console.log(updatedContact);
       } catch (e) {
         console.log(e);
+        // Display error message
+        setErrorMessage(undefined);
+        setErrorTitle(undefined);
+        setErrorSeverity(undefined);
+        setDisplayError(true);
       }
     }
   }, [initialContactData]);
@@ -230,6 +267,11 @@ export default function ViewManualContact() {
         router.replace("/contacts");
       } catch (e) {
         console.log(e);
+        // Display error message
+        setErrorMessage("Failed to delete this contact - Please try again");
+        setErrorTitle(undefined);
+        setErrorSeverity(undefined);
+        setDisplayError(true);
         setIsLoading(false);
       }
     }
@@ -324,6 +366,13 @@ export default function ViewManualContact() {
           </div>
         </div>
       </Container>
+      <ErrorMessage
+        open={displayError}
+        alertMessage={errorMessage}
+        alertTitle={errorTitle}
+        severity={errorSeverity}
+        handleClose={() => setDisplayError(false)}
+      />
     </Layout>
   );
 }

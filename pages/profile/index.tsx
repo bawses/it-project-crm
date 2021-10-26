@@ -13,6 +13,7 @@ import { getSession, signOut } from "next-auth/client";
 import { IUser } from "../../lib/DataTypes";
 import { getUser } from "../../api_client/UserClient";
 import { COLORS } from "../../lib/Colors";
+import ErrorMessage, { AlertSeverity } from '../../components/errors/ErrorMessage';
 
 const useStyles = makeStyles((theme) => ({
 	containerStyle: {
@@ -66,6 +67,10 @@ export default function Profile() {
 		"https://res.cloudinary.com/it-project-crm/image/upload/v1633002681/zdt7litmbbxfdvg7gdvx.png"
 	);
 	const [isLoading, setIsLoading] = useState(true);
+	const [displayError, setDisplayError] = useState(false)
+	const [errorMessage, setErrorMessage] = useState<string>()
+	const [errorTitle, setErrorTitle] = useState<string>()
+	const [errorSeverity, setErrorSeverity] = useState<AlertSeverity>()
 	const router = useRouter();
 
 	const handleSignOut = (e: React.SyntheticEvent) => {
@@ -89,8 +94,12 @@ export default function Profile() {
 			console.log(fetchedData);
 			setIsLoading(false);
 		} catch (e) {
-			/** TODO: redirect to error page */
 			console.log(e);
+			// Display error message
+			setErrorMessage("Failed to load profile details - Please try again")
+			setErrorTitle(undefined)
+			setErrorSeverity(undefined)
+			setDisplayError(true)
 			setIsLoading(false);
 		}
 	}, []);
@@ -156,6 +165,13 @@ export default function Profile() {
 					/>
 				</div>
 			</Container>
+			<ErrorMessage
+        		open={displayError}
+        		alertMessage={errorMessage}
+        		alertTitle={errorTitle}
+        		severity={errorSeverity}
+				handleClose={() => setDisplayError(false)}
+      		/>
 		</Layout>
 	);
 }

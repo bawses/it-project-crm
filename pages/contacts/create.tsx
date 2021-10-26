@@ -5,7 +5,6 @@ import {
   makeStyles,
   TextField,
 } from "@material-ui/core";
-import { Business } from "@material-ui/icons";
 import Image from "next/image";
 import DEFAULT_IMAGE from "../../assets/blank-profile-picture-973460_640.png";
 import React, { useCallback, useEffect, useState } from "react";
@@ -26,6 +25,9 @@ import OrganisationInput from "../../components/input/OrganisationInput";
 import { IOrganisation } from "../../lib/DataTypes";
 import { orgSelectValue } from "../../components/input/OrganisationSelector";
 import { getOrganisations } from "../../api_client/OrganisationClient";
+import ErrorMessage, {
+  AlertSeverity,
+} from "../../components/errors/ErrorMessage";
 
 const useStyles = makeStyles((theme) => ({
   containerStyle: {
@@ -106,7 +108,6 @@ type ContactDetailsType = {
   secondaryEmail: string;
   primaryPhone: string;
   secondaryPhone: string;
-  address: string;
 };
 
 export type ExtraFieldType = {
@@ -134,10 +135,13 @@ export default function CreateContact() {
     secondaryEmail: "",
     primaryPhone: "",
     secondaryPhone: "",
-    address: "",
   });
   const [extraFields, setExtraFields] = useState<ExtraFieldType[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [displayError, setDisplayError] = useState(false);
+  const [errorMessage, setErrorMessage] = useState<string>();
+  const [errorTitle, setErrorTitle] = useState<string>();
+  const [errorSeverity, setErrorSeverity] = useState<AlertSeverity>();
   const router = useRouter();
 
   const fieldCreator = (
@@ -190,8 +194,14 @@ export default function CreateContact() {
       console.log(allOrgs);
       setIsLoading(false);
     } catch (e) {
-      /** TODO: redirect to error page */
       console.log(e);
+      // Display error message
+      setErrorMessage(
+        "Failed to fetch organisations to select from - Please refresh the page and try again"
+      );
+      setErrorTitle("Warning");
+      setErrorSeverity("warning");
+      setDisplayError(true);
       setIsLoading(false);
     }
   }, []);
@@ -204,6 +214,13 @@ export default function CreateContact() {
     /** TODO: make alert or pop up if missing required fields */
     if (!!fieldValues.firstName === false && !!fieldValues.lastName === false) {
       console.log("Error: must enter first or last name");
+      // Display error message
+      setErrorMessage(
+        "Please enter a first or last name."
+      );
+      setErrorTitle(undefined);
+      setErrorSeverity(undefined);
+      setDisplayError(true);
       return;
     }
     /** Remove any extra fields that are empty */
@@ -262,6 +279,13 @@ export default function CreateContact() {
       setIsLoading(false);
     } catch (e: any) {
       console.log(e);
+      // Display error message
+      setErrorMessage(
+        "Failed to create new manual contact - Please try again"
+      );
+      setErrorTitle(undefined);
+      setErrorSeverity(undefined);
+      setDisplayError(true);
       setIsLoading(false);
     }
   };
@@ -413,21 +437,6 @@ export default function CreateContact() {
                 }
               />
             </div>
-            <div className={classes.iconRow}>
-              <Business className={classes.icon} />
-              <TextField
-                size="small"
-                variant="filled"
-                id="workAddress"
-                label="Work address"
-                fullWidth
-                value={fieldValues.address}
-                onChange={(event) =>
-                  handleChange("address", event.target.value)
-                }
-                className={classes.topSpacing}
-              />
-            </div>
             {extraFields.map((field, index) =>
               fieldCreator(index, field.fieldType, field.fieldValue)
             )}
@@ -442,6 +451,13 @@ export default function CreateContact() {
           />
         </form>
       </Container>
+      <ErrorMessage
+        open={displayError}
+        alertMessage={errorMessage}
+        alertTitle={errorTitle}
+        severity={errorSeverity}
+        handleClose={() => setDisplayError(false)}
+      />
     </Layout>
   );
 }

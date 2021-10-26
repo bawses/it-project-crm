@@ -14,6 +14,7 @@ import {
 import { COLORS } from "../../../lib/Colors";
 import { IOrganisation } from "../../../lib/DataTypes";
 import { getOrganisationById } from "../../../api_client/OrganisationClient";
+import ErrorMessage, { AlertSeverity } from '../../../components/errors/ErrorMessage';
 
 const useStyles = makeStyles((theme) => ({
   containerStyle: {
@@ -62,6 +63,10 @@ export default function OrgSettings() {
   const [profileData, setProfileData] = useState<IOrganisation>();
   const classes = useStyles();
   const router = useRouter();
+  const [displayError, setDisplayError] = useState(false)
+  const [errorMessage, setErrorMessage] = useState<string>()
+  const [errorTitle, setErrorTitle] = useState<string>()
+  const [errorSeverity, setErrorSeverity] = useState<AlertSeverity>()
   const [currentPassword, setCurrentPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
@@ -79,8 +84,12 @@ export default function OrgSettings() {
 				throw new Error("Can't get valid session!");
 			}
     } catch (e) {
-      /** TODO: redirect to error page */
       console.log(e);
+      // Display error message
+      setErrorMessage('Failed to load account details - Please try again')
+      setErrorTitle(undefined)
+      setErrorSeverity(undefined)
+      setDisplayError(true)
       setIsLoading(false);
     }
   }, []);
@@ -89,13 +98,41 @@ export default function OrgSettings() {
     fetchProfileDetails();
   }, [fetchProfileDetails]);
 
-  const handleSubmit = (event: React.SyntheticEvent) => {
+  const handleSubmit = async (event: React.SyntheticEvent) => {
     event.preventDefault();
-    if (newPassword !== confirmPassword) {
-      alert("Error! Passwords don't match");
+
+    if (!currentPassword || !newPassword || !confirmPassword) {
+      // Display error message
+      setErrorMessage("Please enter your current and new passwords")
+      setErrorTitle(undefined)
+      setErrorSeverity(undefined)
+      setDisplayError(true)
       return;
     }
-    console.log("Changing password");
+    if (newPassword !== confirmPassword) {
+      // Display error message
+      setErrorMessage("New passwords don't match - Please try again")
+      setErrorTitle(undefined)
+      setErrorSeverity(undefined)
+      setDisplayError(true)
+      return;
+    }
+    try {
+      setIsLoading(true);
+      // const updatedUser = await updatePasswordForUser(currentPassword, newPassword);
+      // console.log(updatedUser);
+      console.log("Password updated!")
+      router.replace('/profile');
+    } catch (e: any) {
+      console.log(e);
+      // Display error message
+      setErrorMessage('Failed to update password - Please try again')
+      setErrorTitle(undefined)
+      setErrorSeverity(undefined)
+      setDisplayError(true)
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   useEffect(() => {
@@ -191,6 +228,13 @@ export default function OrgSettings() {
         </Grid>
         <br />
       </Container>
+      <ErrorMessage
+        open={displayError}
+        alertMessage={errorMessage}
+        alertTitle={errorTitle}
+        severity={errorSeverity}
+        handleClose={() => setDisplayError(false)}
+      />
     </Layout>
   );
 }

@@ -1,7 +1,6 @@
 /*
  * Personal Sign Up Page
  */
-
 import { useRouter } from "next/router";
 import Link from "next/link";
 import React, { useEffect, useState, ChangeEvent, MouseEvent } from "react";
