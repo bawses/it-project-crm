@@ -27,6 +27,7 @@ import { IOrganisation, IUser } from "../../lib/DataTypes";
 import OrganisationInput from "../../components/input/OrganisationInput";
 import { orgSelectValue } from "../../components/input/OrganisationSelector";
 import { getOrganisations } from "../../api_client/OrganisationClient";
+import ErrorMessage, { AlertSeverity } from '../../components/errors/ErrorMessage';
 
 const DEFAULT_URL: string =
 	"https://res.cloudinary.com/it-project-crm/image/upload/v1633002681/zdt7litmbbxfdvg7gdvx.png";
@@ -155,6 +156,11 @@ export default function EditProfile() {
 	const [isLoading, setIsLoading] = useState(true);
 	const [profileImage, setProfileImage] = useState("");
 	const [imageFile, setImageFile] = useState();
+
+	const [displayError, setDisplayError] = useState(false)
+	const [errorMessage, setErrorMessage] = useState<string>()
+	const [errorTitle, setErrorTitle] = useState<string>()
+	const [errorSeverity, setErrorSeverity] = useState<AlertSeverity>()
 
 	const router = useRouter();
 
@@ -350,8 +356,12 @@ export default function EditProfile() {
 			setExtraFields(extraLinks);
 			setIsLoading(false);
 		} catch (e) {
-			/** TODO: redirect to error page */
 			console.log(e);
+			// Display error message
+			setErrorMessage('Failed to load profile details - Please try again')
+			setErrorTitle(undefined)
+			setErrorSeverity(undefined)
+			setDisplayError(true)
 			setIsLoading(false);
 		}
 	}, []);
@@ -385,6 +395,11 @@ export default function EditProfile() {
 		/** TODO: make alert or pop up if missing required fields */
 		if (!!fieldValues.firstName === false || !!fieldValues.lastName === false) {
 			console.log("Error: must enter first and last name");
+			// Display error message
+			setErrorMessage('Please enter a first and last name.')
+			setErrorTitle(undefined)
+			setErrorSeverity(undefined)
+			setDisplayError(true)
 			return;
 		}
 		/** Remove any extra fields that are empty */
@@ -451,6 +466,11 @@ export default function EditProfile() {
 			setIsLoading(false);
 		} catch (e: any) {
 			console.log(e);
+			// Display error message
+			setErrorMessage('Failed to update profile details - Please try again')
+			setErrorTitle(undefined)
+			setErrorSeverity(undefined)
+			setDisplayError(true)
 			setIsLoading(false);
 		}
 	};
@@ -612,6 +632,13 @@ export default function EditProfile() {
 					/>
 				</form>
 			</Container>
+			<ErrorMessage
+        		open={displayError}
+        		alertMessage={errorMessage}
+        		alertTitle={errorTitle}
+        		severity={errorSeverity}
+				handleClose={() => setDisplayError(false)}
+      		/>
 		</Layout>
 	);
 }

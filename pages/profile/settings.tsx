@@ -18,6 +18,9 @@ import {
   updateUser,
 } from "../../api_client/UserClient";
 import { IUser } from "../../lib/DataTypes";
+import ErrorMessage, {
+  AlertSeverity,
+} from "../../components/errors/ErrorMessage";
 
 const useStyles = makeStyles((theme) => ({
   containerStyle: {
@@ -66,6 +69,10 @@ export default function Settings() {
   const [profileData, setProfileData] = useState<IUser>();
   const classes = useStyles();
   const router = useRouter();
+  const [displayError, setDisplayError] = useState(false);
+  const [errorMessage, setErrorMessage] = useState<string>();
+  const [errorTitle, setErrorTitle] = useState<string>();
+  const [errorSeverity, setErrorSeverity] = useState<AlertSeverity>();
   const [recoveryEmail, setRecoveryEmail] = useState("");
   const [currentPassword, setCurrentPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
@@ -79,8 +86,12 @@ export default function Settings() {
       console.log(fetchedData);
       setIsLoading(false);
     } catch (e) {
-      /** TODO: redirect to error page */
       console.log(e);
+      // Display error message
+      setErrorMessage("Failed to load account details - Please try again");
+      setErrorTitle(undefined);
+      setErrorSeverity(undefined);
+      setDisplayError(true);
       setIsLoading(false);
     }
   }, []);
@@ -104,9 +115,13 @@ export default function Settings() {
       console.log(updatedUser);
       console.log("Recovery Email updated!");
       router.replace("/profile");
-      alert("Recovery Email updated! ");
     } catch (e: any) {
       console.log(e);
+      // Display error message
+      setErrorMessage("Failed to update recovery email - Please try again");
+      setErrorTitle(undefined);
+      setErrorSeverity(undefined);
+      setDisplayError(true);
     } finally {
       setIsLoading(false);
     }
@@ -115,8 +130,20 @@ export default function Settings() {
   // handles submit action for password update
   const handleSubmit = async (event: React.SyntheticEvent) => {
     event.preventDefault();
+    if (!currentPassword || !newPassword || !confirmPassword) {
+      // Display error message
+      setErrorMessage("Please enter your current and new passwords");
+      setErrorTitle(undefined);
+      setErrorSeverity(undefined);
+      setDisplayError(true);
+      return;
+    }
     if (newPassword !== confirmPassword) {
-      alert("Error! Passwords don't match");
+      // Display error message
+      setErrorMessage("New passwords don't match - Please try again");
+      setErrorTitle(undefined);
+      setErrorSeverity(undefined);
+      setDisplayError(true);
       return;
     }
     try {
@@ -130,6 +157,11 @@ export default function Settings() {
       router.replace("/profile");
     } catch (e: any) {
       console.log(e);
+      // Display error message
+      setErrorMessage("Failed to update password - Please try again");
+      setErrorTitle(undefined);
+      setErrorSeverity(undefined);
+      setDisplayError(true);
     } finally {
       setIsLoading(false);
     }
@@ -266,6 +298,13 @@ export default function Settings() {
         </Grid>
         <br />
       </Container>
+      <ErrorMessage
+        open={displayError}
+        alertMessage={errorMessage}
+        alertTitle={errorTitle}
+        severity={errorSeverity}
+        handleClose={() => setDisplayError(false)}
+      />
     </Layout>
   );
 }

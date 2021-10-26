@@ -25,6 +25,9 @@ import OrganisationInput from "../../components/input/OrganisationInput";
 import { IOrganisation } from "../../lib/DataTypes";
 import { orgSelectValue } from "../../components/input/OrganisationSelector";
 import { getOrganisations } from "../../api_client/OrganisationClient";
+import ErrorMessage, {
+  AlertSeverity,
+} from "../../components/errors/ErrorMessage";
 
 const useStyles = makeStyles((theme) => ({
   containerStyle: {
@@ -135,6 +138,10 @@ export default function CreateContact() {
   });
   const [extraFields, setExtraFields] = useState<ExtraFieldType[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [displayError, setDisplayError] = useState(false);
+  const [errorMessage, setErrorMessage] = useState<string>();
+  const [errorTitle, setErrorTitle] = useState<string>();
+  const [errorSeverity, setErrorSeverity] = useState<AlertSeverity>();
   const router = useRouter();
 
   const fieldCreator = (
@@ -159,17 +166,17 @@ export default function CreateContact() {
   };
 
   const formatHyperlink = (link?: string) => {
-		if (link) {
-			const formattedLink = link.replace(/\s+/g, '');
-			if (formattedLink.startsWith('https://')) {
-				return formattedLink;
-			} else if (formattedLink.startsWith('http://')) {
-				return formattedLink.replace('http://', 'https://');
-			} else {
-				return 'https://' + formattedLink;
-			}
-		}
-	}
+    if (link) {
+      const formattedLink = link.replace(/\s+/g, "");
+      if (formattedLink.startsWith("https://")) {
+        return formattedLink;
+      } else if (formattedLink.startsWith("http://")) {
+        return formattedLink.replace("http://", "https://");
+      } else {
+        return "https://" + formattedLink;
+      }
+    }
+  };
 
   const formatPairedData = (data: string[]) => {
     if (data.length === 2 && data[0] === "") {
@@ -180,27 +187,40 @@ export default function CreateContact() {
   };
 
   const fetchOrganisations = useCallback(async () => {
-		try {
-			setIsLoading(true);
-			const allOrgs = await getOrganisations();
-			setOrganisations(allOrgs);
-			console.log(allOrgs);
-			setIsLoading(false);
-		} catch (e) {
-			/** TODO: redirect to error page */
-			console.log(e);
-			setIsLoading(false);
-		}
-	}, []);
+    try {
+      setIsLoading(true);
+      const allOrgs = await getOrganisations();
+      setOrganisations(allOrgs);
+      console.log(allOrgs);
+      setIsLoading(false);
+    } catch (e) {
+      console.log(e);
+      // Display error message
+      setErrorMessage(
+        "Failed to fetch organisations to select from - Please refresh the page and try again"
+      );
+      setErrorTitle("Warning");
+      setErrorSeverity("warning");
+      setDisplayError(true);
+      setIsLoading(false);
+    }
+  }, []);
 
-	useEffect(() => {
-		fetchOrganisations();
-	}, [fetchOrganisations]);
+  useEffect(() => {
+    fetchOrganisations();
+  }, [fetchOrganisations]);
 
   const createNewContact = async () => {
     /** TODO: make alert or pop up if missing required fields */
     if (!!fieldValues.firstName === false && !!fieldValues.lastName === false) {
       console.log("Error: must enter first or last name");
+      // Display error message
+      setErrorMessage(
+        "Please enter a first or last name."
+      );
+      setErrorTitle(undefined);
+      setErrorSeverity(undefined);
+      setDisplayError(true);
       return;
     }
     /** Remove any extra fields that are empty */
@@ -212,26 +232,37 @@ export default function CreateContact() {
         firstName: fieldValues.firstName,
         lastName: fieldValues.lastName,
       },
-      email: formatPairedData([fieldValues.primaryEmail, fieldValues.secondaryEmail]),
-      phone: formatPairedData([fieldValues.primaryPhone, fieldValues.secondaryPhone]),
+      email: formatPairedData([
+        fieldValues.primaryEmail,
+        fieldValues.secondaryEmail,
+      ]),
+      phone: formatPairedData([
+        fieldValues.primaryPhone,
+        fieldValues.secondaryPhone,
+      ]),
       job: fieldValues.title,
       location: location?.value,
       links: {
-        facebook: formatHyperlink(finalExtraFields.find(
-          (field) => field.fieldType === "Facebook"
-        )?.fieldValue),
-        linkedIn: formatHyperlink(finalExtraFields.find(
-          (field) => field.fieldType === "LinkedIn"
-        )?.fieldValue),
-        instagram: formatHyperlink(finalExtraFields.find(
-          (field) => field.fieldType === "Instagram"
-        )?.fieldValue),
-        twitter: formatHyperlink(finalExtraFields.find(
-          (field) => field.fieldType === "Twitter"
-        )?.fieldValue),
-        website: formatHyperlink(finalExtraFields.find(
-          (field) => field.fieldType === "Website"
-        )?.fieldValue),
+        facebook: formatHyperlink(
+          finalExtraFields.find((field) => field.fieldType === "Facebook")
+            ?.fieldValue
+        ),
+        linkedIn: formatHyperlink(
+          finalExtraFields.find((field) => field.fieldType === "LinkedIn")
+            ?.fieldValue
+        ),
+        instagram: formatHyperlink(
+          finalExtraFields.find((field) => field.fieldType === "Instagram")
+            ?.fieldValue
+        ),
+        twitter: formatHyperlink(
+          finalExtraFields.find((field) => field.fieldType === "Twitter")
+            ?.fieldValue
+        ),
+        website: formatHyperlink(
+          finalExtraFields.find((field) => field.fieldType === "Website")
+            ?.fieldValue
+        ),
         other: finalExtraFields
           .filter((field) => field.fieldType === "Other")
           .map((other) => formatHyperlink(other.fieldValue) ?? ""),
@@ -248,6 +279,13 @@ export default function CreateContact() {
       setIsLoading(false);
     } catch (e: any) {
       console.log(e);
+      // Display error message
+      setErrorMessage(
+        "Failed to create new manual contact - Please try again"
+      );
+      setErrorTitle(undefined);
+      setErrorSeverity(undefined);
+      setDisplayError(true);
       setIsLoading(false);
     }
   };
@@ -411,6 +449,13 @@ export default function CreateContact() {
           />
         </form>
       </Container>
+      <ErrorMessage
+        open={displayError}
+        alertMessage={errorMessage}
+        alertTitle={errorTitle}
+        severity={errorSeverity}
+        handleClose={() => setDisplayError(false)}
+      />
     </Layout>
   );
 }

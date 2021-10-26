@@ -11,6 +11,7 @@ import { useRouter } from "next/router";
 import PageLoadingBar from "../../../components/PageLoadingBar";
 import { COLORS } from "../../../lib/Colors";
 import { IOrganisation } from "../../../lib/DataTypes";
+import ErrorMessage, { AlertSeverity } from '../../../components/errors/ErrorMessage';
 
 const useStyles = makeStyles((theme) => ({
   containerStyle: {
@@ -81,6 +82,10 @@ export default function OrgProfile() {
   	DEFAULT_IMAGE
   );
   const [isLoading, setIsLoading] = useState(true);
+  const [displayError, setDisplayError] = useState(false)
+  const [errorMessage, setErrorMessage] = useState<string>()
+  const [errorTitle, setErrorTitle] = useState<string>()
+  const [errorSeverity, setErrorSeverity] = useState<AlertSeverity>()
   const router = useRouter();
 
   const handleSignOut = (e: React.SyntheticEvent) => {
@@ -95,16 +100,19 @@ export default function OrgProfile() {
       const fetchedData = dummyOrganisation;
       setProfileData(fetchedData);
 
-      // TODO: add profile pic field to organisation data type
-    //   if (fetchedData?.imageUrl) {
-    //     setProfileImage(fetchedData?.imageUrl);
-    //   }
+      // if (fetchedData?.imageUrl) {
+      //   setProfileImage(fetchedData?.imageUrl);
+      // }
 
       console.log(fetchedData);
       setIsLoading(false);
     } catch (e) {
-      /** TODO: redirect to error page */
       console.log(e);
+      // Display error message
+      setErrorMessage('Failed to load organisation profile - Please try again')
+      setErrorTitle(undefined)
+      setErrorSeverity(undefined)
+      setDisplayError(true)
       setIsLoading(false);
     }
   }, []);
@@ -164,6 +172,13 @@ export default function OrgProfile() {
           />
         </div>
       </Container>
+      <ErrorMessage
+      	open={displayError}
+      	alertMessage={errorMessage}
+      	alertTitle={errorTitle}
+      	severity={errorSeverity}
+        handleClose={() => setDisplayError(false)}
+      />
     </Layout>
   );
 }

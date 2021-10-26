@@ -23,6 +23,7 @@ import {
 	toggleStarContact,
 	addContact_User,
 } from "../../api_client/ContactClient";
+import ErrorMessage, { AlertSeverity } from '../../components/errors/ErrorMessage';
 
 const useStyles = makeStyles((theme) => ({
 	containerStyle: {
@@ -106,7 +107,10 @@ export default function ViewContact() {
 	const [tagOptions, setTagOptions] = useState<string[]>([]);
 	const [isStarred, setIsStarred] = useState(false);
 	const [isAdded, setIsAdded] = useState(false);
-
+	const [displayError, setDisplayError] = useState(false)
+	const [errorMessage, setErrorMessage] = useState<string>()
+	const [errorTitle, setErrorTitle] = useState<string>()
+	const [errorSeverity, setErrorSeverity] = useState<AlertSeverity>()
 	const router = useRouter();
 	const { contactId } = router.query;
 
@@ -129,8 +133,12 @@ export default function ViewContact() {
 				setIsAdded(fetchedData.isAddedContact);
 				setIsLoading(false);
 			} catch (e) {
-				/** TODO: redirect to error page */
 				console.log(e);
+				// Display error message
+				setErrorMessage("Failed to load contact - Please refresh the page")
+				setErrorTitle(undefined)
+				setErrorSeverity(undefined)
+				setDisplayError(true)
 				setIsLoading(false);
 			}
 		}
@@ -160,6 +168,11 @@ export default function ViewContact() {
 				setEditedNotes(updatedContact.notes ?? "");
 			} catch (e) {
 				console.log(e);
+				// Display error message
+				setErrorMessage("Failed to update notes - Please try again");
+				setErrorTitle(undefined);
+				setErrorSeverity(undefined);
+				setDisplayError(true);
 			}
 		}
 	}, [initialContactData, editedNotes]);
@@ -192,6 +205,11 @@ export default function ViewContact() {
 				setTagOptions(updatedTagOptions);
 			} catch (e) {
 				console.log(e);
+				// Display error message
+				setErrorMessage("Failed to delete tag - Please try again");
+				setErrorTitle(undefined);
+				setErrorSeverity(undefined);
+				setDisplayError(true);
 			}
 		}
 	};
@@ -207,6 +225,11 @@ export default function ViewContact() {
 				setTagOptions(updatedTagOptions);
 			} catch (e) {
 				console.log(e);
+				// Display error message
+				setErrorMessage("Failed to add new tag - Please try again");
+				setErrorTitle(undefined);
+				setErrorSeverity(undefined);
+				setDisplayError(true);
 			}
 		}
 	};
@@ -218,6 +241,11 @@ export default function ViewContact() {
 				console.log(updatedContact);
 			} catch (e) {
 				console.log(e);
+				// Display error message
+				setErrorMessage("Failed to star this contact - Please try again");
+				setErrorTitle(undefined);
+				setErrorSeverity(undefined);
+				setDisplayError(true);
 			}
 		}
 	}, [initialContactData]);
@@ -232,6 +260,11 @@ export default function ViewContact() {
 				router.replace("/contacts");
 			} catch (e) {
 				console.log(e);
+				// Display error message
+				setErrorMessage("Failed to remove this contact - Please try again");
+				setErrorTitle(undefined);
+				setErrorSeverity(undefined);
+				setDisplayError(true);
 				setIsLoading(false);
 			}
 		}
@@ -248,6 +281,11 @@ export default function ViewContact() {
 				setIsLoading(false);
 			} catch (e) {
 				console.log(e);
+				// Display error message
+				setErrorMessage("Failed to add this contact - Please try again");
+				setErrorTitle(undefined);
+				setErrorSeverity(undefined);
+				setDisplayError(true);
 				setIsLoading(false);
 			}
 		}
@@ -349,6 +387,13 @@ export default function ViewContact() {
 					</div>
 				)}
 			</Container>
+			<ErrorMessage
+        		open={displayError}
+        		alertMessage={errorMessage}
+        		alertTitle={errorTitle}
+        		severity={errorSeverity}
+				handleClose={() => setDisplayError(false)}
+      		/>
 		</Layout>
 	);
 }
