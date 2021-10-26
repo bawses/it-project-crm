@@ -173,12 +173,12 @@ export default function OrgSettings() {
               {profileData?.email[0]}
             </Typography>
           </div>
-          <div className={classes.passwordSection}>
+          {/* <div className={classes.passwordSection}>
             <Typography variant="h6" component="h5">
               Update password
             </Typography>
-          </div>
-          <form noValidate autoComplete="off" onSubmit={handleSubmit}>
+          </div> */}
+          {/* <form noValidate autoComplete="off" onSubmit={handleSubmit}>
             <div className={classes.passwordSection}>
               <TextField
                 size="small"
@@ -222,7 +222,7 @@ export default function OrgSettings() {
                 title="Change password"
               />
             </div>
-          </form>
+          </form> */}
         </Grid>
         <br />
       </Container>
