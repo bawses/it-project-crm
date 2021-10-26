@@ -4,7 +4,7 @@
 <br />
 <div align="center">
   <a href="https://github.com/bawses/it-project-crm">
-    <img src="assets/CataLog_logo.png" alt="Logo" width="275" height="110">
+    <img src="assets/CataLog_logo.png" alt="Logo" width="260" height="100">
   </a>
 
 <h3 align="center">Your Professional CRM - CataLog</h3>
@@ -77,7 +77,7 @@ Get a free API Key at [https://example.com](https://example.com)
 
 1. Clone the repo
    ```sh
-   git clone https://github.com/github_username/repo_name.git
+   git clone https://github.com/bawses/it-project-crm
    ```
    
 2. Install NPM packages
