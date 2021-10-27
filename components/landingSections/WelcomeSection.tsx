@@ -6,15 +6,18 @@ import { COLORS } from "../../lib/Colors";
 import BACKGROUND_IMAGE from "../../assets/landing_background.png";
 import TextButton from "../../components/buttons/TextButton";
 import Image from "next/image";
+import LoadingButton from "../buttons/LoadingButton";
 
 interface SectionProps {
   CTAtitle?: string;
   onPressCTA?: () => void;
+  btnLoading?: boolean;
 }
 
 export default function WelcomeSection({
   CTAtitle = "Login",
   onPressCTA = () => {},
+  btnLoading = false,
 }: SectionProps) {
   const classes = useStyles();
   const theme = useTheme();
@@ -50,24 +53,26 @@ export default function WelcomeSection({
         </div>
         {isMobile && (
           <div className={classes.mobileLoginBtn}>
-            <TextButton
+            {!btnLoading && <TextButton
               title={CTAtitle}
               color={COLORS.actionOrange}
               textColor={COLORS.white}
               onClick={onPressCTA}
-            />
+            />}
+            {btnLoading && <LoadingButton className={classes.loadingBtn} />}
           </div>
         )}
       </div>
       {!isMobile && (
         <div className={classes.loginBtn}>
-          <TextButton
+          {!btnLoading && <TextButton
             title={CTAtitle}
             color={COLORS.actionOrange}
             textColor={COLORS.white}
             fontSize="1.5rem"
             onClick={onPressCTA}
-          />
+          />}
+          {btnLoading && <LoadingButton className={classes.loadingBtn} />}
         </div>
       )}
     </div>
@@ -130,5 +135,11 @@ const useStyles = makeStyles((theme) => ({
   },
   mobileLoginBtn: {
     marginTop: theme.spacing(3),
+  },
+  loadingBtn: {
+    [theme.breakpoints.up("xs")]: {
+      margin: "5px",
+      fontSize: '1.5rem',
+    },
   },
 }));

@@ -9,13 +9,17 @@ import OrganisationsSection from "../../components/landingSections/Organisations
 export default function Welcome() {
   const router = useRouter();
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [btnLoading, setBtnLoading] = useState(true);
 
   // If user already logged in, redirect to logged in home page (contacts)
   useEffect(() => {
+    setBtnLoading(true);
     getSession().then((session) => {
       if (session) {
         setIsLoggedIn(true);
       }
+    }).finally(() => {
+      setBtnLoading(false);
     });
   }, []);
 
@@ -24,6 +28,7 @@ export default function Welcome() {
       <WelcomeSection
         onPressCTA={() => router.push(isLoggedIn ? "/contacts" : "/login")}
         CTAtitle={isLoggedIn ? "Go to your contacts" : "Login"}
+        btnLoading={btnLoading}
       />
       <ProfessionalsSection
         isLoggedIn={isLoggedIn}

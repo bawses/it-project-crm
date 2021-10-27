@@ -10,6 +10,8 @@ import {
   Typography,
   Grid,
   TextField,
+  useTheme,
+  useMediaQuery,
 } from "@material-ui/core";
 import { COLORS } from "../../lib/Colors";
 import {
@@ -21,6 +23,7 @@ import { IUser } from "../../lib/DataTypes";
 import ErrorMessage, {
   AlertSeverity,
 } from "../../components/errors/ErrorMessage";
+import { DataType } from "../../lib/EnumTypes";
 
 const useStyles = makeStyles((theme) => ({
   containerStyle: {
@@ -78,6 +81,9 @@ export default function Settings() {
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
 
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down("xs"));
+
   const fetchProfileDetails = useCallback(async () => {
     try {
       setIsLoading(true);
@@ -95,10 +101,6 @@ export default function Settings() {
       setIsLoading(false);
     }
   }, []);
-
-  useEffect(() => {
-    fetchProfileDetails();
-  }, [fetchProfileDetails]);
 
   // handles submit action for recovery email update
   const handleEmailUpdate = async (event: React.SyntheticEvent) => {
@@ -169,13 +171,16 @@ export default function Settings() {
 
   useEffect(() => {
     getSession().then((session) => {
-      if (session) {
+      if (session && session.user.type == DataType.User) {
         setIsLoading(false);
+        fetchProfileDetails();
+      } else if (session) {
+        router.replace("/organisations/profile");
       } else {
         router.replace("/login");
       }
     });
-  }, [router]);
+  }, [router, fetchProfileDetails]);
 
   if (isLoading) {
     return <PageLoadingBar />;
@@ -194,13 +199,16 @@ export default function Settings() {
             </Typography>
           </div>
           <div className={classes.accountDetails}>
-            <Typography variant="h4" component="h4">
+            <Typography variant={isMobile ? "h5" : "h4"} component="h4">
               {profileData?.fullName}
             </Typography>
             <Typography
               variant="h6"
               component="h6"
-              style={{ color: COLORS.textGrey }}
+              style={{
+                color: COLORS.textGrey,
+                fontSize: isMobile ? "1rem" : undefined,
+              }}
             >
               {profileData?.email[0]}
             </Typography>

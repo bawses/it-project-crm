@@ -28,6 +28,7 @@ import { getOrganisations } from "../../api_client/OrganisationClient";
 import ErrorMessage, {
   AlertSeverity,
 } from "../../components/errors/ErrorMessage";
+import { DataType } from "../../lib/EnumTypes";
 
 const useStyles = makeStyles((theme) => ({
   containerStyle: {
@@ -206,10 +207,6 @@ export default function CreateContact() {
     }
   }, []);
 
-  useEffect(() => {
-    fetchOrganisations();
-  }, [fetchOrganisations]);
-
   const createNewContact = async () => {
     /** TODO: make alert or pop up if missing required fields */
     if (!!fieldValues.firstName === false && !!fieldValues.lastName === false) {
@@ -331,13 +328,16 @@ export default function CreateContact() {
 
   useEffect(() => {
     getSession().then((session) => {
-      if (session) {
+      if (session && session.user.type == DataType.User) {
         setIsLoading(false);
+        fetchOrganisations();
+      } else if (session) {
+        router.replace("/organisations/profile");
       } else {
         router.replace("/login");
       }
     });
-  }, [router]);
+  }, [router, fetchOrganisations]);
 
   if (isLoading) {
     return <PageLoadingBar />;

@@ -1,5 +1,5 @@
 /**
- * CataLog footer nav (mobile) 
+ * CataLog footer nav (mobile)
  */
 import React from "react";
 import { Box, IconButton, AppBar, Toolbar } from "@material-ui/core";
@@ -49,25 +49,35 @@ export default function Footer({ pageType = "personal" }: FooterProps) {
                 color="inherit"
                 aria-label="open drawer"
                 className={classes.navButton}
-                onClick={() => router.push("/profile")}
+                onClick={() =>
+                  router.push(
+                    pageType === "personal"
+                      ? "/profile"
+                      : "/organisations/profile"
+                  )
+                }
               >
                 <AccountCircleIcon fontSize="large" />
               </IconButton>
-              <IconButton
-                color="inherit"
-                className={classes.navButton}
-                onClick={() => router.push("/contacts")}
-              >
-                <CollectionsBookmarkIcon fontSize="large" />
-              </IconButton>
-              <IconButton
-                edge="end"
-                color="inherit"
-                className={classes.navButton}
-                onClick={() => router.push("/contacts/create")}
-              >
-                <PersonAddIcon fontSize="large" />
-              </IconButton>
+              {pageType === "personal" && (
+                <IconButton
+                  color="inherit"
+                  className={classes.navButton}
+                  onClick={() => router.push("/contacts")}
+                >
+                  <CollectionsBookmarkIcon fontSize="large" />
+                </IconButton>
+              )}
+              {pageType === "personal" && (
+                <IconButton
+                  edge="end"
+                  color="inherit"
+                  className={classes.navButton}
+                  onClick={() => router.push("/contacts/create")}
+                >
+                  <PersonAddIcon fontSize="large" />
+                </IconButton>
+              )}
             </Box>
           </div>
         </Toolbar>

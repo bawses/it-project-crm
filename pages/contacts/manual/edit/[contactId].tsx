@@ -35,6 +35,7 @@ import OrganisationInput from "../../../../components/input/OrganisationInput";
 import ErrorMessage, {
   AlertSeverity,
 } from "../../../../components/errors/ErrorMessage";
+import { DataType } from "../../../../lib/EnumTypes";
 
 const useStyles = makeStyles((theme) => ({
   containerStyle: {
@@ -305,10 +306,6 @@ export default function EditManualContact() {
     }
   }, [contactId]);
 
-  useEffect(() => {
-    loadContactData();
-  }, [loadContactData]);
-
   const formatHyperlink = (link?: string) => {
     if (link) {
       const formattedLink = link.replace(/\s+/g, "");
@@ -466,13 +463,16 @@ export default function EditManualContact() {
 
   useEffect(() => {
     getSession().then((session) => {
-      if (session) {
+      if (session && session.user.type == DataType.User) {
         setIsLoading(false);
+        loadContactData();
+      } else if (session) {
+        router.replace("/organisations/profile");
       } else {
         router.replace("/login");
       }
     });
-  }, [router]);
+  }, [router,loadContactData]);
 
   if (isLoading) {
     return <PageLoadingBar />;

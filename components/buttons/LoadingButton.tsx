@@ -14,7 +14,8 @@ interface LoadingButtonProps {
   loadingMessage?: string,
   indicatorMarginLeft?: number,
   indicatorMarginRight?: number,
-  fullWidth?: boolean
+  fullWidth?: boolean,
+  className?: string | undefined,
 }
 
 export default function LoadingButton({
@@ -31,7 +32,8 @@ export default function LoadingButton({
   loadingMessage = "Loading",
   indicatorMarginLeft = 0,
   indicatorMarginRight = 4,
-  fullWidth = undefined
+  fullWidth = undefined,
+  className = undefined,
 }: LoadingButtonProps) {
   return (
     <Button
@@ -49,6 +51,7 @@ export default function LoadingButton({
         ...(height ? { height: height } : {}),
         ...(width ? { width: width } : {})
       }}
+      className={className}
     >
       <CircularProgress
         size={indicatorSize}

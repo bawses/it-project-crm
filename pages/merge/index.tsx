@@ -18,6 +18,7 @@ import PageLoadingBar from "../../components/PageLoadingBar";
 import { COLORS } from "../../lib/Colors";
 import MergeConfirmation from "../../components/merge/MergeConfirmation";
 import ErrorMessage, { AlertSeverity } from '../../components/errors/ErrorMessage';
+import { DataType } from "../../lib/EnumTypes";
 
 // Get all manual contact data for this user
 async function getData(
@@ -87,7 +88,11 @@ export default function MergePage() {
   // If the user is not logged in, redirect to the login page
   useEffect(() => {
     getSession().then((session) => {
-      if (!session) {
+      if (session && session.user.type == DataType.User) {
+        setIsLoading(false);
+      } else if (session) {
+        router.replace("/organisations/profile");
+      } else {
         router.replace("/login");
       }
     });

@@ -1,4 +1,5 @@
 import NextAuth from "next-auth"
+import { DataType } from "../../../lib/EnumTypes";
 
 declare module "next-auth" {
   /**
@@ -9,6 +10,7 @@ declare module "next-auth" {
   }
 
   interface User {
+    type: DataType,
     sub: string,
     name: string,
     email: string   

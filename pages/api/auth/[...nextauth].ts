@@ -25,7 +25,7 @@ export default NextAuth({
         await connectToDatabase();
 
         var dataType: DataType;
-        switch(credentials.userType){
+        /* switch(credentials.userType){
           case "Organisation":
             dataType = DataType.Organisation;
             break;
@@ -36,8 +36,8 @@ export default NextAuth({
 
           default:
             dataType = DataType.User;
-        }
-        const entity = verifyEntity(credentials, dataType);
+        } */
+        const entity = verifyEntity(credentials);
         
         return entity;
       },
@@ -86,9 +86,11 @@ export default NextAuth({
 
         if (findUser){
           userOrToken.sub = findUser._id;
+          userOrToken.type = DataType.User;
         }
         else{
           userOrToken.sub = findOrg._id;
+          userOrToken.type = DataType.Organisation;
         }
         
         session.user = userOrToken;
@@ -97,24 +99,38 @@ export default NextAuth({
   }
 });
 
-async function verifyEntity(credentials: Record<string,string>, dataType: DataType){
+async function verifyEntity(credentials: Record<string,string>){
 
-    const dbCollection = Database[dataType];
+    const dbCollectionOrg = Database[DataType.Organisation];
+    const dbCollectionUser = Database[DataType.User];
 
-    const user = await dbCollection.findOne({
+    const user = await dbCollectionUser.findOne({
       email: credentials.email,
     });
-    
+    const org = await dbCollectionOrg.findOne({
+      email: credentials.email,
+    });
+
     // Should probably remove this in the future for security sake
-    if (!user) {
-      throw new Error("No user found!");
+    if (!user && !org) {
+      throw new Error("No user/org found!");
     }
 
-    const isValid = await verifyPassword(credentials.password, user.passwordHash);
+    let isValid;
+    if (user){
+      isValid = await verifyPassword(credentials.password, user.passwordHash);
+    }
+    else{
+      isValid = await verifyPassword(credentials.password, org.passwordHash);
+    }
 
     if (!isValid) {
       throw new Error("Could not log you in!");
     }
 
-    return user;
+    if (user){
+      return user;
+    }
+    return org;
+
 }

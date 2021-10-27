@@ -23,9 +23,10 @@ import { getSession } from "next-auth/client";
 import TextButton from "../../../components/buttons/TextButton";
 import { COLORS } from "../../../lib/Colors";
 import { IOrganisation } from "../../../lib/DataTypes";
-import { dummyOrganisation } from ".";
 import { IOrganisation_Update } from "../../../lib/DataTypes_Update";
+import { updateOrganisation, getOrganisationById } from "../../../api_client/OrganisationClient";
 import ErrorMessage, { AlertSeverity } from "../../../components/errors/ErrorMessage";
+import { DataType } from "../../../lib/EnumTypes";
 
 const DEFAULT_URL: string =
 	"https://res.cloudinary.com/it-project-crm/image/upload/v1633002681/zdt7litmbbxfdvg7gdvx.png";
@@ -121,7 +122,7 @@ type OrgDetailsType = {
 	primaryPhone: string;
 	secondaryPhone: string;
 	address: string;
-    about: string;
+	about: string;
 };
 
 export type ExtraFieldType = {
@@ -143,7 +144,7 @@ export default function EditOrgProfile() {
 		primaryPhone: "",
 		secondaryPhone: "",
 		address: "",
-        about: "",
+		about: "",
 	});
 	const [extraFields, setExtraFields] = useState<ExtraFieldType[]>([]);
 	const [isLoading, setIsLoading] = useState(true);
@@ -270,7 +271,7 @@ export default function EditOrgProfile() {
 					? fetchedData.phone[1]
 					: "",
 			address: "",
-            about: fetchedData.about ?? "",
+			about: fetchedData.about ?? "",
 		};
 	};
 
@@ -319,25 +320,30 @@ export default function EditOrgProfile() {
 	const loadProfileData = useCallback(async () => {
 		try {
 			setIsLoading(true);
-			const fetchedData = dummyOrganisation;
+			let session = await getSession();
+			console.log(session?.user);
+			if (session) {
+				const fetchedData = await getOrganisationById(session.user.sub);
 
-			console.log(fetchedData);
+				console.log(fetchedData);
 
-			if (fetchedData?.imageUrl) {
-				setProfileImage(fetchedData?.imageUrl);
-			}
+				if (fetchedData?.imageUrl) {
+					setProfileImage(fetchedData?.imageUrl);
+				}
 
-			setLocation(
+				setLocation(
 				fetchedData.location
 					? { value: fetchedData.location, label: fetchedData.location }
 					: null
-			);
-			const initialFieldValues = extractFieldValues(fetchedData);
-			setFieldValues(initialFieldValues);
-			const extraLinks = extractExtraFields(fetchedData);
-			setExtraFields(extraLinks);
-			/** TODO: set initial profile picture */
-			setIsLoading(false);
+				);
+				const initialFieldValues = extractFieldValues(fetchedData);
+				setFieldValues(initialFieldValues);
+				const extraLinks = extractExtraFields(fetchedData);
+				setExtraFields(extraLinks);
+				setIsLoading(false);
+			} else {
+				throw new Error("Can't get valid session!");
+			}
 		} catch (e) {
 			console.log(e);
 			// Display error message
@@ -349,22 +355,18 @@ export default function EditOrgProfile() {
 		}
 	}, []);
 
-	useEffect(() => {
-		loadProfileData();
-	}, [loadProfileData]);
-
 	const formatHyperlink = (link?: string) => {
 		if (link) {
-			const formattedLink = link.replace(/\s+/g, '');
-			if (formattedLink.startsWith('https://')) {
+			const formattedLink = link.replace(/\s+/g, "");
+			if (formattedLink.startsWith("https://")) {
 				return formattedLink;
-			} else if (formattedLink.startsWith('http://')) {
-				return formattedLink.replace('http://', 'https://');
+			} else if (formattedLink.startsWith("http://")) {
+				return formattedLink.replace("http://", "https://");
 			} else {
-				return 'https://' + formattedLink;
+				return "https://" + formattedLink;
 			}
 		}
-	}
+	};
 
 	const formatPairedData = (data: string[]) => {
 		if (data.length === 2 && data[0] === "") {
@@ -386,26 +388,37 @@ export default function EditOrgProfile() {
 		);
 		const detailsToUpdate: IOrganisation_Update = {
 			name: fieldValues.name,
-			email: formatPairedData([fieldValues.primaryEmail, fieldValues.secondaryEmail]),
-			phone: formatPairedData([fieldValues.primaryPhone, fieldValues.secondaryPhone]),
+			email: formatPairedData([
+				fieldValues.primaryEmail,
+				fieldValues.secondaryEmail,
+			]),
+			phone: formatPairedData([
+				fieldValues.primaryPhone,
+				fieldValues.secondaryPhone,
+			]),
 			industry: fieldValues.industry,
 			location: location ? location.value : "",
 			links: {
-				facebook: formatHyperlink(finalExtraFields.find(
-					(field) => field.fieldType === "Facebook"
-				)?.fieldValue),
-				linkedIn: formatHyperlink(finalExtraFields.find(
-					(field) => field.fieldType === "LinkedIn"
-				)?.fieldValue),
-				instagram: formatHyperlink(finalExtraFields.find(
-					(field) => field.fieldType === "Instagram"
-				)?.fieldValue),
-				twitter: formatHyperlink(finalExtraFields.find(
-					(field) => field.fieldType === "Twitter"
-				)?.fieldValue),
-				website: formatHyperlink(finalExtraFields.find(
-					(field) => field.fieldType === "Website"
-				)?.fieldValue),
+				facebook: formatHyperlink(
+					finalExtraFields.find((field) => field.fieldType === "Facebook")
+						?.fieldValue
+				),
+				linkedIn: formatHyperlink(
+					finalExtraFields.find((field) => field.fieldType === "LinkedIn")
+						?.fieldValue
+				),
+				instagram: formatHyperlink(
+					finalExtraFields.find((field) => field.fieldType === "Instagram")
+						?.fieldValue
+				),
+				twitter: formatHyperlink(
+					finalExtraFields.find((field) => field.fieldType === "Twitter")
+						?.fieldValue
+				),
+				website: formatHyperlink(
+					finalExtraFields.find((field) => field.fieldType === "Website")
+						?.fieldValue
+				),
 				other: finalExtraFields
 					.filter((field) => field.fieldType === "Other")
 					.map((other) => formatHyperlink(other.fieldValue) ?? ""),
@@ -414,11 +427,20 @@ export default function EditOrgProfile() {
 		};
 		try {
 			setIsLoading(true);
-            console.log("Updating org details");
-            console.log(detailsToUpdate);
-			// const updatedUser = await updateUser(detailsToUpdate);
-			router.replace("/organisations/profile");
-			setIsLoading(false);
+			console.log("Updating org details");
+			console.log(detailsToUpdate);
+
+			const session = await getSession();
+			if (session) {
+				const updatedOrg = await updateOrganisation(
+					session.user.sub,
+					detailsToUpdate
+				);
+				router.replace("/organisations/profile");
+				setIsLoading(false);
+			} else {
+				throw new Error("Can't get valid session!");
+			}
 		} catch (e: any) {
 			console.log(e);
 			// Display error message
@@ -469,22 +491,25 @@ export default function EditOrgProfile() {
 		updateProfileDetails();
 	};
 
-	// useEffect(() => {
-	// 	getSession().then((session) => {
-	// 		if (session) {
-	// 			setIsLoading(false);
-	// 		} else {
-	// 			router.replace("/login");
-	// 		}
-	// 	});
-	// }, [router]);
+	useEffect(() => {
+		getSession().then((session) => {
+			if (session && session.user.type == DataType.Organisation) {
+				setIsLoading(false);
+				loadProfileData();
+			} else if (session) {
+				router.replace("/profile");
+			} else {
+				router.replace("/login");
+			}
+		});
+	}, [router,loadProfileData]);
 
 	if (isLoading) {
 		return <PageLoadingBar />;
 	}
 
 	return (
-		<Layout>
+		<Layout pageType="organisation">
 			<Container maxWidth="md" className={classes.containerStyle}>
 				<Typography variant="h5" component="h5" className={classes.pageTitle}>
 					Edit organisation profile:
@@ -495,7 +520,7 @@ export default function EditOrgProfile() {
 							{imageUploadContent()}
 						</Container>
 						<div className={classes.inputFields}>
-                            <TextField
+							<TextField
 								size="small"
 								variant="filled"
 								id="name"
@@ -504,16 +529,18 @@ export default function EditOrgProfile() {
 								value={fieldValues.name || ""}
 								onChange={(event) => handleChange("name", event.target.value)}
 								className={classes.topSpacing}
-                                required={true}
+								required={true}
 							/>
-                            <TextField
+							<TextField
 								size="small"
 								variant="filled"
 								id="industry"
 								label="Industry"
 								fullWidth
 								value={fieldValues.industry || ""}
-								onChange={(event) => handleChange("industry", event.target.value)}
+								onChange={(event) =>
+									handleChange("industry", event.target.value)
+								}
 								className={classes.topSpacing}
 							/>
 							<LocationSelector

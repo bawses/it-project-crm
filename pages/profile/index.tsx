@@ -14,6 +14,7 @@ import { IUser } from "../../lib/DataTypes";
 import { getUser } from "../../api_client/UserClient";
 import { COLORS } from "../../lib/Colors";
 import ErrorMessage, { AlertSeverity } from '../../components/errors/ErrorMessage';
+import { DataType } from "../../lib/EnumTypes";
 
 const useStyles = makeStyles((theme) => ({
 	containerStyle: {
@@ -79,20 +80,23 @@ export default function Profile() {
 	};
 
 	const fetchProfileDetails = useCallback(async () => {
-		console.log("getting the session:");
-		const session = await getSession();
-		console.log(session?.user);
 		try {
 			setIsLoading(true);
-			const fetchedData = await getUser();
-			setProfileData(fetchedData);
+			const session = await getSession();
+			console.log(session?.user);
+			if (session) {
+				const fetchedData = await getUser();
+				setProfileData(fetchedData);
 
-			if (fetchedData?.imageUrl) {
-				setProfileImage(fetchedData?.imageUrl);
+				if (fetchedData?.imageUrl) {
+					setProfileImage(fetchedData?.imageUrl);
+				}
+
+				console.log(fetchedData);
+				setIsLoading(false);
+			} else {
+				throw new Error("Can't get valid session!");
 			}
-
-			console.log(fetchedData);
-			setIsLoading(false);
 		} catch (e) {
 			console.log(e);
 			// Display error message
@@ -101,22 +105,22 @@ export default function Profile() {
 			setErrorSeverity(undefined)
 			setDisplayError(true)
 			setIsLoading(false);
+		} finally {
+			setIsLoading(false);
 		}
 	}, []);
 
 	useEffect(() => {
-		fetchProfileDetails();
-	}, [fetchProfileDetails]);
-
-	useEffect(() => {
 		getSession().then((session) => {
-			if (session) {
-				setIsLoading(false);
-			} else {
+			if (session && session.user.type == DataType.User) {
+				fetchProfileDetails();
+			  } else if (session) {
+				router.replace("/organisations/profile");
+			  } else {
 				router.replace("/login");
-			}
+			  }
 		});
-	}, [router]);
+	}, [router,fetchProfileDetails]);
 
 	if (isLoading) {
 		return <PageLoadingBar />;
