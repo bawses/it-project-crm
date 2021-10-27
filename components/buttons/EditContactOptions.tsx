@@ -2,12 +2,14 @@ import React, { SyntheticEvent } from "react";
 import { makeStyles } from "@material-ui/core";
 import { COLORS } from "../../lib/Colors";
 import TextButton from "./TextButton";
+import LoadingButton from "./LoadingButton";
 
 interface EditContactOptionsProps {
   onCancel?: () => void;
   onSubmit?: (event: SyntheticEvent) => void;
   toSubmitForm?: boolean;
   submitLabel?: string;
+  isLoading?: boolean;
 }
 
 export default function EditContactOptions({
@@ -15,6 +17,7 @@ export default function EditContactOptions({
   onSubmit = (event: SyntheticEvent) => {},
   toSubmitForm = true,
   submitLabel = "Create contact",
+  isLoading = false,
 }: EditContactOptionsProps) {
   const classes = useStyles();
 
@@ -25,14 +28,15 @@ export default function EditContactOptions({
         className={`${classes.formButton} ${classes.cancelButton}`}
         title="Cancel"
       />
-      <TextButton
+      {!isLoading && <TextButton
         type={toSubmitForm ? "submit" : "button"}
         onClick={onSubmit}
         color={COLORS.actionOrange}
         textColor={COLORS.white}
         className={`${classes.formButton} ${classes.submitButton}`}
         title={submitLabel}
-      />
+      />}
+      {isLoading && <LoadingButton className={`${classes.formButton} ${classes.loadingButton}`}/>}
     </div>
   );
 }
@@ -60,6 +64,10 @@ const useStyles = makeStyles((theme) => ({
       width: "70%",
       margin: theme.spacing(),
     },
+  },
+  loadingButton: {
+    fontWeight: "bold",
+    margin: "5px",
   },
   cancelButton: {
     backgroundColor: COLORS.white,

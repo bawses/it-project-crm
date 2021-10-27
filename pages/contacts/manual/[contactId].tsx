@@ -1,7 +1,7 @@
 import { Container, Typography, makeStyles } from "@material-ui/core";
 import Image from "next/image";
 import DEFAULT_IMAGE from "../../../assets/blank-profile-picture-973460_640.png";
-import { useState, useEffect, useCallback } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import MyTags from "../../../components/cards/MyTags";
 import MyNotes from "../../../components/cards/MyNotes";
 import ContactDetails from "../../../components/cards/ContactDetails";
@@ -23,6 +23,10 @@ import {
   toggleStarContact,
   toggleArchiveContact,
 } from "../../../api_client/ContactClient";
+import ErrorMessage, {
+  AlertSeverity,
+} from "../../../components/errors/ErrorMessage";
+import { DataType } from "../../../lib/EnumTypes";
 
 const useStyles = makeStyles((theme) => ({
   containerStyle: {
@@ -88,6 +92,8 @@ export default function ViewManualContact() {
   const classes = useStyles();
   const [initialContactData, setInitialContactData] = useState<IContact>();
   const [isLoading, setIsLoading] = useState(true);
+  const [btnLoading, setBtnLoading] = useState(false);
+  const [tagLoading, setTagLoading] = useState(false);
   const [notes, setNotes] = useState("");
   const [isEditingNotes, setIsEditingNotes] = useState(false);
   const [editedNotes, setEditedNotes] = useState("");
@@ -95,7 +101,10 @@ export default function ViewManualContact() {
   const [tagOptions, setTagOptions] = useState<string[]>([]);
   const [isStarred, setIsStarred] = useState(false);
   const [isArchived, setIsArchived] = useState(false);
-
+  const [displayError, setDisplayError] = useState(false);
+  const [errorMessage, setErrorMessage] = useState<string>();
+  const [errorTitle, setErrorTitle] = useState<string>();
+  const [errorSeverity, setErrorSeverity] = useState<AlertSeverity>();
   const router = useRouter();
   const { contactId } = router.query;
 
@@ -115,17 +124,18 @@ export default function ViewManualContact() {
         setIsArchived(fetchedData.archived ?? false);
         setIsLoading(false);
       } catch (e) {
-        /** TODO: redirect to error page */
         console.log(e);
+        // Display error message
+        setErrorMessage(
+          "Failed to load manual contact - Please refresh the page and try again."
+        );
+        setErrorTitle(undefined);
+        setErrorSeverity(undefined);
+        setDisplayError(true);
         setIsLoading(false);
       }
     }
   }, [contactId]);
-
-  useEffect(() => {
-    console.log("first fetch");
-    fetchContactDetails();
-  }, [fetchContactDetails]);
 
   const toggleEditingMode = () => {
     setIsEditingNotes(!isEditingNotes);
@@ -134,6 +144,7 @@ export default function ViewManualContact() {
   const updateContactNotes = useCallback(async () => {
     if (initialContactData) {
       try {
+        setBtnLoading(true);
         const updateObject = {
           notes: editedNotes,
         };
@@ -147,14 +158,22 @@ export default function ViewManualContact() {
         setEditedNotes(updatedContact.notes ?? "");
       } catch (e) {
         console.log(e);
+        // Display error message
+        setErrorMessage("Failed to update notes - Please try again");
+        setErrorTitle(undefined);
+        setErrorSeverity(undefined);
+        setDisplayError(true);
+      } finally {
+        setBtnLoading(false);
       }
     }
   }, [initialContactData, editedNotes]);
 
   const saveEditedNotes = () => {
     if (isEditingNotes) {
-      updateContactNotes();
-      toggleEditingMode();
+      updateContactNotes().then(() => {
+        toggleEditingMode();
+      });
     }
   };
 
@@ -168,6 +187,7 @@ export default function ViewManualContact() {
   const deleteTag = async (toDelete: string) => {
     if (initialContactData) {
       try {
+        setTagLoading(true);
         const updatedContact = await removeTagFromContact(
           initialContactData,
           toDelete
@@ -179,6 +199,13 @@ export default function ViewManualContact() {
         setTagOptions(updatedTagOptions);
       } catch (e) {
         console.log(e);
+        // Display error message
+        setErrorMessage("Failed to delete tag - Please try again");
+        setErrorTitle(undefined);
+        setErrorSeverity(undefined);
+        setDisplayError(true);
+      } finally {
+        setTagLoading(false);
       }
     }
   };
@@ -186,6 +213,7 @@ export default function ViewManualContact() {
   const addTag = async (toAdd: string) => {
     if (initialContactData) {
       try {
+        setTagLoading(true);
         const updatedContact = await addTagToContact(initialContactData, toAdd);
         setTags(updatedContact.tags ?? []);
         console.log("After adding tag");
@@ -194,6 +222,13 @@ export default function ViewManualContact() {
         setTagOptions(updatedTagOptions);
       } catch (e) {
         console.log(e);
+        // Display error message
+        setErrorMessage("Failed to add new tag - Please try again");
+        setErrorTitle(undefined);
+        setErrorSeverity(undefined);
+        setDisplayError(true);
+      } finally {
+        setTagLoading(false);
       }
     }
   };
@@ -205,6 +240,11 @@ export default function ViewManualContact() {
         console.log(updatedContact);
       } catch (e) {
         console.log(e);
+        // Display error message
+        setErrorMessage("Failed to star this contact - Please try again");
+        setErrorTitle(undefined);
+        setErrorSeverity(undefined);
+        setDisplayError(true);
       }
     }
   }, [initialContactData]);
@@ -214,8 +254,18 @@ export default function ViewManualContact() {
       try {
         const updatedContact = await toggleArchiveContact(initialContactData);
         console.log(updatedContact);
+        // Display error message
+        setErrorMessage("Successfully updated archive for this contact!");
+        setErrorTitle("Success");
+        setErrorSeverity("success");
+        setDisplayError(true);
       } catch (e) {
         console.log(e);
+        // Display error message
+        setErrorMessage(undefined);
+        setErrorTitle(undefined);
+        setErrorSeverity(undefined);
+        setDisplayError(true);
       }
     }
   }, [initialContactData]);
@@ -230,6 +280,11 @@ export default function ViewManualContact() {
         router.replace("/contacts");
       } catch (e) {
         console.log(e);
+        // Display error message
+        setErrorMessage("Failed to delete this contact - Please try again");
+        setErrorTitle(undefined);
+        setErrorSeverity(undefined);
+        setDisplayError(true);
         setIsLoading(false);
       }
     }
@@ -253,13 +308,16 @@ export default function ViewManualContact() {
 
   useEffect(() => {
     getSession().then((session) => {
-      if (session) {
+      if (session && session.user.type == DataType.User) {
         setIsLoading(false);
+        fetchContactDetails();
+      } else if (session) {
+        router.replace("/organisations/profile");
       } else {
         router.replace("/login");
       }
     });
-  }, [router]);
+  }, [router, fetchContactDetails]);
 
   if (isLoading) {
     return <PageLoadingBar />;
@@ -288,12 +346,8 @@ export default function ViewManualContact() {
             firstName={initialContactData?.name.firstName}
             lastName={initialContactData?.name.lastName}
             title={initialContactData?.job}
-            selectedOrg={
-              initialContactData?.organisation ?? null
-            }
-            manualOrg={
-              initialContactData?.manualOrganisation
-            }
+            selectedOrg={initialContactData?.organisation ?? null}
+            manualOrg={initialContactData?.manualOrganisation}
             starred={isStarred}
             onStar={() => {
               setIsStarred(!isStarred);
@@ -314,6 +368,7 @@ export default function ViewManualContact() {
               editedNotes={editedNotes}
               saveEditedNotes={saveEditedNotes}
               cancelEditedNotes={cancelEditedNotes}
+              isLoading={btnLoading}
             />
           </div>
           <div className={classes.myTags}>
@@ -322,10 +377,18 @@ export default function ViewManualContact() {
               tagOptions={tagOptions}
               deleteTag={deleteTag}
               addTag={addTag}
+              isLoading={tagLoading}
             />
           </div>
         </div>
       </Container>
+      <ErrorMessage
+        open={displayError}
+        alertMessage={errorMessage}
+        alertTitle={errorTitle}
+        severity={errorSeverity}
+        handleClose={() => setDisplayError(false)}
+      />
     </Layout>
   );
 }

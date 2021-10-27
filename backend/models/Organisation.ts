@@ -19,6 +19,7 @@ const OrganisationSchema = new mongoose.Schema<IOrganisation>(
       website: String,
       other: [String],
     },
+    recoveryEmail: String,
     industry: String,
     about: String,
     contacts: [String],

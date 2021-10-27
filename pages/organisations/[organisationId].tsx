@@ -11,6 +11,8 @@ import { OnChangeValue } from "react-select";
 import { getSession } from "next-auth/client";
 import { IOrganisation } from "../../lib/DataTypes";
 import { getOrganisationById } from "../../api_client/OrganisationClient";
+import ErrorMessage, { AlertSeverity } from '../../components/errors/ErrorMessage';
+import { DataType } from "../../lib/EnumTypes";
 
 const useStyles = makeStyles((theme) => ({
   containerStyle: {
@@ -87,7 +89,10 @@ export default function ViewOrgContact() {
   	""
   );
   const [isLoading, setIsLoading] = useState(true);
-
+  const [displayError, setDisplayError] = useState(false)
+  const [errorMessage, setErrorMessage] = useState<string>()
+  const [errorTitle, setErrorTitle] = useState<string>()
+  const [errorSeverity, setErrorSeverity] = useState<AlertSeverity>()
   const router = useRouter();
   const { organisationId } = router.query;
 
@@ -103,26 +108,29 @@ export default function ViewOrgContact() {
         console.log(fetchedData);
         setIsLoading(false);
       } catch (e) {
-        /** TODO: redirect to error page */
         console.log(e);
+        // Display error message
+        setErrorMessage('Failed to load organisation details - Please refresh the page to try again')
+        setErrorTitle(undefined)
+        setErrorSeverity(undefined)
+        setDisplayError(true)
         setIsLoading(false);
       }
     }
   }, [organisationId]);
 
   useEffect(() => {
-    fetchOrganisationDetails();
-  }, [fetchOrganisationDetails]);
-
-  // useEffect(() => {
-  // 	getSession().then((session) => {
-  // 		if (session) {
-  // 			setIsLoading(false);
-  // 		} else {
-  // 			router.replace("/login");
-  // 		}
-  // 	});
-  // }, [router]);
+  	getSession().then((session) => {
+  		if (session && session.user.type == DataType.User) {
+				setIsLoading(false);
+        fetchOrganisationDetails();
+			  } else if (session) {
+				router.replace("/organisations/profile");
+			  } else {
+				router.replace("/login");
+			  }
+  	});
+  }, [router,fetchOrganisationDetails]);
 
   if (isLoading) {
     return <PageLoadingBar />;
@@ -151,6 +159,13 @@ export default function ViewOrgContact() {
         </div>
         <ContactDetails fieldValues={initialContactData} />
       </Container>
+      <ErrorMessage
+        open={displayError}
+        alertMessage={errorMessage}
+        alertTitle={errorTitle}
+        severity={errorSeverity}
+        handleClose={() => setDisplayError(false)}
+      />
     </Layout>
   );
 }

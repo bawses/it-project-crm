@@ -87,6 +87,8 @@ const doFetch = async <T_output>(
       }
     }
 
+    console.log(url);
+    console.log(body);
     var response = await fetch(url, {
       method: fetchType,
       headers: {

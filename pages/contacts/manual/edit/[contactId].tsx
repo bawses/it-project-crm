@@ -5,7 +5,6 @@ import {
   makeStyles,
   TextField,
 } from "@material-ui/core";
-import { Business } from "@material-ui/icons";
 import Image from "next/image";
 import DEFAULT_IMAGE from "../../../../assets/blank-profile-picture-973460_640.png";
 import React, { useCallback, useEffect, useState } from "react";
@@ -33,6 +32,10 @@ import { getOrganisations } from "../../../../api_client/OrganisationClient";
 import { IOrganisation } from "../../../../lib/DataTypes";
 import { orgSelectValue } from "../../../../components/input/OrganisationSelector";
 import OrganisationInput from "../../../../components/input/OrganisationInput";
+import ErrorMessage, {
+  AlertSeverity,
+} from "../../../../components/errors/ErrorMessage";
+import { DataType } from "../../../../lib/EnumTypes";
 
 const useStyles = makeStyles((theme) => ({
   containerStyle: {
@@ -126,7 +129,6 @@ type ContactDetailsType = {
   secondaryEmail: string;
   primaryPhone: string;
   secondaryPhone: string;
-  address: string;
 };
 
 export type ExtraFieldType = {
@@ -155,9 +157,12 @@ export default function EditManualContact() {
     secondaryEmail: "",
     primaryPhone: "",
     secondaryPhone: "",
-    address: "",
   });
   const [extraFields, setExtraFields] = useState<ExtraFieldType[]>([]);
+  const [displayError, setDisplayError] = useState(false);
+  const [errorMessage, setErrorMessage] = useState<string>();
+  const [errorTitle, setErrorTitle] = useState<string>();
+  const [errorSeverity, setErrorSeverity] = useState<AlertSeverity>();
   const [isLoading, setIsLoading] = useState(true);
 
   const router = useRouter();
@@ -214,7 +219,6 @@ export default function EditManualContact() {
         fetchedData.phone[1]
           ? fetchedData.phone[1]
           : "",
-      address: "",
     };
   };
 
@@ -289,16 +293,18 @@ export default function EditManualContact() {
         setExtraFields(extraLinks);
         setIsLoading(false);
       } catch (e) {
-        /** TODO: redirect to error page */
         console.log(e);
+        // Display error message
+        setErrorMessage(
+          "Failed to load manual contact data - Please refresh the page to try again"
+        );
+        setErrorTitle(undefined);
+        setErrorSeverity(undefined);
+        setDisplayError(true);
         setIsLoading(false);
       }
     }
   }, [contactId]);
-
-  useEffect(() => {
-    loadContactData();
-  }, [loadContactData]);
 
   const formatHyperlink = (link?: string) => {
     if (link) {
@@ -323,12 +329,15 @@ export default function EditManualContact() {
 
   const updateManualContactDetails = async () => {
     if (initialContact) {
-      /** TODO: make alert or pop up if missing required fields */
       if (
         !!fieldValues.firstName === false &&
         !!fieldValues.lastName === false
       ) {
-        console.log("Error: must enter first or last name");
+        // Display error message
+        setErrorMessage("Please enter a first or last name.");
+        setErrorTitle(undefined);
+        setErrorSeverity(undefined);
+        setDisplayError(true);
         return;
       }
       /** Remove any extra fields that are empty */
@@ -386,16 +395,28 @@ export default function EditManualContact() {
         // Update selected organisation
         let updatedOrgContact;
         if (selectedOrg) {
-          updatedOrgContact = await updateOrganisationForContact(initialContact,selectedOrg.value._id)
+          updatedOrgContact = await updateOrganisationForContact(
+            initialContact,
+            selectedOrg.value._id
+          );
         } else {
           console.log("Remove selected org");
-          updatedOrgContact = await removeOrganisationForContact(initialContact);
+          updatedOrgContact = await removeOrganisationForContact(
+            initialContact
+          );
         }
         console.log(updatedOrgContact);
         router.replace(`/contacts/manual/${updatedContact._id}`);
         setIsLoading(false);
       } catch (e: any) {
         console.log(e);
+        // Display error message
+        setErrorMessage(
+          "Failed to update manual contact details - Please try again."
+        );
+        setErrorTitle(undefined);
+        setErrorSeverity(undefined);
+        setDisplayError(true);
         setIsLoading(false);
       }
     }
@@ -442,13 +463,16 @@ export default function EditManualContact() {
 
   useEffect(() => {
     getSession().then((session) => {
-      if (session) {
+      if (session && session.user.type == DataType.User) {
         setIsLoading(false);
+        loadContactData();
+      } else if (session) {
+        router.replace("/organisations/profile");
       } else {
         router.replace("/login");
       }
     });
-  }, [router]);
+  }, [router,loadContactData]);
 
   if (isLoading) {
     return <PageLoadingBar />;
@@ -547,21 +571,6 @@ export default function EditManualContact() {
                 }
               />
             </div>
-            <div className={classes.iconRow}>
-              <Business className={classes.icon} />
-              <TextField
-                size="small"
-                variant="filled"
-                id="workAddress"
-                label="Work address"
-                fullWidth
-                value={fieldValues.address || ""}
-                onChange={(event) =>
-                  handleChange("address", event.target.value)
-                }
-                className={classes.topSpacing}
-              />
-            </div>
             {extraFields.map((field, index) =>
               fieldCreator(index, field.fieldType, field.fieldValue)
             )}
@@ -576,6 +585,13 @@ export default function EditManualContact() {
           />
         </form>
       </Container>
+      <ErrorMessage
+        open={displayError}
+        alertMessage={errorMessage}
+        alertTitle={errorTitle}
+        severity={errorSeverity}
+        handleClose={() => setDisplayError(false)}
+      />
     </Layout>
   );
 }

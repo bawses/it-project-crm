@@ -13,6 +13,8 @@ import { getSession, signOut } from "next-auth/client";
 import { IUser } from "../../lib/DataTypes";
 import { getUser } from "../../api_client/UserClient";
 import { COLORS } from "../../lib/Colors";
+import ErrorMessage, { AlertSeverity } from '../../components/errors/ErrorMessage';
+import { DataType } from "../../lib/EnumTypes";
 
 const useStyles = makeStyles((theme) => ({
 	containerStyle: {
@@ -66,6 +68,10 @@ export default function Profile() {
 		"https://res.cloudinary.com/it-project-crm/image/upload/v1633002681/zdt7litmbbxfdvg7gdvx.png"
 	);
 	const [isLoading, setIsLoading] = useState(true);
+	const [displayError, setDisplayError] = useState(false)
+	const [errorMessage, setErrorMessage] = useState<string>()
+	const [errorTitle, setErrorTitle] = useState<string>()
+	const [errorSeverity, setErrorSeverity] = useState<AlertSeverity>()
 	const router = useRouter();
 
 	const handleSignOut = (e: React.SyntheticEvent) => {
@@ -74,40 +80,47 @@ export default function Profile() {
 	};
 
 	const fetchProfileDetails = useCallback(async () => {
-		console.log("getting the session:");
-		const session = await getSession();
-		console.log(session?.user);
 		try {
 			setIsLoading(true);
-			const fetchedData = await getUser();
-			setProfileData(fetchedData);
+			const session = await getSession();
+			console.log(session?.user);
+			if (session) {
+				const fetchedData = await getUser();
+				setProfileData(fetchedData);
 
-			if (fetchedData?.imageUrl) {
-				setProfileImage(fetchedData?.imageUrl);
+				if (fetchedData?.imageUrl) {
+					setProfileImage(fetchedData?.imageUrl);
+				}
+
+				console.log(fetchedData);
+				setIsLoading(false);
+			} else {
+				throw new Error("Can't get valid session!");
 			}
-
-			console.log(fetchedData);
-			setIsLoading(false);
 		} catch (e) {
-			/** TODO: redirect to error page */
 			console.log(e);
+			// Display error message
+			setErrorMessage("Failed to load profile details - Please try again")
+			setErrorTitle(undefined)
+			setErrorSeverity(undefined)
+			setDisplayError(true)
+			setIsLoading(false);
+		} finally {
 			setIsLoading(false);
 		}
 	}, []);
 
 	useEffect(() => {
-		fetchProfileDetails();
-	}, [fetchProfileDetails]);
-
-	useEffect(() => {
 		getSession().then((session) => {
-			if (session) {
-				setIsLoading(false);
-			} else {
+			if (session && session.user.type == DataType.User) {
+				fetchProfileDetails();
+			  } else if (session) {
+				router.replace("/organisations/profile");
+			  } else {
 				router.replace("/login");
-			}
+			  }
 		});
-	}, [router]);
+	}, [router,fetchProfileDetails]);
 
 	if (isLoading) {
 		return <PageLoadingBar />;
@@ -154,6 +167,13 @@ export default function Profile() {
 					/>
 				</div>
 			</Container>
+			<ErrorMessage
+        		open={displayError}
+        		alertMessage={errorMessage}
+        		alertTitle={errorTitle}
+        		severity={errorSeverity}
+				handleClose={() => setDisplayError(false)}
+      		/>
 		</Layout>
 	);
 }

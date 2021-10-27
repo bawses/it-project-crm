@@ -15,7 +15,7 @@ import {
 import { compare, hash as hashPassword } from "bcryptjs";
 import { getOrganisationById } from "./OrganisationClient";
 
-function validateSignUpObject(
+export function validateSignUpObject(
   firstName: string,
   lastName: string,
   email: string,
@@ -53,6 +53,7 @@ export const userSignUp = async (
     email: [email],
     passwordHash: await hashPassword(String(password), 10),
   };
+
   return createUser(createObj);
 };
 
@@ -94,14 +95,15 @@ export const updateUser = async (updateObj: IUser_Update) => {
 export const updateUserById = async (id: string, updateObj: IUser_Update) => {
   var updateObj_ = updateObj as any;
   if (updateObj.name) {
-    updateObj_.fullName = updateObj.name.firstName + " " + updateObj.name.lastName;
+    updateObj_.fullName =
+      updateObj.name.firstName + " " + updateObj.name.lastName;
   }
 
-  if (updateObj.imageFile){
+  if (updateObj.imageFile) {
     // Insert in image upload operation here
     const imageUrl = await updateImageForUser(updateObj.imageFile);
     console.log("Image Url: " + imageUrl);
-    
+
     updateObj_.imageUrl = imageUrl;
     console.log(updateObj);
   }
@@ -115,7 +117,10 @@ const updateImageForUser = async (imageFile: File) => {
   return imageUrl;
 };
 
-export const updatePasswordForUser = async (currentPassword: string, newPassword: string) => {
+export const updatePasswordForUser = async (
+  currentPassword: string,
+  newPassword: string
+) => {
   const user = await getUser();
   if ((await compare(currentPassword, user.passwordHash)) !== true) {
     throw new Error("Incorrect current password");
@@ -123,19 +128,22 @@ export const updatePasswordForUser = async (currentPassword: string, newPassword
   const id = await getSessionId();
   if (!id) throw new Error("No valid session");
   const newPasswordHash = await hashPassword(String(newPassword), 10);
-  return updateDbRecord<IUser>(DataType.User, id, { passwordHash: newPasswordHash });
+  return updateDbRecord<IUser>(DataType.User, id, {
+    passwordHash: newPasswordHash,
+  });
 };
 
 export const updateOrganisationForUser = async (orgId: string) => {
   const org = await getOrganisationById(orgId);
   if (!org) throw new Error("No organisation found");
-  return updateUser({ organisation: { _id: orgId, name: org.name, imageUrl: org.imageUrl } });
+  return updateUser({
+    organisation: { _id: orgId, name: org.name, imageUrl: org.imageUrl },
+  });
 };
 
 export const removeOrganisationForUser = async () => {
   return updateUser({ organisation: { _id: "delete", name: "" } });
-}
-
+};
 
 export const deleteUser = async () => {
   const id = await getSessionId();

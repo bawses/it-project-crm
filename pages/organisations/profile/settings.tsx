@@ -13,6 +13,9 @@ import {
 } from "@material-ui/core";
 import { COLORS } from "../../../lib/Colors";
 import { IOrganisation } from "../../../lib/DataTypes";
+import { getOrganisationById } from "../../../api_client/OrganisationClient";
+import ErrorMessage, { AlertSeverity } from '../../../components/errors/ErrorMessage';
+import { DataType } from "../../../lib/EnumTypes";
 
 const useStyles = makeStyles((theme) => ({
   containerStyle: {
@@ -56,28 +59,15 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const dummyOrganisation: IOrganisation = {
-    _id: "123",
-    passwordHash: "passwordhash",
-    name: "Sample Organisation",
-    email: ["bigcompany@example.com"],
-    phone: ["12345"],
-    location: "Melbourne, AU",
-    links: {
-      facebook: "facebook.com",
-      instagram: "instagram.com",
-    },
-    industry: "Software development",
-    about:
-      "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.",
-    contacts: [],
-  };
-
 export default function OrgSettings() {
   const [isLoading, setIsLoading] = useState(true);
   const [profileData, setProfileData] = useState<IOrganisation>();
   const classes = useStyles();
   const router = useRouter();
+  const [displayError, setDisplayError] = useState(false)
+  const [errorMessage, setErrorMessage] = useState<string>()
+  const [errorTitle, setErrorTitle] = useState<string>()
+  const [errorSeverity, setErrorSeverity] = useState<AlertSeverity>()
   const [currentPassword, setCurrentPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
@@ -85,46 +75,82 @@ export default function OrgSettings() {
   const fetchProfileDetails = useCallback(async () => {
     try {
       setIsLoading(true);
-      const fetchedData = dummyOrganisation;
-      setProfileData(fetchedData);
-      console.log(fetchedData);
-      setIsLoading(false);
+      let session = await getSession();
+			console.log(session?.user);
+			if (session) {
+				const fetchedData = await getOrganisationById(session?.user.sub);
+				setProfileData(fetchedData);
+				setIsLoading(false);
+			} else {
+				throw new Error("Can't get valid session!");
+			}
     } catch (e) {
-      /** TODO: redirect to error page */
       console.log(e);
+      // Display error message
+      setErrorMessage('Failed to load account details - Please try again')
+      setErrorTitle(undefined)
+      setErrorSeverity(undefined)
+      setDisplayError(true)
       setIsLoading(false);
     }
   }, []);
 
-  useEffect(() => {
-    fetchProfileDetails();
-  }, [fetchProfileDetails]);
-
-  const handleSubmit = (event: React.SyntheticEvent) => {
+  const handleSubmit = async (event: React.SyntheticEvent) => {
     event.preventDefault();
-    if (newPassword !== confirmPassword) {
-      alert("Error! Passwords don't match");
+
+    if (!currentPassword || !newPassword || !confirmPassword) {
+      // Display error message
+      setErrorMessage("Please enter your current and new passwords")
+      setErrorTitle(undefined)
+      setErrorSeverity(undefined)
+      setDisplayError(true)
       return;
     }
-    console.log("Changing password");
+    if (newPassword !== confirmPassword) {
+      // Display error message
+      setErrorMessage("New passwords don't match - Please try again")
+      setErrorTitle(undefined)
+      setErrorSeverity(undefined)
+      setDisplayError(true)
+      return;
+    }
+    try {
+      setIsLoading(true);
+      // const updatedUser = await updatePasswordForUser(currentPassword, newPassword);
+      // console.log(updatedUser);
+      console.log("Password updated!")
+      router.replace('/profile');
+    } catch (e: any) {
+      console.log(e);
+      // Display error message
+      setErrorMessage('Failed to update password - Please try again')
+      setErrorTitle(undefined)
+      setErrorSeverity(undefined)
+      setDisplayError(true)
+    } finally {
+      setIsLoading(false);
+    }
   };
 
-//   useEffect(() => {
-//     getSession().then((session) => {
-//       if (session) {
-//         setIsLoading(false);
-//       } else {
-//         router.replace("/login");
-//       }
-//     });
-//   }, [router]);
+  useEffect(() => {
+    getSession().then((session) => {
+      if (session && session.user.type == DataType.Organisation) {
+				setIsLoading(false);
+        fetchProfileDetails();
+			} else if (session) {
+				router.replace("/profile");
+			} else {
+				router.replace("/login");
+			}
+    });
+  }, [router, fetchProfileDetails]);
 
   if (isLoading) {
     return <PageLoadingBar />;
   }
 
   return (
-    <Layout>
+    <Layout pageType="organisation">
       <Container maxWidth="md" className={classes.containerStyle}>
         <Typography variant="h5" component="h2" className={classes.pageTitle}>
           My Organisation Settings
@@ -147,12 +173,12 @@ export default function OrgSettings() {
               {profileData?.email[0]}
             </Typography>
           </div>
-          <div className={classes.passwordSection}>
+          {/* <div className={classes.passwordSection}>
             <Typography variant="h6" component="h5">
               Update password
             </Typography>
-          </div>
-          <form noValidate autoComplete="off" onSubmit={handleSubmit}>
+          </div> */}
+          {/* <form noValidate autoComplete="off" onSubmit={handleSubmit}>
             <div className={classes.passwordSection}>
               <TextField
                 size="small"
@@ -196,10 +222,17 @@ export default function OrgSettings() {
                 title="Change password"
               />
             </div>
-          </form>
+          </form> */}
         </Grid>
         <br />
       </Container>
+      <ErrorMessage
+        open={displayError}
+        alertMessage={errorMessage}
+        alertTitle={errorTitle}
+        severity={errorSeverity}
+        handleClose={() => setDisplayError(false)}
+      />
     </Layout>
   );
 }

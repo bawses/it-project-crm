@@ -10,7 +10,8 @@
     "test": "jest --setupFilesAfterEnv='./tests/setupEnv.js'"
   },
   "dependencies": {
-    "@emotion/react": "^11.4.1",
+    "@emotion/react": "^11.5.0",
+    "@emotion/styled": "^11.3.0",
     "@material-ui/core": "^4.12.3",
     "@material-ui/icons": "^4.11.2",
     "@material-ui/styles": "^4.11.4",
@@ -38,7 +39,8 @@
     "react-select": "5.0.0-beta.1",
     "swr": "^1.0.0",
     "watch": "^0.13.0",
-    "webpack": "^5.51.1"
+    "webpack": "^5.51.1",
+    "webpack-dev-server": "^4.3.1"
   },
   "devDependencies": {
     "@babel/plugin-transform-modules-commonjs": "^7.15.4",
