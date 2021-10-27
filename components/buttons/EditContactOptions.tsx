@@ -36,7 +36,7 @@ export default function EditContactOptions({
         className={`${classes.formButton} ${classes.submitButton}`}
         title={submitLabel}
       />}
-      {isLoading && <LoadingButton className={classes.formButton}/>}
+      {isLoading && <LoadingButton className={`${classes.formButton} ${classes.loadingButton}`}/>}
     </div>
   );
 }
@@ -64,6 +64,10 @@ const useStyles = makeStyles((theme) => ({
       width: "70%",
       margin: theme.spacing(),
     },
+  },
+  loadingButton: {
+    fontWeight: "bold",
+    margin: "5px",
   },
   cancelButton: {
     backgroundColor: COLORS.white,
