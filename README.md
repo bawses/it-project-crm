@@ -7,7 +7,7 @@
     <img src="assets/CataLog_logo.png" alt="Logo" width="270" height="100">
   </a>
 
-<h3 align="center">Your Professional CRM - CataLog</h3>
+<h3 align="center">:orange_square:Your Professional CRM - CataLog:blue_square:</h3>
 
   <p align="center">
     CataLog is a Personal CRM that helps you to stay in touch with your network wherever you are. You can easily save and retrieve the contact details of your network by either adding their profile or through creating a manual contact.  
@@ -57,7 +57,7 @@
 CataLog is the modern CRM that brings your world closer to you. It is both a Digital Phonebook and a social media site for Professional Networking, allowing you to access your contacts from any computer or mobile device. CataLog also helps organisations connect with professionals. 
 
 ### Features
-##### Digital Phonebook
+##### Digital Phonebook :closed_book:
 <ul>
   <li>Add a Manual Contact Entry</li>
   <li>Edit and Save a Manual Contact Entry</li>
@@ -71,7 +71,7 @@ CataLog is the modern CRM that brings your world closer to you. It is both a Dig
   <li>Search for a Contact from your list of Contacts (Local Search)</li>
 </ul>
 
-##### Networking
+##### Networking :globe_with_meridians:
 <ul>
   <li>Add a User as a Contact</li>
   <li>View and edit user's personal profile</li>
@@ -83,7 +83,7 @@ CataLog is the modern CRM that brings your world closer to you. It is both a Dig
   <li>Search for any CataLog User or Organisation Profile (Global Search)</li>
 </ul>
 
-##### Platform Services
+##### Platform Services :desktop_computer:
 <ul>
   <li>Sign Up/Log In for Personal and Organisation Accounts (Email and Google options)</li>
   <li>Add Recovery Email</li>
