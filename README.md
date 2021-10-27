@@ -10,7 +10,7 @@
 <h3 align="center">Your Professional CRM - CataLog</h3>
 
   <p align="center">
-    CataLog is a Personal CRM that helps you to stay in touch with your network. You can easily save and retrieve the contact details of your network by either adding their profile or through creating a manual contact.  
+    CataLog is a Personal CRM that helps you to stay in touch with your network wherever you are. You can easily save and retrieve the contact details of your network by either adding their profile or through creating a manual contact.  
     <br />
     <a href="https://bawses-it-project.atlassian.net/wiki/spaces/BAWSES/overview?homepageId=262290"><strong>Explore the docs »</strong></a>
     <br />
@@ -54,7 +54,41 @@
 
 <!-- ABOUT THE PROJECT -->
 ## About The Project
-{Insert Detail About Project}
+CataLog is the modern CRM that brings your world closer to you. It is both a Digital Phonebook and a social media site for Professional Networking, allowing you to access your contacts from any computer or mobile device. CataLog also helps organisations connect with professionals. 
+
+### Features
+##### Digital Phonebook
+<ul>
+  <li>Add a Manual Contact Entry</li>
+  <li>Edit and Save a Manual Contact Entry</li>
+  <li>Record personal notes for a Manual Contact Entry</li>
+  <li>Categorise a Manual Contact by adding tags</li>
+  <li>Merge Manual Contact and CataLog User Profile</li>
+  
+  <li>View your Contacts Directory</li> 
+  <li>Sort your Contacts Directory based on different fields (i.e. first name, last name, etc…)</li>
+  <li>Filter categories of Contacts by applying tags</li>
+  <li>Search for a Contact from your list of Contacts (Local Search)</li>
+</ul>
+
+##### Networking
+<ul>
+  <li>Add a User as a Contact</li>
+  <li>View and edit user's personal profile</li>
+  <li>Record personal notes for an Added Contact</li>
+  <li>Categorise an Added Contact by adding tags</li>
+  
+  <li>Create Organisation Profile</li>
+  <li>Edit and Save Organisation Profile</li>
+  <li>Search for any CataLog User or Organisation Profile (Global Search)</li>
+</ul>
+
+##### Platform Services
+<ul>
+  <li>Sign Up/Log In for Personal and Organisation Accounts (Email and Google options)</li>
+  <li>Add Recovery Email</li>
+  <li>Update Password</li>
+</ul>
 
 ### Built With
 
