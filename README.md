@@ -1,5 +1,7 @@
 <div id="top"></div>
 
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+
 <!-- PROJECT LOGO -->
 <br />
 <div align="center">
@@ -54,6 +56,7 @@
 
 <!-- ABOUT THE PROJECT -->
 ## About The Project
+
 CataLog is the modern CRM that brings your world closer to you. It is both a Digital Phonebook and a social media site for Professional Networking, allowing you to access your contacts from any computer or mobile device. CataLog also helps organisations connect with professionals. 
 
 ### Features
@@ -185,6 +188,11 @@ Check out our [Next.js deployment documentation](https://nextjs.org/docs/deploym
 * []()
 * []()
 * []()
+
+## License
+
+MIT License
+Copyright (c) 2021 Bawses
 
 <p align="right">(<a href="#top">back to top</a>)</p>
 
