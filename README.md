@@ -189,6 +189,7 @@ Check out our [Next.js deployment documentation](https://nextjs.org/docs/deploym
 * []()
 * []()
 
+<!-- LICENSE -->
 ## License
 
 MIT License
