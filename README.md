@@ -9,7 +9,7 @@
     <img src="assets/CataLog_logo.png" alt="Logo" width="270" height="100">
   </a>
 
-<h3 align="center">:orange_square:Your Professional CRM - CataLog:blue_square:</h3>
+<h3 align="center">:orange_square: Your Professional CRM - CataLog :blue_square:</h3>
 
   <p align="center">
     CataLog is a Personal CRM that helps you to stay in touch with your network wherever you are. You can easily save and retrieve the contact details of your network by either adding their profile or through creating a manual contact.  
