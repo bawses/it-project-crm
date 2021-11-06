@@ -185,8 +185,8 @@ Check out our [Next.js deployment documentation](https://nextjs.org/docs/deploym
 <!-- ACKNOWLEDGMENTS -->
 ## Acknowledgments
 
-* [Isaac Daly for being a wonderful client to work with, and giving us consistent and valuable feedback throughout the development process.]()
-* [Thomas Bowes for all his help as our IT project supervisor - thank you for always being helpful and guiding us in the right direction.]()
+* Isaac Daly for being a wonderful client to work with, and giving us consistent and valuable feedback throughout the development process.
+* Thomas Bowes for all his help as our IT project supervisor - thank you for always being helpful and guiding us in the right direction.
 
 <!-- LICENSE -->
 ## License
