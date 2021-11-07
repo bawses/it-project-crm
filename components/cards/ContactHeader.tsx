@@ -157,6 +157,9 @@ const useStyles = makeStyles((theme) => ({
     [theme.breakpoints.down("xs")]: {
       padding: 10,
     },
+    "&:hover": {
+      cursor: "pointer",
+    },
   },
   responsiveRow: {
     display: "flex",
