@@ -379,7 +379,11 @@ export default function EditOrgProfile() {
 	const updateProfileDetails = async () => {
 		/** TODO: make alert or pop up if missing required fields */
 		if (!!fieldValues.name === false) {
-			console.log("Error: must enter organisation name");
+			// Display error message
+			setErrorMessage("Please enter an organisation name")
+			setErrorTitle(undefined)
+			setErrorSeverity(undefined)
+			setDisplayError(true)
 			return;
 		}
 		/** Remove any extra fields that are empty */
@@ -432,6 +436,7 @@ export default function EditOrgProfile() {
 
 			const session = await getSession();
 			if (session) {
+				console.log(session);
 				const updatedOrg = await updateOrganisation(
 					session.user.sub,
 					detailsToUpdate
