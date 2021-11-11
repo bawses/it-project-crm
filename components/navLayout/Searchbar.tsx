@@ -82,6 +82,7 @@ export default function Searchbar() {
   const isMobile = useMediaQuery(theme.breakpoints.down("xs"));
   const [searchString, setSearchString] = useState<string>("");
   const [predictiveResults, setPredictiveResults] = useState<IContact[]>([]);
+  const [isLoading, setIsLoading] = useState(false);
 
   //  thank you Tony
   const ref = React.useRef() as React.MutableRefObject<HTMLInputElement>;
@@ -126,12 +127,17 @@ export default function Searchbar() {
     }
 
     try {
+      setIsLoading(true);
+
       var fetchedPredictions = await searchContactsByName(searchString);
       const filteredPredictions = fetchedPredictions.filter((contact) => !contact.archived);
       setPredictiveResults(filteredPredictions);
+
+      setIsLoading(false);
     } catch (e) {
       // TODO (NICE TO HAVE): Display error to user on webpage
       console.log(e);
+      setIsLoading(false);
     }
   }
 
@@ -176,11 +182,11 @@ export default function Searchbar() {
         {isOpen && searchString.length > 0 ? (
           isMobile ? (
             <div className={classes.resultsTable} style={{ zIndex: MAX_ZINDEX }}>
-              <SearchResultTable searchResults={predictiveResults.slice(0, MOBILE_ROW_LIMIT)} />
+              <SearchResultTable searchResults={predictiveResults.slice(0, MOBILE_ROW_LIMIT)} isLoading={isLoading} />
             </div>
           ) : (
             <div className={classes.resultsTable} style={{ zIndex: MAX_ZINDEX }}>
-              <SearchResultTable searchResults={predictiveResults.slice(0, DESKTOP_ROW_LIMIT)} />
+              <SearchResultTable searchResults={predictiveResults.slice(0, DESKTOP_ROW_LIMIT)} isLoading={isLoading} />
             </div>
           )
         ) : (
