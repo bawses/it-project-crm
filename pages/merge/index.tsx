@@ -89,7 +89,7 @@ export default function MergePage() {
   useEffect(() => {
     getSession().then((session) => {
       if (session && session.user.type == DataType.User) {
-        setIsLoading(false);
+        //setIsLoading(false);
       } else if (session) {
         router.replace("/organisations/profile");
       } else {

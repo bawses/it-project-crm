@@ -70,7 +70,7 @@ export default function SearchPage() {
     (async () => {
       // Do a global search for the given name and store the results
       if (searchParam.name !== undefined) {
-        setIsLoading(true)
+        //setIsLoading(true)
         await getSearchResults(
           searchParam.name as string,
           setSearchResults,
