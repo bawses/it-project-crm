@@ -70,7 +70,8 @@ export default function SearchPage() {
     (async () => {
       // Do a global search for the given name and store the results
       if (searchParam.name !== undefined) {
-        //setIsLoading(true)
+        setIsLoading(true)
+
         await getSearchResults(
           searchParam.name as string,
           setSearchResults,
@@ -79,6 +80,7 @@ export default function SearchPage() {
           setErrorTitle,
           setErrorSeverity
         )
+
         setIsLoading(false)
       }
     })()
@@ -131,7 +133,7 @@ export default function SearchPage() {
   useEffect(() => {
     getSession().then((session) => {
       if (session && session.user.type == DataType.User) {
-        setIsLoading(false);
+        //setIsLoading(false);
       } else if (session) {
         router.replace("/organisations/profile");
       } else {

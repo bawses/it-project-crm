@@ -92,6 +92,7 @@ export default function Contacts() {
       setAllContacts(data);
       // Make the display contacts initially just a copy of all contacts
       setDisplayContacts(data);
+
       setIsLoading(false);
     } catch (error) {
       console.error(error);
