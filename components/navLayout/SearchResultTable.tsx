@@ -8,17 +8,23 @@ import SearchResultRow from "./SearchResultRow";
 import NoResultsRow from "./NoResultsRow";
 import { IContact } from "../../lib/UnifiedDataType";
 import React from "react";
+import LoadingRow from "./LoadingRow";
 
 interface SearchResultTableProps {
   searchResults: IContact[];
+  isLoading: boolean;
 }
 
 export default function SearchResultsTable({
   searchResults,
+  isLoading
 }: SearchResultTableProps) {
   //  Populating search results table
   const rows: JSX.Element[] = [];
-  if (searchResults.length > 0) {
+  if (isLoading) {
+    // Results are still loading, show loading indicator
+    rows.push(<LoadingRow />);
+  } else if (searchResults.length > 0) {
     let counter = 0;
     for (const profile of searchResults) {
       const key = profile._id;

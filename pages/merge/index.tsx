@@ -1,4 +1,4 @@
-// Page for mergin manual contacts with existing profiles
+// Page for merging manual contacts with existing profiles
 
 import Layout from "../../components/navLayout/Layout";
 import Box from '@material-ui/core/Box';
@@ -34,6 +34,7 @@ async function getData(
 ) {
   try {
     setIsLoading(true)
+
     const manualContacts = await getContacts_Manual()
     const user = await getContact(userId, false)
     // Set all contacts
@@ -42,6 +43,7 @@ async function getData(
     setDisplayContacts(manualContacts)
     // Set the current user profile being merged
     setCurrentUser(user)
+
     setIsLoading(false)
   } catch (error) {
     console.error("Error getting merge page data", error)
@@ -89,7 +91,7 @@ export default function MergePage() {
   useEffect(() => {
     getSession().then((session) => {
       if (session && session.user.type == DataType.User) {
-        setIsLoading(false);
+        //setIsLoading(false);
       } else if (session) {
         router.replace("/organisations/profile");
       } else {

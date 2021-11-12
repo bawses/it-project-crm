@@ -25,18 +25,6 @@ export default NextAuth({
         await connectToDatabase();
 
         var dataType: DataType;
-        /* switch(credentials.userType){
-          case "Organisation":
-            dataType = DataType.Organisation;
-            break;
-          
-          case "User":
-            dataType = DataType.User;
-            break;
-
-          default:
-            dataType = DataType.User;
-        } */
         const entity = verifyEntity(credentials);
         
         return entity;
@@ -81,9 +69,14 @@ export default NextAuth({
     session: async (session: Session, userOrToken: authUser) : Promise<Session> => {
 
         await connectToDatabase();
-        const findUser = await User.findOne({email: userOrToken.email});
-        const findOrg = await Organisation.findOne({email: userOrToken.email});
+        const findUser = await User.findOne({email: userOrToken.email[0]});
+        const findOrg = await Organisation.findOne({email: userOrToken.email[0]});
 
+        console.log("====================================");
+        console.log(userOrToken.email[0]);
+        console.log("------------------------------------");
+        console.log(findOrg);
+        console.log("====================================");
         if (findUser){
           userOrToken.sub = findUser._id;
           userOrToken.type = DataType.User;

@@ -143,7 +143,7 @@ export default function ViewOrgContact() {
           <Container className={classes.profilePicDiv}>
             <Image
               className={classes.profilePic}
-              src={profileImage ?? DEFAULT_IMAGE}
+              src={profileImage === "" ? DEFAULT_IMAGE : profileImage}
               alt="Profile picture"
               width={400}
               height={400}

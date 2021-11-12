@@ -102,10 +102,7 @@ export const updateUserById = async (id: string, updateObj: IUser_Update) => {
   if (updateObj.imageFile) {
     // Insert in image upload operation here
     const imageUrl = await updateImageForUser(updateObj.imageFile);
-    console.log("Image Url: " + imageUrl);
-
     updateObj_.imageUrl = imageUrl;
-    console.log(updateObj);
   }
 
   delete updateObj_.imageFile;

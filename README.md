@@ -1,5 +1,7 @@
 <div id="top"></div>
 
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+
 <!-- PROJECT LOGO -->
 <br />
 <div align="center">
@@ -7,7 +9,7 @@
     <img src="assets/CataLog_logo.png" alt="Logo" width="270" height="100">
   </a>
 
-<h3 align="center">:orange_square:Your Professional CRM - CataLog:blue_square:</h3>
+<h3 align="center">:orange_square: Your Professional CRM - CataLog :blue_square:</h3>
 
   <p align="center">
     CataLog is a Personal CRM that helps you to stay in touch with your network wherever you are. You can easily save and retrieve the contact details of your network by either adding their profile or through creating a manual contact.  
@@ -54,6 +56,7 @@
 
 <!-- ABOUT THE PROJECT -->
 ## About The Project
+
 CataLog is the modern CRM that brings your world closer to you. It is both a Digital Phonebook and a social media site for Professional Networking, allowing you to access your contacts from any computer or mobile device. CataLog also helps organisations connect with professionals. 
 
 ### Features
@@ -182,9 +185,14 @@ Check out our [Next.js deployment documentation](https://nextjs.org/docs/deploym
 <!-- ACKNOWLEDGMENTS -->
 ## Acknowledgments
 
-* []()
-* []()
-* []()
+* Isaac Daly for being a wonderful client to work with, and giving us consistent and valuable feedback throughout the development process.
+* Thomas Bowes for all his help as our IT project supervisor - thank you for always being helpful and guiding us in the right direction.
+
+<!-- LICENSE -->
+## License
+
+MIT License
+Copyright (c) 2021 Bawses
 
 <p align="right">(<a href="#top">back to top</a>)</p>
 
