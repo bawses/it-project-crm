@@ -4,7 +4,7 @@ import { IOrganisation_Update } from "../lib/DataTypes_Update";
 import { DataType } from "../lib/EnumTypes";
 import { validateSignUpObject } from "./UserClient";
 import { hash as hashPassword } from "bcryptjs";
-import { createDbRecord, searchDb, getDbRecordById, updateDbRecord, deleteDbRecord } from "./Client";
+import { createDbRecord, searchDb, getDbRecordById, updateDbRecord, deleteDbRecord, doUploadImage} from "./Client";
 
 export const orgSignUp = async (
   name: string,
@@ -42,9 +42,20 @@ export const getOrganisationById = async (id: string) => {
 };
 
 export const updateOrganisation = async (id: string, updateObj: IOrganisation_Update) => {
-  return updateDbRecord<IOrganisation>(DataType.Organisation, id, updateObj);
+  var updateObj_ = updateObj as any;
+  if (updateObj.imageFile) {
+    // Insert in image upload operation here
+    const imageUrl = await updateImageForOrg(updateObj.imageFile);
+    updateObj_.imageUrl = imageUrl;
+  }
+  return updateDbRecord<IOrganisation>(DataType.Organisation, id, updateObj_);
 };
 
 export const deleteOrganisation = async (id: string) => {
   deleteDbRecord<IOrganisation>(DataType.Organisation, id);
+};
+
+const updateImageForOrg = async (imageFile: File) => {
+  const imageUrl = await doUploadImage(imageFile);
+  return imageUrl;
 };

@@ -178,6 +178,8 @@ export default function OrganisationSignUpPage() {
 			);
 			router.replace("/login");
 		} catch (error) {
+			setSignUpPressed(false);
+			setError("Invalid Credentials Entered!");
 			console.error(error);
 		}
 	};

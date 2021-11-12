@@ -173,6 +173,8 @@ export default function SignUpPage() {
       router.replace("/login");
     } catch (error) {
       console.error(error);
+      setError("Invalid Credentials Entered!");
+      setSignUpPressed(false);
     }
   };
 
