@@ -24,8 +24,13 @@ import TextButton from "../../../components/buttons/TextButton";
 import { COLORS } from "../../../lib/Colors";
 import { IOrganisation } from "../../../lib/DataTypes";
 import { IOrganisation_Update } from "../../../lib/DataTypes_Update";
-import { updateOrganisation, getOrganisationById } from "../../../api_client/OrganisationClient";
-import ErrorMessage, { AlertSeverity } from "../../../components/errors/ErrorMessage";
+import {
+	updateOrganisation,
+	getOrganisationById,
+} from "../../../api_client/OrganisationClient";
+import ErrorMessage, {
+	AlertSeverity,
+} from "../../../components/errors/ErrorMessage";
 import { DataType } from "../../../lib/EnumTypes";
 
 const DEFAULT_URL: string =
@@ -150,16 +155,15 @@ export default function EditOrgProfile() {
 	const [isLoading, setIsLoading] = useState(true);
 	const [profileImage, setProfileImage] = useState("");
 	const [imageFile, setImageFile] = useState();
-	const [displayError, setDisplayError] = useState(false)
-	const [errorMessage, setErrorMessage] = useState<string>()
-	const [errorTitle, setErrorTitle] = useState<string>()
-	const [errorSeverity, setErrorSeverity] = useState<AlertSeverity>()
+	const [displayError, setDisplayError] = useState(false);
+	const [errorMessage, setErrorMessage] = useState<string>();
+	const [errorTitle, setErrorTitle] = useState<string>();
+	const [errorSeverity, setErrorSeverity] = useState<AlertSeverity>();
 	const router = useRouter();
 
 	// On file select (from the pop up)
 	const onUploadImage = (event: any) => {
 		console.log(event.target.files[0]);
-		//console.log(URL.createObjectURL(event.target.files[0]));
 		setImageFile(event.target.files[0]);
 	};
 
@@ -320,21 +324,20 @@ export default function EditOrgProfile() {
 	const loadProfileData = useCallback(async () => {
 		try {
 			setIsLoading(true);
+			console.log("Here");
 			let session = await getSession();
-			console.log(session?.user);
+			console.log(session);
 			if (session) {
 				const fetchedData = await getOrganisationById(session.user.sub);
-
-				console.log(fetchedData);
 
 				if (fetchedData?.imageUrl) {
 					setProfileImage(fetchedData?.imageUrl);
 				}
 
 				setLocation(
-				fetchedData.location
-					? { value: fetchedData.location, label: fetchedData.location }
-					: null
+					fetchedData.location
+						? { value: fetchedData.location, label: fetchedData.location }
+						: null
 				);
 				const initialFieldValues = extractFieldValues(fetchedData);
 				setFieldValues(initialFieldValues);
@@ -347,10 +350,12 @@ export default function EditOrgProfile() {
 		} catch (e) {
 			console.log(e);
 			// Display error message
-			setErrorMessage("Failed to load organisation profile details - Please try again")
-			setErrorTitle(undefined)
-			setErrorSeverity(undefined)
-			setDisplayError(true)
+			setErrorMessage(
+				"Failed to load organisation profile details - Please try again"
+			);
+			setErrorTitle(undefined);
+			setErrorSeverity(undefined);
+			setDisplayError(true);
 			setIsLoading(false);
 		}
 	}, []);
@@ -380,10 +385,10 @@ export default function EditOrgProfile() {
 		/** TODO: make alert or pop up if missing required fields */
 		if (!!fieldValues.name === false) {
 			// Display error message
-			setErrorMessage("Please enter an organisation name")
-			setErrorTitle(undefined)
-			setErrorSeverity(undefined)
-			setDisplayError(true)
+			setErrorMessage("Please enter an organisation name");
+			setErrorTitle(undefined);
+			setErrorSeverity(undefined);
+			setDisplayError(true);
 			return;
 		}
 		/** Remove any extra fields that are empty */
@@ -392,6 +397,8 @@ export default function EditOrgProfile() {
 		);
 		const detailsToUpdate: IOrganisation_Update = {
 			name: fieldValues.name,
+			imageFile: imageFile,
+			imageUrl: profileImage,
 			email: formatPairedData([
 				fieldValues.primaryEmail,
 				fieldValues.secondaryEmail,
@@ -431,16 +438,14 @@ export default function EditOrgProfile() {
 		};
 		try {
 			setIsLoading(true);
-			console.log("Updating org details");
-			console.log(detailsToUpdate);
 
 			const session = await getSession();
 			if (session) {
-				console.log(session);
 				const updatedOrg = await updateOrganisation(
 					session.user.sub,
 					detailsToUpdate
 				);
+
 				router.replace("/organisations/profile");
 				setIsLoading(false);
 			} else {
@@ -449,10 +454,12 @@ export default function EditOrgProfile() {
 		} catch (e: any) {
 			console.log(e);
 			// Display error message
-			setErrorMessage("Failed to update organisation profile - Please try again")
-			setErrorTitle(undefined)
-			setErrorSeverity(undefined)
-			setDisplayError(true)
+			setErrorMessage(
+				"Failed to update organisation profile - Please try again"
+			);
+			setErrorTitle(undefined);
+			setErrorSeverity(undefined);
+			setDisplayError(true);
 			setIsLoading(false);
 		}
 	};
@@ -507,7 +514,7 @@ export default function EditOrgProfile() {
 				router.replace("/login");
 			}
 		});
-	}, [router,loadProfileData]);
+	}, [router, loadProfileData]);
 
 	if (isLoading) {
 		return <PageLoadingBar />;
@@ -631,12 +638,12 @@ export default function EditOrgProfile() {
 				</form>
 			</Container>
 			<ErrorMessage
-        		open={displayError}
-       			alertMessage={errorMessage}
-        		alertTitle={errorTitle}
-        		severity={errorSeverity}
+				open={displayError}
+				alertMessage={errorMessage}
+				alertTitle={errorTitle}
+				severity={errorSeverity}
 				handleClose={() => setDisplayError(false)}
-      		/>
+			/>
 		</Layout>
 	);
 }
