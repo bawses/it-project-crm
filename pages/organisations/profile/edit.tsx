@@ -446,7 +446,7 @@ export default function EditOrgProfile() {
 					detailsToUpdate
 				);
 
-				//router.replace("/organisations/profile");
+				router.replace("/organisations/profile");
 				setIsLoading(false);
 			} else {
 				throw new Error("Can't get valid session!");
