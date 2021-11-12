@@ -35,6 +35,7 @@ import { DataType } from "../../../lib/EnumTypes";
 
 const DEFAULT_URL: string =
 	"https://res.cloudinary.com/it-project-crm/image/upload/v1633002681/zdt7litmbbxfdvg7gdvx.png";
+const DEFAULT_STR: string = "";
 
 const useStyles = makeStyles((theme) => ({
 	containerStyle: {
