@@ -5,7 +5,7 @@ import { getSession } from "next-auth/client";
 import WelcomeSection from "../../components/landingSections/WelcomeSection";
 import ProfessionalsSection from "../../components/landingSections/ProfessionalsSection";
 import OrganisationsSection from "../../components/landingSections/OrganisationsSection";
-import { Helmet } from "react-helmet";
+import Head from "next/head";
 
 export default function Welcome() {
   const router = useRouter();
@@ -26,7 +26,7 @@ export default function Welcome() {
 
   return (
     <>
-      <Helmet>
+      <Head>
         <meta name="description" content="CataLog CRM" />
         <meta name="title" property="og:title" content="CataLog" />
         <meta property="og:type" content="Website" />
@@ -37,7 +37,7 @@ export default function Welcome() {
         />
         <meta name="description" property="og:description" content="CataLog App" />
         <meta name="author" content="Bawses Team" />
-      </Helmet>
+      </Head>
 
       <div>
         <WelcomeSection
