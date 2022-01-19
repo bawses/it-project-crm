@@ -33,7 +33,7 @@ export default function Welcome() {
         <meta
           name="image"
           property="og:image"
-          content="https://i.ibb.co/xMYbyG2/Cata-Log-Welcome-Page.png"
+          content="https://i.ibb.co/X5b7gsP/Cata-Log-Welcome-Page.png"
         />
         <meta name="description" property="og:description" content="CataLog App" />
         <meta name="author" content="Bawses Team" />
