@@ -35,7 +35,11 @@ export default function Welcome() {
           property="og:image"
           content="https://i.ibb.co/X5b7gsP/Cata-Log-Welcome-Page.png"
         />
-        <meta name="description" property="og:description" content="CataLog App" />
+        <meta
+          name="description"
+          property="og:description"
+          content="CataLog is the modern CRM that brings your world closer to you. No matter where you are, stay connected with whoever you want. CataLog keep the details of your contacts organised and handy, and helps your network stay in touch with you too."
+        />
         <meta name="author" content="Bawses Team" />
       </Head>
 
